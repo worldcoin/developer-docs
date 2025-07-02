@@ -1,0 +1,19 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  annotations: 
+    github.com/project-slug: worldcoin/developer-docs
+  tags: ["code-lang:PLACEHOLDER-ADD-CODE-LANGUAGE"]
+  description: Documentation of World's Developer SDKs and Developer Portal.
+  links:
+  - title: Linear
+    url: PLACEHOLDER-ADD-LINEAR-URL
+  - title: Documentation
+    url: PLACEHOLDER-ADD-DOCUMENTATION-URL
+  - title: Slack
+    url: PLACEHOLDER-ADD-SLACK-URL
+  name: developer-docs
+spec: 
+  lifecycle: production
+  owner: team-developers
+  type: resource
