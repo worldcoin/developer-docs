@@ -1,0 +1,399 @@
+---
+title: "Send Transaction"
+---
+
+The "Send Transaction" feature allows you to interact with arbitrary smart contracts. 
+One important caveat is that approvals are not permitted. 
+To transfer funds, you must either use Permit2 [Signature Transfer](https://docs.uniswap.org/contracts/permit2/reference/signature-transfer) or directly call the asset's transfer function.
+
+Ensure you specify the contracts and tokens you are interacting with in the Developer Portal (under Configuration → Advanced) ; otherwise, the backend will block the transaction. 
+Gas fees are covered on World Chain; however, there is a limit of 300 transactions per user per day.
+
+Users can sign and send multiple transactions in parallel. Sequential execution is not enforced for miniapp transactions, unless those transactions are placed in the transaction array and sent as a single sendTransaction command.
+
+## Creating a transaction
+
+This command accepts an array of transactions, allowing you to specify multiple actions that will be executed atomically in a single multicall.
+We default to formatting the payload to avoid validation errors, but if you are experiencing issues, you can set `formatPayload` to `false`.
+
+```ts
+export type SendTransactionInput = {
+	transaction: Transaction[]
+	permit2?: Permit2[] // Optional
+  formatPayload?: boolean // Optional, default is true. If this is causing errors, you can set this to false.
+}
+
+export type Transaction = {
+	address: string // Contract address you're interacting with
+	abi: Abi | readonly unknown[] // It's recommended to only include the functions you're using.
+	functionName: ContractFunctionName<Abi | readonly unknown[], 'payable' | 'nonpayable'>
+	value?: string // Hex string representation of the value to send with the function call
+	args: ContractFunctionArgs<
+		Abi | readonly unknown[],
+		'payable' | 'nonpayable',
+		ContractFunctionName<Abi | readonly unknown[], 'payable' | 'nonpayable'>
+	>
+}
+```
+
+<Tabs>
+  <Tab title="Send Transaction">
+    ```tsx app/page.tsx
+    import SimpleABI from '../../abi/SimpleABI.json'
+    import { MiniKit } from '@worldcoin/minikit-js'
+
+    const sendTransaction = async () => {
+      const {commandPayload, finalPayload} = await MiniKit.commandsAsync.sendTransaction({
+        transaction: [
+          {
+            address: '0x9Cf4F011F55Add3ECC1B1B497A3e9bd32183D6e8',
+            abi: SimpleABI,
+            functionName: 'mintToken',
+            args: ['0x126f7998Eb44Dd2d097A8AB2eBcb28dEA1646AC8'],
+          },
+        ],
+      })
+    }
+    ```
+
+    ### Confirming the transaction
+
+    Once the transaction is sent, you will receive a `transaction_id`. You can use this ID to check the transaction status and retrieve the transaction hash after confirmation.
+    In this flow, we will use the useWaitForTransactionReceipt hook to monitor the transaction status.
+
+    ```tsx app/page.tsx
+    // Make sure you have the @worldcoin/minikit-react package installed
+    import { useWaitForTransactionReceipt } from '@worldcoin/minikit-react'
+
+    const [transactionId, setTransactionId] = useState<string>('')
+
+    const client = createPublicClient({
+      chain: worldchain,
+      transport: http('https://worldchain-mainnet.g.alchemy.com/public'),
+    })
+
+    const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+      client: client,
+      appConfig: {
+        app_id: '<app_id>',
+      },
+      transactionId: transactionId,
+    })
+
+    const sendTransaction = async () => {
+      const {commandPayload, finalPayload} = await MiniKit.commandsAsync.sendTransaction({
+        // ...
+      })
+
+      if (payload.status === 'error') {
+        console.error('Error sending transaction', payload)
+      } else {
+        setTransactionId(payload.transaction_id)
+      }
+    }
+    ```
+  </Tab>
+
+  <Tab title="ABI">
+    ```tsx abi/SimpleAbi.json
+    [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+           ],
+          "name": "mintToken",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+    ]
+
+    ```
+  </Tab>
+</Tabs>
+
+
+
+## With permit2
+This example demonstrates how to send a transaction using Permit2. You must specify additional configuration options in the Developer Portal (under Configuration → Advanced) to enable a particular token.
+
+Note that Permit2 requires a signature. Our backend automatically replaces the placeholder with the correct signature; you simply need to indicate this using `PERMIT2_SIGNATURE_PLACEHOLDER_{index}`. 
+The index corresponds to the position of the Permit2 value within the permit2 array.
+
+```ts
+export type Permit2 = {
+	permitted: {
+		token: string
+		amount: string | unknown
+	}
+	spender: string
+	nonce: string | unknown
+	deadline: string | unknown
+}
+```
+
+<Tabs>
+  <Tab title="Send Transaction (Permit2)">
+    ### Sending the transaction & receiving the response
+
+    ```tsx app/page.tsx
+    import Permit2 from '../../abi/Permit2.json'
+    import { MiniKit } from '@worldcoin/minikit-js'
+
+   const onClickUsePermit2 = async () => {
+      // Permit2 is valid for max 1 hour
+      const permitTransfer = {
+        permitted: {
+          token: "0x..." // The token I'm sending
+          amount: (0.5 * 10 ** 18).toString(),
+        },
+        nonce: Date.now().toString(),
+        deadline: Math.floor((Date.now() + 30 * 60 * 1000) / 1000).toString(),
+      };
+
+      const transferDetails = {
+        to: address,
+        requestedAmount: (0.5 * 10 ** 18).toString(),
+      };
+
+      try {
+        const { finalPayload } = await MiniKit.commandsAsync.sendTransaction({
+          transaction: [
+            {
+              address: "0xF0882554ee924278806d708396F1a7975b732522",
+              abi: Permit2,
+              functionName: 'signatureTransfer',
+              args: [
+                [
+                  [
+                    permitTransfer.permitted.token,
+                    permitTransfer.permitted.amount,
+                  ],
+                  permitTransfer.nonce,
+                  permitTransfer.deadline,
+                ],
+                [transferDetails.to, transferDetails.requestedAmount],
+                'PERMIT2_SIGNATURE_PLACEHOLDER_0', // Placeholders will automatically be replaced with the correct signature. 
+              ],
+            },
+          ],
+          permit2: [
+            {
+              ...permitTransfer,
+              spender: myContractToken,
+            }, // If you have more than one permit2 you can add more values here.
+          ],
+        });
+      }
+    }
+    ```
+
+    ### Confirming the transaction
+
+    Once the transaction is sent you will receive back a transaction id. You can use this to check the status of the transaction and will also be able to get the transaction hash
+    once the transaction is confirmed.
+
+    This requires installing the `@worldcoin/minikit-react` package.
+
+    ```tsx app/page.tsx
+    import { useWaitForTransactionReceipt } from '@worldcoin/minikit-react'
+
+    const [transactionId, setTransactionId] = useState<string>('')
+
+    const client = createPublicClient({
+      chain: worldchain,
+      transport: http('https://worldchain-mainnet.g.alchemy.com/public'),
+    })
+
+    // You can use isSuccess to check if the transaction is mined
+    const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+      client: client,
+      appConfig: {
+        app_id: '<app_id>',
+      },
+      transactionId: transactionId,
+    })
+
+    const sendTransaction = async () => {
+      const {commandPayload, finalPayload} = await MiniKit.commandsAsync.sendTransaction({
+        // ...
+      })
+
+      if (payload.status === 'error') {
+        console.error('Error sending transaction', payload)
+      } else {
+        setTransactionId(payload.transaction_id)
+      }
+    }
+    ```
+  </Tab>
+
+  <Tab title="ABI">
+    ```tsx abi/Permit2.json
+    [
+        {
+        "inputs": [
+          {
+            "components": [
+              {
+                "components": [
+                  {
+                    "internalType": "address",
+                    "name": "token",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "amount",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct ISignatureTransfer.TokenPermissions",
+                "name": "permitted",
+                "type": "tuple"
+              },
+              {
+                "internalType": "uint256",
+                "name": "nonce",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "deadline",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct ISignatureTransfer.PermitTransferFrom",
+            "name": "permitTransferFrom",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "to",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "requestedAmount",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct ISignatureTransfer.SignatureTransferDetails",
+            "name": "transferDetails",
+            "type": "tuple"
+          },
+          {
+            "internalType": "bytes",
+            "name": "signature",
+            "type": "bytes"
+          }
+        ],
+        "name": "signatureTransfer",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+    ]
+
+    ```
+  </Tab>
+</Tabs>
+
+
+## Success Result on World App
+
+If implemented correctly, the user will see the following drawer on World App.
+
+<div className="grid justify-items-center text-center">
+	<video className="m-auto" width="300" autoPlay muted loop playsInline>
+		<source src="/images/docs/mini-apps/commands/send-transaction.mp4" type="video/mp4" />
+		Your browser does not support the video tag.
+	</video>
+</div>
+
+## Debugging
+
+Sending transactions can be tricky. If you encounter a simulation_failed error, you will receive a debug_url that allows you to inspect the error in Tenderly.
+However, when using Permit2, the debug_url won't be available until your Permit2 signature expires. Therefore, it's recommended to set a shorter deadline during testing.
+For details on other types of [errors](/mini-apps/reference/errors#transactions)
+
+To get precise debug information, you can fetch debug URLs (Tenderly) using the [Get Transaction Debug URL](/mini-apps/reference/api#get-transaction-debug-url) endpoint.
+
+## Alternative: Verifying the transaction
+
+If you don't want to use our hook you can choose to query for the hash yourself using this endpoint. Make sure to specify `type=transaction` in the query string.
+
+Transactions are sent via our relayer currently and so we provide you an internal id rather than a hash in the original response above.
+
+```tsx app/confirm-transaction/route.ts
+import { NextRequest, NextResponse } from 'next/server'
+import { MiniAppSendTransactionSuccessPayload } from '@worldcoin/minikit-js'
+
+interface IRequestPayload {
+	payload: MiniAppSendTransactionSuccessPayload
+}
+
+export async function POST(req: NextRequest) {
+	const { payload } = (await req.json()) as IRequestPayload
+
+	const response = await fetch(
+		`https://developer.worldcoin.org/api/v2/minikit/transaction/${payload.transaction_id}?app_id=${process.env.APP_ID}&type=transaction`,
+		{
+			method: 'GET',
+		}
+	)
+	const transaction = await response.json()
+
+	return NextResponse.json(transaction)
+}
+```
+
+Example response from api call.
+
+```tsx
+{
+    "transactionId": "0xa5b02107433da9e2a450c433560be1db01963a9146c14eed076cbf2c61837d60",
+    "transactionHash": "0xa8388148b630b49a3d5a739eaad9e98b5766235cdb21a5ec8d3f89053d982a71",
+    "transactionStatus": "failed",
+    "miniappId": "app_staging_5748c49d2e6c68849479e0b321bc5257",
+    "updatedAt": "2024-09-09T15:18:25.320Z",
+    "network": "worldchain",
+    "fromWalletAddress": "0x2321401e6a175a7236498ab66f25cd1db4b17558",
+    "toContractAddress": "0x2321401e6a175a7236498ab66f25cd1db4b17558"
+}
+```
+
+## Using ETH
+
+<Info>This functionality is available from minikit-js 1.6.0 onwards.</Info>
+Send transaction supports sending to payable functions. Make sure you have ETH in your wallet. For ease of use, we have a
+simple contract that lets you send ETH by forwarding the value. [Forward.sol](https://worldscan.org/address/0x087d5449a126e4e439495fcBc62A853eB3257936#code)
+
+```tsx
+// Sending eth via Forward.sol
+const sendTransaction = async () => {
+	const payload = await MiniKit.commandsAsync.sendTransaction({
+		transaction: [
+			{
+				address: '0x087d5449a126e4e439495fcBc62A853eB3257936', // Forward.sol
+				abi: ForwardABI,
+				functionName: 'pay',
+				args: ['0x377da9cab87c04a1d6f19d8b4be9aef8df26fcdd'], // To Whom
+				value: '0x9184E72A000', // Send 0.00001 ETH hex encoded
+			},
+		],
+	})
+}
+```
+
+## Why Approvals are not supported
+
+Approvals are not supported in order to create a better user experience. Any user transfer of funds will
+only show one confirmation modal. This is to help cater towards users who are less familiar with the user patterns
+of crypto.

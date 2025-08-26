@@ -1,0 +1,196 @@
+---
+title: "Contract Deployments"
+---
+
+Here you can find the address and associated ENS name (if available) for all of the World ID contracts. For verifying proofs, the only contract you need to interact with is the `WorldIdRouter` contract, which will properly route the call to the correct contract based on the `groupId` argument.
+
+<Note>
+  Only the Orb verification level is supported on-chain, so your `groupId`
+  should always be `1`.
+</Note>
+
+## Ethereum
+
+<table>
+  <thead>
+    <tr>
+      <th className="p-2 text-left align-middle">Contract</th>
+      <th className="p-2 text-left align-middle">Ethereum Mainnet</th>
+      <th className="p-2 text-left align-middle">Ethereum Sepolia Testnet</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td className="p-2 align-middle">World ID Router</td>
+      <td className="p-2 align-middle">
+        <a href="https://etherscan.io/address/0x163b09b4fe21177c455d850bd815b6d583732432#code">
+          id.worldcoin.eth
+        </a>
+      </td>
+      <td className="p-2 align-middle">
+        <a href="https://sepolia.etherscan.io/address/0x469449f251692e0779667583026b5a1e99512157#code">
+          0x469449f2…2157
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">Identity Manager</td>
+      <td className="p-2 align-middle">
+        <a href="https://etherscan.io/address/0xf7134CE138832c1456F2a91D64621eE90c2bddEa#code">
+          0xf7134CE1…ddEa
+        </a>
+      </td>
+      <td className="p-2 align-middle">
+        <a href="https://sepolia.etherscan.io/address/0xb2ead588f14e69266d1b87936b75325181377076#code">
+          0xb2ead588…7076
+        </a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## World Chain
+
+<table>
+  <thead>
+    <tr>
+      <th className="p-2 text-left align-middle">Contract</th>
+      <th className="p-2 text-left align-middle">World Chain</th>
+      <th className="p-2 text-left align-middle">
+        World Chain Sepolia Testnet
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td className="p-2 align-middle">World ID Router</td>
+      <td className="p-2 align-middle">
+        <a href="https://worldscan.org/address/0x17B354dD2595411ff79041f930e491A4Df39A278">
+          0x17B354dD…A278
+        </a>
+      </td>
+      <td className="p-2 align-middle">
+        <a href="https://sepolia.worldscan.org/address/0x57f928158C3EE7CDad1e4D8642503c4D0201f611">
+          0x57f92815…f611
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">Bridged World ID</td>
+      <td className="p-2 align-middle">
+        <a href="https://worldscan.org/address/0xdFCa0A882eF7793485B3d052142B60647E82009E#code">
+          0xdFCa0A88…09E
+        </a>
+      </td>
+      <td className="p-2 align-middle">
+        <a href="https://sepolia.worldscan.org/address/0xE177F37AF0A862A02edFEa4F59C02668E9d0aAA4">
+          0xE177F37A…0AA4
+        </a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Optimism
+
+<table>
+  <thead>
+    <tr>
+      <th className="p-2 text-left align-middle">Contract</th>
+      <th className="p-2 text-left align-middle">Optimism Mainnet</th>
+      <th className="p-2 text-left align-middle">Optimism Sepolia Testnet</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td className="p-2 align-middle">World ID Router</td>
+      <td className="p-2 align-middle">
+        <a href="https://optimistic.etherscan.io/address/0x57f928158C3EE7CDad1e4D8642503c4D0201f611#code">
+          optimism.id.worldcoin.eth
+        </a>
+      </td>
+      <td className="p-2 align-middle">
+        <a href="https://sepolia-optimism.etherscan.io/address/0x11cA3127182f7583EfC416a8771BD4d11Fae4334#code">
+          0x11cA3127…4334
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">Bridged World ID</td>
+      <td className="p-2 align-middle">
+        <a href="https://optimistic.etherscan.io/address/0xB3E7771a6e2d7DD8C0666042B7a07C39b938eb7d#code">
+          0xB3E7771a…eb7d
+        </a>
+      </td>
+      <td className="p-2 align-middle">
+        <a href="https://sepolia-optimism.etherscan.io/address/0xf07d3efadD82A1F0b4C5Cc3476806d9a170147Ba#code">
+          0xf07d3efa…47Ba
+        </a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Polygon
+
+<Warning>
+  World ID is currently unavailable on Polygon testnets. Support for [Polygon
+  Amoy](https://polygon.technology/blog/introducing-the-amoy-testnet-for-polygon-pos)
+  is coming soon.
+</Warning>
+
+<table>
+  <thead>
+    <tr>
+      <th className="p-2 text-left align-middle">Contract</th>
+      <th className="p-2 text-left align-middle">Polygon Mainnet</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td className="p-2 align-middle">World ID Router</td>
+      <td className="p-2 align-middle">
+        <a href="https://polygonscan.com/address/0x515f06B36E6D3b707eAecBdeD18d8B384944c87f#code">
+          polygon.id.worldcoin.eth
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">Bridged World ID</td>
+      <td className="p-2 align-middle">
+        <a href="https://polygonscan.com/address/0xa6d85F3b3bE6Ff6DC52C3aaBe9A35d0ce252b79F#code">
+          0xa6d85F3b…b79F
+        </a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Base (Sepolia)
+
+<table>
+  <thead>
+    <tr>
+      <th className="p-2 text-left align-middle">Contract</th>
+      <th className="p-2 text-left align-middle">Base Sepolia Testnet</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td className="p-2 align-middle">World ID Router</td>
+      <td className="p-2 align-middle">
+        <a href="https://sepolia.basescan.org/address/0x42FF98C4E85212a5D31358ACbFe76a621b50fC02#code">
+          0x42FF98C4…C02
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">Bridged World ID</td>
+      <td className="p-2 align-middle">
+        <a href="https://sepolia.basescan.org/address/0x163b09b4fE21177c455D850BD815B6D583732432#code">
+          0x163b09b4…2432
+        </a>
+      </td>
+    </tr>
+  </tbody>
+</table>

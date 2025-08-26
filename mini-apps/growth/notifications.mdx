@@ -1,0 +1,88 @@
+---
+title: Retention via Notifications
+---
+
+Thoughtful, behavior‑based notifications keep users engaged long after they close your Mini App. Done right, they lift retention and even earn you a coveted **home‑screen badge** in World App.
+
+### 1 · Why They Matter
+
+| Benefit              | Details                                                             |
+| -------------------- | ------------------------------------------------------------------- |
+| **Retention boost**  | Targeted pushes can 2–3× day‑7 retention.                           |
+| **Free visibility**  | ≥ 15 % open rate unlocks a persistent badge on your app icon.       |
+| **Strict standards** | < 10 % open = delivery paused for 7 days—quality is non‑negotiable. |
+
+### 2 · Quality Thresholds
+
+| Open‑Rate (7‑day) | Platform Action   | Your Next Step                    |
+| ----------------- | ----------------- | --------------------------------- |
+| **< 10%**         | Paused for 1 week | Audit triggers & copy immediately |
+| **10%+**          | Badge displayed   | Maintain & iterate                |
+| **25%+**          | "Excellent" tier  | Scale what works, test new ideas  |
+
+### 3 · Core Principles
+
+1. **Trigger‑based > Broadcasts** – React to _user actions_ (wins, risks) instead of fixed schedules.
+2. **Personalize** – Use `${username}` placeholder to personalize notifications with usernames.
+3. **Copy rules** – ≤ 30‑char title, 1–2 emojis, clear value + curiosity gap.
+
+### 4 · Trigger Library
+
+| Trigger          | Why It Works          | Sample Title                      |
+| ---------------- | --------------------- | --------------------------------- |
+| **Achievement**  | Users love quick wins | `🎉 Level 2 unlocked!`            |
+| **Streak Risk**  | Loss aversion         | `🔥 Keep your 5‑day streak alive` |
+| **Social**       | FOMO / competition    | `👀 Maya just beat your score`    |
+| **Limited‑time** | Urgency               | `⏰ Double rewards end in 2 h`    |
+| **Re‑engage**    | Gentle nudge          | `🚀 Welcome back bonus ready`     |
+
+### 5 · Frequency & Control
+
+- **Start** at **≤ 1 push/day**; add more only if retention rises.
+- Present a clear **opt‑out** path; trust drives long‑term engagement.
+
+### 6 · Copy Cheatsheet
+
+- **Lead with benefit**: "Earn 50 coins" beats "Check the app".
+- **Curiosity**: "Something new awaits …".
+- **Concrete numbers**: "30 s left" > "Hurry up".
+- **Avoid** vague, generic, or feature‑only blasts.
+
+### 7 · Test & Improve
+
+| Variable       | What to Try           |
+| -------------- | --------------------- |
+| Emoji          | 🔥 vs ⚡              |
+| Timing         | Instant vs +2 h       |
+| CTA            | "Claim" vs "Open now" |
+| Content length | Short vs rich preview |
+
+### 8 · Integrations
+
+- **Gamification** – Push on badge earned, streak day, leaderboard change.
+- **Virality** – Notify referrer when invitee signs up or hits milestones.
+- **Core value** – Release drops, new content, feature unlocks.
+
+### 9 · Home‑Screen Badge
+
+<div className="flex justify-center">
+  <img
+    src="/images/docs/mini-apps/notifications/notification-badges.jpg"
+    alt="Notification badges on home screen"
+    className="m-auto block"
+    width="260"
+    style={{ maxWidth: "260px", height: "auto" }}
+  />
+</div>
+
+Maintain ≥ 15 % opens to display this permanent badge—top‑of‑mind visibility every time users open World App.
+
+### 10 · Implementation Checklist
+
+- [ ] Ask permission **after** first value delivered
+- [ ] Use `${username}` in every push
+- [ ] Include `mini_app_path` deep link
+- [ ] Limit to ≤ 1 notification/day at launch
+- [ ] Monitor 7‑day open rate weekly
+- [ ] A/B test copy monthly
+- [ ] Iterate triggers; retire low performers

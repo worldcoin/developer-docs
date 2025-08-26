@@ -1,0 +1,306 @@
+---
+title: "Smart Contracts"
+---
+
+All of our smart contracts are available on GitHub:
+
+- [World ID Smart Contracts](https://github.com/worldcoin/world-id-contracts)
+- [State Bridge Smart Contracts](https://github.com/worldcoin/world-id-state-bridge)
+
+<Note>
+  If you're interested in using World ID and verifying proofs on-chain, see our
+  [On-Chain Verification guide](/world-id/id/on-chain).
+</Note>
+
+## Supported Chains
+
+<table>
+  <thead>
+    <tr>
+      <th className="p-2 text-left align-middle">Chain</th>
+      <th className="p-2 text-left align-middle">Testnet</th>
+      <th className="p-2 text-left align-middle">Role</th>
+      <th className="p-2 text-left align-middle">Identity Availability</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td className="p-2 align-middle">
+        <img
+          src="/icons/ethereum.svg"
+          alt="Ethereum"
+          className="inline-block w-5 h-5 mr-2 align-middle"
+        />
+        <strong>Ethereum</strong>
+      </td>
+      <td className="p-2 align-middle">Sepolia</td>
+      <td className="p-2 align-middle">Canonical</td>
+      <td className="p-2 align-middle">~60 minutes after verification</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <img
+          src="/icons/optimism.svg"
+          alt="Optimism"
+          className="inline-block w-5 h-5 mr-2 align-middle"
+        />
+        <strong>Optimism</strong>
+      </td>
+      <td className="p-2 align-middle">Optimism Sepolia</td>
+      <td className="p-2 align-middle">Bridged</td>
+      <td className="p-2 align-middle">~5 Minutes after Ethereum</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <img
+          src="/icons/polygon.svg"
+          alt="Polygon"
+          className="inline-block w-5 h-5 mr-2 align-middle"
+        />
+        <strong>Polygon</strong>
+      </td>
+      <td className="p-2 align-middle">N/A</td>
+      <td className="p-2 align-middle">Bridged</td>
+      <td className="p-2 align-middle">~40 Minutes after Ethereum</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <img
+          src="/icons/base.svg"
+          alt="Base"
+          className="inline-block w-5 h-5 mr-2 align-middle"
+        />
+        <strong>Base (Testnet Only)</strong>
+      </td>
+      <td className="p-2 align-middle">Base Sepolia</td>
+      <td className="p-2 align-middle">Bridged</td>
+      <td className="p-2 align-middle">~5 Minutes after Ethereum Sepolia</td>
+    </tr>
+  </tbody>
+</table>
+
+<Note>
+  Find our smart contract [address book
+  here](/world-id/reference/contract-deployments).
+</Note>
+
+## Architecture
+
+This section offers a high-level overview of the various smart contracts that make up World ID. This structure (including state bridging) is replicated on testnets -- currently Sepolia, Optimism Sepolia, and Base Sepolia.
+
+### Identity Managers: `WorldIdIdentityManager`
+
+Identity Managers are only deployed on Ethereum. The Identity Manager contracts are responsible for managing the Semaphore instance. Worldcoin's signup sequencers call the Identity Manager contracts to add or remove identities from the merkle tree.
+
+### State Bridges: `OpStateBridge`/`PolygonStateBridge`
+
+One State Bridge contract is deployed on Ethereum for each bridged chain. It publishes the root of the merkle tree to its configured chain's World ID contract, allowing proofs to be verified on that chain.
+
+### Bridged World ID: `OpWorldId`/`PolygonWorldId`
+
+One World ID contract is deployed on each bridged chain, with an associated State Bridge contract on Ethereum. It is responsible for receiving merkle roots from its State Bridge contract, and verifying World ID proofs against those roots.
+
+<Note>
+  You can deploy your own State Bridge contract on Ethereum and Bridged World ID
+  contract to any chain to bridge World ID to that chain permissionlessly.
+</Note>
+
+### World ID Router: `WorldIdRouter`
+
+**This is the contract you should interact with.**
+
+The World ID Router will route your call to the correct Identity Manager contract (Ethereum) or World ID contract (L2 Chains) based on the `groupId` argument. This contract is proxied, so you will not need to update your code if the underlying contracts are upgraded.
+
+<Note>
+  Only Orb credentials are supported on-chain, so the `groupId` must be `1`.
+</Note>
+
+## Usage
+
+The `verifyProof` method of the **World ID Router** is used to verify proofs on-chain.
+
+### Arguments
+
+<table>
+  <thead>
+    <tr>
+      <th className="p-2 text-left align-middle">Parameter</th>
+      <th className="p-2 text-left align-middle">Type</th>
+      <th className="p-2 text-left align-middle">Required</th>
+      <th className="p-2 text-left align-middle">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>root</code>
+      </td>
+      <td className="p-2 align-middle">
+        <code>uint256</code>
+      </td>
+      <td className="p-2 align-middle">
+        <strong>Yes</strong>
+      </td>
+      <td className="p-2 align-middle">The World ID root to verify against.</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>groupId</code>
+      </td>
+      <td className="p-2 align-middle">
+        <code>uint256</code>
+      </td>
+      <td className="p-2 align-middle">
+        <strong>Yes</strong>
+      </td>
+      <td className="p-2 align-middle">
+        Determines which Credential Type to verify against. As only Orb
+        credentials are supported on-chain, this must be <code>1</code>.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>signalHash</code>
+      </td>
+      <td className="p-2 align-middle">
+        <code>uint256</code>
+      </td>
+      <td className="p-2 align-middle">
+        <strong>Yes</strong>
+      </td>
+      <td className="p-2 align-middle">
+        The <code>keccak256</code> hash of the signal to verify.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>nullifierHash</code>
+      </td>
+      <td className="p-2 align-middle">
+        <code>uint256</code>
+      </td>
+      <td className="p-2 align-middle">
+        <strong>Yes</strong>
+      </td>
+      <td className="p-2 align-middle">
+        The root of the merkle tree to verify against. This is obtained from the
+        IDKit widget as a hex string <code>nullifier_hash</code>, and must be
+        converted to a <code>uint256</code> before passing it to the{" "}
+        <code>verifyProof</code> method.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>externalNullifierHash</code>
+      </td>
+      <td className="p-2 align-middle">
+        <code>uint256</code>
+      </td>
+      <td className="p-2 align-middle">
+        <strong>Yes</strong>
+      </td>
+      <td className="p-2 align-middle">
+        The <code>keccak256</code> hash of the <code>externalNullifier</code> to
+        verify. The <code>externalNullifier</code> is computed from the{" "}
+        <code>app_id</code> and <code>action</code>.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>proof</code>
+      </td>
+      <td className="p-2 align-middle">
+        <code>uint256[8]</code>
+      </td>
+      <td className="p-2 align-middle">
+        <strong>Yes</strong>
+      </td>
+      <td className="p-2 align-middle">
+        The zero-knowledge proof to verify. This is obtained from the IDKit
+        widget as a hex string <code>proof</code>, and must be converted to a{" "}
+        <code>uint256[8]</code> before passing it to the{" "}
+        <code>verifyProof</code> method.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### Example: groupId
+
+```solidity title="Orb-Only groupId"
+uint256 internal immutable groupId = 1;
+```
+
+#### Example: signalHash
+
+```solidity title="signalHash"
+abi.encodePacked(signal).hashToField();
+```
+
+#### Example: externalNullifierHash
+
+```solidity title="externalNullifierHash"
+externalNullifier = abi.encodePacked(abi.encodePacked(appId).hashToField(), action)
+externalNullifierHash = externalNullifier.hashToField();
+```
+
+<Note>Read more about the External Nullifier in Protocol Internals.</Note>
+
+#### Example: Unpacking Proof
+
+<CodeGroup>
+```ts title="viem"
+import { decodeAbiParameters } from 'viem'
+
+const unpackedProof = decodeAbiParameters([{ type: 'uint256[8]' }], proof)[0]
+
+````
+
+```ts title="ethers.js"
+import { defaultAbiCoder as abi } from '@ethers/utils'
+
+const unpackedProof = abi.decode(['uint256[8]'], proof)[0]
+````
+
+</CodeGroup>
+
+### Sybil resistance
+
+While the World ID protocol makes it very easy to make your contracts sybil resistant, this takes a little more than just calling the `verifyProof` function. To make your contract sybil-resistant, you'll need to do the following:
+
+- Store the `nullifierHash` of each user that has successfully verified a proof.
+- When a user attempts to verify a proof, check that the `nullifierHash` is not already in the list of used `nullifierHash`es.
+
+Here's an example function doing the above. You can also use the [World ID starter kits](/world-id/id/on-chain) to get started with sybil resistance.
+
+```solidity
+/// @param root The root (returned by the IDKit widget).
+/// @param groupId The group ID
+/// @param signal An arbitrary input from the user, usually the user's wallet address
+/// @param nullifierHash The nullifier hash for this proof, preventing double signaling (returned by the IDKit widget).
+/// @param proof The zero-knowledge proof that demonstrates the claimer is registered with World ID (returned by the IDKit widget).
+function verifyAndExecute(
+    address signal,
+    uint256 root,
+    uint256 nullifierHash,
+    uint256[8] calldata proof
+) public {
+    // First make sure this person hasn't done this before
+    if (nullifierHashes[nullifierHash]) revert InvalidNullifier();
+
+    // Verify the provided proof is valid and the user is verified by World ID
+    worldId.verifyProof(
+        root,
+        groupId,
+        abi.encodePacked(signal).hashToField(),
+        nullifierHash,
+        externalNullifierHash,
+        proof
+    );
+
+    // Record the user has done this, so they can't do it again (sybil-resistance)
+    nullifierHashes[nullifierHash] = true;
+
+    // Finally, execute your logic here, for example issue a token, NFT, etc...
+}
+```

@@ -1,0 +1,73 @@
+---
+title: "EVM Equivalence"
+---
+
+World Chain is EVM-equivalent because it utilizes the [OP Stack](https://docs.optimism.io/stack/getting-started), a modular framework developed by Optimism,
+which ensures compatibility with the [Ethereum Virtual Machine (EVM)](https://ethereum.org/en/developers/docs/evm/). By leveraging the OP Stack,
+World Chain can execute smart contracts and interact with decentralized applications designed for Ethereum
+without any modifications. This equivalency enables seamless interoperability with Ethereum's ecosystem of applications and protocols. 
+The OP Stack's modularity also allows World Chain to implement scaling solutions and other customizations while maintaining the fundamental EVM equivalence,
+ensuring a flexible yet consistent environment for developers and users alike.
+
+## Differences between World Chain, OP Mainnet and Ethereum
+
+Though the EVM remains unchanged across OP Stack (Superchain) chains compared to the Ethereum layer 1, there are some configurations of the execution clients that
+do differ. 
+
+<table>
+  <thead>
+    <tr>
+      <th className="p-2 text-left align-middle">Parameter</th>
+      <th className="p-2 text-left align-middle">World Chain</th>
+      <th className="p-2 text-left align-middle">OP Mainnet</th>
+      <th className="p-2 text-left align-middle">Ethereum</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td className="p-2 align-middle">Block time in seconds</td>
+      <td className="p-2 align-middle">2</td>
+      <td className="p-2 align-middle">2</td>
+      <td className="p-2 align-middle">12</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">Block gas limit</td>
+      <td className="p-2 align-middle">30,000,000</td>
+      <td className="p-2 align-middle">30,000,000</td>
+      <td className="p-2 align-middle">30,000,000</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">Block gas target</td>
+      <td className="p-2 align-middle">10,000,000</td>
+      <td className="p-2 align-middle">5,000,000</td>
+      <td className="p-2 align-middle">15,000,000</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">EIP-1559 elasticity multiplier</td>
+      <td className="p-2 align-middle">6</td>
+      <td className="p-2 align-middle">6</td>
+      <td className="p-2 align-middle">2</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">EIP-1559 denominator</td>
+      <td className="p-2 align-middle">250</td>
+      <td className="p-2 align-middle">250</td>
+      <td className="p-2 align-middle">8</td>
+    </tr>
+    <tr>
+    <td className="p-2 align-middle">Maximum base fee increase (per block)</td>
+    <td className="p-2 align-middle">0.8%</td>
+    <td className="p-2 align-middle">2%</td>
+    <td className="p-2 align-middle">12.5%</td>
+    </tr>
+    <tr>
+    <td className="p-2 align-middle">Maximum base fee decrease (per block)</td>
+    <td className="p-2 align-middle">0.4%</td>
+    <td className="p-2 align-middle">0.4%</td>
+    <td className="p-2 align-middle">12.5%</td>
+    </tr>
+  </tbody>
+</table>
+
+
+For more information check out the [OP Stack docs](https://docs.optimism.io/stack/getting-started).

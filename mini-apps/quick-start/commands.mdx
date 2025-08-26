@@ -1,0 +1,90 @@
+---
+title: "Commands"
+---
+
+import { QRCodeGenerator } from "/snippets/qr-code-generator.jsx";
+
+Commands are defined actions your mini app can perform in World App. Every command is available as either:
+
+- a synchronous function that dispatches an event, the result of which has to be listened for,
+- an async function, that can be awaited, resolves with the result.
+
+To quickly get a sense of how commands work, you can scan the QR code below with your phone (you must have World App installed).
+
+<div className="flex justify-center my-4">
+  <QRCodeGenerator
+    hideInput={true}
+    hideDetails={true}
+    appId="app_dfbe55706a640c82dce839bb0ecae74d"
+    baseUrl="https://world.org/mini-app"
+  />
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th className="p-2 text-left align-middle">Command</th>
+      <th className="p-2 text-left align-middle">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td className="flex items-center p-2">Verify</td>
+      <td className="p-2 align-middle">Verify an action with World ID.</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">Pay</td>
+      <td className="p-2 align-middle">Initiate a payment request.</td>
+    </tr>
+    <tr>
+      <td className="flex items-center p-2">Wallet Auth</td>
+      <td className="p-2 align-middle">
+        Authenticate via Sign in with Ethereum
+      </td>
+    </tr>
+    <tr>
+      <td className="flex items-center p-2">Send Transaction</td>
+      <td className="p-2 align-middle">Write to smart contracts</td>
+    </tr>
+    <tr>
+      <td className="flex items-center p-2">Sign Message</td>
+      <td className="p-2 align-middle">
+        Sign personal messages with your wallet
+      </td>
+    </tr>
+    <tr>
+      <td className="flex items-center p-2">Sign Typed Data</td>
+      <td className="p-2 align-middle">
+        Sign EIP-712 payloads with your wallet
+      </td>
+    </tr>
+    <tr>
+      <td className="flex items-center p-2">Share Contacts</td>
+      <td className="p-2 align-middle">
+        Share your contacts in a privacy preserving way with apps
+      </td>
+    </tr>
+    <tr>
+      <td className="flex items-center p-2">Notifications</td>
+      <td className="p-2 align-middle">Send notifications to users</td>
+    </tr>
+    <tr>
+      <td className="flex items-center p-2">Quick Actions</td>
+      <td className="p-2 align-middle">Use other mini app feature</td>
+    </tr>
+    <tr>
+      <td className="flex items-center p-2">Get Permissions</td>
+      <td className="p-2 align-middle">Get user permissions</td>
+    </tr>
+    <tr>
+      <td className="flex items-center p-2">Send Haptic Feedback</td>
+      <td className="p-2 align-middle">
+        Send haptic feedback to user's device
+      </td>
+    </tr>
+    <tr>
+      <td className="flex items-center p-2">Share</td>
+      <td className="p-2 align-middle">Share content</td>
+    </tr>
+  </tbody>
+</table>

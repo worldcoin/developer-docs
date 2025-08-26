@@ -1,0 +1,97 @@
+---
+title: "How to Set Up a World Chain Node"
+---
+
+Follow this guide to set up your own World Chain node.
+
+## Overview
+
+World Chain mainnet and testnet run on the OP Stack as part of the Superchain. We provide a simple Docker Compose configuration for running World Chain nodes, [simple-worldchain-node](https://github.com/worldcoin-foundation/simple-worldchain-node). If you're interested in building a node from source, see the [documentation from Optimism](https://docs.optimism.io/operators/node-operators/tutorials/node-from-source).
+
+## Using `simple-worldchain-node`
+
+`simple-worldchain-node` supports World Chain Mainnet and Sepolia, full nodes and archive nodes, and two execution clients: [op-geth](https://github.com/ethereum-optimism/op-geth) and [op-reth](https://github.com/paradigmxyz/reth).
+
+<Note>
+  World Chain node snapshots for `op-geth` are available from Bware Labs [here](https://bwarelabs.com/snapshots/worldchain).
+</Note>
+
+### Installation
+
+First, download [`simple-worldchain-node`](https://github.com/worldcoin-foundation/simple-worldchain-node) and create your `.env` file.
+
+<CodeGroup>
+```bash Download simple-worldchain-node
+git clone https://github.com/worldcoin-foundation/simple-worldchain-node.git
+cd simple-worldchain-node
+cp .env.example .env
+```
+</CodeGroup>
+
+Ensure you have installed Docker and Docker Compose by following [this guide](https://docs.docker.com/compose/install/#scenario-three-install-the-docker-compose-standalone).
+
+### Configuration
+
+Open your `.env` file in an editor of your choice. The following values must be configured before starting your node.
+
+<ParamField body="NETWORK_NAME" type="worldchain-mainnet | worldchain-sepolia" required>
+  Used to select which network the node connects to, either `worldchain-mainnet` or `worldchain-sepolia`.
+</ParamField>
+
+<ParamField body="COMPOSE_PROFILES" type="geth | reth" required>
+  Used to select your execution client, either `geth` (default) or `reth` (experimental).
+</ParamField>
+
+<ParamField body="GETH_NODE_TYPE" type="full | archive" required>
+  When using `op-geth`, determines which type of node to run. Either `full` (less storage, but only recent history) or `archive` (more storage, all history).
+</ParamField>
+
+<ParamField body="L1_RPC_ENDPOINT" type="URL" required>
+  An L1 (Ethereum) RPC endpoint. We recommend using [Alchemy](https://www.alchemy.com/) or [QuickNode](https://www.quicknode.com), but any Ethereum RPC provider or archive node will work.
+</ParamField>
+
+<ParamField body="L1_BEACON_RPC_ENDPOINT" type="URL" required>
+  An L1 Beacon Archive RPC endpoint. Note that this is not the same as a standard RPC endpoint, as this is used to retrieve Blobs from the Ethereum Beacon Chain. We recommend using [QuickNode](https://www.quicknode.com/).
+</ParamField>
+
+<ParamField body="L1_RPC_TYPE" type="string" required>
+  Selects which RPC provider is set in `OP_NODE__RPC_ENDPOINT`. This allows for more efficient syncing given different RPC capabilities. Choose from `alchemy`, `quicknode`, `erigon`, or `basic` for other RPC providers.
+</ParamField>
+
+For details on optional settings, see the `simple-worldchain-node` [README](https://github.com/worldcoin-foundation/simple-worldchain-node?tab=readme-ov-file#optional-configurations).
+
+### Running your node
+
+To start your node in the background, run the following command from the `simple-worldchain-node` folder:
+
+```bash
+docker compose up -d --build
+```
+
+To view logs for your node, run the following command:
+
+```bash
+docker compose logs -f --tail 10
+```
+
+To shut down your node:
+```bash
+docker compose down
+```
+
+### Monitoring your node
+
+A Grafana dashboard is included to monitor your node. Access it by visiting [http://localhost:3000](http://localhost:3000) and logging in with these credentials:
+
+- Username: `admin`
+- Password: `worldchain`
+
+### Upgrading your Node
+
+When new versions of `op-geth`, `op-reth`, or `op-node` are released, we will update the `simple-worldchain-node` repository to use these new versions. You can then update your node to use these versions with the following commands:
+
+```bash
+git pull
+docker compose pull
+docker compose up -d --build
+```

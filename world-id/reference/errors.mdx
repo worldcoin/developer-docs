@@ -1,0 +1,369 @@
+---
+title: "Errors"
+---
+
+This page acts as a reference for the error codes returned by IDKit, the Developer Portal API, and the Wallet Bridge.
+
+## IDKit
+
+These error codes are returned in the `onError` callback. The source described if the error originates from within IDKit or the Wallet Bridge response.
+
+<table>
+  <thead>
+    <tr>
+      <th className="p-2 text-left align-middle">Code</th>
+      <th className="p-2 text-left align-middle">Source</th>
+      <th className="p-2 text-left align-middle">Description</th>
+      <th className="p-2 text-left align-middle">How to fix?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>failed_by_host_app</code>
+      </td>
+      <td className="p-2 align-middle">IDKit</td>
+      <td className="p-2 align-middle">
+        An error was thrown in the <code>handleVerify</code> callback.
+      </td>
+      <td className="p-2 align-middle">
+        Assess the error thrown in your <code>handleVerify</code> callback and
+        resolve the issue.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>connection_failed</code>
+      </td>
+      <td className="p-2 align-middle">IDKit</td>
+      <td className="p-2 align-middle">
+        Could not establish a connection to World App.
+      </td>
+      <td className="p-2 align-middle">
+        Ask the user to check their internet connection on both devices running
+        your application and World App. Additionally, make sure the user has the
+        latest version of World App.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>verification_rejected</code>
+      </td>
+      <td className="p-2 align-middle">Wallet Bridge</td>
+      <td className="p-2 align-middle">
+        User rejected the World ID request in World App.
+      </td>
+      <td className="p-2 align-middle">
+        If this was a mistake, ask the user to go through the flow again.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>max_verifications_reached</code>
+      </td>
+      <td className="p-2 align-middle">Wallet Bridge</td>
+      <td className="p-2 align-middle">
+        This person has already verified for this particular action the maximum
+        number of times allowed.
+      </td>
+      <td className="p-2 align-middle">
+        Nothing to do. User cannot verify for this action again.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>credential_unavailable</code>
+      </td>
+      <td className="p-2 align-middle">Wallet Bridge</td>
+      <td className="p-2 align-middle">
+        This user does not have the requested credential.
+      </td>
+      <td className="p-2 align-middle">
+        The user must verify at the Orb or verify their unique device in World
+        App to receive the credential required.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>malformed_request</code>
+      </td>
+      <td className="p-2 align-middle">Wallet Bridge</td>
+      <td className="p-2 align-middle">
+        The request payload couldn't be decrypted or did not conform to the
+        standard.
+      </td>
+      <td className="p-2 align-middle">
+        Ensure IDKit is configured properly and all parameters are valid. See
+        above for configuration details.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>invalid_network</code>
+      </td>
+      <td className="p-2 align-middle">Wallet Bridge</td>
+      <td className="p-2 align-middle">
+        The application is configured for a different environment than the
+        verifying user's client.
+      </td>
+      <td className="p-2 align-middle">
+        Ensure you use the Worldcoin Simulator for Staging applications and
+        World App for Production applications.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>inclusion_proof_failed</code>
+      </td>
+      <td className="p-2 align-middle">Wallet Bridge</td>
+      <td className="p-2 align-middle">
+        The sequencer returned an unexpected error when retrieving the inclusion
+        proof.
+      </td>
+      <td className="p-2 align-middle">
+        Ask the user to try again. This may be due to a temporary network issue,
+        or a bug with World App or the Signup Sequencer.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>inclusion_proof_pending</code>
+      </td>
+      <td className="p-2 align-middle">Wallet Bridge</td>
+      <td className="p-2 align-middle">
+        The user might have the requested credential, but it is not available
+        on-chain yet. It might be available for API verification.
+      </td>
+      <td className="p-2 align-middle">
+        Ask the user to verify again in approximately one hour.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>metadata_failed</code>
+      </td>
+      <td className="p-2 align-middle">Wallet Bridge</td>
+      <td className="p-2 align-middle">
+        Unable to load metadata for the app from the Developer Portal.
+      </td>
+      <td className="p-2 align-middle">
+        Ensure your <code>app_id</code> is configured correctly in IDKit and
+        exactly matches the <code>app_id</code> from the Developer Portal.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>unexpected_response</code>
+      </td>
+      <td className="p-2 align-middle">IDKit</td>
+      <td className="p-2 align-middle">
+        There was a problem with the response obtained from the WLD app.
+      </td>
+      <td className="p-2 align-middle">
+        Check the JS console for further details, though in most cases these
+        will require contacting us to report the bug.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>generic_error</code>
+      </td>
+      <td className="p-2 align-middle">Wallet Bridge or IDKit</td>
+      <td className="p-2 align-middle">An unhandled exception occurred.</td>
+      <td className="p-2 align-middle">
+        Check the JS console for further details, though in most cases these
+        will require contacting us to report the bug.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## Developer Portal API
+
+These error codes are returned in the `error` property of the response body.
+
+<table>
+  <thead>
+    <tr>
+      <th className="p-2 text-left align-middle">Code</th>
+      <th className="p-2 text-left align-middle">Description</th>
+      <th className="p-2 text-left align-middle">How to fix?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>required</code>
+      </td>
+      <td className="p-2 align-middle">
+        The attribute named in the <code>attribute</code> property is required,
+        but was not included in the request.
+      </td>
+      <td className="p-2 align-middle">
+        Provide the required attribute in your API request.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>invalid_format</code>
+      </td>
+      <td className="p-2 align-middle">
+        The attribute named in the <code>attribute</code> property was provided,
+        but was in an unexpected format.
+      </td>
+      <td className="p-2 align-middle">
+        See the error message for the proper format.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>unauthenticated</code>
+      </td>
+      <td className="p-2 align-middle">
+        The credentials (if provided) were invalid.
+      </td>
+      <td className="p-2 align-middle">
+        Provide the required credentials in your API request and ensure they are
+        correct.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>permission_denied</code>
+      </td>
+      <td className="p-2 align-middle">
+        The credentials provided were valid, but you do not have the required
+        permissions.
+      </td>
+      <td className="p-2 align-middle">
+        Contact your Developer Portal team's owner to be granted permissions, or
+        the Worldcoin team if you are unable to resolve the issue.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>max_verifications_reached</code>
+      </td>
+      <td className="p-2 align-middle">
+        This person has already verified for this particular action the maximum
+        number of times allowed.
+      </td>
+      <td className="p-2 align-middle">
+        Nothing to do. User cannot verify for this action again.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>invalid_proof</code>
+      </td>
+      <td className="p-2 align-middle">
+        The provided proof is invalid and it cannot be verified.
+      </td>
+      <td className="p-2 align-middle">
+        Ensure your <code>app_id</code>, <code>action</code>,{" "}
+        <code>signal</code>, and <code>verification_level</code> are unchanged
+        between the proof request and proof verification.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>invalid_merkle_root</code>
+      </td>
+      <td className="p-2 align-middle">
+        The merkle root provided is not recognized.
+      </td>
+      <td className="p-2 align-middle">
+        Ask the user to generate a new proof, the existing proof may be stale.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>invalid_network</code>
+      </td>
+      <td className="p-2 align-middle">
+        The application is configured for a different environment than the
+        verifying user's client.
+      </td>
+      <td className="p-2 align-middle">
+        Ensure you use the Worldcoin Simulator for Staging applications and
+        World App for Production applications.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>invalid_engine</code>
+      </td>
+      <td className="p-2 align-middle">
+        The application is configured for on-chain verification and cannot be
+        verified via API.
+      </td>
+      <td className="p-2 align-middle">
+        Either verify the proof on-chain or create a new application configured
+        for Cloud verifications.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>metadata_failed</code>
+      </td>
+      <td className="p-2 align-middle">
+        Unable to load metadata for the app from the Developer Portal.
+      </td>
+      <td className="p-2 align-middle">
+        Ensure your <code>app_id</code> is configured correctly in IDKit and
+        exactly matches the <code>app_id</code> from the Developer Portal.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>action_inactive</code>
+      </td>
+      <td className="p-2 align-middle">
+        The requested action is disabled in the Developer Portal.
+      </td>
+      <td className="p-2 align-middle">
+        Enable the action or create a new action.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>verification_error</code>
+      </td>
+      <td className="p-2 align-middle">
+        The Developer Portal faced an internal error verifying the proof.
+      </td>
+      <td className="p-2 align-middle">Contact the Worldcoin team.</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>internal_error</code>
+      </td>
+      <td className="p-2 align-middle">
+        The Developer Portal faced an internal error verifying the proof.
+      </td>
+      <td className="p-2 align-middle">Contact the Worldcoin team.</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>unexpected_response</code>
+      </td>
+      <td className="p-2 align-middle">
+        There was a problem with the response obtained from the WLD app.
+      </td>
+      <td className="p-2 align-middle">
+        Check the JS console for further details, though in most cases these
+        will require contacting us to report the bug.
+      </td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">
+        <code>generic_error</code>
+      </td>
+      <td className="p-2 align-middle">An unhandled exception occurred.</td>
+      <td className="p-2 align-middle">
+        Check the JS console for further details, though in most cases these
+        will require contacting us to report the bug.
+      </td>
+    </tr>
+  </tbody>
+</table>

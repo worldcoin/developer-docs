@@ -1,0 +1,63 @@
+---
+title: "Add Money"
+---
+
+Add money to your World Wallet directly from exchanges like Binance and Coinbase. Deposit, withdraw, and swap tokens across multiple exchanges and chains effortlessly.
+
+<div
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  }}
+>
+  <div style={{ flex: 1 }}>
+    <h3>Parameters</h3>
+    <ParamField path="app_id" type="string" required>
+      Unique ID for the Add Money mini app.
+    </ParamField>
+    <ParamField path="path" type="string" required>
+      URL-encoded path to the bridge interface (typically `%2Fbridge`).
+    </ParamField>
+    <ParamField path="toAddress" type="string" required>
+      Address of the recipient World Wallet user.
+    </ParamField>
+    <ParamField path="toToken" type="string" required>
+      Token contract address to deposit (supports USDC or WLD).
+    </ParamField>
+    <ParamField path="amountUsd" type="string">
+      USD amount to deposit. If omitted, the user selects the amount in-app.
+    </ParamField>
+    <ParamField path="sourceAppId" type="string">
+      App ID of the source app for quick navigation back.
+    </ParamField>
+    <ParamField path="sourceAppName" type="string">
+      Name of the source app displayed in the "Go Back" button.
+    </ParamField>
+    <ParamField path="sourceDeeplinkPath" type="string">
+      Path within the source app to deeplink back to (URL-encoded).
+    </ParamField>
+  </div>
+  <div style={{ marginLeft: "20px" }}>
+    <img
+      src="/images/docs/mini-apps/quick-actions/add-money-qa.png"
+      alt="Add Money Screen"
+      className="m-auto block"
+      width="260"
+      style={{ maxWidth: "260px", height: "auto" }}
+    />
+  </div>
+</div>
+
+Url follows the schema below. Navigate there to use this Quick Action.
+
+```
+https://worldcoin.org/mini-app?app_id=app_e7d27c5ce2234e00558776f227f791ef
+&path={%2Fbridge}
+&toAddress={0xRecipientAddressHere}
+&toToken={0xUSDCOrWLDAddress}
+&amountUsd={100}
+&sourceAppId={app_source1234567890abcdef}
+&sourceAppName={My%20App}
+&sourceDeeplinkPath={%2Fdashboard}
+```
