@@ -1,0 +1,125 @@
+---
+title: Status Page
+---
+
+You can check the current status of World services at [status.worldcoin.org](https://status.worldcoin.org).
+
+<Note>
+The Networks section is not up to date yet.
+</Note>
+
+For transactions, status is determined by:
+
+- **Disruption**: Transactions taking longer than 45 seconds
+- **Outage**: Transactions taking longer than 5 minutes
+
+## Get Status
+
+<ParamField path="method" type="GET">
+  https://status.worldcoin.org/api/services
+</ParamField>
+
+This endpoint returns the current status of all World services.
+
+### Query Params
+
+<ParamField query="logs" type="boolean">
+  Include `logs=true` to get historical status logs for each service.
+</ParamField>
+
+<CodeGroup title="Request">
+```bash cURL
+curl -X GET "https://status.worldcoin.org/api/services?logs=true"
+```
+
+```javascript
+fetch('https://status.worldcoin.org/api/services?logs=true')
+```
+</CodeGroup>
+
+### Response
+
+<ResponseField name="services" type="array">
+  Array of service status objects, each containing:
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Service name (e.g., "Mini Apps", "World ID Verifications")
+</ResponseField>
+
+<ResponseField name="id" type="string">
+  Service identifier
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  Description of the service
+</ResponseField>
+
+<ResponseField name="categoryId" type="string">
+  Category the service belongs to (e.g., "mini-apps", "world-id", "finance")
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Current service status: "ok", "warning", or "error"
+</ResponseField>
+
+<ResponseField name="logs" type="array">
+  Historical status changes, containing:
+  - `datetime`: Unix timestamp
+  - `status`: Status at that time
+  - `name`: Event name
+  - `description`: Event description
+  - `downtime`: Duration in seconds (if applicable)
+</ResponseField>
+
+<ResponseField name="uptimeRatio" type="object">
+  Uptime percentages for different time periods:
+  - `1`: Last 24 hours
+  - `7`: Last 7 days
+  - `30`: Last 30 days
+  - `90`: Last 90 days
+</ResponseField>
+
+<CodeGroup title="Response">
+```json
+{
+    "services": [
+        {
+            "name": "Crypto Transactions",
+            "id": "crypto-transactions",
+            "description": "",
+            "categoryId": "mini-apps",
+            "status": "ok",
+            "logs": [
+                {
+                    "datetime": 1739546233,
+                    "status": "ok",
+                    "name": "Running again",
+                    "description": "Service outage"
+                }
+            ],
+            "uptimeRatio": {
+                "1": 99.7,
+                "7": 100,
+                "30": 100,
+                "90": 100
+            }
+        }
+    ],
+    "categories": [
+        {
+            "id": "mini-apps",
+            "name": "Mini Apps",
+            "status": "ok"
+        }
+    ],
+    "uptimeRatio": {
+        "1": 98,
+        "7": 98.7,
+        "30": 99.6,
+        "90": 99.9
+    },
+    "status": "ok"
+}
+```
+</CodeGroup>

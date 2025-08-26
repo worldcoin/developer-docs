@@ -1,0 +1,249 @@
+---
+title: "Sign In Reference"
+---
+
+<Note>Sign in with World ID uses a different base API endpoint than the Developer Portal.</Note>
+
+**Base domain**
+
+```
+https://id.worldcoin.org
+```
+
+<Note>
+This page primarily describes options that are OIDC-compliant. We additionally support using access tokens as described in the OAuth2 standards. No actions can be taken on behalf of a user with OAuth2 access tokens, but you may retrieve the same information about a user as would be contained in an `id_token`. [See below for details.](#oauth2)
+</Note>
+
+## OpenID Connect discovery
+
+**GET** `/.well-known/openid-configuration`
+
+Fetches the OpenID Connect discovery document.
+
+### Common Errors
+
+- `method_not_allowed`: HTTP method is not allowed. Only GET and OPTIONS may be used
+
+```bash title="cURL"
+curl https://id.worldcoin.org/.well-known/openid-configuration
+```
+
+```json title="Response"
+{
+    "issuer": "https://id.worldcoin.org",
+    "authorization_endpoint": "https://id.worldcoin.org/authorize",
+    "token_endpoint": "https://id.worldcoin.org/token",
+    "userinfo_endpoint": "https://id.worldcoin.org/userinfo",
+    "jwks_uri": "https://id.worldcoin.org/jwks",
+    "scopes_supported": ["openid", "email", "profile"],
+    "response_types_supported": ["code", "id_token", "id_token token", "code id_token"],
+    "grant_types_supported": ["authorization_code", "implicit"],
+    "subject_types_supported": ["pairwise"],
+    "id_token_signing_alg_values_supported": ["RSA"]
+}
+```
+
+## Authorize
+
+**GET** `/authorize`
+
+Redirect your users to this page to begin the sign-in flow.
+
+### Required attributes
+
+All attributes are formatted as URL query parameters.
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `response_type` | `string` | Must be `code` for authorization code flow, `id_token` for implicit flow, or a space-separated combination of `code`, `id_token`, and `token` for hybrid flow. We generally recommend using the authorization code or implicit flows. |
+| `scope` | `string` | Space-separated list of the requested OIDC scopes. Must include `openid`, and may optionally include `email` and `profile`. |
+| `client_id` | `string` | The Client ID of your app. Get this from the Developer Portal. |
+| `redirect_uri` | `string` | URL the user will be redirected to after authentication. Must match one of your app's configured `redirect_uris`. |
+
+### Optional attributes
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `state` | `string` | An opaque value used to maintain state between the request and the callback. |
+| `nonce` | `string` | **Required when using the implicit flow.** Used to prevent replay attacks. Should be randomly generated for each sign-in, and checked to ensure it's unchanged after the callback. |
+| `response_mode` | `string` | Determines how the authorization code, ID token, and/or access token are returned. Must be one of `query`, `fragment`, or `form_post`. `query` is only supported for the authorization code flow. Defaults to `query` for authorization code flow, and `fragment` for all others. |
+
+### Common Errors
+
+- `required`: A necessary attribute was not set. Required attributes are: `response_type scope client_id redirect_uri`
+- `invalid_redirect_uri`: The provided redirect URI is invalid. Ensure you've set the correct `redirect_uri` in the Developer Portal.
+
+```http title="Request"
+https://id.worldcoin.org/authorize?redirect_uri=https%3A%2F%2Fdocs.worldcoin.org%2Fworld-id%2Ftry-callback&response_type=code&scope=openid+profile+email&client_id=app_ce4cb73cb75fc3b73b71ffb4de178410
+```
+
+```http title="Response - Authorization Code"
+https://example.app/api/auth/callback/worldcoin?code=e777d780f437330bbd79535b
+```
+
+```http title="Response - ID Token"
+https://example.app/api/auth/callback/worldcoin#id_token=eyJhbGciOiJSUzI1NiIsInR5cCI6I...
+```
+
+## Exchange Code
+
+**POST** `/token`
+
+Exchanges an authorization code for an `id_token` for the given user.
+
+### Required attributes
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `code` | `string` | The authorization code to exchange. |
+| `grant_type` | `string` | The type of grant to exchange. Must be `authorization_code`. |
+| `redirect_uri` | `string` | The same redirect URI used in the `/authorize` request. |
+
+### Common Errors
+
+- `method_not_allowed`: HTTP method is not allowed. Only POST and OPTIONS may be used
+- `invalid_content_type`: The provided content type is invalid, only `application/x-www-form-urlencoded` is supported
+- `unauthenticated`: The provided authorization token is invalid, try checking your credentials
+- `invalid_grant_type`: The provided grant type is invalid, only `authorization_code` is supported
+- `required`: A necessary attribute was not set. Required attributes are: `code`
+- `invalid_grant`: The authorization code was invalid, and may be expired. Try generating a new code via `/authorize`
+
+```shell title="cURL"
+curl -X POST https://id.worldcoin.org/token \
+     -H "Authorization: Basic YXBwXzU1MGU4MjkwODJmYzU1OGUxMTJlMDYyMGMxYzdhNT..." \
+     -H "Content-Type: application/x-www-form-urlencoded" \
+     -d "code=23e5edda0f731dfdddace390&grant_type=authorization_code&redirect_uri=https%3A%2F%2Fdocs.worldcoin.org%2Fapi%2Fauth"
+```
+
+```js
+const data = new URLSearchParams()
+data.append('code', '23e5edda0f731dfdddace390')
+data.append('grant_type', 'authorization_code')
+data.append('redirect_uri', 'https://docs.worldcoin.org/api/auth')
+
+fetch('https://id.worldcoin.org/token', {
+	method: 'POST',
+	headers: {
+		Authorization: `Basic ${btoa(`${client_id}:${client_secret}`)}`,
+		'Content-Type': 'application/x-www-form-urlencoded',
+	},
+	body: data,
+})
+```
+
+```json title="Response"
+{
+	"access_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6Imp3a1.ey8yZmVi.ZjY3MDc3N2UyY2NlNzY5YzUxOG...",
+	"token_type": "Bearer",
+	"expires_in": 3600,
+	"scope": "openid",
+	"id_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6Imp3a1.ey8yZmVi.ZjY3MDc3N2UyY2NlNzY5YzUxOG..."
+}
+```
+
+## OAuth2
+
+If you selected `token` as one of your `response_types` for the `/authorize` endpoint, you'll receive an OAuth2 access token. Typically an access token would allow you to perform certain actions on a user's behalf, but there are no actions to perform for a user in this case.
+You can retrieve the same information about a user with an access token as you'd receive in an ID token. While we support this functionality for broader compatibility, we generally recommend using the authorization code or implicit flows, rather than the hybrid flow.
+
+The endpoints below are only used with an OAuth2 access token.
+
+## Introspect
+
+**POST** `/introspect`
+
+Validates the given access token is active for the user.
+
+<Note>
+For introspect, [Basic Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication#basic_authentication_scheme) is used. The `Authorization` header contains the word "Basic ", followed by a base64 encoding of the "client_id:client_secret" values. You obtain your client_id (also called app_id) and client_secret from the Developer Portal.
+</Note>
+
+### Required attributes
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `token` | `string` | The access token to validate. |
+
+### Common Errors
+
+- `method_not_allowed`: HTTP method is not allowed. Only POST may be used
+- `invalid_content_type`: The provided content type is invalid, only `application/x-www-form-urlencoded` is supported
+- `required`: A necessary attribute was not set. Required attributes are: `token`
+- `unauthenticated`: The authorization header is missing, please pass the Bearer authorization token
+- `invalid_token`: The authorization token was invalid, and may be expired. Try generating a new token via `/token`
+
+```shell title="cURL"
+curl -X POST https://id.worldcoin.org/introspect \
+  -H "Authorization: Basic YXBwXzU1MGU4MjkwODJmYzU1OGUxMTJlMDYyMGMxYzdhNT..." \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  --data-urlencode "token=eyJhbGciOiJSUzI1NiIsImtpZCI6Imp3a18yZmViZjY3MDc3N2UyY2NlNzY5YzUxOGM3MDNkNTNjMStN..."
+```
+
+```js
+fetch('https://id.worldcoin.org/introspect', {
+	method: 'POST',
+	headers: {
+		Authorization: `Basic ${btoa(`${client_id}:${client_secret}`)}`,
+		'Content-Type': 'application/x-www-form-urlencoded',
+	},
+	body: new URLSearchParams({ token }),
+})
+```
+
+```json title="Response"
+{
+	"active": true,
+	"client_id": "app_staging_7550e829082fc558e112e0620c1c7a59",
+	"exp": 1678330528,
+	"sub": "0x2ae86d6d747702b3b2c81811cd2b39875e8fa6b780ee4a207bdc203a7860b535"
+}
+```
+
+## Get User Info
+
+**POST** `/userinfo`
+
+Retrieves all user information, based on the approved scopes, with the given access token.
+
+<Note>
+For userinfo, [Bearer Authentication](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication#bearer_authentication_scheme) is used. The `Authorization` header contains the word "Bearer ", followed by the access token returned from the `/token` endpoint.
+</Note>
+
+### Common Errors
+
+- `method_not_allowed`: HTTP method is not allowed. Only GET, POST, and OPTIONS may be used
+- `unauthenticated`: The authorization header is missing, please pass the Bearer authorization token
+- `invalid_token`: The authorization token was invalid, and may be expired. Try generating a new token via `/token`
+
+```shell title="cURL"
+curl -X POST https://id.worldcoin.org/userinfo \
+-H "Authorization: Bearer eyJhbGciOiJSUzI1NiIsImtpZ.eyCI6I.mp3a18yZmViZjY3MDc3N2UyY2NlN..."
+```
+
+```js
+fetch('https://id.worldcoin.org/userinfo', {
+	method: 'POST',
+	headers: {
+		Authorization: `Bearer ${access_token}`,
+	},
+})
+```
+
+```json title="Response"
+{
+	"sub": "0x2ae86d6d747702b3b2c81811cd2b39875e8fa6b780ee4a207bdc203a7860b535",
+	"https://id.worldcoin.org/beta": { // deprecated, will be removed in the future
+		"likely_human": "strong",
+		"credential_type": "orb"
+	},
+  "https://id.worldcoin.org/v1": {
+    "verification_level": "orb", // "orb" or "device"
+  },
+  // if `email` scope is included:
+	"email": "0x2ae86d6d747702b3b2c81811cd2b39875e8fa6b780ee4a207bdc203a7860b535@id.worldcoin.org", 
+  // if `profile` scope is included:
+	"name": "World ID User",
+	"given_name": "World ID",
+	"family_name": "User"
+}
+```

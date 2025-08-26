@@ -1,0 +1,85 @@
+---
+title: Payment Methods
+---
+
+Integrate Apple Pay and Google Pay into your mini-app
+
+<Note>
+  Both Apple Pay and Google Pay run directly in the WebView environment of your
+  mini-app, using their respective JavaScript APIs.
+</Note>
+
+## Environment Setup
+
+First, ensure your mini-app has a secure HTTPS environment, as both Apple Pay and Google Pay require it.
+
+<Tabs>
+  <Tab title="Apple Pay">
+    For Apple Pay, you must: - Register for an Apple Developer account -
+    Configure your merchant ID - Register your domain with Apple - Set up
+    merchant validation on your server [Complete setup guide on Apple's
+    website](https://applepaydemo.apple.com/)
+  </Tab>
+
+  <Tab title="Google Pay">
+    For Google Pay, you must: - Set up a Google Pay merchant account - Configure
+    your Google Pay API in the Google Pay Business Console - Obtain your
+    merchant ID [Complete setup guide on Google's
+    website](https://developers.google.com/pay/api/web/guides/resources/demos)
+  </Tab>
+</Tabs>
+
+### Testing
+
+Test your integration thoroughly using test cards and sandbox environments.
+
+<Tabs>
+  <Tab title="Apple Pay">
+    **Development Environment:** - Use Apple Pay's sandbox environment - Test
+    with Apple's test cards **Test Cards:** - You can use any valid card number
+    in the sandbox - No actual charges will be processed **Testing Checklist:**
+    - Verify merchant validation works - Test on both iOS devices and Safari on
+    macOS - Check error handling - Verify payment completion flows
+    <video controls className="m-auto" width="300">
+      <source
+        src="/images/docs/mini-apps/commands/apple-pay.mp4"
+        type="video/mp4"
+      />
+      Your browser does not support the video tag.
+    </video>
+    Apple Pay integration demo
+  </Tab>
+
+  <Tab title="Google Pay">
+    **Development Environment:** - Use Google Pay's TEST environment - Test with
+    Google's test cards **Test Cards:** - Use test PAN: 4111 1111 1111 1111 -
+    Expiration: Any future date - CVV: Any 3 digits **Testing Checklist:** -
+    Verify button displays correctly - Test on Android devices - Check error
+    handling - Verify payment completion flows
+    <img
+      src="/images/docs/mini-apps/commands/google-pay-demo.jpg"
+      alt="Google Pay integration example"
+      className="m-auto block"
+      width="300"
+    />
+    Google Pay integration example
+  </Tab>
+</Tabs>
+
+## Limitations and Considerations
+
+- **Platform Restrictions**: Apple Pay only works on iOS/macOS devices with Safari, while Google Pay is primarily for Android
+- **Device Support**: Users must have devices that support these payment methods
+- **WebView Context**: Some features might behave differently in the mini-app WebView compared to a standard browser
+
+<Warning>
+  For Apple Pay merchant validation, your server needs to be accessible via
+  HTTPS and properly configured with Apple's developer portal.
+</Warning>
+
+## Additional Resources
+
+- [Apple Pay Demo and Documentation](https://applepaydemo.apple.com/)
+- [Google Pay API Documentation](https://developers.google.com/pay/api/web/guides/resources/demos)
+- [Apple Pay Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/apple-pay/overview/)
+- [Google Pay Web Integration Guide](https://developers.google.com/pay/api/web/guides/tutorial)

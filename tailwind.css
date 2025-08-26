@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family:
+      "TWK Lausanne",
+      ui-sans-serif,
+      system-ui,
+      -apple-system,
+      "Segoe UI",
+      Roboto,
+      "Helvetica Neue",
+      Arial,
+      "Noto Sans",
+      "Apple Color Emoji",
+      "Segoe UI Emoji",
+      "Segoe UI Symbol";
+  }
+}
+
+@layer components {
+  /* Page content text links only (anchors without custom classes) */
+  .prose a:not([class]),
+  .prose a:not([class]):hover,
+  .prose a:not([class]):focus {
+    color: #1989fb !important;
+    text-decoration: none !important;
+    background-image: none !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Specific smaller image override for Mini Apps template screenshot */
+  .img-miniapps-template {
+    width: 220px !important;
+    max-width: 220px !important;
+    height: auto !important;
+  }
+}

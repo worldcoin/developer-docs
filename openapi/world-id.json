@@ -1,0 +1,263 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "World ID API",
+    "version": "1.0.0"
+  },
+  "servers": [{ "url": "https://developer.worldcoin.org" }],
+  "paths": {
+    "/api/v2/verify/{app_id}": {
+      "post": {
+        "summary": "Verify Proof",
+        "description": "Verify a World ID proof for a Cloud action.",
+        "parameters": [
+          {
+            "name": "app_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Your app ID from the Developer Portal"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyRequest"
+              },
+              "example": {
+                "nullifier_hash": "0x2bf8406809dcefb1486dadc96c0a897db9bab002053054cf64272db512c6fbd8",
+                "merkle_root": "0x2264a66d162d7893e12ea8e3c072c51e785bc085ad655f64c10c1a61e00f0bc2",
+                "proof": "0x1aa8b8f3b2d2de5ff452c0e1a83e29d6bf46fb83ef35dc5957121ff3d3698a1119090fb...",
+                "verification_level": "orb",
+                "action": "my_action",
+                "signal_hash": "0x00c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a4"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Verified",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean" },
+                    "action": { "type": "string" },
+                    "nullifier_hash": { "type": "string" },
+                    "created_at": { "type": "string" }
+                  }
+                },
+                "examples": {
+                  "200 OK": {
+                    "value": {
+                      "success": true,
+                      "action": "my_action",
+                      "nullifier_hash": "0x2bf8406809dcefb1486dadc96c0a897db9bab002053054cf64272db512c6fbd8",
+                      "created_at": "2023-02-18T11:20:39.530041+00:00"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "examples": {
+                  "Invalid Proof": {
+                    "value": {
+                      "code": "invalid_proof",
+                      "detail": "The provided proof is invalid and it cannot be verified. Please check all inputs and try again.",
+                      "attribute": null
+                    }
+                  },
+                  "Invalid Merkle Root": {
+                    "value": {
+                      "code": "invalid_merkle_root",
+                      "detail": "The provided Merkle root is invalid. User appears to be unverified.",
+                      "attribute": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/precheck/{app_id}": {
+      "post": {
+        "summary": "Get Action Metadata",
+        "description": "Fetch information about a particular app/action to determine eligibility for verification.",
+        "parameters": [
+          {
+            "name": "app_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Your app ID from the Developer Portal"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "action": {
+                    "type": "string",
+                    "description": "Same action identifier as passed to IDKit"
+                  },
+                  "nullifier_hash": {
+                    "type": "string",
+                    "description": "ZKP's nullifier hash, as provided by IDKit"
+                  },
+                  "external_nullifier": {
+                    "type": "string",
+                    "description": "Deprecated. Use action instead."
+                  }
+                },
+                "required": ["action"]
+              },
+              "example": {
+                "action": "my_custom_action",
+                "nullifier_hash": "0x2bf8406809dcefb1486dadc96c0a897db9bab002053054cf64272db512c6fbd8",
+                "external_nullifier": "0x00949dd9a8c5b600304d010ce3a3cf012352070ae4b77504e17af77ee894cda"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "additionalProperties": true },
+                "example": {
+                  "id": "app_staging_4cfd049031b0da1e8b62084b09a9f430",
+                  "is_staging": true,
+                  "is_verified": false,
+                  "name": "Default App",
+                  "verified_app_logo": "",
+                  "engine": "cloud",
+                  "__typename": "app",
+                  "sign_in_with_world_id": true,
+                  "can_user_verify": "yes",
+                  "action": {
+                    "external_nullifier": "0x00949dd9a8c5b600304d010ce3a3cf012352070ae4b77504e17af77ee894cda",
+                    "name": "My action",
+                    "action": "my_custom_action",
+                    "description": "My action",
+                    "max_verifications": 0,
+                    "max_accounts_per_user": 1,
+                    "__typename": "action"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" },
+                "example": {
+                  "code": "required",
+                  "detail": "This attribute is required.",
+                  "attribute": "action"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/jwks": {
+      "get": {
+        "summary": "Get JWK Keys",
+        "description": "Retrieve JWKs (public keys) used to verify JWT signatures for verification requests.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "keys": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "e": { "type": "string" },
+                          "n": { "type": "string" },
+                          "kty": { "type": "string" },
+                          "kid": { "type": "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "VerifyRequest": {
+        "type": "object",
+        "properties": {
+          "nullifier_hash": {
+            "type": "string",
+            "description": "Unique user identifier, provided by IDKit"
+          },
+          "proof": {
+            "type": "string",
+            "description": "Zero-knowledge proof from IDKit"
+          },
+          "merkle_root": {
+            "type": "string",
+            "description": "Merkle root proving credential membership"
+          },
+          "verification_level": {
+            "type": "string",
+            "description": "Verification level returned by IDKit"
+          },
+          "action": {
+            "type": "string",
+            "description": "Action identifier used in IDKit"
+          },
+          "signal_hash": {
+            "type": "string",
+            "description": "Hash of the signal used to generate the proof"
+          }
+        },
+        "required": [
+          "nullifier_hash",
+          "proof",
+          "merkle_root",
+          "verification_level",
+          "action"
+        ]
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string" },
+          "detail": { "type": "string" },
+          "attribute": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}

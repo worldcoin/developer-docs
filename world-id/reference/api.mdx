@@ -1,0 +1,511 @@
+---
+title: "API Reference"
+---
+
+The Worldcoin Developer Portal offers an API to enable easy verification of World IDs and relevant credentials.
+
+### Base URL
+
+```
+https://developer.worldcoin.org
+```
+
+<Note>
+  All requests to the Developer Portal API must include a `Content-Type:
+  application/json` header, a `User-Agent` header, and a valid JSON body.
+</Note>
+
+## Verify Proof
+
+<ParamField path="method" type="POST">
+  https://developer.worldcoin.org/api/v2/verify/{app_id}
+</ParamField>
+
+Enables you to verify a World ID proof for a **Cloud action.** To ensure sybil-resistance, by default, a single person can only verify once for every action. The number of allowed verifications for a single user can be configured in the Developer Portal.
+
+<Note>
+  This endpoint is now on **version 2**. The previous version at
+  `/api/v1/verify/{app_id}` will be unavailable after June 30, 2024.
+</Note>
+
+### Request Body
+
+<ParamField body="nullifier_hash" type="string" required>
+  The unique user identifier (called the nullifier hash in the ZKP), as provided
+  by IDKit. See [IDKit response](/world-id/reference/idkit#types) for details.
+</ParamField>
+
+<ParamField body="proof" type="string" required>
+  The zero-knowledge proof, as provided by IDKit. See [IDKit
+  response](/world-id/reference/idkit#types) for details.
+</ParamField>
+
+<ParamField body="merkle_root" type="string" required>
+  Part of the ZKP, the hash of the Merkle root that proves membership to the set
+  of credentials. As provided by IDKit. See [IDKit
+  response](/world-id/reference/idkit#types) for details.
+</ParamField>
+
+<ParamField body="verification_level" type="string" required>
+  The verification level, as provided by IDKit. See [IDKit
+  response](/world-id/reference/idkit#types) for details.
+</ParamField>
+
+<ParamField body="action" type="string" required>
+  Same action identifier as passed to IDKit.
+</ParamField>
+
+<ParamField body="signal_hash" type="string" default="hashToField('').digest">
+  The hash of the signal that was used to generate the proof. Defaults to the
+  hash of an empty string.
+</ParamField>
+
+<ParamField body="max_age" type="number" default={7200}>
+  The maximum age of the root in seconds. This parameter controls how old the
+  Merkle root used in the proof can be. Minimum value is 3600 (1 hour) and
+  maximum value is 604800 (7 days). Defaults to 7200 (2 hours).
+</ParamField>
+
+<CodeGroup title="Request">
+```bash cURL
+curl -X POST "https://developer.worldcoin.org/api/v2/verify/{app_id}" \
+    -H "Content-Type: application/json" \
+    -d '{
+        "nullifier_hash": "0x2bf8406809dcefb1486dadc96c0a897db9bab002053054cf64272db512c6fbd8",
+        "merkle_root": "0x2264a66d162d7893e12ea8e3c072c51e785bc085ad655f64c10c1a61e00f0bc2",
+        "proof": "0x1aa8b8f3b2d2de5ff452c0e1a83e29d6bf46fb83ef35dc5957121ff3d3698a1119090fb...",
+        "verification_level": "orb",
+        "action": "my_action",
+        "signal_hash": "0x00c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a4"
+    }'
+```
+
+```javascript
+fetch("https://developer.worldcoin.org/api/v2/verify/{app_id}", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    nullifier_hash:
+      "0x2bf8406809dcefb1486dadc96c0a897db9bab002053054cf64272db512c6fbd8",
+    merkle_root:
+      "0x2264a66d162d7893e12ea8e3c072c51e785bc085ad655f64c10c1a61e00f0bc2",
+    proof:
+      "0x1aa8b8f3b2d2de5ff452c0e1a83e29d6bf46fb83ef35dc5957121ff3d3698a1119090fb...",
+    verification_level: "orb",
+    action: "my_action",
+    signal_hash:
+      "0x00c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a4",
+  }),
+});
+```
+
+</CodeGroup>
+
+### Possible Responses
+
+- `200 OK` - The proof was successfully verified.
+- `400 Bad Request` - The proof was invalid or the user has already verified for this action.
+
+### Response Examples
+
+<Tabs>
+  <Tab title="200 OK">
+    ```json
+    {
+      "success": true,
+      "action": "my_action",
+      "nullifier_hash": "0x2bf8406809dcefb1486dadc96c0a897db9bab002053054cf64272db512c6fbd8",
+      "created_at": "2023-02-18T11:20:39.530041+00:00"
+    }
+    ```
+  </Tab>
+  <Tab title="400 Invalid Proof">
+    ```json
+    {
+      "code": "invalid_proof",
+      "detail": "The provided proof is invalid and it cannot be verified. Please check all inputs and try again.",
+      "attribute": null
+    }
+    ```
+  </Tab>
+  <Tab title="400 Invalid Merkle Root">
+    ```json
+    {
+      "code": "invalid_merkle_root",
+      "detail": "The provided Merkle root is invalid. User appears to be unverified.",
+      "attribute": null
+    }
+    ```
+  </Tab>
+  <Tab title="400 Invalid Credential Type">
+    ```json
+    {
+      "code": "invalid",
+      "detail": "Invalid credential type.",
+      "attribute": "credential_type"
+    }
+    ```
+  </Tab>
+  <Tab title="400 User Exceeded Maximum Verifications">
+    ```json
+    {
+      "code": "exceeded_max_verifications",
+      "detail": "This user has exceeded the maximum number of verifications allowed for this proof.",
+      "attribute": null
+    }
+    ```
+  </Tab>
+  <Tab title="400 User Already Verified">
+    ```json
+    {
+      "code": "already_verified",
+      "detail": "This person has already verified for this action.",
+      "attribute": null
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Get Action Metadata
+
+<ParamField path="method" type="GET">
+  https://developer.worldcoin.org/api/v1/precheck/{app_id}
+</ParamField>
+
+Enables fetching information about a particular app to determine eligibility for verification. This endpoint is also used by the World ID Kiosk, Sign in with World ID, and World App to show metadata about the action being verified. This endpoint will only return information for active actions.
+
+<Note>Primarily intended for internal use.</Note>
+
+### Request Body
+
+<ParamField body="action" type="string" required default="">
+  The action to check. This is the same action that was passed to IDKit.
+  Defaults to an empty string for Sign in with World ID.
+</ParamField>
+
+<ParamField body="nullifier_hash" type="string" default="">
+  The ZKP's nullifier hash, as provided by IDKit. See [IDKit
+  response](/world-id/reference/api#response) for details. Defaults to an empty
+  string.
+</ParamField>
+
+<ParamField body="external_nullifier" type="string" deprecated>
+  **Deprecated.** The ZKP's external nullifier. This parameter is deprecated and
+  will be removed in a future release, and should no longer be used. Instead,
+  pass the `action` parameter.
+</ParamField>
+
+<CodeGroup>
+
+```bash title="cURL"
+curl -X POST "/api/v1/precheck/{app_id}" \
+     -H "Content-Type: application/json" \
+     -d '{
+             "action": "my_custom_action",
+             "nullifier_hash": "0x2bf8406809dcefb1486dadc96c0a897db9bab002053054cf64272db512c6fbd8",
+             "external_nullifier": "0x00949dd9a8c5b600304d010ce3a3cf012352070ae4b77504e17af77ee894cda"
+         }'
+```
+
+```js title="JavaScript"
+fetch(`/api/v1/precheck/${appId}`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    action: "my_custom_action",
+    nullifier_hash:
+      "0x2bf8406809dcefb1486dadc96c0a897db9bab002053054cf64272db512c6fbd8",
+    external_nullifier:
+      "0x00949dd9a8c5b600304d010ce3a3cf012352070ae4b77504e17af77ee894cda",
+  }),
+});
+```
+
+</CodeGroup>
+
+### Response
+
+<ParamField body="__typename" type="string" default="app">
+  Always returns `app`.
+</ParamField>
+
+<ParamField body="id" type="string">
+  The `app_id` from the Developer Portal.
+</ParamField>
+
+<ParamField body="engine" type="'cloud' | 'on-chain'">
+  Whether the app is configured for use with **Cloud** or **On-Chain** proof
+  verifications.
+</ParamField>
+
+<ParamField body="is_staging" type="boolean">
+  Whether the app is a staging app. If `true`, the [Worldcoin
+  Simulator](https://simulator.worldcoin.org) must be used to verify.
+</ParamField>
+
+<ParamField body="is_verified" type="string">
+  Whether the app has been verified by Worldcoin.
+</ParamField>
+
+<ParamField body="name" type="string">
+  The app's name as configured in the Developer Portal.
+</ParamField>
+
+<ParamField body="verified_app_logo" type="string">
+  The URL of the app's logo. Only returned if the app has been verified,
+  otherwise returns an empty string.
+</ParamField>
+
+<ParamField body="is_sign_in" type="boolean">
+  Whether the action request is for Sign in with World ID.
+</ParamField>
+
+<ParamField
+  body="can_user_verify"
+  type="'yes' | 'no' | 'on-chain' | 'undetermined'"
+>
+  If the user is eligible to verify for this action.
+
+<ul>
+  <li>
+    <code>"yes"</code>: The user has not reached the maximum number of
+    verifications for this action based on the <code>nullifier_hash</code>
+    provided. Always returned when <code>is_sign_in</code> is
+    <code>true</code>.
+  </li>
+  <li>
+    <code>"no"</code>: The user has reached the maximum number of verifications
+    for this action based on the <code>nullifier_hash</code> provided.
+  </li>
+  <li>
+    <code>"undetermined"</code>: A <code>nullifier_hash</code> was not
+    provided, so the user's eligibility cannot be determined.
+  </li>
+  <li>
+    <code>"on-chain"</code>: The app is configured for <strong>On-Chain</strong>
+    verifications, so the user's eligibility cannot be determined. Verification
+    eligibility is determined solely by the application's smart contract.
+  </li>
+</ul>
+  </ParamField>
+
+<ParamField body="action" type="object">
+  Information about the action being verified.
+
+  <ul>
+    <li>
+      <code>name</code>: The action's human-readable name as configured in the
+      Developer Portal.
+    </li>
+    <li>
+      <code>action</code>: The action identifier as configured in the Developer
+      Portal. Typically a slugified version of the action's name.
+    </li>
+    <li>
+      <code>description</code>: The action's description as configured in the
+      Developer Portal.
+    </li>
+    <li>
+      <code>max_verifications</code>: The maximum number of verifications
+      allowed for this action. Will be <code>0</code> if the action is
+      configured for unlimited verifications.
+    </li>
+    <li>
+      <code>max_accounts_per_user</code>: The maximum number of accounts allowed
+      per user for Sign in with World ID. Will always be <code>1</code>.
+    </li>
+    <li>
+      <code>external_nullifier</code>: The action's external nullifier.
+      <strong>Intended for internal use only.</strong>
+    </li>
+    <li>
+      <code>status</code>: Will return <code>active</code> if the action is
+      active, otherwise will return <code>inactive</code>.
+    </li>
+    <li>
+      <code>__typename</code>: Always returns <code>action</code>.
+    </li>
+  </ul>
+</ParamField>
+
+### Response Examples
+
+<Tabs>
+  <Tab title="200 OK">
+    ```json
+    {
+      "id": "app_staging_4cfd049031b0da1e8b62084b09a9f430",
+      "is_staging": true,
+      "is_verified": false,
+      "name": "Default App",
+      "verified_app_logo": "",
+      "engine": "cloud",
+      "__typename": "app",
+      "sign_in_with_world_id": true,
+      "can_user_verify": "yes",
+      "action": {
+        "external_nullifier": "0x00949dd9a8c5b600304d010ce3a3cf012352070ae4b77504e17af77ee894cda",
+        "name": "My action",
+        "action": "my_custom_action",
+        "description": "My action",
+        "max_verifications": 0,
+        "max_accounts_per_user": 1,
+        "__typename": "action"
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="400 Required">
+    ```json
+    {
+      "code": "required",
+      "detail": "This attribute is required.",
+      "attribute": "action"
+    }
+    ```
+  </Tab>
+  <Tab title="400 Action Inactive">
+    ```json
+    {
+      "code": "action_inactive",
+      "detail": "This action is inactive.",
+      "attribute": "status"
+    }
+    ```
+  </Tab>
+  <Tab title="404 Not Found">
+    ```json
+    {
+      "code": "not_found",
+      "detail": "We couldn't find an app with this ID.",
+      "attribute": null
+    }
+    ```
+  </Tab>
+  <Tab title="405 Method Not Allowed">
+    ```json
+    {
+      "code": "method_not_allowed",
+      "detail": "HTTP method POST is not allowed for this endpoint.",
+      "attribute": null
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Get JWK Keys
+
+<ParamField path="method" type="GET">
+  https://developer.worldcoin.org/api/v1/jwks
+</ParamField>
+
+This endpoint lets you retrieve the JWKs (public keys) used to verify the signature on JSON web tokens that authenticate a verification request from the Developer Portal. This verification method is only used if you are using the **Hosted page user interface.**
+
+<CodeGroup>
+
+```bash title="cURL"
+curl /api/v1/jwks
+```
+
+```js title="JavaScript"
+fetch("/api/v1/jwks");
+```
+
+</CodeGroup>
+
+### Response
+
+```json
+{
+  "keys": [
+    {
+      "e": "AQAB",
+      "n": "09ETz2k4_9IbDBYK_Tcr6DzbDdJPeqIgvoeUvXNVjNU8mYzFbhdqh8jRH80FwtuoFqyw5oyuG9ILHxfGaG_SeutPWSxBsqulXhxTnTAx2i8HtF0i2toMuvsEtiAjQ3hD4_w2xInBVOO98WAGcNA_UgWAG2DlWpe2km_V5bv3iKteCsSTZtzT3RjEO6FeOlVr8rmx9EGwWITdPIvrEXm_3REFqvDOnQvLu2-Au8m1V3U_6404m4RV_wlWGPnhHfG57VTkkqjgrnFKGUDniG-VMJs-WFX4VIQRvy2z1A5nQsmYpobK_clGyV0D0i5P1A_lmWGDEXBLSjEW9zH_o0d2DQ",
+      "kty": "RSA",
+      "kid": "jwk_8934bcc47ec5b86dd490cc2a46f18a5e"
+    }
+  ]
+}
+```
+
+## Authenticated Endpoints
+
+<Note>
+  You can generate API Keys on the **My Team** page of the Developer Portal.
+</Note>
+
+- API keys are intended for use by third-party applications and for server-to-server communication. They are long-lived and can be revoked at any time.
+- API keys are scoped to a team and have full permissions for any actions as any user of the Developer Portal.
+- Once you have an API key, use it as the value of the `Authorization` header in your requests. For example:
+
+```
+Authorization: Bearer $API_KEY
+```
+
+### GraphQL
+
+<ParamField path="method" type="POST">
+  https://developer.worldcoin.org/api/v1/graphql
+</ParamField>
+
+Interaction with the Developer Portal API is mostly done through a GraphQL endpoint, which enables retrieving information and interacting with any of the API objects. You can read more about [queries](https://hasura.io/docs/latest/graphql/core/api-reference/graphql-api/query/) and [mutations](https://hasura.io/docs/latest/graphql/core/api-reference/graphql-api/mutation/) for GraphQL to help you construct your query.
+
+<CodeGroup>
+
+```bash title="cURL"
+curl -X POST "/v1/graphql" \
+     -H "Content-Type: application/json" \
+     -H "Authorization: Bearer $WORLD_ID_TOKEN" \
+     -d '{
+           "query": "YOUR_GRAPHQL_QUERY_HERE"
+         }'
+```
+
+```js title="JavaScript"
+fetch("/v1/graphql", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${WORLD_ID_TOKEN}`,
+  },
+  body: JSON.stringify({
+    query: "YOUR_GRAPHQL_QUERY_HERE",
+  }),
+});
+```
+
+</CodeGroup>
+
+#### Example Queries
+
+<Tabs>
+  <Tab title="Listing Apps">
+    ```graphql
+    query MyApps {
+      app {
+        id
+        name
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="Listing nullifiers for action">
+    ```graphql
+    query ActionNullifiers($action_id: String) {
+      action(where: { id: { _eq: $action_id }, status: { _eq: "active" } }) {
+        id
+        status
+        max_accounts_per_user
+        max_verifications
+        nullifiers {
+          nullifier_hash
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>

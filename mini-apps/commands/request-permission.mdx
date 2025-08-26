@@ -1,0 +1,127 @@
+---
+title: "Request Permission"
+---
+
+This command lets you request permissions to the user's device. This currently includes notifications and microphone. 
+
+## Using the command
+
+This command only supports requesting one permission at a time. Additionally, it will only show the user the modal once. If a user rejects it, you will need to direct them to settings in order to re-enable the permission.
+
+<Info>
+	If a user removes your mini app from their World App home screen, you will need to request the permission again.
+</Info>
+
+```
+worldcoin.org/settings/miniapps
+```
+
+Permission Types:
+```tsx
+// Types of permissions you can request. You can only request one at a time.
+export enum Permission {
+  Notifications = 'notifications',
+  Microphone = 'microphone',
+}
+```
+
+<Tabs>
+  <Tab title="Async handlers">
+    ### Sending the command and handling the response
+    ```tsx
+    import { MiniKit, RequestPermissionPayload, Permission } from '@worldcoin/minikit-js'
+
+    // Example function of how to use the command
+    const requestPermission = useCallback(
+        async () => {
+            const requestPermissionPayload: RequestPermissionPayload = {
+                permission: Permission.Notifications,
+            };
+            const payload = await MiniKit.commandsAsync.requestPermission(requestPermissionPayload);
+            // Handle the response
+        }, []);
+    ```
+  </Tab>
+
+  <Tab title="Event listeners">
+    ### Sending the command 
+    ```tsx
+    // Example function of how to use the command
+    const requestPermission = useCallback(
+        () => {
+            const requestPermissionPayload: RequestPermissionPayload = {
+                permission: Permission.Notifications,
+            };
+            const payload = MiniKit.commands.requestPermission(requestPermissionPayload);
+            },
+        []
+    );
+    ```
+
+    ### Handling the response
+    ```tsx app/page.tsx
+    import { MiniKit, tokenToDecimals, Tokens, PayCommandInput, ResponseEvent } from '@worldcoin/minikit-js'
+        // ...
+        useEffect(() => {
+            if (!MiniKit.isInstalled()) {
+                console.error("MiniKit is not installed");
+                return;
+            }
+
+            MiniKit.subscribe(
+                ResponseEvent.MiniAppRequestPermission,
+                async (response: MiniAppRequestPermissionPayload) => {
+                    if (response.status == "success") {
+                        const response = await res.json();
+                        // Handle the response
+                    }
+                }
+            );
+
+            return () => {
+                MiniKit.unsubscribe(ResponseEvent.MiniAppRequestPermission);
+            };
+        }, []);
+    ```
+  </Tab>
+</Tabs>
+
+## Response type 
+### Success response payload
+```ts
+type MiniAppRequestPermissionSuccessPayload = {
+    status: 'success';
+    permission: 'notifications';
+    timestamp: string;  // ISO-8601
+    version: number;    // same version that was received from MiniKit
+};
+```
+### Error response payload
+```ts
+type MiniAppRequestPermissionErrorPayload = {
+    status: 'error';
+    error_code: RequestPermissionErrorCodes;
+    version: number;
+}
+```
+
+The possible error codes are:
+
+-   `user_rejected` - User declined permission request
+-   `generic_error` - Request failed for unknown reason
+-   `already_requested` - User has already declined turning on notifications once
+-   `permission_disabled` - User has notification disabled for World App
+-   `already_granted` - User has already granted this mini app permission
+-   `unsupported_permission` - Permission is not supported yet
+-   `world_app_permission_not_enabled` - User has not granted permission to World App. This means you need to prompt the user to enable microphone for World App first.
+
+## Success Result on World App
+
+If implemented correctly, the user will see the following drawer on World App.
+
+<div className='grid justify-items-center text-center'>
+    <video className="m-auto" width="300" autoPlay muted loop playsInline>
+        <source src="/images/docs/mini-apps/commands/notifications-command.mp4" type="video/mp4" />
+		Your browser does not support the video tag.
+	</video>
+</div>

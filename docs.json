@@ -1,0 +1,490 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "World Documentation",
+  "colors": {
+    "primary": "#1989FB",
+    "light": "#4B5563",
+    "dark": "#000000"
+  },
+  "favicon": "/favicon.ico",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Home",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": ["index"]
+          }
+        ]
+      },
+      {
+        "tab": "Mini Apps",
+        "groups": [
+          {
+            "group": "Introduction",
+            "pages": ["mini-apps/index"]
+          },
+          {
+            "group": "Quick Start",
+            "pages": [
+              "mini-apps/quick-start/installing",
+              "mini-apps/quick-start/commands",
+              "mini-apps/quick-start/responses",
+              "mini-apps/quick-start/testing",
+              "mini-apps/quick-start/app-store"
+            ]
+          },
+          {
+            "group": "Authentication",
+            "pages": ["mini-apps/authentication/wallet-auth"]
+          },
+          {
+            "group": "Commands",
+            "pages": [
+              "mini-apps/commands/verify",
+              "mini-apps/commands/pay",
+              "mini-apps/commands/wallet-auth",
+              "mini-apps/commands/send-transaction",
+              "mini-apps/commands/sign-message",
+              "mini-apps/commands/sign-typed-data",
+              "mini-apps/commands/share-contacts",
+              "mini-apps/commands/request-permission",
+              "mini-apps/commands/get-permissions",
+              "mini-apps/commands/send-haptic-feedback",
+              "mini-apps/commands/share"
+            ]
+          },
+          {
+            "group": "Notifications",
+            "pages": [
+              "mini-apps/notifications/features-and-guidelines",
+              "mini-apps/notifications/how-to-send-notifications"
+            ]
+          },
+          {
+            "group": "Technical Reference",
+            "openapi": "openapi/world-miniapps.json",
+            "pages": [
+              "mini-apps/reference/init",
+              "mini-apps/reference/api",
+              "POST /api/v2/create-action/{app_id}",
+              "POST /api/v2/minikit/send-notification",
+              "POST /api/v2/verify/{app_id}",
+              "GET /api/v2/minikit/transaction/{transaction_id}",
+              "GET /api/v2/minikit/transaction/debug",
+              "GET /api/v2/minikit/user-grant-cycle",
+              "GET /public/v1/miniapps/prices",
+              "mini-apps/reference/errors",
+              "mini-apps/reference/address-book",
+              "mini-apps/reference/usernames",
+              "mini-apps/reference/status-page",
+              "mini-apps/reference/payment-methods",
+              "mini-apps/reference/microphone"
+            ]
+          },
+          {
+            "group": "Growth Playbook",
+            "pages": [
+              "mini-apps/growth/index",
+              "mini-apps/growth/invites-viral",
+              "mini-apps/growth/gamification",
+              "mini-apps/growth/notifications",
+              "mini-apps/growth/analytics"
+            ]
+          },
+          {
+            "group": "Design Standards",
+            "pages": [
+              "mini-apps/design/app-guidelines",
+              "mini-apps/design/ui-kit"
+            ]
+          },
+          {
+            "group": "Quick Actions",
+            "pages": [
+              "mini-apps/sharing/quick-actions",
+              "mini-apps/sharing/add-money-qa",
+              "mini-apps/sharing/uno-qa",
+              "mini-apps/sharing/eggs-vault-qa",
+              "mini-apps/sharing/earn-wld-qa",
+              "mini-apps/sharing/dna-qa",
+              "mini-apps/sharing/sage-qa",
+              "mini-apps/sharing/vuni-qa",
+              "mini-apps/sharing/world-chat-qa",
+              "mini-apps/sharing/world-companies-finder-qa",
+              "mini-apps/sharing/one-pay-qa",
+              "mini-apps/sharing/puf-qa",
+              "mini-apps/sharing/orbital-x-qa"
+            ]
+          },
+          {
+            "group": "Further Reading",
+            "pages": [
+              "mini-apps/more/security",
+              "mini-apps/more/policy",
+              "mini-apps/more/promotion",
+              "mini-apps/more/grants",
+              "mini-apps/more/developer-rewards-pilot",
+              "mini-apps/more/troubleshooting",
+              "mini-apps/more/webview-spec",
+              "mini-apps/more/releases",
+              "mini-apps/more/community-tools-perks",
+              "mini-apps/more/faq"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "World ID",
+        "groups": [
+          {
+            "group": "Introduction",
+            "pages": ["world-id/index", "world-id/concepts"]
+          },
+          {
+            "group": "ID Kit",
+            "pages": [
+              "world-id/id/getting-started",
+              "world-id/id/web-react",
+              "world-id/id/web-vanilla",
+              "world-id/id/mobile",
+              "world-id/id/cloud",
+              "world-id/id/on-chain",
+              "world-id/id/libraries",
+              "world-id/id/testing",
+              "world-id/id/pitfalls",
+              "world-id/id/design-guidelines"
+            ]
+          },
+          {
+            "group": "Sign in with World ID",
+            "pages": [
+              "world-id/sign-in/getting-started",
+              "world-id/sign-in/oidc"
+            ]
+          },
+          {
+            "group": "Technical Reference",
+            "pages": [
+              "world-id/reference/idkit",
+              "world-id/reference/api",
+              "world-id/reference/sign-in",
+              "world-id/reference/contracts",
+              "world-id/reference/contract-deployments",
+              "world-id/reference/errors"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "World Chain",
+        "groups": [
+          {
+            "group": "About World Chain",
+            "pages": [
+              "world-chain/index",
+              "world-chain/quick-start/why",
+              "world-chain/quick-start/features",
+              "world-chain/quick-start/data"
+            ]
+          },
+          {
+            "group": "Using World Chain",
+            "pages": [
+              "world-chain/quick-start/index",
+              "world-chain/quick-start/fund-wallet",
+              "world-chain/quick-start/info"
+            ]
+          },
+          {
+            "group": "Building on World Chain",
+            "pages": [
+              "world-chain/developers/deploy",
+              "world-chain/developers/template",
+              "world-chain/developers/world-chain-contracts",
+              "world-chain/developers/fees",
+              "world-chain/developers/evm-equivalence",
+              "world-chain/developers/grants"
+            ]
+          },
+          {
+            "group": "Infrastructure Providers",
+            "pages": [
+              "world-chain/providers/nodes",
+              "world-chain/providers/bridges",
+              "world-chain/providers/data",
+              "world-chain/providers/explorers",
+              "world-chain/providers/developer-tooling",
+              "world-chain/providers/oracles",
+              "world-chain/providers/paymasters",
+              "world-chain/providers/onramps"
+            ]
+          },
+          {
+            "group": "Technical Reference",
+            "pages": [
+              "world-chain/reference/useful-contracts",
+              "world-chain/reference/node-setup"
+            ]
+          },
+          {
+            "group": "Tokens",
+            "pages": [
+              "world-chain/tokens/bridging",
+              "world-chain/tokens/superchain-token",
+              "world-chain/tokens/usdc"
+            ]
+          },
+          {
+            "group": "Further Reading",
+            "pages": ["world-chain/resources"]
+          }
+        ]
+      }
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Telegram",
+          "href": "https://t.me/worlddevelopersupport",
+          "icon": "telegram"
+        },
+        {
+          "anchor": "GitHub",
+          "href": "https://github.com/worldcoin",
+          "icon": "github"
+        }
+      ]
+    }
+  },
+  "logo": {
+    "light": "/logo/world-logo.svg",
+    "dark": "/logo/world-logo-white.svg"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Explore Apps",
+        "href": "https://world.org/ecosystem"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Developer Portal",
+      "href": "https://developer.worldcoin.org"
+    }
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/worldcoin",
+      "github": "https://github.com/worldcoin",
+      "discord": "https://discord.gg/worldcoin"
+    }
+  },
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
+  },
+  "redirects": [
+    { "source": "/apps", "destination": "https://world.org/apps" },
+    {
+      "source": "/world-id-2",
+      "destination": "https://world.org/blog/announcements/introducing-world-id-2.0"
+    },
+    { "source": "/idkit", "destination": "/world-id/cloud" },
+    { "source": "/js", "destination": "/world-id/cloud" },
+    { "source": "/id", "destination": "/world-id" },
+    { "source": "/id/sign-in", "destination": "/world-id/id/sign-in" },
+    {
+      "source": "/protocol",
+      "destination": "https://whitepaper.world.org/#protocol"
+    },
+    {
+      "source": "/mini-apps/virality/virality",
+      "destination": "/mini-apps/virality/sharing"
+    },
+    { "source": "/test", "destination": "/quick-start" },
+    { "source": "/simulator", "destination": "/world-id/quick-start/testing" },
+    {
+      "source": "/privacy",
+      "destination": "https://whitepaper.world.org/technical-implementation#privacy"
+    },
+    {
+      "source": "/zkp",
+      "destination": "/world-id/further-reading/zero-knowledge-proofs"
+    },
+    {
+      "source": "/id/anonymous-actions",
+      "destination": "/world-id/id/incognito-actions"
+    },
+    { "source": "/quick-start", "destination": "/world-chain/quick-start" },
+    { "source": "/id/incognito-actions", "destination": "/world-id/id/cloud" },
+    { "source": "/id/idkit", "destination": "/world-id/reference/idkit" },
+    {
+      "source": "/apps/discord",
+      "destination": "https://discord.com/invite/worldnetwork"
+    },
+    { "source": "/api-docs", "destination": "/world-id/reference/api" },
+    {
+      "source": "/advanced/zero-knowledge-proofs",
+      "destination": "/world-id/further-reading/zero-knowledge-proofs"
+    },
+    {
+      "source": "/advanced/privacy",
+      "destination": "https://vault.pactsafe.io/s/8a18d792-fd76-44db-9b92-b0bb7981c248/legal.html#contract-s1ytru6kk"
+    },
+    { "source": "/advanced/on-chain", "destination": "/world-id/id/on-chain" },
+    { "source": "/about/glossary", "destination": "/world-id/concepts" },
+    {
+      "source": "/world-chain/providers/worldchain-mainnet.explorer.alchemy.com",
+      "destination": "/world-chain/providers/explorers"
+    },
+    {
+      "source": "/world-chain/providers/thirdweb.com",
+      "destination": "/world-chain/providers/developer-tooling#thirdweb"
+    },
+    {
+      "source": "/world-id/idkit/reference",
+      "destination": "/world-id/reference/idkit"
+    },
+    { "source": "/concepts", "destination": "/world-id/concepts" },
+    {
+      "source": "/further-reading/protocol-internals",
+      "destination": "/world-id/further-reading/protocol-internals"
+    },
+    {
+      "source": "/further-reading/world-id-reset",
+      "destination": "/world-id/further-reading/world-id-reset"
+    },
+    {
+      "source": "/further-reading/zero-knowledge-proofs",
+      "destination": "/world-id/further-reading/zero-knowledge-proofs"
+    },
+    { "source": "/id/cloud", "destination": "/world-id/id/cloud" },
+    { "source": "/id/libraries", "destination": "/world-id/id/libraries" },
+    { "source": "/id/on-chain", "destination": "/world-id/id/on-chain" },
+    {
+      "source": "/idkit/reference",
+      "destination": "/world-id/reference/idkit"
+    },
+    {
+      "source": "/quick-start/configuration",
+      "destination": "/world-id/quick-start/configuration"
+    },
+    {
+      "source": "/quick-start/installation",
+      "destination": "/world-id/quick-start/installation"
+    },
+    {
+      "source": "/reference/address-book",
+      "destination": "/world-id/reference/address-book"
+    },
+    { "source": "/reference/api", "destination": "/world-id/reference/api" },
+    {
+      "source": "/reference/contracts",
+      "destination": "/world-id/reference/contracts"
+    },
+    {
+      "source": "/reference/errors",
+      "destination": "/world-id/reference/errors"
+    },
+    {
+      "source": "/reference/idkit",
+      "destination": "/world-id/reference/idkit"
+    },
+    {
+      "source": "/reference/sign-in",
+      "destination": "/world-id/reference/sign-in"
+    },
+    {
+      "source": "/reference/world-id-2-migration-guide",
+      "destination": "/world-id/reference/world-id-2-migration-guide"
+    },
+    { "source": "/sign-in", "destination": "/world-id" },
+    { "source": "/try", "destination": "/world-id/try" },
+    {
+      "source": "/use-cases",
+      "destination": "/mini-apps/design/app-guidelines#inspiration"
+    },
+    {
+      "source": "/use-cases/customer-incentives",
+      "destination": "/mini-apps/design/app-guidelines#inspiration"
+    },
+    {
+      "source": "/use-cases/defi-and-fintech",
+      "destination": "/mini-apps/design/app-guidelines#inspiration"
+    },
+    {
+      "source": "/use-cases/events",
+      "destination": "/mini-apps/design/app-guidelines#inspiration"
+    },
+    {
+      "source": "/use-cases/marketplaces",
+      "destination": "/mini-apps/design/app-guidelines#inspiration"
+    },
+    {
+      "source": "/use-cases/nfts",
+      "destination": "/mini-apps/design/app-guidelines#inspiration"
+    },
+    {
+      "source": "/use-cases/social-media",
+      "destination": "/mini-apps/design/app-guidelines#inspiration"
+    },
+    {
+      "source": "/use-cases/token-airdrops",
+      "destination": "/mini-apps/design/app-guidelines#inspiration"
+    },
+    {
+      "source": "/use-cases/voting",
+      "destination": "/mini-apps/design/app-guidelines#inspiration"
+    },
+    {
+      "source": "/use-cases/wealth-distribution",
+      "destination": "/mini-apps/design/app-guidelines#inspiration"
+    },
+    {
+      "source": "/world-id/id/incognito-actions",
+      "destination": "/world-id/id/cloud"
+    },
+    { "source": "/world-id/id/sign-in", "destination": "/world-id" },
+    { "source": "/world-id/sign-in", "destination": "/world-id" },
+    {
+      "source": "/world-id/sign-in/pitfalls",
+      "destination": "/world-id/id/pitfalls"
+    },
+    {
+      "source": "/world-id/quick-start/testing",
+      "destination": "/world-id/id/testing"
+    },
+    {
+      "source": "/world-id/quick-start/installation",
+      "destination": "/world-id/id/getting-started"
+    },
+    {
+      "source": "/world-id/quick-start/configuration",
+      "destination": "/world-id/id/getting-started"
+    },
+    {
+      "source": "/world-id/quick-start/templates",
+      "destination": "/world-id/quick-start"
+    },
+    {
+      "source": "/world-id/reference/address-book",
+      "destination": "/world-id/reference/contract-deployments"
+    },
+    {
+      "source": "/mini-apps/virality/sharing",
+      "destination": "/mini-apps/growth"
+    }
+  ]
+}

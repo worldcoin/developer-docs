@@ -1,0 +1,582 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "World Mini Apps API",
+    "version": "1.0.0"
+  },
+  "servers": [{ "url": "https://developer.worldcoin.org" }],
+  "paths": {
+    "/api/v2/verify/{app_id}": {
+      "post": {
+        "summary": "Verify Proof",
+        "description": "Verify a World ID proof for a Cloud action.",
+        "parameters": [
+          {
+            "name": "app_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Your app ID from the Developer Portal"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/VerifyProofRequest" },
+              "example": {
+                "nullifier_hash": "0x2bf8406809dcefb1486dadc96c0a897db9bab002053054cf64272db512c6fbd8",
+                "merkle_root": "0x2264a66d162d7893e12ea8e3c072c51e785bc085ad655f64c10c1a61e00f0bc2",
+                "proof": "0x1aa8b8f3b2d2de5ff452c0e1a83e29d6bf46fb83ef35dc5957121ff3d3698a1119090fb...",
+                "verification_level": "orb",
+                "action": "my_action",
+                "signal_hash": "0x00c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a4",
+                "max_age": 3600
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Verified",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "action": "my_action",
+                  "nullifier_hash": "0x2bf8406809dcefb1486dadc96c0a897db9bab002053054cf64272db512c6fbd8",
+                  "created_at": "2023-02-18T11:20:39.530041+00:00"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or already verified",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "invalid_proof": {
+                    "value": {
+                      "code": "invalid_proof",
+                      "detail": "The provided proof is invalid and it cannot be verified. Please check all inputs and try again.",
+                      "attribute": null
+                    }
+                  },
+                  "invalid_merkle_root": {
+                    "value": {
+                      "code": "invalid_merkle_root",
+                      "detail": "The provided Merkle root is invalid. User appears to be unverified.",
+                      "attribute": null
+                    }
+                  },
+                  "root_too_old": {
+                    "value": {
+                      "code": "root_too_old",
+                      "detail": "The provided merkle root is too old. Please generate a new proof and try again.",
+                      "attribute": null
+                    }
+                  },
+                  "invalid_credential_type": {
+                    "value": {
+                      "code": "invalid",
+                      "detail": "Invalid credential type.",
+                      "attribute": "credential_type"
+                    }
+                  },
+                  "exceeded_max_verifications": {
+                    "value": {
+                      "code": "exceeded_max_verifications",
+                      "detail": "This user has exceeded the maximum number of verifications allowed for this proof.",
+                      "attribute": null
+                    }
+                  },
+                  "already_verified": {
+                    "value": {
+                      "code": "already_verified",
+                      "detail": "This person has already verified for this action.",
+                      "attribute": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/minikit/send-notification": {
+      "post": {
+        "summary": "Send Notification",
+        "description": "Send notifications to users of your mini app.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendNotificationRequest"
+              },
+              "example": {
+                "app_id": "app_id",
+                "wallet_addresses": ["0x123", "0x456"],
+                "title": "title",
+                "message": "Hello ${username}, your transaction is complete!",
+                "mini_app_path": "mini_app_path"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Notification send status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SendNotificationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/minikit/transaction/{transaction_id}": {
+      "get": {
+        "summary": "Get Transaction",
+        "description": "Query transactions for their current status.",
+        "parameters": [
+          {
+            "name": "transaction_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The transaction identifier returned by the API"
+          },
+          {
+            "name": "app_id",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Your app ID from the Developer Portal"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "enum": ["pay", "sendTransaction"] },
+            "description": "The `type` is either payment (pay) or transaction (sendTransaction) depending on the command you used."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transaction status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTransactionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/minikit/transaction/debug": {
+      "get": {
+        "summary": "Get Transaction Debug URL",
+        "description": "Debug transactions that failed during the prepare stage. Returns Tenderly URLs when applicable.",
+        "parameters": [
+          {
+            "name": "app_id",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The `app_id` corresponding to the transaction that is being queried."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Debug information list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDebugUrlResponse"
+                },
+                "example": {
+                  "transactions": [
+                    {
+                      "debugUrl": "https://dashboard.tenderly.co/tx/...",
+                      "createdAt": "2024-03-21T10:30:00.000Z",
+                      "block": 12345678,
+                      "simulationRequestId": "sim_abc123def456",
+                      "simulationError": "Permit signature expired",
+                      "walletAddress": "0x1234..."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/public/v1/miniapps/prices": {
+      "get": {
+        "summary": "Get Prices",
+        "description": "Query latest prices of tokens in various fiat currencies.",
+        "servers": [{ "url": "https://app-backend.worldcoin.dev" }],
+        "parameters": [
+          {
+            "name": "fiatCurrencies",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Comma-separated ISO4217 fiat codes, e.g. USD,EUR,JPY"
+          },
+          {
+            "name": "cryptoCurrencies",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Comma-separated crypto codes, e.g. USDC,WLD"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Prices response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetPricesResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/minikit/user-grant-cycle": {
+      "get": {
+        "summary": "Get User Grant Cycle",
+        "description": "Retrieve next grant claim date for a user of your mini app.",
+        "parameters": [
+          {
+            "name": "wallet_address",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string", "minLength": 42, "maxLength": 42 },
+            "description": "The `wallet_address` of the user to query. Must be exactly 42 characters long."
+          },
+          {
+            "name": "app_id",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The `app_id` of your mini app."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Next grant date",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserGrantCycleResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "User not found / app not installed / no active cycles"
+          }
+        }
+      }
+    },
+    "/api/v2/create-action/{app_id}": {
+      "post": {
+        "summary": "Create Incognito Action",
+        "description": "Create an incognito action for your app.",
+        "parameters": [
+          {
+            "name": "app_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateActionRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Action created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateActionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": { "bearerAuth": { "type": "http", "scheme": "bearer" } },
+    "schemas": {
+      "VerifyProofRequest": {
+        "type": "object",
+        "required": [
+          "nullifier_hash",
+          "proof",
+          "merkle_root",
+          "verification_level",
+          "action"
+        ],
+        "properties": {
+          "nullifier_hash": {
+            "type": "string",
+            "description": "The unique user identifier (called the nullifier hash in the ZKP), as provided by IDKit. See [IDKit response](/world-id/reference/idkit#types) for details."
+          },
+          "proof": {
+            "type": "string",
+            "description": "The zero-knowledge proof, as provided by IDKit. See [IDKit response](/world-id/reference/idkit#types) for details."
+          },
+          "merkle_root": {
+            "type": "string",
+            "description": "Part of the ZKP, the hash of the Merkle root that proves membership to the set of credentials. As provided by IDKit. See [IDKit response](/world-id/reference/idkit#types) for details."
+          },
+          "verification_level": {
+            "type": "string",
+            "description": "The verification level, as provided by IDKit. See [IDKit response](/world-id/reference/idkit#types) for details."
+          },
+          "action": {
+            "type": "string",
+            "description": "Same action identifier as passed to IDKit."
+          },
+          "signal_hash": {
+            "type": "string",
+            "description": "The hash of the signal that was used to generate the proof. Defaults to the hash of an empty string."
+          },
+          "max_age": {
+            "type": "integer",
+            "minimum": 3600,
+            "maximum": 604800,
+            "default": 7200,
+            "description": "The maximum age of the root in seconds. This parameter controls how old the Merkle root used in the proof can be. Minimum value is 3600 (1 hour) and maximum value is 604800 (7 days). Defaults to 7200 (2 hours)."
+          }
+        }
+      },
+      "SendNotificationRequest": {
+        "type": "object",
+        "required": [
+          "wallet_addresses",
+          "title",
+          "message",
+          "mini_app_path",
+          "app_id"
+        ],
+        "properties": {
+          "wallet_addresses": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "The `wallet_addresses` is an array of wallet addresses to send the notification to. Users must have opted in to notifications for your app. Max 1000 users per call."
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 30,
+            "description": "The `title` is the title of the notification. It should be 30 characters or less. May contain emojis."
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "The `message` is the message of the notification. It should be 200 characters or less. You can include the special variable `${username}` in your message, which will be replaced with the actual username of the recipient when the notification is delivered."
+          },
+          "mini_app_path": {
+            "type": "string",
+            "description": "The `mini_app_path` is the url encoded path of the mini app where your notification should link to when the user clicks on it. Should be of the format `worldapp://mini-app?app_id=[app_id]&path=[path]` (path is optional)."
+          },
+          "app_id": {
+            "type": "string",
+            "description": "The `app_id` is the identifier of the app initiating the transaction."
+          }
+        }
+      },
+      "SendNotificationResultItem": {
+        "type": "object",
+        "properties": {
+          "walletAddress": { "type": "string" },
+          "sent": { "type": "boolean" },
+          "reason": { "type": "string" }
+        }
+      },
+      "SendNotificationResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SendNotificationResultItem"
+            }
+          }
+        }
+      },
+      "GetTransactionResponse": {
+        "type": "object",
+        "properties": {
+          "reference": {
+            "type": "string",
+            "description": "Your unique reference for the transaction"
+          },
+          "transaction_hash": {
+            "type": "string",
+            "description": "On-chain transaction hash"
+          },
+          "transaction_status": {
+            "type": "string",
+            "enum": ["pending", "mined", "failed"],
+            "description": "Current status of the transaction"
+          },
+          "from": { "type": "string", "description": "Sender address" },
+          "chain": {
+            "type": "string",
+            "description": "Blockchain network name"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp when created"
+          },
+          "token_amount": {
+            "type": "string",
+            "description": "Amount transferred (BigInt with 6 decimals)"
+          },
+          "token": { "type": "string", "description": "Token symbol" },
+          "to": { "type": "string", "description": "Receiver address" },
+          "app_id": { "type": "string", "description": "Your app ID" }
+        }
+      },
+      "GetDebugUrlItem": {
+        "type": "object",
+        "properties": {
+          "debugUrl": {
+            "type": "string",
+            "description": "Tenderly URL for debugging"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp"
+          },
+          "block": { "type": "integer", "description": "Block number" },
+          "simulationRequestId": {
+            "type": "string",
+            "description": "Simulation request ID"
+          },
+          "simulationError": {
+            "type": "string",
+            "description": "Simulation error message if any"
+          },
+          "walletAddress": {
+            "type": "string",
+            "description": "Associated wallet address"
+          }
+        }
+      },
+      "GetDebugUrlResponse": {
+        "type": "object",
+        "properties": {
+          "transactions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/GetDebugUrlItem" }
+          }
+        }
+      },
+      "GetPricesResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "object",
+            "properties": {
+              "prices": {
+                "type": "object",
+                "description": "Nested object keyed by currency codes with price details"
+              }
+            }
+          }
+        }
+      },
+      "UserGrantCycleResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "status": { "type": "integer" },
+          "result": {
+            "type": "object",
+            "properties": {
+              "nextGrantClaimUTCDate": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "CreateActionRequest": {
+        "type": "object",
+        "required": ["action"],
+        "properties": {
+          "action": {
+            "type": "string",
+            "description": "Identifier for the incognito action"
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable name for the action"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description for the action"
+          },
+          "max_verifications": {
+            "type": "integer",
+            "default": 1,
+            "description": "Maximum number of verifications allowed for this action"
+          }
+        }
+      },
+      "CreateActionResponse": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "object",
+            "properties": {
+              "action": {
+                "type": "string",
+                "description": "Action identifier"
+              },
+              "name": { "type": "string", "description": "Action name" },
+              "description": {
+                "type": "string",
+                "description": "Action description"
+              },
+              "max_verifications": {
+                "type": "integer",
+                "description": "Max verifications for the action"
+              },
+              "external_nullifier": {
+                "type": "string",
+                "description": "External nullifier derived from action and app_id"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
