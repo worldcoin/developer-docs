@@ -12,7 +12,12 @@ The following examples demonstrate the most common use case: verifying proofs fr
 This setup is recommended for most users, as it is the most gas-efficient. For more information on use cases that require more complex setups (such as multiple actions or other types of signals), see the [Advanced On-Chain Verification](/world-id/id/on-chain) page.
 
 <Note>
-At the core of the World ID Protocol is the use of [Semaphore](https://docs.semaphore.pse.dev/). Semaphore is a zk-SNARK based privacy protocol that allows for the creation of anonymous credential systems developed by the Ethereum Foundation. Read more about [The Protocol](https://whitepaper.world.org/#world-network-protocol) and [Semaphore](https://docs.semaphore.pse.dev/).
+  At the core of the World ID Protocol is the use of
+  [Semaphore](https://docs.semaphore.pse.dev/). Semaphore is a zk-SNARK based
+  privacy protocol that allows for the creation of anonymous credential systems
+  developed by the Ethereum Foundation. Read more about [The
+  Protocol](https://whitepaper.world.org/#world-network-protocol) and
+  [Semaphore](https://docs.semaphore.pse.dev/).
 </Note>
 
 ## IDKit Configuration
@@ -109,32 +114,36 @@ constructor(
 }
 ```
 
-<Note>On-chain verification will succeed for **7 days** after a proof is created.</Note>
+<Note>
+  On-chain verification will succeed for **7 days** after a proof is created.
+</Note>
 
 ## verifyProof
 
 The `verifyProof` method reverts if the proof is invalid, meaning you can just call it as part of your smart contract's logic and execute the rest of your logic after as usual.
 
 <Warning>
-	Note that calling the `verifyProof` function by itself does not provide sybil-resistance, or prevent proof reuse --
-	it just verifies that the proof is valid. However, this example **does** implement sybil-resistance by checking that
-	the `nullifierHash` has not been verified before.
+  Note that calling the `verifyProof` function by itself does not provide
+  sybil-resistance, or prevent proof reuse -- it just verifies that the proof is
+  valid. However, this example **does** implement sybil-resistance by checking
+  that the `nullifierHash` has not been verified before.
 </Warning>
 
 The `verifyProof` method takes the arguments below.
 
--   `root` - The World ID root to verify against. This is obtained from the IDKit widget, and should be passed as-is.
--   `groupId` - This must be `1` for Orb-verified users. World ID Device is currently not supported on-chain.
--   `signalHash` - The keccak256 hash of the signal to verify.
--   `nullifierHash` - Anonymous user ID for this action. This is obtained from the IDKit widget, and should just be passed as-is.
--   `externalNullifierHash` - The externalNullifierHash, which identifies which app and action the user is verifying for.
--   `proof` - The proof to verify. This is obtained from the IDKit widget.
+- `root` - The World ID root to verify against. This is obtained from the IDKit widget, and should be passed as-is.
+- `groupId` - This must be `1` for Orb-verified users. World ID Device is currently not supported on-chain.
+- `signalHash` - The keccak256 hash of the signal to verify.
+- `nullifierHash` - Anonymous user ID for this action. This is obtained from the IDKit widget, and should just be passed as-is.
+- `externalNullifierHash` - The externalNullifierHash, which identifies which app and action the user is verifying for.
+- `proof` - The proof to verify. This is obtained from the IDKit widget.
 
 ```solidity
 /// @param signal An arbitrary input from the user that cannot be tampered with. In this case, it is the user's wallet address.
 /// @param root The root (returned by the IDKit widget).
 /// @param nullifierHash The nullifier hash for this proof, preventing double signaling (returned by the IDKit widget).
 /// @param proof The zero-knowledge proof that demonstrates the claimer is registered with World ID (returned by the IDKit widget).
+/// @param externalNullifierHash The externalNullifierHash, which identifies which app and action the user is verifying for.
 function verifyAndExecute(
     address signal,
     uint256 root,
@@ -169,12 +178,14 @@ function verifyAndExecute(
 import { decodeAbiParameters } from 'viem'
 
 const unpackedProof = decodeAbiParameters([{ type: 'uint256[8]' }], proof)[0]
-```
+
+````
 
 ```ts ethers.js
 import { defaultAbiCoder as abi } from '@ethers/utils'
 
 const unpackedProof = abi.decode(['uint256[8]'], proof)[0]
-```
+````
+
 </CodeGroup>
 </Note>
