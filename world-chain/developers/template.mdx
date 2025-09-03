@@ -11,10 +11,10 @@ to verify the ZK proofs of personhood.
 
 Before we start, make sure you have the following tools installed:
 
--   [Git](https://git-scm.com/) (usually pre-installed on most systems)
--   [Node.js](https://nodejs.org/en/)
--   [pnpm](https://yarnpkg.com/) (or equivalent like npm, yarn or bun)
--   [Foundry CLI](https://book.getfoundry.sh/)
+- [Git](https://git-scm.com/) (usually pre-installed on most systems)
+- [Node.js](https://nodejs.org/en/)
+- [pnpm](https://yarnpkg.com/) (or equivalent like npm, yarn or bun)
+- [Foundry CLI](https://book.getfoundry.sh/)
 
 ## Clone template
 
@@ -49,72 +49,74 @@ Before we deploy the World ID template app, let's take a look at the smart contr
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import { ByteHasher } from './helpers/ByteHasher.sol';
-import { IWorldID } from './interfaces/IWorldID.sol';
+import { ByteHasher } from "./helpers/ByteHasher.sol";
+import { IWorldID } from "./interfaces/IWorldID.sol";
 
 contract Contract {
-	using ByteHasher for bytes;
+using ByteHasher for bytes;
 
-	///////////////////////////////////////////////////////////////////////////////
-	///                                  ERRORS                                ///
-	//////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+    ///                                  ERRORS                                ///
+    //////////////////////////////////////////////////////////////////////////////
 
-	/// @notice Thrown when attempting to reuse a nullifier
-	error DuplicateNullifier(uint256 nullifierHash);
+    /// @notice Thrown when attempting to reuse a nullifier
+    error DuplicateNullifier(uint256 nullifierHash);
 
-	/// @dev The World ID instance that will be used for verifying proofs
-	IWorldID internal immutable worldId;
+    /// @dev The World ID instance that will be used for verifying proofs
+    IWorldID internal immutable worldId;
 
-	/// @dev The contract's external nullifier hash
-	uint256 internal immutable externalNullifier;
+    /// @dev The contract's external nullifier hash
+    uint256 internal immutable externalNullifier;
 
-	/// @dev The World ID group ID (always 1)
-	uint256 internal immutable groupId = 1;
+    /// @dev The World ID group ID (always 1)
+    uint256 internal immutable groupId = 1;
 
-	/// @dev Whether a nullifier hash has been used already. Used to guarantee an action is only performed once by a single person
-	mapping(uint256 => bool) internal nullifierHashes;
+    /// @dev Whether a nullifier hash has been used already. Used to guarantee an action is only performed once by a single person
+    mapping(uint256 => bool) internal nullifierHashes;
 
-	/// @param nullifierHash The nullifier hash for the verified proof
-	/// @dev A placeholder event that is emitted when a user successfully verifies with World ID
-	event Verified(uint256 nullifierHash);
+    /// @param nullifierHash The nullifier hash for the verified proof
+    /// @dev A placeholder event that is emitted when a user successfully verifies with World ID
+    event Verified(uint256 nullifierHash);
 
-	/// @param _worldId The WorldID router that will verify the proofs
-	/// @param _appId The World ID app ID
-	/// @param _actionId The World ID action ID
-	constructor(IWorldID _worldId, string memory _appId, string memory _actionId) {
-		worldId = _worldId;
-		externalNullifier = abi.encodePacked(abi.encodePacked(_appId).hashToField(), _actionId).hashToField();
-	}
+    /// @param _worldId The WorldID router that will verify the proofs
+    /// @param _appId The World ID app ID
+    /// @param _actionId The World ID action ID
+    constructor(IWorldID _worldId, string memory _appId, string memory _actionId) {
+    	worldId = _worldId;
+    	externalNullifier = abi.encodePacked(abi.encodePacked(_appId).hashToField(), _actionId).hashToField();
+    }
 
-	/// @param signal An arbitrary input from the user, usually the user's wallet address (check README for further details)
-	/// @param root The root of the Merkle tree (returned by the JS widget).
-	/// @param nullifierHash The nullifier hash for this proof, preventing double signaling (returned by the JS widget).
-	/// @param proof The zero-knowledge proof that demonstrates the claimer is registered with World ID (returned by the JS widget).
-	/// @dev Feel free to rename this method however you want! We've used `claim`, `verify` or `execute` in the past.
-	function verifyAndExecute(address signal, uint256 root, uint256 nullifierHash, uint256[8] calldata proof) public {
-		// First, we make sure this person hasn't done this before
-		if (nullifierHashes[nullifierHash]) revert DuplicateNullifier(nullifierHash);
+    /// @param signal An arbitrary input from the user, usually the user's wallet address (check README for further details)
+    /// @param root The root of the Merkle tree (returned by the JS widget).
+    /// @param nullifierHash The nullifier hash for this proof, preventing double signaling (returned by the JS widget).
+    /// @param proof The zero-knowledge proof that demonstrates the claimer is registered with World ID (returned by the JS widget).
+    /// @dev Feel free to rename this method however you want! We've used `claim`, `verify` or `execute` in the past.
+    function verifyAndExecute(address signal, uint256 root, uint256 nullifierHash, uint256[8] calldata proof) public {
+    	// First, we make sure this person hasn't done this before
+    	if (nullifierHashes[nullifierHash]) revert DuplicateNullifier(nullifierHash);
 
-		// We now verify the provided proof is valid and the user is verified by World ID
-		worldId.verifyProof(
-			root,
-			groupId,
-			abi.encodePacked(signal).hashToField(),
-			nullifierHash,
-			externalNullifier,
-			proof
-		);
+    	// We now verify the provided proof is valid and the user is verified by World ID
+    	worldId.verifyProof(
+    		root,
+    		groupId,
+    		abi.encodePacked(signal).hashToField(),
+    		nullifierHash,
+    		externalNullifier,
+    		proof
+    	);
 
-		// We now record the user has done this, so they can't do it again (proof of uniqueness)
-		nullifierHashes[nullifierHash] = true;
+    	// We now record that the user has done this, so they can't do it again (proof of uniqueness)
+    	nullifierHashes[nullifierHash] = true;
 
-		// Finally, execute your logic here, for example issue a token, NFT, etc...
-		// Make sure to emit some kind of event afterwards!
+    	// Finally, execute your logic here, for example issue a token, NFT, etc...
+    	// Make sure to emit some kind of event afterwards!
 
-		emit Verified(nullifierHash);
-	}
+    	emit Verified(nullifierHash);
+    }
+
 }
-```
+
+````
 </CodeGroup>
 
 This contract has all the necessary pieces that any app that wants to integrate World ID proofs of personhood will require.
@@ -124,7 +126,7 @@ But we will go over the main parts of the contract here:
 1. The `Contract` contract is the main contract that will be deployed to World Chain Sepolia. It has a constructor that
    takes the `IWorldID` interface, the app ID and the action ID as parameters. The `IWorldID` interface is the World ID router
    that will verify the proofs, the app ID is the ID of the app can be created by the developer using the
-   [World ID Developer Portal](https://developer.worldcoin.org/login) and and the action ID is the ID of the action that the user
+   [World ID Developer Portal](https://developer.worldcoin.org/login) and that the action ID is the ID of the action that the user
    is performing which will be generated automatically by the [IDKit SDK](https://docs.worldcoin.org/reference/idkit) and derived
    from `action` string defined in the Developer Portal.
 2. The [`nullifierHashes` mapping](https://docs.worldcoin.org/reference/contracts#sybil-resistance) is used to keep track of
@@ -155,13 +157,13 @@ First, we will fork the World Chain Sepolia network using anvil:
 ```bash
 # Substitute the RPC_URL with the RPC URL of the World Chain Sepolia network
 anvil -f $RPC_URL
-```
+````
 
-We need to also set three important environment variables that are required for the deployment of the World ID template app:
+We also need to set three important environment variables that are required for the deployment of the World ID template app:
 
--   `WORLD_ID_ROUTER`: The address of the World ID router contract that will verify the proofs (can be found in the [World ID documentation](https://docs.worldcoin.org/world-chain/reference/useful-contracts))
--   `NEXT_PUBLIC_APP_ID`: The app ID that was generated in the [Developer Portal](https://developer.worldcoin.org/login)
--   `NEXT_PUBLIC_ACTION`: The action ID as configured in the [Developer Portal](https://developer.worldcoin.org/login)
+- `WORLD_ID_ROUTER`: The address of the World ID router contract that will verify the proofs (can be found in the [World ID documentation](https://docs.worldcoin.org/world-chain/reference/useful-contracts))
+- `NEXT_PUBLIC_APP_ID`: The app ID that was generated in the [Developer Portal](https://developer.worldcoin.org/login)
+- `NEXT_PUBLIC_ACTION`: The action ID as configured in the [Developer Portal](https://developer.worldcoin.org/login)
 
 Once the fork is running, you can deploy the World ID template app to the World Chain Sepolia network using the Foundry CLI:
 
@@ -177,10 +179,10 @@ This command will deploy the `Contract` contract to the World Chain Sepolia netw
 
 Set up your environment variables in the `.env` file. You will need to set the following variables:
 
--   `NEXT_PUBLIC_APP_ID`: The app ID as configured in the [Worldcoin Developer Portal](https://developer.worldcoin.org).
--   `NEXT_PUBLIC_ACTION`: The action ID as configured in the Worldcoin Developer Portal.
--   `NEXT_PUBLIC_WALLETCONNECT_ID`: Your WalletConnect ID.
--   `NEXT_PUBLIC_CONTRACT_ADDRESS`: The address of the contract deployed in the previous step.
+- `NEXT_PUBLIC_APP_ID`: The app ID as configured in the [Worldcoin Developer Portal](https://developer.worldcoin.org).
+- `NEXT_PUBLIC_ACTION`: The action ID as configured in the Worldcoin Developer Portal.
+- `NEXT_PUBLIC_WALLETCONNECT_ID`: Your WalletConnect ID.
+- `NEXT_PUBLIC_CONTRACT_ADDRESS`: The address of the contract deployed in the previous step.
 
 Back in the root directory of the World ID template app, you can start the local web server:
 
@@ -194,16 +196,17 @@ The Contract ABI will be automatically re-generated and saved to `src/abi/Contra
 
 After making changes to the contract, you should:
 
--   re-run the `forge create` command from above
--   replace the `NEXT_PUBLIC_CONTRACT_ADDRESS` environment variable with the new contract address
--   if your contract ABI has changed, restart the local web server
+- re-run the `forge create` command from above
+- replace the `NEXT_PUBLIC_CONTRACT_ADDRESS` environment variable with the new contract address
+- if your contract ABI has changed, restart the local web server
 
 ## Testing
 
 You'll need to import the private keys on the local testnet into your wallet used for local development. The default development seed phrase is `test test test test test test test test test test test junk`.
 
-<Note> 
-This is only for local development. Do not use this seed phrase on mainnet or any public testnet. 
+<Note>
+  This is only for local development. Do not use this seed phrase on mainnet or
+  any public testnet.
 </Note>
 
 When connecting your wallet to the local development environment, you will be prompted to add the network to your wallet.

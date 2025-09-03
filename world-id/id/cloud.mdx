@@ -9,9 +9,9 @@ After receiving the user's proof from IDKit, you must verify it in your backend.
 In you backend you need to hash the signal passed in the IDKit. If you want to implement the hashing yourself you need to use `keccak256` hash function and 64 minimum padding. Take a look at how we implemented it [here](https://github.com/worldcoin/idkit-js/blob/main/packages/core/src/lib/hashing.ts).
 
 ```javascript title="IDKit Core"
-import { hashToField } from '@worldcoin/idkit-core/hashing'
+import { hashToField } from "@worldcoin/idkit-core/hashing";
 
-const signalHash = hashToField('my_signal')
+const signalHash = hashToField("my_signal");
 ```
 
 ## Rest Endpoint
@@ -27,6 +27,6 @@ curl -X POST "/api/v2/verify/{app_id}" \
         "proof": "0x1aa8b8f3b2d2de5ff452c0e1a83e29d6bf46fb83ef35dc5957121ff3d3698a1119090fb...",
         "verification_level": "orb",
         "action": "my_action",
-        "signal_hash": "hashed_signal" // optional: only add this paramater if you added a custom signal
+        "signal_hash": "hashed_signal" // optional: only add this parameter if you added a custom signal
     }'
 ```

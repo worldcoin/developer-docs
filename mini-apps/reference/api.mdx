@@ -28,9 +28,24 @@ Below content was removed to avoid duplication. Use the endpoint pages in the si
   https://developer.worldcoin.org/api/v2/minikit/send-notification
 </ParamField>
 
-This endpoint lets you send notifications to users of your mini app and requires an `api_key`.
+This endpoint lets you send localized notifications to users of your mini app and requires an `api_key`.
+
+### How do localizations work?
+
+The user's language is available to you when they access your mini app
+(via [Navigator](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/language)).
+
+All you need to do is provide localizations. Our backend will automatically infer which language is preferred by the user.
+Currently we support only a subset of languages, with plans to expand. Find the entire list [here](/mini-apps/reference/api#supported-languages).
+You can only specify languages that we support.
+
+- If a user prefers a language that we don't currently support, we will deliver the notification in English.
+- If you don't specify a localization for the user's preferred language, the notification will not be delivered.
+  The response will include a specific `reason` to inform you of this.
 
 ### Body Params
+
+You are required to either specify both `title` and `message` OR `localisations`.
 
 <ParamField body="wallet_addresses" type="string[]" required>
   The `wallet_addresses` is an array of wallet addresses to send the
@@ -130,6 +145,27 @@ fetch(apiUrl, {
 }
 ```
 </CodeGroup>
+
+### Supported Languages
+
+| Language                     | Code     |
+| ---------------------------- | -------- |
+| English                      | `en`     |
+| Catalan                      | `ca`     |
+| Chinese Simplified           | `zh_CN`  |
+| French                       | `fr`     |
+| German                       | `de`     |
+| Hindi                        | `hi`     |
+| Indonesian                   | `id`     |
+| Japanese                     | `ja`     |
+| Korean                       | `ko`     |
+| Malay                        | `ms`     |
+| Polish                       | `pl`     |
+| Portuguese                   | `pt`     |
+| Spanish                      | `es`     |
+| Spanish (Latin America)      | `es_419` |
+| Thai                         | `th`     |
+| Traditional Chinese (Taiwan) | `zh_TW`  |
 
 ---
 
