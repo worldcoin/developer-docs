@@ -37,10 +37,6 @@
             ]
           },
           {
-            "group": "Authentication",
-            "pages": ["mini-apps/authentication/wallet-auth"]
-          },
-          {
             "group": "Commands",
             "pages": [
               "mini-apps/commands/verify",
@@ -52,15 +48,19 @@
               "mini-apps/commands/share-contacts",
               "mini-apps/commands/request-permission",
               "mini-apps/commands/get-permissions",
+              "mini-apps/commands/how-to-send-notifications",
               "mini-apps/commands/send-haptic-feedback",
               "mini-apps/commands/share"
             ]
           },
           {
-            "group": "Notifications",
+            "group": "Guidelines",
             "pages": [
-              "mini-apps/notifications/features-and-guidelines",
-              "mini-apps/notifications/how-to-send-notifications"
+              "mini-apps/guidelines/app-guidelines",
+              "mini-apps/guidelines/design-guidelines",
+              "mini-apps/guidelines/policy",
+              "mini-apps/guidelines/smart-contract-development-guidelines",
+              "mini-apps/guidelines/features-and-guidelines"
             ]
           },
           {
@@ -95,24 +95,16 @@
             ]
           },
           {
-            "group": "Design Standards",
-            "pages": [
-              "mini-apps/design/app-guidelines",
-              "mini-apps/design/ui-kit"
-            ]
-          },
-          {
             "group": "Quick Actions",
             "pages": [
               "mini-apps/sharing/quick-actions",
               "mini-apps/sharing/add-money-qa",
               "mini-apps/sharing/uno-qa",
-              "mini-apps/sharing/eggs-vault-qa",
+              "mini-apps/sharing/holdstation-buy-qa",
               "mini-apps/sharing/earn-wld-qa",
               "mini-apps/sharing/dna-qa",
               "mini-apps/sharing/sage-qa",
               "mini-apps/sharing/vuni-qa",
-              "mini-apps/sharing/world-chat-qa",
               "mini-apps/sharing/world-companies-finder-qa",
               "mini-apps/sharing/one-pay-qa",
               "mini-apps/sharing/puf-qa",
@@ -122,14 +114,8 @@
           {
             "group": "Further Reading",
             "pages": [
-              "mini-apps/more/security",
-              "mini-apps/more/policy",
-              "mini-apps/more/promotion",
-              "mini-apps/more/grants",
-              "mini-apps/more/developer-rewards-pilot",
-              "mini-apps/more/troubleshooting",
-              "mini-apps/more/webview-spec",
               "mini-apps/more/releases",
+              "mini-apps/more/webview-spec",
               "mini-apps/more/community-tools-perks",
               "mini-apps/more/faq"
             ]
@@ -311,7 +297,7 @@
     },
     {
       "source": "/mini-apps/virality/virality",
-      "destination": "/mini-apps/virality/sharing"
+      "destination": "/mini-apps/growth"
     },
     { "source": "/test", "destination": "/quick-start" },
     { "source": "/simulator", "destination": "/world-id/quick-start/testing" },
@@ -414,43 +400,43 @@
     { "source": "/try", "destination": "/world-id/try" },
     {
       "source": "/use-cases",
-      "destination": "/mini-apps/design/app-guidelines#inspiration"
+      "destination": "/mini-apps/guidelines/app-guidelines"
     },
     {
       "source": "/use-cases/customer-incentives",
-      "destination": "/mini-apps/design/app-guidelines#inspiration"
+      "destination": "/mini-apps/guidelines/app-guidelines"
     },
     {
       "source": "/use-cases/defi-and-fintech",
-      "destination": "/mini-apps/design/app-guidelines#inspiration"
+      "destination": "/mini-apps/guidelines/app-guidelines"
     },
     {
       "source": "/use-cases/events",
-      "destination": "/mini-apps/design/app-guidelines#inspiration"
+      "destination": "/mini-apps/guidelines/app-guidelines"
     },
     {
       "source": "/use-cases/marketplaces",
-      "destination": "/mini-apps/design/app-guidelines#inspiration"
+      "destination": "/mini-apps/guidelines/app-guidelines"
     },
     {
       "source": "/use-cases/nfts",
-      "destination": "/mini-apps/design/app-guidelines#inspiration"
+      "destination": "/mini-apps/guidelines/app-guidelines"
     },
     {
       "source": "/use-cases/social-media",
-      "destination": "/mini-apps/design/app-guidelines#inspiration"
+      "destination": "/mini-apps/guidelines/app-guidelines"
     },
     {
       "source": "/use-cases/token-airdrops",
-      "destination": "/mini-apps/design/app-guidelines#inspiration"
+      "destination": "/mini-apps/guidelines/app-guidelines"
     },
     {
       "source": "/use-cases/voting",
-      "destination": "/mini-apps/design/app-guidelines#inspiration"
+      "destination": "/mini-apps/guidelines/app-guidelines"
     },
     {
       "source": "/use-cases/wealth-distribution",
-      "destination": "/mini-apps/design/app-guidelines#inspiration"
+      "destination": "/mini-apps/guidelines/app-guidelines"
     },
     {
       "source": "/world-id/id/incognito-actions",
@@ -485,6 +471,10 @@
     {
       "source": "/mini-apps/virality/sharing",
       "destination": "/mini-apps/growth"
+    },
+    {
+      "source": "/mini-apps/design/app-guidelines",
+      "destination": "/mini-apps/guidelines/app-guidelines"
     }
   ]
 }
