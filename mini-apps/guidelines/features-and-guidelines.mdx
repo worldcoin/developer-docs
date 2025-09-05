@@ -1,5 +1,5 @@
 ---
-title: "Features & Guidelines"
+title: "Notification Guidelines"
 ---
 
 ## Guidelines
@@ -24,8 +24,13 @@ curl -X POST "https://developer.worldcoin.org/api/v2/minikit/send-notification" 
     -d '{
           "app_id": "app_id", 
           "wallet_addresses": ["0x123", "0x456"], 
-          "title": "title", 
-          "message": "🧑‍🍳 We're cooking something special for you ${username}", 
+          "localisations": [
+            {
+              "language": "en",
+              "title": "title",
+              "message": "🧑‍🍳 We're cooking something special for you ${username}"
+            }
+          ],
           "mini_app_path": "worldapp://mini-app?app_id=[app_id]&path=[path]"
         }'
 ```
@@ -57,6 +62,16 @@ Notification badges increase your miniapp's visibility on the home screen, leadi
 </div>
 </div>
 
+## Notification Quality Enforcement
+
+Given that notifications can be disruptive and reflect negatively on the entire miniapp ecosystem,
+we enforce additional rules based on open rates. If your miniapp's notification permissions are enabled,
+we evaluate your notification open rates weekly (from May 5th 2025 on).
+
+If your miniapp's 7 day rolling average is less than 10%, we will pause any further notifications for a week.
+This is a signal for you to rethink your strategy. After the pause, your permissions will be resumed,
+and up for reevaluation the following week.
+
 ## Open Rate Goal
 
 An excellent goal to aim for is a 25% open rate. This % means your notifications drive strong traffic to the miniapp.
@@ -72,7 +87,7 @@ Examples:
 
 ## Useful links
 
-- [How To Send Notifications](/mini-apps/notifications/how-to-send-notifications)
+- [How To Send Notifications](/mini-apps/commands/how-to-send-notifications)
 - [How To Request Notification Permissions](/mini-apps/commands/request-permission)
 - [How To Get Notification Permissions](/mini-apps/commands/get-permissions)
 - [Send Notification API Reference](/mini-apps/reference/api#send-notification)
