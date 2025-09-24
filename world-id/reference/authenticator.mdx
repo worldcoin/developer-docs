@@ -1,0 +1,102 @@
+---
+title: "Authenticator Reference"
+---
+
+## Authenticator Requests
+
+The authenticator receives a request from an RP in the following format.
+
+<ParamField body="id" type="string" required>
+  A unique identifier for this request.
+</ParamField>
+
+<ParamField body="version" type="number" required>
+  The version of the request. Must equal to `1`.
+</ParamField>
+
+<ParamField body="created_at" type="string">
+  The date and time the request was created.
+</ParamField>
+
+<ParamField body="expires_at" type="string" required>
+  The date and time the request will expire.
+</ParamField>
+
+<ParamField body="app_id" type="string" required>
+  The ID of the app requesting the proof.
+</ParamField>
+
+<ParamField body="action" type="string">
+  The action being performed. While not required, it is recommended as actions can only be performed once.
+</ParamField>
+
+<ParamField body="requests" type="array" required>
+ The credentials being requested for verification.
+ - `type` (required): The type of credential being requested.
+ - `signal`: An optional commitment which the user signs.
+</ParamField>
+
+```json
+{
+  "id": "req_18c0f7f03e7d",
+  "version": 1,
+  "created_at": "2025-09-03T17:33:12Z",
+  "expires_at": "2025-09-03T17:38:12Z",
+  "app_id": "app_123", // TODO: Confirm abstraction (vs. rpId) & match contract/dev portal
+  "action": "claim_promotion_1", // TODO: String or pre-defined
+  "requests": [
+    {
+        "type": "gov-id",
+        "signal": "abcd-efgh-ijkl",
+    },
+    {
+        "type": "orb",
+	    "signal": "abcd-efgh-ijkl"
+    }
+  ]
+}
+```
+
+### Response Examples
+
+<Tabs>
+  <Tab title="Success (OK)">
+    ```json
+    {
+    "id": "req_18c0f7f03e7d",
+    "version": 1,
+    "responses": [
+        {
+            "type": "orb",
+            "issuer": "https://issuer.world.org", // TODO: Define issuer or implicit from type
+            "success": true,
+            "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
+            "nullifier": "nil_00000000000000000000000000000000000000000000000001"
+        },
+        {
+            "id": "gov-id",
+            "success": false,
+        }
+    ]
+    }
+    ```
+  </Tab>
+   <Tab title="Success with Reverification (OK)">
+    ```json
+    {
+    "id": "req_18c0f7f03e7d",
+    "version": 1,
+    "responses": [
+        {
+            "type": "orb",
+            "issuer": "https://issuer.world.org", // TODO: Define issuer or implicit from type
+            "success": true,
+            "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
+            "nullifier": "nil_00000000000000000000000000000000000000000000000001",
+            "psub": "psub_00000000000000000000000000000000000000000000000002"
+        }
+    ]
+    }
+    ```
+  </Tab>
+</Tabs>
