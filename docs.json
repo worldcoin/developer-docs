@@ -15,7 +15,9 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": ["index"]
+            "pages": [
+              "index"
+            ]
           }
         ]
       },
@@ -24,7 +26,9 @@
         "groups": [
           {
             "group": "Introduction",
-            "pages": ["mini-apps/index"]
+            "pages": [
+              "mini-apps/index"
+            ]
           },
           {
             "group": "Quick Start",
@@ -126,7 +130,9 @@
         "groups": [
           {
             "group": "Introduction",
-            "pages": ["world-id/index", "world-id/concepts"]
+            "pages": [
+              "world-id/concepts"
+            ]
           },
           {
             "group": "ID Kit",
@@ -146,7 +152,6 @@
           {
             "group": "Sign in with World ID",
             "pages": [
-              "world-id/sign-in/getting-started",
               "world-id/sign-in/oidc"
             ]
           },
@@ -224,7 +229,9 @@
           },
           {
             "group": "Further Reading",
-            "pages": ["world-chain/resources"]
+            "pages": [
+              "world-chain/resources"
+            ]
           }
         ]
       }
@@ -281,15 +288,30 @@
     ]
   },
   "redirects": [
-    { "source": "/apps", "destination": "https://world.org/apps" },
+    {
+      "source": "/apps",
+      "destination": "https://world.org/apps"
+    },
     {
       "source": "/world-id-2",
       "destination": "https://world.org/blog/announcements/introducing-world-id-2.0"
     },
-    { "source": "/idkit", "destination": "/world-id/cloud" },
-    { "source": "/js", "destination": "/world-id/cloud" },
-    { "source": "/id", "destination": "/world-id" },
-    { "source": "/id/sign-in", "destination": "/world-id/id/sign-in" },
+    {
+      "source": "/idkit",
+      "destination": "/world-id/cloud"
+    },
+    {
+      "source": "/js",
+      "destination": "/world-id/cloud"
+    },
+    {
+      "source": "/id",
+      "destination": "/world-id"
+    },
+    {
+      "source": "/id/sign-in",
+      "destination": "/world-id/id/sign-in"
+    },
     {
       "source": "/protocol",
       "destination": "https://whitepaper.world.org/#protocol"
@@ -298,8 +320,14 @@
       "source": "/mini-apps/virality/virality",
       "destination": "/mini-apps/growth"
     },
-    { "source": "/test", "destination": "/quick-start" },
-    { "source": "/simulator", "destination": "/world-id/quick-start/testing" },
+    {
+      "source": "/test",
+      "destination": "/quick-start"
+    },
+    {
+      "source": "/simulator",
+      "destination": "/world-id/quick-start/testing"
+    },
     {
       "source": "/privacy",
       "destination": "https://whitepaper.world.org/technical-implementation#privacy"
@@ -312,14 +340,26 @@
       "source": "/id/anonymous-actions",
       "destination": "/world-id/id/incognito-actions"
     },
-    { "source": "/quick-start", "destination": "/world-chain/quick-start" },
-    { "source": "/id/incognito-actions", "destination": "/world-id/id/cloud" },
-    { "source": "/id/idkit", "destination": "/world-id/reference/idkit" },
+    {
+      "source": "/quick-start",
+      "destination": "/world-chain/quick-start"
+    },
+    {
+      "source": "/id/incognito-actions",
+      "destination": "/world-id/id/cloud"
+    },
+    {
+      "source": "/id/idkit",
+      "destination": "/world-id/reference/idkit"
+    },
     {
       "source": "/apps/discord",
       "destination": "https://discord.com/invite/worldnetwork"
     },
-    { "source": "/api-docs", "destination": "/world-id/reference/api" },
+    {
+      "source": "/api-docs",
+      "destination": "/world-id/reference/api"
+    },
     {
       "source": "/advanced/zero-knowledge-proofs",
       "destination": "/world-id/further-reading/zero-knowledge-proofs"
@@ -328,8 +368,14 @@
       "source": "/advanced/privacy",
       "destination": "https://vault.pactsafe.io/s/8a18d792-fd76-44db-9b92-b0bb7981c248/legal.html#contract-s1ytru6kk"
     },
-    { "source": "/advanced/on-chain", "destination": "/world-id/id/on-chain" },
-    { "source": "/about/glossary", "destination": "/world-id/concepts" },
+    {
+      "source": "/advanced/on-chain",
+      "destination": "/world-id/id/on-chain"
+    },
+    {
+      "source": "/about/glossary",
+      "destination": "/world-id/concepts"
+    },
     {
       "source": "/world-chain/providers/worldchain-mainnet.explorer.alchemy.com",
       "destination": "/world-chain/providers/explorers"
@@ -342,7 +388,10 @@
       "source": "/world-id/idkit/reference",
       "destination": "/world-id/reference/idkit"
     },
-    { "source": "/concepts", "destination": "/world-id/concepts" },
+    {
+      "source": "/concepts",
+      "destination": "/world-id/concepts"
+    },
     {
       "source": "/further-reading/protocol-internals",
       "destination": "/world-id/further-reading/protocol-internals"
@@ -355,9 +404,18 @@
       "source": "/further-reading/zero-knowledge-proofs",
       "destination": "/world-id/further-reading/zero-knowledge-proofs"
     },
-    { "source": "/id/cloud", "destination": "/world-id/id/cloud" },
-    { "source": "/id/libraries", "destination": "/world-id/id/libraries" },
-    { "source": "/id/on-chain", "destination": "/world-id/id/on-chain" },
+    {
+      "source": "/id/cloud",
+      "destination": "/world-id/id/cloud"
+    },
+    {
+      "source": "/id/libraries",
+      "destination": "/world-id/id/libraries"
+    },
+    {
+      "source": "/id/on-chain",
+      "destination": "/world-id/id/on-chain"
+    },
     {
       "source": "/idkit/reference",
       "destination": "/world-id/reference/idkit"
@@ -374,7 +432,10 @@
       "source": "/reference/address-book",
       "destination": "/world-id/reference/address-book"
     },
-    { "source": "/reference/api", "destination": "/world-id/reference/api" },
+    {
+      "source": "/reference/api",
+      "destination": "/world-id/reference/api"
+    },
     {
       "source": "/reference/contracts",
       "destination": "/world-id/reference/contracts"
@@ -395,8 +456,14 @@
       "source": "/reference/world-id-2-migration-guide",
       "destination": "/world-id/reference/world-id-2-migration-guide"
     },
-    { "source": "/sign-in", "destination": "/world-id" },
-    { "source": "/try", "destination": "/world-id/try" },
+    {
+      "source": "/sign-in",
+      "destination": "/world-id"
+    },
+    {
+      "source": "/try",
+      "destination": "/world-id/try"
+    },
     {
       "source": "/use-cases",
       "destination": "/mini-apps/guidelines/app-guidelines"
@@ -441,8 +508,14 @@
       "source": "/world-id/id/incognito-actions",
       "destination": "/world-id/id/cloud"
     },
-    { "source": "/world-id/id/sign-in", "destination": "/world-id" },
-    { "source": "/world-id/sign-in", "destination": "/world-id" },
+    {
+      "source": "/world-id/id/sign-in",
+      "destination": "/world-id"
+    },
+    {
+      "source": "/world-id/sign-in",
+      "destination": "/world-id"
+    },
     {
       "source": "/world-id/sign-in/pitfalls",
       "destination": "/world-id/id/pitfalls"
