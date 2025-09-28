@@ -6,27 +6,29 @@ title: "Getting Started"
 
 ## Quick Start
 
-The fastest way to get started is by using our template next-15 repository.
+The fastest way to get started is by using our template next-15 repository.\
 Run the following command and follow the instructions to create a new mini app. For cleanliness we recommend using `pnpm` as your package manager.
+
+If you scan the QR code to open your mini app and nothing happens make sure you've properly configured the allowed countries settings in the Developer Portal > Configuration > Mini App Store 
 
 ```bash
 npx @worldcoin/create-mini-app@latest my-first-mini-app
 ```
 
-<div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-  <img
-    src="/images/docs/mini-apps/quick-start/template.png"
-    alt="Template"
-    className="m-auto block img-miniapps-template"
-    width="220"
-    style={{
-      borderRadius: "12px",
-      boxShadow: "0 2px 10px rgba(0,0,0,0.06)",
-    }}
-  />
-  <p style={{ fontStyle: "italic", marginTop: "0.5rem" }}>
-    Correctly running template should look like this
-  </p>
+<div style={{ display:"flex",flexDirection:"column",alignItems:"center" }}>
+<img
+  src="/images/docs/mini-apps/quick-start/template.png"
+  alt="Template"
+  className="m-auto block img-miniapps-template"
+  width="220"
+  style={{ borderRadius:"12px",boxShadow:"0 2px 10px rgba(0,0,0,0.06)" }}
+/>
+
+<p style={{ fontStyle:"italic",marginTop:"0.5rem" }}>
+Correctly running template should look like this
+
+</p>
+
 </div>
 
 ## Manual Installation
@@ -40,6 +42,7 @@ npx @worldcoin/create-mini-app@latest my-first-mini-app
 ```bash minikit-js
 pnpm install @worldcoin/minikit-js
 ```
+
 
 ```bash minikit-react
 pnpm install @worldcoin/minikit-react
@@ -89,10 +92,6 @@ export default async function Root({
 console.log(MiniKit.isInstalled());
 ```
 
-## Build with AI
-
-We have generated a [llms-full.txt](https://docs.world.org/llms-full.txt) file that converts all our documentation into a single markdown document following the https://llmstxt.org/ standard.
-
 ## Template Repositories
 
 The following template repositories are also available:
@@ -106,3 +105,7 @@ Otherwise, continue below with the installation instructions.
 <Note>
   Watch a video tutorial [here](https://www.youtube.com/watch?v=QJ0htHP6lb0).
 </Note>
+
+## Build with AI
+
+We have generated a [llms-full.txt](https://docs.world.org/llms-full.txt) file that converts all our documentation into a single markdown document following the https://llmstxt.org/ standard.
