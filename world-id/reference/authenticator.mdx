@@ -81,7 +81,7 @@ The authenticator receives a request from an RP in the following format.
 <ParamField body="constraints" type="object">
   Boolean expression over credential types. 
   - Use one of `all` or `any` at each level.
-  - Values are arrays of credential `type` strings and/or nested constraint objects.
+  - Values are arrays of credential `type` strings and/or nested constraint objects, with at most one level of nesting.
 </ParamField>
 
 ### Request Examples
