@@ -2,7 +2,43 @@
 title: "Authenticator Reference"
 ---
 
+import { AuthenticatorSDK, UniquenessProof, RpRegistry, Nullifier } from "/snippets/terms.mdx"
+
+## Action Encoding & Hashing
+
+Actions scope <UniquenessProof />s. When requesting these proofs, the user will prove they have only performed that specific action, for that specific RP and app once. Ultimately this is reflected with the computation of the <Nullifier /> which takes the `rp_id`, `app_id`, and `action` information as inputs (as well as a user-specific input not relevant here).
+
+<Note>Each different action will result in a different <Nullifier />.</Note>
+
+Authenticators expect a pre-encoded action to be able to process requests. ID Kit already does this in the background, but for reference, this is how the action is encoded.
+
+```rust
+    #[serde(Serialize, Deserialize)]
+    struct WorldIdAction {
+        /// The timestamp when the action will expire
+        expires_at: u64,
+        /// Arbitrary data to be included. Typically this would be a string value, which simply gets UTF-8 encoded.
+        data: Vec<u8>,
+        /// Description shown to the user when they are prompted to perform the action
+        description: String,
+    }
+
+    impl WorldIdAction {
+        pub fn encode(&self) -> String {
+            let encoded_bytes = serde_json::to_vec(self).unwrap();
+            let encoded_bytes = STANDARD.encode(&json_bytes);
+            format!("act_{}", encoded_bytes)
+        }
+    }
+```
+
+The authenticator uses the encoded action to:
+- Display the description to the user.
+- Compute the hash of the action and use it in the proof (by removing the `act_` prefix and using the base 64 decoded bytes as the input).
+
 ## Authenticator Requests
+
+This section describes how authenticators receive and respond to requests from RPs. This also reflects what is implemented in the <AuthenticatorSDK />.
 
 The authenticator receives a request from an RP in the following format.
 
@@ -22,12 +58,16 @@ The authenticator receives a request from an RP in the following format.
   The date and time the request will expire.
 </ParamField>
 
-<ParamField body="app_id" type="string" required>
-  The ID of the app requesting the proof.
+<ParamField body="rp_id" type="string" required>
+  The ID of the RP requesting the proof. Must be registered in the <RpRegistry />.
 </ParamField>
 
-<ParamField body="action" type="string">
-  The action being performed. While not required, it is recommended as actions can only be performed once.
+<ParamField body="app_id" type="string" required>
+  The ID for the app requesting the proof.
+</ParamField>
+
+<ParamField body="encoded_action" type="string" required>
+  The action being performed. See [Action Encoding & Hashing](#action-encoding-hashing) for more details.
 </ParamField>
 
 <ParamField body="requests" type="array" required>
@@ -42,16 +82,18 @@ The authenticator receives a request from an RP in the following format.
   "version": 1,
   "created_at": "2025-09-03T17:33:12Z",
   "expires_at": "2025-09-03T17:38:12Z",
-  "app_id": "app_123", // TODO: Confirm abstraction (vs. rpId) & match contract/dev portal
-  "action": "claim_promotion_1", // TODO: String or pre-defined
-  "requests": [
+  "rp_id": "rp_0000000000000000000000000000000000001",
+  "app_id": "app_123",
+  "encoded_action": "act_0000000000000000000000000000000000001",
+  "requests": [ // TODO: group operators
     {
-        "type": "gov-id",
-        "signal": "abcd-efgh-ijkl",
+      "type": "gov-id",
+      "signal": "abcd-efgh-ijkl"
     },
     {
-        "type": "orb",
-	    "signal": "abcd-efgh-ijkl"
+      "type": "orb",
+	    "signal": "abcd-efgh-ijkl",
+      // Include Verification Proof
     }
   ]
 }
@@ -81,7 +123,7 @@ The authenticator receives a request from an RP in the following format.
     }
     ```
   </Tab>
-   <Tab title="Success with Reverification (OK)">
+   <Tab title="Success with Session (OK)">
     ```json
     {
     "id": "req_18c0f7f03e7d",
@@ -93,7 +135,7 @@ The authenticator receives a request from an RP in the following format.
             "success": true,
             "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
             "nullifier": "nil_00000000000000000000000000000000000000000000000001",
-            "psub": "psub_00000000000000000000000000000000000000000000000002"
+            "session_id": "psub_0fff0000000000000000000000000000000000000000000002"
         }
     ]
     }
