@@ -36,11 +36,13 @@ The authenticator uses the encoded action to:
 - Display the description to the user.
 - Compute the hash of the action and use it in the proof (by removing the `act_` prefix and using the base 64 decoded bytes as the input).
 
-## Authenticator Requests
+## Authenticator Requests & Responses
 
 This section describes how authenticators receive and respond to requests from RPs. This also reflects what is implemented in the <AuthenticatorSDK />.
 
 The authenticator receives a request from an RP in the following format.
+
+### Request Schema
 
 <ParamField body="id" type="string" required>
   A unique identifier for this request.
@@ -76,6 +78,16 @@ The authenticator receives a request from an RP in the following format.
  - `signal`: An optional commitment which the user signs.
 </ParamField>
 
+<ParamField body="constraints" type="object">
+  Boolean expression over credential types. 
+  - Use one of `all` or `any` at each level.
+  - Values are arrays of credential `type` strings and/or nested constraint objects.
+</ParamField>
+
+### Request Examples
+
+<Tabs>
+    <Tab title="Single Credential">
 ```json
 {
   "id": "req_18c0f7f03e7d",
@@ -85,19 +97,102 @@ The authenticator receives a request from an RP in the following format.
   "rp_id": "rp_0000000000000000000000000000000000001",
   "app_id": "app_123",
   "encoded_action": "act_0000000000000000000000000000000000001",
-  "requests": [ // TODO: group operators
+  "requests": [
+    {
+      "type": "gov-id",
+      "signal": "abcd-efgh-ijkl"
+    }
+  ]
+}
+```
+  </Tab>
+  <Tab title="Multiple Credentials">
+    ```json
+{
+  "id": "req_18c0f7f03e7d",
+  "version": 1,
+  "created_at": "2025-09-03T17:33:12Z",
+  "expires_at": "2025-09-03T17:38:12Z",
+  "rp_id": "rp_0000000000000000000000000000000000001",
+  "app_id": "app_123",
+  "encoded_action": "act_0000000000000000000000000000000000001",
+  "requests": [
     {
       "type": "gov-id",
       "signal": "abcd-efgh-ijkl"
     },
     {
       "type": "orb",
-	    "signal": "abcd-efgh-ijkl",
+      "signal": "abcd-efgh-ijkl",
       // Include Verification Proof
     }
-  ]
+  ],
+  "constraints": {
+    "all": ["gov-id", "orb"]
+  }
+  // alternatively { "any": ["gov-id", "orb"] }
 }
 ```
+  </Tab>
+  <Tab title="More Complex Constraints">
+    ```json
+{
+  "id": "req_18c0f7f03e7d",
+  "version": 1,
+  "created_at": "2025-09-03T17:33:12Z",
+  "expires_at": "2025-09-03T17:38:12Z",
+  "rp_id": "rp_0000000000000000000000000000000000001",
+  "app_id": "app_123",
+  "encoded_action": "act_0000000000000000000000000000000000001",
+  "requests": [
+    {
+      "type": "passport",
+      "signal": "abcd-efgh-ijkl"
+    },
+    {
+      "type": "my-number-card",
+      "signal": "mnop-qrst-uvwx"
+    },
+    {
+      "type": "orb",
+      "signal": "abcd-efgh-ijkl",
+      // Include Verification Proof
+    }
+  ],
+  "constraints": {
+    "all": [
+      "orb",
+      { "any": ["passport", "my-number-card"] }
+    ]
+  }
+}
+    ```
+  </Tab>
+</Tabs>
+
+### Response Schema
+
+<ParamField body="id" type="string" required>
+  The request identifier this response corresponds to.
+</ParamField>
+
+<ParamField body="version" type="number" required>
+  The response version. Must equal to `1`.
+</ParamField>
+
+<ParamField body="responses" type="array" required>
+  Per-credential results. Each item contains:
+  - `type` (string, required): Credential type this item refers to.
+  - `issuer` (string): Identifier/URL of the credential issuer.
+  - `proof` (string): Proof payload when applicable (e.g., uniqueness proof).
+  - `nullifier` (string): The computed <Nullifier /> for the action when applicable.
+  - `session_id` (string): Session identifier if a session is established.
+  - `error` (string): Present if the credential could not be provided.
+</ParamField>
+
+<Note>
+  Success is implicit. If a response item is present without an `error`, the credential was provided successfully. Do not include a `success` boolean.
+</Note>
 
 ### Response Examples
 
@@ -111,13 +206,31 @@ The authenticator receives a request from an RP in the following format.
         {
             "type": "orb",
             "issuer": "https://issuer.world.org", // TODO: Define issuer or implicit from type
-            "success": true,
             "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
             "nullifier": "nil_00000000000000000000000000000000000000000000000001"
         },
         {
-            "id": "gov-id",
-            "success": false,
+            "type": "gov-id"
+        }
+    ]
+    }
+    ```
+  </Tab>
+  <Tab title="Failure (Constraints Not Satisfied)">
+    ```json
+    {
+    "id": "req_18c0f7f03e7d",
+    "version": 1,
+    "responses": [
+        {
+            "type": "orb",
+            "issuer": "https://issuer.world.org",
+            "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
+            "nullifier": "nil_00000000000000000000000000000000000000000000000001"
+        },
+        {
+            "type": "gov-id",
+            "error": "credential_not_available"
         }
     ]
     }
@@ -132,7 +245,6 @@ The authenticator receives a request from an RP in the following format.
         {
             "type": "orb",
             "issuer": "https://issuer.world.org", // TODO: Define issuer or implicit from type
-            "success": true,
             "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
             "nullifier": "nil_00000000000000000000000000000000000000000000000001",
             "session_id": "psub_0fff0000000000000000000000000000000000000000000002"
@@ -140,5 +252,137 @@ The authenticator receives a request from an RP in the following format.
     ]
     }
     ```
+  </Tab>
+</Tabs>
+
+### Paired Request/Response Examples
+
+<Note>
+  A request is considered successful if the provided response items satisfy the declared `constraints`. Items with an `error` do not satisfy constraints.
+</Note>
+
+<Tabs>
+  <Tab title="AND Constraint (all)">
+    <CodeBlock title="Request">
+```json
+{
+  "id": "req_18c0f7f03e7d",
+  "version": 1,
+  "created_at": "2025-09-03T17:33:12Z",
+  "expires_at": "2025-09-03T17:38:12Z",
+  "rp_id": "rp_0000000000000000000000000000000000001",
+  "app_id": "app_123",
+  "encoded_action": "act_0000000000000000000000000000000000001",
+  "requests": [
+    { "type": "orb", "signal": "abcd-efgh-ijkl" },
+    { "type": "passport", "signal": "abcd-efgh-ijkl" }
+  ],
+  "constraints": { "all": ["orb", "passport"] }
+}
+```
+    </CodeBlock>
+    <CodeBlock title="Response">
+```json
+{
+  "id": "req_18c0f7f03e7d",
+  "version": 1,
+  "responses": [
+    {
+      "type": "orb",
+      "issuer": "https://issuer.toolsforhumanity.com",
+      "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
+      "nullifier": "nil_00000000000000000000000000000000000000000000000001"
+    },
+    {
+      "type": "passport"
+    }
+  ]
+}
+```
+    </CodeBlock>
+  </Tab>
+  <Tab title="OR Constraint (any)">
+    <CodeBlock title="Request">
+```json
+{
+  "id": "req_18c0f7f03e7d",
+  "version": 1,
+  "created_at": "2025-09-03T17:33:12Z",
+  "expires_at": "2025-09-03T17:38:12Z",
+  "rp_id": "rp_0000000000000000000000000000000000001",
+  "app_id": "app_123",
+  "encoded_action": "act_0000000000000000000000000000000000001",
+  "requests": [
+    { "type": "orb", "signal": "abcd-efgh-ijkl" },
+    { "type": "passport", "signal": "abcd-efgh-ijkl" }
+  ],
+  "constraints": { "any": ["orb", "passport"] }
+}
+```
+    </CodeBlock>
+    <CodeBlock title="Response">
+```json
+{
+  "id": "req_18c0f7f03e7d",
+  "version": 1,
+  "responses": [
+    {
+      "type": "orb",
+      "issuer": "https://issuer.world.org",
+      "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
+      "nullifier": "nil_00000000000000000000000000000000000000000000000001"
+    }
+  ]
+}
+```
+    </CodeBlock>
+  </Tab>
+  <Tab title="Nested (all + any)">
+    <CodeBlock title="Request">
+```json
+{
+  "id": "req_18c0f7f03e7d",
+  "version": 1,
+  "created_at": "2025-09-03T17:33:12Z",
+  "expires_at": "2025-09-03T17:38:12Z",
+  "rp_id": "rp_0000000000000000000000000000000000001",
+  "app_id": "app_123",
+  "encoded_action": "act_0000000000000000000000000000000000001",
+  "requests": [
+    { "type": "orb", "signal": "abcd-efgh-ijkl" },
+    { "type": "passport", "signal": "abcd-efgh-ijkl" },
+    { "type": "national-id", "signal": "abcd-efgh-ijkl" }
+  ],
+  "constraints": {
+    "all": [
+      "orb",
+      { "any": ["passport", "national-id"] }
+    ]
+  }
+}
+```
+    </CodeBlock>
+    <CodeBlock title="Response (success – nested satisfied)">
+```json
+{
+  "id": "req_18c0f7f03e7d",
+  "version": 1,
+  "responses": [
+    {
+      "type": "orb",
+      "issuer": "https://issuer.world.org",
+      "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
+      "nullifier": "nil_00000000000000000000000000000000000000000000000001"
+    },
+    {
+      "type": "passport"
+      "issuer": "https://issuer.toolsforhumanity.com",
+      "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
+      "nullifier": "nil_00000000000000000000000000000000000000000000000001"
+    }
+  ]
+}
+```
+    </CodeBlock>
   </Tab>
 </Tabs>
