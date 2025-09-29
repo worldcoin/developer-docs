@@ -183,7 +183,6 @@ The authenticator receives a request from an RP in the following format.
 <ParamField body="responses" type="array" required>
   Per-credential results. Each item contains:
   - `type` (string, required): Credential type this item refers to.
-  - `issuer` (string): Identifier/URL of the credential issuer.
   - `proof` (string): Proof payload when applicable (e.g., uniqueness proof).
   - `nullifier` (string): The computed <Nullifier /> for the action when applicable.
   - `session_id` (string): Session identifier if a session is established.
@@ -205,12 +204,8 @@ The authenticator receives a request from an RP in the following format.
     "responses": [
         {
             "type": "orb",
-            "issuer": "https://issuer.world.org", // TODO: Define issuer or implicit from type
             "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
             "nullifier": "nil_00000000000000000000000000000000000000000000000001"
-        },
-        {
-            "type": "gov-id"
         }
     ]
     }
@@ -224,7 +219,6 @@ The authenticator receives a request from an RP in the following format.
     "responses": [
         {
             "type": "orb",
-            "issuer": "https://issuer.world.org",
             "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
             "nullifier": "nil_00000000000000000000000000000000000000000000000001"
         },
@@ -244,7 +238,6 @@ The authenticator receives a request from an RP in the following format.
     "responses": [
         {
             "type": "orb",
-            "issuer": "https://issuer.world.org", // TODO: Define issuer or implicit from type
             "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
             "nullifier": "nil_00000000000000000000000000000000000000000000000001",
             "session_id": "psub_0fff0000000000000000000000000000000000000000000002"
@@ -289,12 +282,13 @@ The authenticator receives a request from an RP in the following format.
   "responses": [
     {
       "type": "orb",
-      "issuer": "https://issuer.toolsforhumanity.com",
       "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
       "nullifier": "nil_00000000000000000000000000000000000000000000000001"
     },
     {
-      "type": "passport"
+      "type": "passport",
+      "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
+      "nullifier": "nil_00000000000000000000000000000000000000000000000001"
     }
   ]
 }
@@ -328,7 +322,6 @@ The authenticator receives a request from an RP in the following format.
   "responses": [
     {
       "type": "orb",
-      "issuer": "https://issuer.world.org",
       "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
       "nullifier": "nil_00000000000000000000000000000000000000000000000001"
     }
@@ -370,13 +363,11 @@ The authenticator receives a request from an RP in the following format.
   "responses": [
     {
       "type": "orb",
-      "issuer": "https://issuer.world.org",
       "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
       "nullifier": "nil_00000000000000000000000000000000000000000000000001"
     },
     {
-      "type": "passport"
-      "issuer": "https://issuer.toolsforhumanity.com",
+      "type": "passport",
       "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
       "nullifier": "nil_00000000000000000000000000000000000000000000000001"
     }
