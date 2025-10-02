@@ -255,7 +255,7 @@
     "/api/v2/minikit/user-grant-cycle": {
       "get": {
         "summary": "Get User Grant Cycle",
-        "description": "Retrieve next grant claim date for a user of your mini app.",
+        "description": "Retrieve the next grant claim date for a user of your mini app. Returns the user's humanity (orb-verified) grant cycle date if available, otherwise falls back to their document (passport-verified) grant cycle date.",
         "parameters": [
           {
             "name": "wallet_address",
