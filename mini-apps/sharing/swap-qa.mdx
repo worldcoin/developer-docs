@@ -1,0 +1,95 @@
+---
+title: "Swap"
+---
+
+Use this Quick Action to deep link into the Swap interface with prefilled parameters.
+
+<div
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  }}
+>
+  <div style={{ flex: 1 }}>
+    <h3>Parameters</h3>
+    <ParamField path="app_id" type="string">
+      Target app id for the Swap quick action:{" "}
+      <code>app_6c5c5717c77abe83be8814c032c3a6f9</code>.
+    </ParamField>
+    <ParamField path="path" type="string">
+      Path inside the target app. Use <code>'/'</code> for Swap.
+    </ParamField>
+    <ParamField path="fromToken" type="string | 0x${string}">
+      Token address for the "from" token.
+    </ParamField>
+    <ParamField path="toToken" type="string | 0x${string}">
+      Token address for the "to" token.
+    </ParamField>
+    <ParamField path="amount" type="string">
+      Amount of the from token in base token units.
+    </ParamField>
+    <ParamField path="sourceAppId" type="string">
+      app_id of the app that uses this quick action.
+    </ParamField>
+    <ParamField path="sourceAppName" type="string">
+      Name of the app that uses this quick action.
+    </ParamField>
+  </div>
+  <div style={{ marginLeft: "20px" }}>
+    <img
+      src="/images/docs/mini-apps/quick-actions/swap-qa.png"
+      alt="Swap Screen"
+      className="m-auto block"
+      width="260"
+      style={{ maxWidth: "260px", height: "auto" }}
+    />
+  </div>
+</div>
+
+### Helper function
+
+```ts
+export interface ActionLinkProps {
+  targetAppId: string; // app_6c5c5717c77abe83be8814c032c3a6f9 for Swap quick action
+  path: string; // '/' for Swap quick action
+  params: Record<string, string>;
+}
+
+const MAIN_ACTION_URL = "https://worldcoin.org/mini-app";
+
+export function getActionLink({ targetAppId, path, params }: ActionLinkProps) {
+  let fullPath = path;
+
+  if (Object.keys(params).length > 0) {
+    const paramParts = Object.entries(params).map(([key, value]) => {
+      return `${key}=${value}`;
+    });
+    fullPath += `?${paramParts.join("&")}`;
+  }
+
+  const queryString = `${MAIN_ACTION_URL}?app_id=${targetAppId}&path=${encodeURIComponent(fullPath)}`;
+
+  return queryString;
+}
+
+// Example usage
+const link = getActionLink({
+  targetAppId: "app_6c5c5717c77abe83be8814c032c3a6f9",
+  path: "/",
+  params: {
+    fromToken: "0x2cFc85d8E48F8EAB294be644d9E25C3030863003",
+    toToken: "0x4200000000000000000000000000000000000006",
+    amount: "1234500",
+    sourceAppId: "app_source1234567890abcdef",
+    sourceAppName: "My%20App",
+  },
+});
+console.log(link);
+```
+
+### Example link
+
+```
+https://worldcoin.org/mini-app?app_id=app_6c5c5717c77abe83be8814c032c3a6f9&path=%2F%3FfromToken%3D0x2cFc85d8E48F8EAB294be644d9E25C3030863003
+```

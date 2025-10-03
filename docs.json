@@ -15,9 +15,7 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": [
-              "index"
-            ]
+            "pages": ["index"]
           }
         ]
       },
@@ -26,9 +24,7 @@
         "groups": [
           {
             "group": "Introduction",
-            "pages": [
-              "mini-apps/index"
-            ]
+            "pages": ["mini-apps/index"]
           },
           {
             "group": "Quick Start",
@@ -103,6 +99,7 @@
               "mini-apps/sharing/quick-actions",
               "mini-apps/sharing/add-money-qa",
               "mini-apps/sharing/uno-qa",
+              "mini-apps/sharing/swap-qa",
               "mini-apps/sharing/holdstation-buy-qa",
               "mini-apps/sharing/earn-wld-qa",
               "mini-apps/sharing/dna-qa",
@@ -130,9 +127,7 @@
         "groups": [
           {
             "group": "Introduction",
-            "pages": [
-              "world-id/concepts"
-            ]
+            "pages": ["world-id/concepts"]
           },
           {
             "group": "ID Kit",
@@ -151,9 +146,7 @@
           },
           {
             "group": "Sign in with World ID",
-            "pages": [
-              "world-id/sign-in/oidc"
-            ]
+            "pages": ["world-id/sign-in/oidc"]
           },
           {
             "group": "Technical Reference",
@@ -229,9 +222,7 @@
           },
           {
             "group": "Further Reading",
-            "pages": [
-              "world-chain/resources"
-            ]
+            "pages": ["world-chain/resources"]
           }
         ]
       }
