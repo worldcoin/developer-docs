@@ -170,6 +170,28 @@ The authenticator receives a request from an RP in the following format.
   </Tab>
 </Tabs>
 
+### Constraint Evaluation
+
+When using the `any` constraint, the order of credential types in the array determines **priority order**. The authenticator will attempt to provide the first available credential type in the list. If that credential is not available, it will fall back to the next type in the array, and so on.
+
+<Note>
+  Priority ordering only applies to `any` constraints. For `all` constraints, all specified credential types must be provided regardless of order.
+</Note>
+
+**Example**:
+```json
+{
+  "constraints": { "any": ["orb", "document"] }
+}
+```
+
+In this case:
+- If the user has an orb credential, the authenticator will provide it
+- If the user does not have an orb credential but has a document credential, the authenticator will provide the document instead
+- The orb credential type has priority over document
+
+This priority mechanism allows RPs to request their preferred credential type while still accepting fallback options if the preferred type is unavailable.
+
 ### Response Schema
 
 <ParamField body="id" type="string" required>
@@ -295,7 +317,7 @@ The authenticator receives a request from an RP in the following format.
 ```
     </CodeBlock>
   </Tab>
-  <Tab title="OR Constraint (any)">
+  <Tab title="Any Constraint (implicit priority)">
     <CodeBlock title="Request">
 ```json
 {
@@ -329,6 +351,9 @@ The authenticator receives a request from an RP in the following format.
 }
 ```
     </CodeBlock>
+    <Note>
+      Even though both `orb` and `passport` credentials were requested, only `orb` is returned in the response. This is because the `any` constraint is satisfied by providing just one credential, and `orb` appears first in the priority order. The authenticator provides the highest-priority available credential that satisfies the constraint.
+    </Note>
   </Tab>
   <Tab title="Nested (all + any)">
     <CodeBlock title="Request">
