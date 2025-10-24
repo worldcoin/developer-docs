@@ -1,5 +1,6 @@
 ---
 title: "Integrate on web (React)"
+description: "Integrate World ID on React using IDKitWidget and Session API; install, verify proofs, and handle callbacks."
 ---
 
 For react integrations, we support 2 paths:
@@ -21,6 +22,7 @@ pnpm i @worldcoin/idkit
 ```bash yarn
 yarn add @worldcoin/idkit
 ```
+
 </CodeGroup>
 
 ## IDKitWidget
@@ -28,22 +30,26 @@ yarn add @worldcoin/idkit
 First, add the `IDKitWidget` component to your site. The values for the `app_id` and `action` props were obtained from the Developer Portal in [Getting Started](/world-id/id/getting-started). We'll define the `handleVerify` and `onSuccess` callbacks next.
 
 ```tsx title="/verify.tsx"
-'use client' // for Next.js app router
-import { IDKitWidget, VerificationLevel, ISuccessResult } from '@worldcoin/idkit'
+"use client"; // for Next.js app router
+import {
+  IDKitWidget,
+  VerificationLevel,
+  ISuccessResult,
+} from "@worldcoin/idkit";
 
 // ...
-;<IDKitWidget
-	app_id="your app id" // obtained from the Developer Portal
-	action="your action id" // obtained from the Developer Portal
-	onSuccess={onSuccess} // callback when the modal is closed
-	handleVerify={handleVerify} // callback when the proof is received
-	verification_level={VerificationLevel.Orb}
+<IDKitWidget
+  app_id="your app id" // obtained from the Developer Portal
+  action="your action id" // obtained from the Developer Portal
+  onSuccess={onSuccess} // callback when the modal is closed
+  handleVerify={handleVerify} // callback when the proof is received
+  verification_level={VerificationLevel.Orb}
 >
-	{({ open }) => (
-		// This is the button that will open the IDKit modal
-		<button onClick={open}>Verify with World ID</button>
-	)}
-</IDKitWidget>
+  {({ open }) => (
+    // This is the button that will open the IDKit modal
+    <button onClick={open}>Verify with World ID</button>
+  )}
+</IDKitWidget>;
 ```
 
 ### handleVerify
@@ -52,18 +58,18 @@ The `handleVerify` callback is called when the user's proof is received. This wi
 
 ```tsx title="/verify.tsx"
 const handleVerify = async (proof: ISuccessResult) => {
-	const res = await fetch('/api/verify', {
-		// route to your backend will depend on implementation
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify(proof),
-	})
-	if (!res.ok) {
-		throw new Error('Verification failed.') // IDKit will display the error message to the user in the modal
-	}
-}
+  const res = await fetch("/api/verify", {
+    // route to your backend will depend on implementation
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(proof),
+  });
+  if (!res.ok) {
+    throw new Error("Verification failed."); // IDKit will display the error message to the user in the modal
+  }
+};
 ```
 
 ### Verifying the proof
@@ -71,32 +77,40 @@ const handleVerify = async (proof: ISuccessResult) => {
 The `handleVerify` callback sends the proof to your backend for verification. In the backend handler should verify the proof with the Developer Portal API:
 
 <Warning>
-The call to the Developer Portal API must be made server-side to avoid [man in the middle attacks](https://en.wikipedia.org/wiki/Man-in-the-middle_attack).
+  The call to the Developer Portal API must be made server-side to avoid [man in
+  the middle attacks](https://en.wikipedia.org/wiki/Man-in-the-middle_attack).
 </Warning>
 
 ```tsx title="/api/verify.ts"
-import { type IVerifyResponse, verifyCloudProof } from '@worldcoin/idkit-core'
+import { type IVerifyResponse, verifyCloudProof } from "@worldcoin/idkit-core";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-	const proof = req.body
-	const app_id = process.env.APP_ID
-	const action = process.env.ACTION_ID
-	const verifyRes = (await verifyCloudProof(proof, app_id, action)) as IVerifyResponse
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const proof = req.body;
+  const app_id = process.env.APP_ID;
+  const action = process.env.ACTION_ID;
+  const verifyRes = (await verifyCloudProof(
+    proof,
+    app_id,
+    action
+  )) as IVerifyResponse;
 
-	if (verifyRes.success) {
-		// This is where you should perform backend actions if the verification succeeds
-		// Such as, setting a user as "verified" in a database
-		res.status(200).send(verifyRes)
-	} else {
-		// This is where you should handle errors from the World ID /verify endpoint.
-		// Usually these errors are due to a user having already verified.
-		res.status(400).send(verifyRes)
-	}
+  if (verifyRes.success) {
+    // This is where you should perform backend actions if the verification succeeds
+    // Such as, setting a user as "verified" in a database
+    res.status(200).send(verifyRes);
+  } else {
+    // This is where you should handle errors from the World ID /verify endpoint.
+    // Usually these errors are due to a user having already verified.
+    res.status(400).send(verifyRes);
+  }
 }
 ```
 
 <Note>
-If you want to verify the proof onchain read more about it [here](./on-chain).
+  If you want to verify the proof onchain read more about it [here](./on-chain).
 </Note>
 
 ### onSuccess
@@ -105,10 +119,10 @@ The `onSuccess` callback is called when the user closes the modal. This is where
 
 ```tsx title="/verify.tsx"
 const onSuccess = () => {
-	// This is where you should perform any actions after the modal is closed
-	// Such as redirecting the user to a new page
-	window.location.href = '/success'
-}
+  // This is where you should perform any actions after the modal is closed
+  // Such as redirecting the user to a new page
+  window.location.href = "/success";
+};
 ```
 
 ## Session Hook
@@ -117,9 +131,9 @@ First, setup the session hook with your configuration:
 
 ```tsx title="/verify.tsx"
 const { status, sessionURI, result, errorCode } = useSession({
-	app_id: 'your app id',
-	action: 'your action id',
-})
+  app_id: "your app id",
+  action: "your action id",
+});
 ```
 
 After that you need to handle the following possible statuses:
