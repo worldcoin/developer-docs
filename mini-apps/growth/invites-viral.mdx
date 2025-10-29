@@ -133,7 +133,7 @@ export async function processReferral(data: {
 }
 ```
 
-### 6 · Support Deferred Deep Links (Android)
+### 6. Support Deferred Deep Links (Android)
 
 ```
 https://play.google.com/store/apps/details?id=com.worldcoin&referrer=app_id%3D{app_id}%26path%3D{path}
@@ -143,8 +143,9 @@ World App prompts the install and then automatically forwards the user to your s
 
 ### Optimising Social-Share Previews
 
-Specify a meta-tag image in the developer portal. If unset, the first showcase image is used. Localised versions are supported so you can translate on-image text.
+World app universal links will forward the og:image from your integration url.
 
+Eg. `world.org/mini-app?app_id=1234&path=/invite?code=abcd` will forward the og:image from `[your-miniapp-url]/invite?code=abcd`.
 ### Inside World App Discovery
 
 - **Quick Actions**: Mini apps can hand off context to one another. Split distinct flows into focused apps that trigger each other with Quick Actions.

@@ -80,6 +80,29 @@ Here are some design patterns that we recommend you follow:
 
 Your app icon should be a **square** image with a non white background.
 
+## Content Card
+
+Follow these guidelines when preparing the content card image:
+
+- Content card size is 345x240 px.
+- Avoid adding text inside content card images as much as possible.
+- Keep the bottom 94 px free of important details; this area is overlaid in app.
+- The text and icon on the card are rendered from your app description and app icon automatically—no need to add them to the image.
+- Export the banner without metadata, and include the blurred foreground element covering the bottom 94 px.
+- Export without border radius, as PNG at 3x scale.
+
+<div className="grid justify-items-center text-center">
+  <img
+    className="m-auto"
+    width="345"
+    height="240"
+    src="/images/docs/mini-apps/guidelines/content-card-image.png"
+    alt="Good content card example"
+  />
+  ✅ Good Example <br />
+  <br />
+</div>
+
 ## Load times
 
 For mini apps, 2-3 seconds max for initial load and under 1 second for subsequent actions should be your target.

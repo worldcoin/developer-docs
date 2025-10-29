@@ -8,6 +8,24 @@
     "dark": "#000000"
   },
   "favicon": "/favicon.ico",
+  "seo": {
+    "metatags": {
+      "canonical": "https://docs.world.org",
+      "description": "Developer documentation for building with World ID, Mini Apps, and World Chain.",
+      "og:title": "World Developer Docs",
+      "og:description": "Build with World ID, Mini Apps, and World Chain.",
+      "og:image": "/images/docs/docs-meta.png",
+      "og:type": "website",
+      "og:site_name": "World Documentation",
+      "og:locale": "en_US",
+      "twitter:card": "summary_large_image",
+      "twitter:image": "/images/docs/docs-meta.png",
+      "twitter:site": "@worldcoin",
+      "theme-color": "#000000",
+      "referrer": "origin-when-cross-origin"
+    },
+    "indexing": "all"
+  },
   "navigation": {
     "tabs": [
       {
@@ -15,9 +33,7 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": [
-              "index"
-            ]
+            "pages": ["index"]
           }
         ]
       },
@@ -26,9 +42,7 @@
         "groups": [
           {
             "group": "Introduction",
-            "pages": [
-              "mini-apps/index"
-            ]
+            "pages": ["mini-apps/index"]
           },
           {
             "group": "Quick Start",
@@ -103,6 +117,7 @@
               "mini-apps/sharing/quick-actions",
               "mini-apps/sharing/add-money-qa",
               "mini-apps/sharing/uno-qa",
+              "mini-apps/sharing/swap-qa",
               "mini-apps/sharing/holdstation-buy-qa",
               "mini-apps/sharing/earn-wld-qa",
               "mini-apps/sharing/dna-qa",
@@ -130,10 +145,7 @@
         "groups": [
           {
             "group": "Introduction",
-            "pages": [
-              "world-id/index",
-              "world-id/concepts"
-            ]
+            "pages": ["world-id/index", "world-id/concepts"]
           },
           {
             "group": "ID Kit",
@@ -149,6 +161,10 @@
               "world-id/id/pitfalls",
               "world-id/id/design-guidelines"
             ]
+          },
+          {
+            "group": "Sign in with World ID",
+            "pages": ["world-id/sign-in/oidc"]
           },
           {
             "group": "Technical Reference",
@@ -225,9 +241,7 @@
           },
           {
             "group": "Further Reading",
-            "pages": [
-              "world-chain/resources"
-            ]
+            "pages": ["world-chain/resources"]
           }
         ]
       }
