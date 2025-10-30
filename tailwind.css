@@ -38,4 +38,18 @@
     max-width: 220px !important;
     height: auto !important;
   }
+
+  /* Improve select dropdown option contrast in light/dark modes */
+  select,
+  select option {
+    color: inherit;
+  }
+  :root select option {
+    background-color: #ffffff;
+    color: #0f172a; /* slate-900 */
+  }
+  .dark select option {
+    background-color: #0b1220; /* near slate-950 */
+    color: #e5e7eb; /* gray-200 */
+  }
 }

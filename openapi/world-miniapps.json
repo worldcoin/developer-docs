@@ -162,8 +162,8 @@
             "name": "type",
             "in": "query",
             "required": true,
-            "schema": { "type": "string", "enum": ["pay", "sendTransaction"] },
-            "description": "The `type` is either payment (pay) or transaction (sendTransaction) depending on the command you used."
+            "schema": { "type": "string", "enum": ["payment", "transaction"] },
+            "description": "The `type` is either payment or transaction depending on the command you used."
           }
         ],
         "responses": {
