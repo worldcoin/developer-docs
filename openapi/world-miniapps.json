@@ -322,6 +322,72 @@
           }
         }
       }
+    },
+    "/api/borrower/{identifier}": {
+      "get": {
+        "summary": "Get Borrower",
+        "description": "Retrieve borrower state and credit score by wallet address or World username.",
+        "servers": [{ "url": "https://credit.cash" }],
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "Wallet address (e.g., 0x...) or World username (e.g., satoshi.world)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Credit record found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreditBorrower" },
+                "examples": {
+                  "success": {
+                    "value": { "state": "INACTIVE", "score": 1947 }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing identifier",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreditError" },
+                "examples": {
+                  "missing": { "value": { "error": "Missing identifier" } }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Username not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreditError" },
+                "examples": {
+                  "notFound": { "value": { "error": "Username not found" } }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to get borrower info",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreditError" },
+                "examples": {
+                  "server": {
+                    "value": { "error": "Failed to get borrower info" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -575,6 +641,29 @@
               }
             }
           }
+        }
+      },
+      "CreditBorrower": {
+        "type": "object",
+        "required": ["state", "score"],
+        "properties": {
+          "state": {
+            "type": "string",
+            "enum": ["INACTIVE", "ACTIVE", "DEFAULTED"],
+            "description": "Borrower status on Credit"
+          },
+          "score": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0,
+            "description": "The borrower's credit score"
+          }
+        }
+      },
+      "CreditError": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string", "description": "Error message" }
         }
       }
     }

@@ -1,0 +1,89 @@
+---
+title: Credit Scoring API
+description: Real-time, on-chain creditworthiness for World accounts. Look up by wallet address or World username to get borrower state and a credit score.
+---
+
+World proves there's a real human behind an account. The Credit API tells you whether you can trust them. It provides real-time creditworthiness data for [over half a million](https://credit.cash/analytics) World accounts that have borrowed on [Credit](https://www.notion.so/ebdd8475db3238254fca5b25ccba266a?pvs=21). This lets you focus your app and incentives on trustworthy users who are less likely to game or farm your system.
+
+Unlike traditional credit bureaus with opaque scoring models, this API calculates credit scores purely from verifiable on-chain data. Every data point comes directly from smart contract events.
+
+## How to use it
+
+Send a `GET` request to:
+
+```bash
+https://credit.cash/api/borrower/[identifier]
+```
+
+where `[identifier]` is either the user's wallet address or [World username](/mini-apps/reference/usernames).
+
+The response is a JSON object with two keys:
+
+- `state`: the user's status on Credit
+- `score`: the user's credit score (integer)
+
+### User state
+
+`state` is one of:
+
+- `INACTIVE`: Borrower has no outstanding loan. They could be a new user or never borrowed.
+- `ACTIVE`: Borrower has an outstanding loan that has not yet passed its overdue deadline.
+- `DEFAULTED`: Borrower has an outstanding loan that is past due and not fully repaid.
+
+### Credit score
+
+The `score` is an integer that:
+
+- Starts at 0 for new users
+- Increases as users successfully repay loans and build a repayment track record
+
+Use these bands to categorize borrowers:
+
+| **Score range** | **Band** | **Description**                              |
+| --------------- | -------- | -------------------------------------------- |
+| 0               | New      | No loan history or no loans timely repaid    |
+| 1-99            | Bronze   | Early borrower with minimal history          |
+| 100-299         | Silver   | Developing credit with some successful loans |
+| 300-599         | Gold     | Established borrower with solid history      |
+| 600-999         | Platinum | Excellent track record                       |
+| 1000+           | Diamond  | Elite borrower with extensive history        |
+
+## Example
+
+### Query
+
+Get data for user with wallet address `0x764C890E7D96481cBEa64c64C0F9cFF34bFF2Ce7`:
+
+```bash
+curl -s "https://credit.cash/api/borrower/0x764C890E7D96481cBEa64c64C0F9cFF34bFF2Ce7"
+```
+
+### Response
+
+```json
+{
+  "state": "INACTIVE",
+  "score": 1947
+}
+```
+
+## Tips
+
+- Use score thresholds to shape your rewards and incentives. For example, offer higher rewards to users with high credit scores, who are more likely to be high-quality, and lower rewards to users with low credit scores, who are more likely to engage in fraud.
+- Treat `DEFAULTED` as a strong risk signal. These accounts are much more likely to have sold their World account or be banned for fraud, so exclude them from sensitive actions like valuable rewards, referrals, and high-impact features.
+- Add extra scrutiny or manual review for low-score users, such as additional verification or smaller caps, instead of blocking them outright. This lets you onboard new but unproven accounts safely.
+
+## Error codes
+
+| **Status** | **Error**                   | **Description**                        |
+| ---------- | --------------------------- | -------------------------------------- |
+| 400        | Missing identifier          | No wallet address or username provided |
+| 404        | Username not found          | World username could not be resolved   |
+| 500        | Failed to get borrower info | Internal server error                  |
+
+## Support
+
+For support, questions, or suggestions, contact via Telegram:
+
+- [Diego](http://t.me/antidiego)
+- [Monchi](http://t.me/cairoeth)
