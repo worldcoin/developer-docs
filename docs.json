@@ -93,14 +93,12 @@
               "GET /api/v2/minikit/transaction/debug",
               "GET /api/v2/minikit/user-grant-cycle",
               "GET /public/v1/miniapps/prices",
-              "GET /api/borrower/{identifier}",
               "mini-apps/reference/errors",
               "mini-apps/reference/address-book",
               "mini-apps/reference/usernames",
               "mini-apps/reference/status-page",
               "mini-apps/reference/payment-methods",
-              "mini-apps/reference/microphone",
-              "mini-apps/reference/credit-api"
+              "mini-apps/reference/microphone"
             ]
           },
           {
