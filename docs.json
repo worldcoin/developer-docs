@@ -62,7 +62,6 @@
               "mini-apps/commands/wallet-auth",
               "mini-apps/commands/send-transaction",
               "mini-apps/commands/sign-message",
-              "mini-apps/commands/sign-typed-data",
               "mini-apps/commands/share-contacts",
               "mini-apps/commands/request-permission",
               "mini-apps/commands/get-permissions",
