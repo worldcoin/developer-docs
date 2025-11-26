@@ -6,3 +6,5 @@ images/docs/mini-apps/guidelines/do-dont/nav-component-do-dont.png
 images/docs/mini-apps/guidelines/do-dont/nav-component-do.png
 images/docs/mini-apps/guidelines/do-dont/nav-component-dont.png
 mini-apps/guidelines/do-dont.mdx
+scripts/check-meta-images.js
+scripts/add-meta-images.js
