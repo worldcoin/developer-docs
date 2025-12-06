@@ -170,7 +170,8 @@
               {
                 "group": "API References",
                 "openapi": [
-                  "https://world-id-gateway.stage-crypto.worldcoin.org/api-docs/openapi.json"
+                  "https://world-id-gateway.stage-crypto.worldcoin.org/api-docs/openapi.json",
+                  "https://world-id-indexer.stage-crypto.worldcoin.org/openapi.json"
                 ]
               },
               "world-id/reference/sign-in",
