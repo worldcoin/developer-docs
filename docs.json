@@ -169,9 +169,29 @@
               "world-id/reference/authenticator",
               {
                 "group": "API References",
-                "openapi": [
-                  "https://world-id-gateway.stage-crypto.worldcoin.org/api-docs/openapi.json",
-                  "https://world-id-indexer.stage-crypto.worldcoin.org/openapi.json"
+                "pages": [
+                  {
+                    "group": "Indexer",
+                    "openapi": "https://world-id-indexer.stage-crypto.worldcoin.org/openapi.json",
+                    "pages": [
+                      "POST /inclusion-proof",
+                      "POST /packed-account",
+                      "POST /signature-nonce"
+                    ]
+                  },
+                  {
+                    "group": "Gateway",
+                    "openapi": "https://world-id-gateway.stage-crypto.worldcoin.org/openapi.json",
+                    "pages": [
+                      "POST /create-account",
+                      "POST /insert-authenticator",
+                      "POST /update-authenticator",
+                      "POST /remove-authenticator",
+                      "POST /recover-account",
+                      "GET /is-valid-root",
+                      "GET /status/{id}"
+                    ]
+                  }
                 ]
               },
               "world-id/reference/sign-in",
