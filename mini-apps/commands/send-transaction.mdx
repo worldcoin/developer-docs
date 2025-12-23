@@ -4,12 +4,12 @@ title: "Send Transaction"
 "twitter:image": "/images/docs/docs-meta.png"
 ---
 
-The "Send Transaction" feature allows you to interact with arbitrary smart contracts. 
-One important caveat is that approvals are not permitted. 
-To transfer funds, you must either use Permit2 [Signature Transfer](https://docs.uniswap.org/contracts/permit2/reference/signature-transfer) or directly call the asset's transfer function.
+Send transaction allows you to read and write to any smart contract on World Chain.
+Token transfers are only supported through Permit2 [Signature Transfer](https://docs.uniswap.org/contracts/permit2/reference/signature-transfer) or by directly calling the asset's transfer function. 
+Approvals are by default disabled. 
 
-Ensure you specify the contracts and tokens you are interacting with in the Developer Portal (under Configuration → Advanced) ; otherwise, the backend will block the transaction. 
-Gas fees are covered on World Chain; however, there is a limit of 300 transactions per user per day.
+Allow list the contracts and tokens you are interacting with in the Developer Portal (Configuration → Advanced); otherwise, the backend will block the transaction. 
+Users can send 500 transactions a day for free. Afterwards, a user must pay for gas themselves. There is also an enforced 1 million gas limit per transaction.
 
 Users can sign and send multiple transactions in parallel. Sequential execution is not enforced for miniapp transactions, unless those transactions are placed in the transaction array and sent as a single sendTransaction command.
 
@@ -61,7 +61,7 @@ export type Transaction = {
     ### Confirming the transaction
 
     Once the transaction is sent, you will receive a `transaction_id`. You can use this ID to check the transaction status and retrieve the transaction hash after confirmation.
-    In this flow, we will use the useWaitForTransactionReceipt hook to monitor the transaction status.
+    In this flow, we will use the `useWaitForTransactionReceipt` hook to monitor the transaction status.
 
     ```tsx app/page.tsx
     // Make sure you have the @worldcoin/minikit-react package installed
@@ -120,7 +120,7 @@ export type Transaction = {
 
 
 
-## With permit2
+## Using permit2
 This example demonstrates how to send a transaction using Permit2. You must specify additional configuration options in the Developer Portal (under Configuration → Advanced) to enable a particular token.
 
 Note that Permit2 requires a signature. Our backend automatically replaces the placeholder with the correct signature; you simply need to indicate this using `PERMIT2_SIGNATURE_PLACEHOLDER_{index}`. 
@@ -314,15 +314,15 @@ If implemented correctly, the user will see the following drawer on World App.
 
 <div className="grid justify-items-center text-center">
 	<video className="m-auto" width="300" autoPlay muted loop playsInline>
-		<source src="/images/docs/mini-apps/commands/send-transaction.mp4" type="video/mp4" />
+		<source src="/images/docs/mini-apps/commands/transaction.mp4" type="video/mp4" />
 		Your browser does not support the video tag.
 	</video>
 </div>
 
-## Debugging
+## Debugging failed transactions
 
-Sending transactions can be tricky. If you encounter a simulation_failed error, you will receive a debug_url that allows you to inspect the error in Tenderly.
-However, when using Permit2, the debug_url won't be available until your Permit2 signature expires. Therefore, it's recommended to set a shorter deadline during testing.
+Sending transactions can be tricky. If you encounter a simulation_failed error, you will receive a `debug_url` that allows you to inspect the error in Tenderly.
+However, when using Permit2, the `debug_url` won't be available until your Permit2 signature expires. Therefore, it's recommended to <b>set a shorter deadline during testing. </b>
 For details on other types of [errors](/mini-apps/reference/errors#transactions)
 
 To get precise debug information, you can fetch debug URLs (Tenderly) using the [Get Transaction Debug URL](/mini-apps/reference/api#get-transaction-debug-url) endpoint.

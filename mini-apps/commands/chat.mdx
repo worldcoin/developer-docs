@@ -1,0 +1,108 @@
+---
+title: "World Chat"
+"og:image": "/images/docs/docs-meta.png"
+"twitter:image": "/images/docs/docs-meta.png"
+---
+
+The chat command allows your mini app to prompt users to share a message via World Chat. Users can send messages to individual contacts or groups.
+
+## Using the command
+
+```tsx
+import { MiniKit } from '@worldcoin/minikit-js'
+
+const handleChat = async () => {
+  if (!MiniKit.isInstalled()) {
+    return
+  }
+
+  const { finalPayload } = await MiniKit.commandsAsync.chat({
+    message: "Check out this awesome mini app!", // Required
+    to: ["username1", "0x1234..."], // Optional: usernames or addresses, pre-selects them in the modal
+  })
+
+  if (finalPayload.status === "error") {
+    console.log("Error:", finalPayload.error_code)
+    return
+  }
+
+  console.log(`Message shared to ${finalPayload.count} chats`)
+}
+```
+
+
+### Response
+
+**Success:**
+Upon success the user will be navigated to the chat tab and your mini app will be closed. 
+Thus, it's advised to include a link to your mini app in the message so they can easily return.
+
+**Error payload:**
+
+```tsx
+type ChatErrorPayload = {
+  status: "error"
+  error_code: "user_rejected" | "send_failed" | "generic_error"
+  version: number
+}
+```
+
+### Error Codes
+
+| Code | Description |
+| --- | --- |
+| `user_rejected` | User closed the modal |
+| `send_failed` | Sending message failed (user might not be on World Chat) |
+| `generic_error` | Any other error |
+
+### Command Preview
+<div className='grid justify-items-center text-center'>
+    <video className="m-auto" width="300" autoPlay muted loop playsInline>
+        <source src="/images/docs/mini-apps/commands/chat.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+    </video>
+</div>
+## Universal Links to World Chat
+You can create universal links to open World Chat from your mini app or any web page. These also work as deep links.
+
+### Open the chat tab in World App
+
+```
+https://world.org/chat
+```
+
+### Open a conversation with a specific user
+
+Opens a user-specific page with an action:
+
+```
+https://world.org/profile?username=andy&action=chat
+```
+
+| Query Param | Values | Description |
+| --- | --- | --- |
+| `username` | e.g. `andy` | Username of the user |
+| `address` | e.g. `0xdeadbeef` | Wallet address of the user |
+| `action` | `chat` \| `request` \| `pay` | Action to take with the user |
+
+## Show Profile Card
+
+Display a native profile card modal inside your app for social sharing and easy access to profiles.
+
+```tsx
+MiniKit.showProfileCard({
+  username: "andy", // Optional
+  walletAddress: "0x1234..." // Optional
+})
+```
+<Note>
+  Adding profile cards anywhere you display usernames helps users discover and connect with each other, making your app feel more integrated with World App.
+</Note>
+
+<div className='grid justify-items-center text-center'>
+    <video className="m-auto" width="300" autoPlay muted loop playsInline>
+        <source src="/images/docs/mini-apps/commands/profilecard.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+    </video>
+</div>
+
