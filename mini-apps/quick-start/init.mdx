@@ -1,0 +1,165 @@
+---
+title: Initialization
+"og:image": "/images/docs/docs-meta.png"
+"twitter:image": "/images/docs/docs-meta.png"
+---
+
+When your mini app is initialized in World App, it will receive useful context, device properties and user preferences from World App.
+These values can be accessed via the `MiniKit` object or in a raw object format via `window.WorldApp`.
+
+```tsx
+// Useful metadata you can access from the MiniKit object
+export type MiniKit = {
+  user: {
+    walletAddress?: string;
+    username?: string;
+    profilePictureUrl?: string;
+    permissions?: { // These will be null until you call getPermissions()
+      notifications: boolean;
+      contacts: boolean;
+      microphone: boolean;
+    };
+    optedIntoOptionalAnalytics?: boolean; // If this is false, you should not collect any analytics for this user.
+  } | null;
+  deviceProperties: {
+    safeAreaInsets?: { // The safe area insets of the device.
+      top: number;
+      right: number;
+      bottom: number;
+      left: number;
+    };
+    deviceOS?: string; // The operating system of the device.
+    worldAppVersion?: number; // The version of the World App.
+  } | null;
+  launchLocation: 'chat' | 'home' | 'app-store' | 'deep-link' | 'wallet-tab' | null; // Where the mini app was launched from.
+};
+```
+
+### Accessing Mini App Open location
+Open location tells you where your mini app was opened from. It can be very helpful for analytics and understanding user behavior. You can access it via:
+```typescript
+import { MiniKit } from "@worldcoin/minikit-js";
+console.log(MiniKit.location);
+```
+
+The possible values are:
+```typescript
+export enum MiniAppLaunchLocation {
+  Chat = 'chat',
+  Home = 'home',
+  AppStore = 'app-store',
+  DeepLink = 'deep-link',
+  WalletTab = 'wallet-tab',
+}
+```
+
+### Accessing the Raw Object
+
+If you chose to access the values via `window.WorldApp`, the structure will be similar.
+Some types will not be properly mapped. In addition you'll get context of which version of commands a users World App supports. 
+
+Here's an example of what the raw object looks like:
+```json
+{
+  "pending_notifications": 0,
+  "safe_area_insets": {
+    "top": 0,
+    "right": 0,
+    "bottom": 0,
+    "left": 0
+  },
+  "device_os": "ios",
+  "world_app_version": 4000301,
+  "is_optional_analytics": true,
+  "supported_commands": [
+    {
+      "supported_versions": [
+        1
+      ],
+      "name": "verify"
+    },
+    {
+      "supported_versions": [
+        1,
+        2
+      ],
+      "name": "wallet-auth"
+    },
+    {
+      "supported_versions": [
+        1
+      ],
+      "name": "pay"
+    },
+    {
+      "name": "sign-message",
+      "supported_versions": [
+        1
+      ]
+    },
+    {
+      "name": "sign-typed-data",
+      "supported_versions": [
+        1
+      ]
+    },
+    {
+      "supported_versions": [
+        1
+      ],
+      "name": "send-transaction"
+    },
+    {
+      "name": "share-contacts",
+      "supported_versions": [
+        1
+      ]
+    },
+    {
+      "name": "request-permission",
+      "supported_versions": [
+        1
+      ]
+    },
+    {
+      "supported_versions": [
+        1
+      ],
+      "name": "get-permissions"
+    },
+    {
+      "supported_versions": [
+        1
+      ],
+      "name": "send-haptic-feedback"
+    },
+    {
+      "name": "share",
+      "supported_versions": [
+        1
+      ]
+    },
+    {
+      "supported_versions": [
+        1
+      ],
+      "name": "microphone-stream-started"
+    },
+    {
+      "supported_versions": [
+        1
+      ],
+      "name": "microphone-stream-ended"
+    },
+    {
+      "name": "chat",
+      "supported_versions": [
+        1
+      ]
+    }
+  ],
+  "location": {
+    "open_origin": "deeplink"
+  }
+}
+```
