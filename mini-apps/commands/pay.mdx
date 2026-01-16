@@ -217,21 +217,23 @@ export async function POST(req: NextRequest) {
 </Warning>
 
 **Web2** applications can call our Developer Portal API to get the current status of the transaction. Since payments are executed on-chain, it can take up to a few minutes to confirm.
-You can choose to optimistically accept the payments once they've landed on-chain, or poll the endpoint to wait until it's successful mined.
+You can choose to optimistically accept the payments once they've landed on-chain, or poll the endpoint to wait until it's successfully mined.
 
-**Web3** applications can choose to search the on-chain event logs temselves via the `TransferReference` event emitted on-chain.
-Note for reference ID the value on chain will be the keccak256 hash of the reference ID.
+**Web3** applications can verify payments by inspecting the ERC-4337 `UserOperationEvent` emitted during the pay operation.
 
-```solidity TransferReference
-event TransferReference(
-    address sender,
-    address indexed recipient,
-    uint256 amount,
-    address token,
-    string indexed referenceId,
-    bool indexed success
-);
-```
+The `TransferReference` event will no longer be emitted. Instead, the `reference` string is SHA-256 hashed and the **leftmost 10 bytes** are included in the **`nonceKey`** embedded in the `nonce` field of `UserOperationEvent`.
+
+The `nonceKey` is a fixed-length **24-byte** value constructed as:
+
+- **1 byte**: version
+- **13 bytes**: truncated SHA-256 hash of `miniappId`
+- **10 bytes**: truncated SHA-256 hash of `reference`
+
+Conceptually:
+
+1. Compute \(h = \mathrm{SHA256}(\text{reference})\)
+2. Take `h[0..10)` (10 bytes)
+3. Compare it against bytes `nonceKey[14..24)` (offset = 1 + 13) extracted from the `UserOperationEvent` nonce
 
 In this example, we will show querying via Developer Portal API.
 
@@ -270,6 +272,77 @@ export async function POST(req: NextRequest) {
 			return NextResponse.json({ success: false })
 		}
 	}
+}
+```
+
+### On-chain verification (advanced)
+
+Below is a minimal example of how you can extract the `nonceKey` from the `UserOperationEvent` nonce and compare the embedded reference bytes.
+
+```ts
+import { createHash } from 'crypto'
+import { ethers } from 'ethers'
+
+// In the EntryPoint contract, `UserOperationEvent` includes a `nonce` field.
+// That nonce is structured as: [24-byte nonceKey][8-byte sequential nonce].
+//
+// nonceKey layout (24 bytes):
+// [ 1B version ][ 13B sha256(miniappId)[0..13) ][ 10B sha256(reference)[0..10) ]
+
+const REFERENCE_BYTES = 10
+const MINIAPP_ID_BYTES = 13
+const VERSION_BYTES = 1
+
+function referenceBytes(reference: string) {
+  return createHash('sha256').update(reference, 'utf8').digest().subarray(0, REFERENCE_BYTES)
+}
+
+async function verifyReferenceFromReceipt({
+  provider,
+  transactionHash,
+  senderAddress,
+  entryPointInterface,
+  userOperationEventTopic,
+  reference,
+  miniappId,
+}: {
+  provider: ethers.Provider
+  transactionHash: string
+  senderAddress: string
+  entryPointInterface: ethers.Interface
+  userOperationEventTopic: string
+  reference: string
+  miniappId: string
+}) {
+  const receipt = await provider.getTransactionReceipt(transactionHash)
+  if (!receipt) throw new Error('Transaction receipt not found')
+
+  // Find the UserOperationEvent for this user's wallet (sender is indexed)
+  const senderTopic = ethers.zeroPadValue(senderAddress.toLowerCase(), 32)
+  const useropLog = receipt.logs.find(
+    (log) => log.topics[0] === userOperationEventTopic && log.topics[2]?.toLowerCase() === senderTopic,
+  )
+  if (!useropLog) throw new Error('UserOperationEvent log not found')
+
+  const parsed = entryPointInterface.parseLog({ topics: useropLog.topics as string[], data: useropLog.data })
+  const nonce = parsed.args.nonce as bigint
+
+  // nonceKey is the top 24 bytes of nonce
+  const nonceKey = nonce >> 64n
+  const nonceKeyHex = nonceKey.toString(16).padStart(48, '0') // 24 bytes
+  const nonceKeyBytes = Buffer.from(nonceKeyHex, 'hex')
+
+  // Reference bytes live at: nonceKey[1 + 13 .. 24)
+  const expected = referenceBytes(reference)
+  const referenceOffset = VERSION_BYTES + MINIAPP_ID_BYTES
+  const actual = nonceKeyBytes.subarray(referenceOffset, referenceOffset + REFERENCE_BYTES)
+
+  // Optional: also validate miniappId bytes (nonceKey[1..14))
+  const expectedMiniapp = createHash('sha256').update(miniappId, 'utf8').digest().subarray(0, MINIAPP_ID_BYTES)
+  const actualMiniapp = nonceKeyBytes.subarray(VERSION_BYTES, VERSION_BYTES + MINIAPP_ID_BYTES)
+  if (Buffer.compare(actualMiniapp, expectedMiniapp) !== 0) return false
+
+  return Buffer.compare(actual, expected) === 0
 }
 ```
 
