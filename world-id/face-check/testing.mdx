@@ -1,0 +1,38 @@
+---
+title: "Testing"
+description: "This is your guide for testing your Face Check (Beta) integration for standalone web applications."
+"og:image": "/images/docs/docs-meta.png"
+"twitter:image": "/images/docs/docs-meta.png"
+---
+
+We recommend that you test your integration in the World staging environment to allow for repeated testing.
+
+## Prerequisites
+
+You will need to register your application in the World Developer Portal (Staging).
+
+1. Log in to the [Staging World Developer Portal](https://staging-developer.world.org).
+2. Create a Team and an Application.
+3. Create an "Incognito Action" and set “Number of verifications per user” to Unlimited.
+4. Save your credentials: You will need your App ID (e.g., app_e448...) and Action ID (e.g., face-verify).
+
+You must use the Staging World App installed to test an integration created using the Staging World Developer Portal.
+
+Please reach out to your World Developer Relations contact to get access.
+
+## Resetting User Data
+
+To re-test the "New User" enrollment flow, you must first delete any existing Face credential on your World App (Staging) device from the same account that you used to create the credential:
+
+1.  Open **World App (Staging)**.
+2.  Tap the **Settings (Gear)** icon in the top-right.
+3.  Go to **Developer Settings** -> **Debug**.
+4.  Tap **Delete Credential**.
+
+Once you have deleted the credential, you can reenroll using the same World ID account or create a new World ID account.
+
+To create a new World ID account on the same device, you can log out and create a new account via Settings → World ID → Log Out.*
+
+## Next steps
+
+See [Web Integration Guide](/world-id/face-check/web-integration) or go back to [Overview](/world-id/face-check/overview).

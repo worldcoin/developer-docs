@@ -1,0 +1,90 @@
+---
+title: "Web Integration Guide"
+description: "This guide describes how to integrate Face Check (Beta) in your standalone web applications."
+"og:image": "/images/docs/docs-meta.png"
+"twitter:image": "/images/docs/docs-meta.png"
+---
+
+## Prerequisites
+
+You will need to register your application in the World Developer Portal (Staging).
+
+1. Log in to the [Developer Portal](https://developer.world.org).
+2. Create a Team and an Application.
+3. Create an "Incognito Action" and set “Number of verifications per user” to Unlimited.
+4. Save your credentials: You will need your App ID (e.g., app_e448...) and Action ID (e.g., face-verify).
+
+## Client-Side Implementation
+
+You need to use a special standalone version of IDKit to integrate Face Check (Beta).
+
+Add the IDKit library to your application's `<head>`.
+
+```html
+<script 
+  src="https://unpkg.com/@worldcoin/idkit@4.0.0/build/index.global.js" strategy="beforeInteractive"
+></script>
+
+````
+
+Next, configure `IDKitWidget`.
+
+The key difference from regular IDKit integrations is in setting the `verification_level` to `Face`.
+
+``` javascript
+import { IDKitWidget, VerificationLevel } from '@worldcoin/idkit' 
+
+// ... inside your component
+<IDKitWidget
+    app_id="app_e448f820180e3399c66fb90a68f36150" // Your app ID from Developer Portal
+    action="your-action-id" // Your action ID from Developer Portal
+    onSuccess={onSuccess} // Callback when the modal closes
+    handleVerify={handleVerify} // Callback when the proof is received
+    verification_level={VerificationLevel.Face} // REQUIRED for Face Check
+>
+    {({ open }) => (
+        <button onClick={open}>Verify with World ID</button>
+    )}
+</IDKitWidget>
+
+```
+
+## Server-Side Verification
+
+After the user completes the Face Check (Beta) flow in the World App, your web application will receive a proof. This proof should be sent to your backend for validation. Your backend will call a special Face Check (Beta) endpoint for the verification.
+
+**Example Implementation (Node.js/Next.js)**
+
+``` javascript
+import { NextResponse } from "next/server";
+import { verifyCloudProof } from "@worldcoin/minikit-js";
+  
+export async function POST(req: Request) {
+  const body = await req.json();
+  const app_id = body.app_id;
+  
+  // Verify the proof against the Staging API
+  const result = await verifyCloudProof(
+    body,
+    app_id as `app_${string}`,
+    body.action,
+    body.signal, // Ensure unique signal values per challenge
+    `https://staging-developer.worldcoin.org/api/v2/verify/${app_id}` // Staging Endpoint
+  );
+  
+  if (result?.success) {
+    // Verification successful
+    // You can now trust the user is human and unique according to the Sybil score
+    return NextResponse.json({ success: true });
+  }
+  
+  return NextResponse.json({
+    success: false,
+    error: result?.code || "verification_failed"
+  });
+}
+```
+
+## Next steps
+
+See [Testing Guide](/world-id/face-check/testing) or go back to [Overview](/world-id/face-check/overview).

@@ -159,6 +159,15 @@
             ]
           },
           {
+            "group": "Face Check (Beta)",
+            "hidden": true,
+            "pages": [
+              "world-id/face-check/overview",
+              "world-id/face-check/web-integration",
+              "world-id/face-check/testing"
+            ]
+          },
+          {
             "group": "Sign in with World ID",
             "pages": ["world-id/sign-in/oidc"]
           },
