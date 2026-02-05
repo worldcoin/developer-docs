@@ -178,10 +178,12 @@ const decoded = JSON.parse(Buffer.from(credential, "base64").toString("utf8"));
 
 ### PoH-specific claims
 
-- When refreshing with a PCP, `claims[0]` and `associated_data_hash` are derived from the PCP `hashes.json` bytes.
+- When refreshing with a PCP, `claims[0]` is derived from the PCP `hashes.json` bytes.
 - When refreshing without a PCP, `claims[0]` is derived from issuer-defined refresh data (a hash of `idCommitment`, `sub`, and a timestamp).
+- In both cases, `associated_data_hash` is instead empty, i.e. the zero field element
 
 ## References
 
 - [World ID 4 specs](https://github.com/worldcoin/world-id-protocol/tree/main/docs/world-id-4-specs)
+- [Credential reference](/world-id/reference/credential)
 
