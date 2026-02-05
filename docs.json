@@ -172,9 +172,14 @@
             "pages": ["world-id/sign-in/oidc"]
           },
           {
+            "group": "Credential Issuance",
+            "pages": ["world-id/credential-issuance/refresh"]
+          },
+          {
             "group": "Technical Reference",
             "pages": [
               "world-id/reference/idkit",
+              "world-id/reference/credential",
               "world-id/reference/api",
               "world-id/reference/sign-in",
               "world-id/reference/contracts",
