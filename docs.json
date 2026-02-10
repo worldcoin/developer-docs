@@ -172,10 +172,6 @@
             "pages": ["world-id/sign-in/oidc"]
           },
           {
-            "group": "Credential Issuance",
-            "pages": ["world-id/credential-issuance/poh-issuer"]
-          },
-          {
             "group": "Technical Reference",
             "pages": [
               "world-id/reference/idkit",
@@ -186,6 +182,15 @@
               "world-id/reference/contract-deployments",
               "world-id/reference/errors"
             ]
+          }
+        ]
+      },
+      {
+        "tab": "PoH Issuer",
+        "groups": [
+          {
+            "group": "PoH Issuer",
+            "pages": ["poh-issuer/index"]
           }
         ]
       },
