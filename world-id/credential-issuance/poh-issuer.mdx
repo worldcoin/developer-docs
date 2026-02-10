@@ -1,18 +1,23 @@
 ---
-title: "Credential Refresh"
-description: "Refresh endpoint for issuing World ID PoH credentials and the Credential object format."
+title: "PoH Issuer"
+description: "PoH issuer endpoints, including credential refresh for v3 to v4 migration."
 "og:image": "/images/docs/docs-meta.png"
 "twitter:image": "/images/docs/docs-meta.png"
 ---
 
-This endpoint issues a new proof-of-human (PoH) credential to a holder of a valid World ID. It can re-verify with a Personal Custody Package (PCP) or issue a credential-only refresh when a PCP is not available.
+The PoH issuer provides endpoints that issue proof-of-human (PoH) credentials. The main endpoint is credential refresh, which re-issues a PoH credential using a Personal Custody Package (PCP) or a credential-only refresh flow.
 
 <Note>
   Base URL is environment-specific and served by the signup-service app-api. Contact
   your World ID point of contact for environment endpoints and access.
 </Note>
 
-## Endpoint
+<Warning>
+  The refresh endpoint is intended for World ID v3 holders to obtain v4 PoH
+  credentials. It is not a general re-issuance endpoint for v4 holders.
+</Warning>
+
+## Credential refresh
 
 <ParamField path="method" type="POST">
   /api/v1/refresh
@@ -180,10 +185,9 @@ const decoded = JSON.parse(Buffer.from(credential, "base64").toString("utf8"));
 
 - When refreshing with a PCP, `claims[0]` is derived from the PCP `hashes.json` bytes.
 - When refreshing without a PCP, `claims[0]` is derived from issuer-defined refresh data (a hash of `idCommitment`, `sub`, and a timestamp).
-- In both cases, `associated_data_hash` is instead empty, i.e. the zero field element
+- In both cases, `associated_data_hash` is instead empty, i.e. the zero field element.
 
 ## References
 
 - [World ID 4.0 specs](https://github.com/worldcoin/world-id-protocol/tree/main/docs/world-id-4-specs)
 - [Credential reference](/world-id/reference/credential)
-

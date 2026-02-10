@@ -173,7 +173,7 @@
           },
           {
             "group": "Credential Issuance",
-            "pages": ["world-id/credential-issuance/refresh"]
+            "pages": ["world-id/credential-issuance/poh-issuer"]
           },
           {
             "group": "Technical Reference",
