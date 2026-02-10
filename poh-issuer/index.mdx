@@ -135,12 +135,6 @@ If PCP validation fails, the endpoint returns an error status with `PCP_VALIDATI
 
 The `credential` response field is a base64-encoded JSON representation of the World ID `Credential` object defined in `world-id-protocol/crates/primitives/src/credential.rs`.
 
-### Decoding
-
-```javascript
-const decoded = JSON.parse(Buffer.from(credential, "base64").toString("utf8"));
-```
-
 ### Example (decoded)
 
 ```json
@@ -181,13 +175,19 @@ const decoded = JSON.parse(Buffer.from(credential, "base64").toString("utf8"));
 - **Issuer public key** (`issuer.pk`) is serialized as `[x, y]` decimal strings for BabyJubJub affine coordinates.
 - **Signature** is hex-encoded compressed bytes (no `0x` prefix).
 
-### PoH-specific claims
+### PoH credential semantics
 
-- When refreshing with a PCP, `claims[0]` is derived from the PCP `hashes.json` bytes.
+- The user first obtains an Orb credential (currently a PCP in v2.3 format).
+- `claim[0]` is a commitment to the Orb credential, currently `H(hashes.json)`.
 - When refreshing without a PCP, `claims[0]` is derived from issuer-defined refresh data (a hash of `idCommitment`, `sub`, and a timestamp).
-- In both cases, `associated_data_hash` is instead empty, i.e. the zero field element.
+- The PoH credential has no associated data, so `associated_data_hash` is the zero field element.
+- The PoH credential subject is blinded and differs from the Orb credential subject.
+- The issuer may require a proof for the requested `sub` to prevent bricking an identity.
+
+These details are issuer-specific and may evolve as the protocol migrates to the World ID 4.0 credential format.
 
 ## References
 
 - [World ID 4.0 specs](https://github.com/worldcoin/world-id-protocol/tree/main/docs/world-id-4-specs)
 - [Credential reference](/world-id/reference/credential)
+- [PoH issuer credential structure (Notion)](https://www.notion.so/worldcoin/WIP-World-ID-Issuers-Credential-Structures-2ca8614bdf8c80c5b1cbfdd7d6becb61?source=copy_link#2ca8614bdf8c80879d9dcd770734ae41)
