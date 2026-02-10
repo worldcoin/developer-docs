@@ -216,9 +216,6 @@ const request2 = await IDKit.request({ ...config }).preset(
 Once you have a request, display `connectorURI` as a QR code and poll for the proof:
 
 ```typescript
-// request.connectorURI - show this as a QR code
-// request.requestId    - unique ID for this verification
-
 // Option A: Poll continuously (recommended)
 const completion = await request.pollUntilCompletion({
   pollInterval: 2000, // default: 1000ms
