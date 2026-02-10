@@ -1,41 +1,29 @@
 ---
-title: "API Reference (v4 Preview)"
-description: "Developer Portal v4 API: verify World ID proofs with support for both v3 (cloud) and v4 (on-chain) proof formats."
+title: "POST /v4/verify (Preview)"
 "og:image": "/images/docs/docs-meta.png"
 "twitter:image": "/images/docs/docs-meta.png"
 ---
 
-<Warning>
-  The v4 verify endpoint is in **preview**. It is the verification backend for
-  [IDKit v4](/world-id/id/idkit-v4-preview).
-</Warning>
-
-## Base URL
-
-```
-https://developer.world.org
-```
-
 <Note>
-  All requests must include `Content-Type: application/json` and a valid JSON body.
+  Use this endpoint to verify **World ID 3.0 (Legacy)** or **World ID 4.0**
+  proofs. Should be used with [IDKit 4.0+](/world-id/id/idkit-v4-preview).
 </Note>
 
-## Verify Proof
+```
+POST https://developer.world.org/api/v4/verify/{rp_id}
+```
 
-<ParamField path="method" type="POST">
-  https://developer.world.org/api/v4/verify/\{rp_id\}
-</ParamField>
+Accepts both `rp_id` (`rp_xxx`) and `app_id` (`app_xxx`) as the route parameter.
 
-Verifies a World ID proof returned by IDKit v4. Accepts both `rp_id` (`rp_xxx`) and `app_id` (`app_xxx`) as the route parameter.
+The `result` from a successful `pollUntilCompletion()` response can be forwarded directly - no transformation needed.
 
-The request body from `pollForUpdates()` can be forwarded directly to this endpoint — no transformation needed.
-
-This endpoint handles both World ID v3 (cloud) and v4 (on-chain) proof formats. During the preview period, users will produce **v3 proofs** since World ID v4 has not launched yet. The endpoint verifies either format transparently.
+During the preview period, users will produce **v3 proofs** since World ID v4 has not launched yet. The endpoint verifies either format transparently.
 
 ### Request Body
 
 <ParamField body="protocol_version" type="string" required>
-  The protocol version. Must be `"3.0"` or `"4.0"`. IDKit sets this automatically.
+  The protocol version. Must be `"3.0"` or `"4.0"`. IDKit sets this
+  automatically.
 </ParamField>
 
 <ParamField body="nonce" type="string" required>
@@ -47,17 +35,19 @@ This endpoint handles both World ID v3 (cloud) and v4 (on-chain) proof formats. 
 </ParamField>
 
 <ParamField body="action_description" type="string" default='""'>
-  Human-readable description of the action. Used when creating the action for the first time.
+  Human-readable description of the action. Used when creating the action for
+  the first time.
 </ParamField>
 
 <ParamField body="responses" type="array" required>
-  Array of proof response items (at least one). The shape of each item depends on `protocol_version`.
+  Array of proof response items (at least one). The shape of each item depends
+  on `protocol_version`.
 </ParamField>
 
 #### Response item fields (protocol 3.0)
 
 <ParamField body="responses[].identifier" type="string" required>
-  Credential type: `"orb"`, `"device"`, or `"face"`.
+  Credential type (e.g. `"orb"`).
 </ParamField>
 
 <ParamField body="responses[].proof" type="string" required>
@@ -72,22 +62,28 @@ This endpoint handles both World ID v3 (cloud) and v4 (on-chain) proof formats. 
   Nullifier hash (hex string, optional `0x` prefix).
 </ParamField>
 
-<ParamField body="responses[].signal_hash" type="string" default="keccak256('')">
+<ParamField
+  body="responses[].signal_hash"
+  type="string"
+  default="keccak256('')"
+>
   Hash of the signal. Defaults to the keccak256 hash of an empty string.
 </ParamField>
 
 <ParamField body="responses[].max_age" type="number">
-  Maximum age of the Merkle root in seconds. Range: 3600 (1 hour) to 604800 (7 days).
+  Maximum age of the Merkle root in seconds. Range: 3600 (1 hour) to 604800 (7
+  days).
 </ParamField>
 
 #### Response item fields (protocol 4.0)
 
 <ParamField body="responses[].identifier" type="string" required>
-  Credential type: `"orb"`, `"face"`, `"secure_document"`, `"document"`, or `"device"`.
+  Credential type (e.g. `"orb"`).
 </ParamField>
 
 <ParamField body="responses[].proof" type="string[5]" required>
-  Array of exactly 5 hex strings: 4 compressed Groth16 proof elements + Merkle root.
+  Array of exactly 5 hex strings: 4 compressed Groth16 proof elements + Merkle
+  root.
 </ParamField>
 
 <ParamField body="responses[].nullifier" type="string" required>
@@ -95,7 +91,7 @@ This endpoint handles both World ID v3 (cloud) and v4 (on-chain) proof formats. 
 </ParamField>
 
 <ParamField body="responses[].issuer_schema_id" type="number" required>
-  Credential issuer schema ID: 1=orb, 2=face, 3=secure_document, 4=document, 5=device.
+  Credential issuer schema ID.
 </ParamField>
 
 <ParamField body="responses[].expires_at_min" type="number" required>
@@ -106,9 +102,7 @@ This endpoint handles both World ID v3 (cloud) and v4 (on-chain) proof formats. 
   Hash of the signal. Defaults to `"0x0"`.
 </ParamField>
 
-### Request Examples
-
-<CodeGroup>
+<CodeGroup title="Request">
 ```bash cURL
 curl -X POST "https://developer.world.org/api/v4/verify/rp_xxxxx" \
     -H "Content-Type: application/json" \
@@ -129,24 +123,30 @@ curl -X POST "https://developer.world.org/api/v4/verify/rp_xxxxx" \
 ```
 
 ```javascript JavaScript
-const result = await request.pollForUpdates(); // IDKit result
+const completion = await request.pollUntilCompletion();
+
+if (!completion.success) {
+  console.error("Verification failed:", completion.error);
+  return;
+}
 
 const response = await fetch(
   `https://developer.world.org/api/v4/verify/${RP_ID}`,
   {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(result), // forward directly
+    body: JSON.stringify(completion.result), // forward directly
   },
 );
 ```
+
 </CodeGroup>
 
 ### Possible Responses
 
-- `200 OK` — At least one proof was successfully verified.
-- `400 Bad Request` — All proofs failed verification, or the user has already verified for this action.
-- `404 Not Found` — App not found or no longer active.
+- `200 OK` - At least one proof was successfully verified.
+- `400 Bad Request` - All proofs failed verification, or the user has already verified for this action.
+- `404 Not Found` - App not found or no longer active.
 
 ### Response Examples
 
@@ -158,7 +158,7 @@ const response = await fetch(
       "action": "my-action",
       "nullifier": "0x2bf8406809dcefb1486dadc96c0a897db9bab002053054cf64272db512c6fbd8",
       "created_at": "2025-02-18T11:20:39.530041+00:00",
-      "environment": "production",
+      "environment": "staging",
       "results": [
         {
           "identifier": "orb",
@@ -227,7 +227,8 @@ const response = await fetch(
 </ParamField>
 
 <ParamField body="nullifier" type="string">
-  The nullifier from the first successful proof (returned on success). Use this to track unique users per action.
+  The nullifier from the first successful proof (returned on success). Use this
+  to track unique users per action.
 </ParamField>
 
 <ParamField body="created_at" type="string">
@@ -239,5 +240,7 @@ const response = await fetch(
 </ParamField>
 
 <ParamField body="results" type="array">
-  Per-response verification results. Each entry includes `identifier`, `success`, and optionally `nullifier` (on success) or `code`/`detail` (on failure).
+  Per-response verification results. Each entry includes `identifier`,
+  `success`, and optionally `nullifier` (on success) or `code`/`detail` (on
+  failure).
 </ParamField>
