@@ -1,0 +1,358 @@
+---
+title: "IDKit v4 (Preview)"
+description: "Preview guide for @worldcoin/idkit-core v4 - the new pure TypeScript SDK for World ID verification."
+"og:image": "/images/docs/docs-meta.png"
+"twitter:image": "/images/docs/docs-meta.png"
+---
+
+<Warning>
+  IDKit v4 is currently in **preview**. APIs may change before the stable
+  release. Use `@worldcoin/idkit-core@^4.0` for early access.
+</Warning>
+
+<Note>
+  If you pass `environment: "staging"` in your IDKit request, use the
+  [Simulator](https://simulator.worldcoin.org) to scan QR codes and complete
+  verifications - no real World App needed.
+</Note>
+
+## Install
+
+<CodeGroup>
+```bash npm
+npm install @worldcoin/idkit-core
+```
+
+```bash pnpm
+pnpm add @worldcoin/idkit-core
+```
+
+```bash yarn
+yarn add @worldcoin/idkit-core
+```
+
+</CodeGroup>
+
+## Prerequisites
+
+Before writing code you need:
+
+1. An **app ID** (`app_...`) from the [Developer Portal](https://developer.worldcoin.org).
+2. An **RP ID** (`rp_...`) and **signing key** - obtained when you register your Relying Party in the Developer Portal.
+3. A backend endpoint that generates RP signatures (see [Backend setup](#backend-setup)).
+
+## Quick start (browser)
+
+```typescript
+import { IDKit, orbLegacy } from "@worldcoin/idkit-core";
+
+// 1. Initialize (call once on page load)
+await IDKit.init();
+
+// 2. Fetch an RP signature from your backend
+const rpSig = await fetch("/api/rp-signature", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ action: "my-action" }),
+}).then((r) => r.json());
+
+// 3. Create a verification request
+const request = await IDKit.request({
+  app_id: "app_xxxxx",
+  action: "my-action",
+  environment: "staging",
+  rp_context: {
+    rp_id: "rp_xxxxx",
+    nonce: rpSig.nonce,
+    created_at: rpSig.created_at,
+    expires_at: rpSig.expires_at,
+    signature: rpSig.sig,
+  },
+  allow_legacy_proofs: true,
+}).preset(orbLegacy({ signal: "user-123" }));
+
+// 4. Display QR code for users to scan with World App
+console.log("Scan this:", request.connectorURI);
+
+// 5. Wait for the proof (never throws - returns a discriminated union)
+const completion = await request.pollUntilCompletion({
+  pollInterval: 2000, // ms between polls
+  timeout: 120_000, // 2 minute timeout
+});
+
+if (!completion.success) {
+  console.error("Verification failed:", completion.error);
+  // completion.error is an IDKitErrorCodes value, e.g. "user_rejected", "timeout"
+  return;
+}
+
+// 6. Send result directly to the Developer Portal v4 verify endpoint
+const verification = await fetch("/api/verify-proof", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(completion.result),
+});
+```
+
+<Note>
+  Use `IDKit.init()` in the browser and `IDKit.initServer()` in Node.js. Both
+  are safe to call multiple times - initialization only happens once.
+</Note>
+
+## Backend setup
+
+Your backend needs two endpoints: one to generate RP signatures, and one to verify proofs.
+
+### Generate RP signatures
+
+The `signRequest` function must run server-side - it requires your RP signing key.
+
+```typescript
+import { IDKit, signRequest } from "@worldcoin/idkit-core";
+
+// Initialize for Node.js (call once at startup)
+await IDKit.initServer();
+
+const SIGNING_KEY = process.env.RP_SIGNING_KEY; // 32-byte hex private key
+
+app.post("/api/rp-signature", (req, res) => {
+  const { action } = req.body;
+  const sig = signRequest(action, SIGNING_KEY);
+
+  res.json({
+    sig: sig.sig,
+    nonce: sig.nonce,
+    created_at: Number(sig.createdAt),
+    expires_at: Number(sig.expiresAt),
+  });
+});
+```
+
+<Warning>
+  Never expose your RP signing key to client-side code. `signRequest()` will
+  throw if called outside a server environment.
+</Warning>
+
+### Verify proofs
+
+The `result` inside a successful `pollUntilCompletion()` response is shaped exactly as the Developer Portal's [`/v4/verify`](/world-id/reference/api-v4) endpoint expects - just forward it directly:
+
+```typescript
+app.post("/api/verify-proof", async (req, res) => {
+  const proof = req.body;
+
+  const response = await fetch(
+    `https://developer.world.org/api/v4/verify/${RP_ID}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(proof),
+    },
+  );
+
+  const result = await response.json();
+  res.status(response.ok ? 200 : 400).json(result);
+});
+```
+
+## Presets
+
+Presets are the simplest way to create a request. Each preset configures the credential type and handles both v4 and v3 proof formats.
+
+| Preset                   | Credential        | Function                            |
+| ------------------------ | ----------------- | ----------------------------------- |
+| Orb (Legacy)             | `orb`             | `orbLegacy({ signal? })`            |
+| Secure Document (Legacy) | `secure_document` | `secureDocumentLegacy({ signal? })` |
+| Document (Legacy)        | `document`        | `documentLegacy({ signal? })`       |
+
+```typescript
+import { IDKit, orbLegacy, secureDocumentLegacy } from "@worldcoin/idkit-core";
+
+// Orb verification with a signal
+const request = await IDKit.request({ ...config }).preset(
+  orbLegacy({ signal: "user-123" }),
+);
+
+// Secure document verification
+const request2 = await IDKit.request({ ...config }).preset(
+  secureDocumentLegacy(),
+);
+```
+
+## Request configuration
+
+<Properties>
+  <Property name="app_id" type="app_${string}" required={true}>
+    Your application ID from the Developer Portal.
+  </Property>
+  <Property name="action" type="string" required={true}>
+    The action identifier. Should match what's configured in the Developer
+    Portal.
+  </Property>
+  <Property name="rp_context" type="RpContext" required={true}>
+    RP signature context generated by your backend via `signRequest()`. Contains
+    `rp_id`, `nonce`, `created_at`, `expires_at`, and `signature`.
+  </Property>
+  <Property name="allow_legacy_proofs" type="boolean" required={true}>
+    Set to `true` to accept World ID v3 proofs alongside v4. Set to `false` for
+    v4-only.
+  </Property>
+  <Property name="environment" type='"production" | "staging"'>
+    Set to `"staging"` to use the [Simulator](https://simulator.worldcoin.org)
+    for testing. Defaults to `"production"`.
+  </Property>
+  <Property name="action_description" type="string">
+    Human-readable description shown to users in World App. Recommended for
+    dynamically created actions.
+  </Property>
+  <Property name="bridge_url" type="string">
+    Override the default bridge URL. Only change this if running your own bridge
+    service.
+  </Property>
+</Properties>
+
+## Polling for results
+
+Once you have a request, display `connectorURI` as a QR code and poll for the proof:
+
+```typescript
+// Option A: Poll continuously (recommended)
+const completion = await request.pollUntilCompletion({
+  pollInterval: 2000, // default: 1000ms
+  timeout: 120_000, // default: 300_000ms (5 min)
+  signal: abortController.signal, // optional cancellation
+});
+
+if (completion.success) {
+  console.log(completion.result); // IDKitResult - forward to your backend
+} else {
+  console.error(completion.error); // IDKitErrorCodes value
+}
+
+// Option B: Manual polling
+const status = await request.pollOnce();
+// status.type: "waiting_for_connection" | "awaiting_confirmation" | "confirmed" | "failed"
+if (status.type === "confirmed") {
+  console.log(status.result);
+}
+```
+
+## Error handling
+
+`pollUntilCompletion()` **never throws**. It returns a discriminated union:
+
+```typescript
+type IDKitCompletionResult =
+  | { success: true; result: IDKitResult }
+  | { success: false; error: IDKitErrorCodes };
+```
+
+You can match against specific error codes:
+
+```typescript
+import { IDKitErrorCodes } from "@worldcoin/idkit-core";
+
+const completion = await request.pollUntilCompletion();
+
+if (!completion.success) {
+  switch (completion.error) {
+    case IDKitErrorCodes.UserRejected:
+      console.log("User declined in World App");
+      break;
+    case IDKitErrorCodes.Timeout:
+      console.log("Verification timed out");
+      break;
+    case IDKitErrorCodes.Cancelled:
+      console.log("Request was cancelled via AbortSignal");
+      break;
+    default:
+      console.error("Verification failed:", completion.error);
+  }
+  return;
+}
+
+// completion.result is the IDKitResult - forward to your backend
+```
+
+### Error codes
+
+| Code                        | Description                                                 |
+| --------------------------- | ----------------------------------------------------------- |
+| `user_rejected`             | User declined the request in World App                      |
+| `verification_rejected`     | Verification rejected (legacy, replaced by `user_rejected`) |
+| `credential_unavailable`    | Requested credential is not available                       |
+| `malformed_request`         | Request was malformed                                       |
+| `invalid_network`           | Invalid network                                             |
+| `inclusion_proof_pending`   | Inclusion proof is still being generated                    |
+| `inclusion_proof_failed`    | Inclusion proof generation failed                           |
+| `unexpected_response`       | Unexpected response from World App                          |
+| `connection_failed`         | Failed to connect to World App                              |
+| `max_verifications_reached` | User has already verified for this action                   |
+| `failed_by_host_app`        | Verification failed by host app                             |
+| `generic_error`             | An unspecified error occurred                               |
+| `timeout`                   | Client-side: polling timed out                              |
+| `cancelled`                 | Client-side: request cancelled via `AbortSignal`            |
+
+## Response format
+
+On success, `completion.result` can be forwarded directly to the Developer Portal [`/v4/verify`](/world-id/reference/api-v4) endpoint - no transformation needed.
+
+The response shape depends on which World ID protocol version the user's World App uses.
+
+### World ID v3 vs v4
+
+World ID **v3** is the current live protocol. World ID **v4** is the new protocol shipping with this SDK. During the preview period, you will receive **v3 proofs** since World ID v4 has not launched yet. Once v4 rolls out, users with updated World Apps will produce v4 proofs instead.
+
+Set `allow_legacy_proofs: true` so your app works with both - the Developer Portal `/v4/verify` endpoint handles either format transparently.
+
+### V3 response (current - World ID 3.0)
+
+```typescript
+interface IDKitResultV3 {
+  protocol_version: "3.0";
+  nonce: string;
+  action?: string;
+  responses: ResponseItemV3[];
+}
+
+interface ResponseItemV3 {
+  identifier: string; // e.g. "orb"
+  proof: string; // ABI-encoded proof (hex)
+  merkle_root: string; // Merkle root (hex)
+  nullifier: string; // nullifier hash (hex)
+  signal_hash?: string; // included if signal was provided
+}
+```
+
+### V4 response (upcoming - World ID 4.0)
+
+```typescript
+interface IDKitResultV4 {
+  protocol_version: "4.0";
+  nonce: string;
+  action: string;
+  responses: ResponseItemV4[];
+}
+
+interface ResponseItemV4 {
+  identifier: string; // e.g. "orb"
+  proof: string[]; // compressed Groth16 proof + Merkle root
+  nullifier: string; // RP-scoped nullifier (hex)
+  signal_hash?: string; // included if signal was provided
+  issuer_schema_id: number; // credential issuer schema ID
+  expires_at_min: number; // credential expiration (unix seconds)
+}
+```
+
+You can check `protocol_version` on the result to determine which format you received.
+
+<Note>
+  The `signal_hash` field is returned as a convenience - it's the hash of the signal you
+  provided in the preset. You can also compute it yourself with `hashSignal()`:
+
+```typescript
+import { hashSignal } from "@worldcoin/idkit-core";
+const hash = hashSignal("user-123"); // 0x-prefixed hex string
+```
+
+</Note>
