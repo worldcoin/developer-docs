@@ -254,7 +254,7 @@ export async function POST(req: NextRequest) {
 
 		// 2. Here we optimistically confirm the transaction.
 		//    Otherwise, you can poll until the transaction_status == mined
-		if (transaction.reference == reference && transaction.transaction_status == 'mined') {
+		if (transaction.reference === reference && transaction.transaction_status !== 'failed') {
 			return NextResponse.json({ success: true })
 		} else {
 			return NextResponse.json({ success: false })
