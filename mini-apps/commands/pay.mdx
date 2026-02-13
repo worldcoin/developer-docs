@@ -253,8 +253,8 @@ export async function POST(req: NextRequest) {
 		const transaction = await response.json()
 
 		// 2. Here we optimistically confirm the transaction.
-		// Otherwise, you can poll until the status == mined
-		if (transaction.reference == reference && transaction.status != 'failed') {
+		//    Otherwise, you can poll until the transaction_status == mined
+		if (transaction.reference == reference && transaction.transaction_status == 'mined') {
 			return NextResponse.json({ success: true })
 		} else {
 			return NextResponse.json({ success: false })
@@ -369,15 +369,20 @@ async function verifyPaymentOnChain({
     .update(reference, 'utf8')
     .digest()
     .subarray(0, REFERENCE_BYTES)
-  
+
   // 3. Iterate through the logs to find the matching event
   for (const log of logs) {
     const parsedEvent = ENTRYPOINT_INTERFACE.parseLog({
       topics: log.topics as string[],
       data: log.data,
     })
+
+    // Only verify successful UserOperations
+    const success = parsedEvent.args.success as boolean
+    if (!success) continue
+
     const nonce = parsedEvent.args.nonce as bigint
-    
+
     // The nonce is structured as: [24-byte nonce key][8-byte nonce sequence]
     // Extract the nonce key by shifting right by 64 bits
     const nonceKey = nonce >> 64n
