@@ -376,10 +376,13 @@ async function verifyPaymentOnChain({
       topics: log.topics as string[],
       data: log.data,
     })
+    if (!parsedEvent)
+      continue
 
     // Only verify successful UserOperations
     const success = parsedEvent.args.success as boolean
-    if (!success) continue
+    if (!success)
+      continue
 
     const nonce = parsedEvent.args.nonce as bigint
 
