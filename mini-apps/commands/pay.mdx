@@ -348,7 +348,7 @@ async function verifyReferenceFromReceipt({
   senderAddress: string
   reference: string // The reference you generated when initiating the payment
 }): Promise<boolean> {
-  
+
   // 1. Poll Get Transaction API until the transaction is mined to get the transaction hash
   const transactionHash = await checkStatusUntilMined(transactionId)
 
