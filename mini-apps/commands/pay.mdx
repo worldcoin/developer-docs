@@ -278,7 +278,7 @@ World App encodes your `reference` and `miniappId` into the `nonceKey` of the `U
 The `UserOperationEvent` nonce is a 32-byte value split into two parts:
 
 - **Nonce key** (top 24 bytes): contains your payment identifiers
-- **Sequential nonce** (bottom 8 bytes): a counter
+- **Nonce sequence** (bottom 8 bytes): a counter
 
 The `nonceKey` is constructed as:
 
@@ -300,7 +300,7 @@ const miniappId = MINIAPP_ID
 
 const WORLDCHAIN_RPC_URL = 'https://worldchain-mainnet.g.alchemy.com/public'
 
-const PROVIDER = new ethers.JsonRpcProvider(WORLDCHAIN_RPC_URL)
+const provider = new ethers.JsonRpcProvider(WORLDCHAIN_RPC_URL)
 
 // Minimal ABI for the ERC-4337 v0.7 EntryPoint contract
 // Only the UserOperationEvent definition is needed
@@ -325,12 +325,10 @@ const ENTRYPOINT_INTERFACE = new ethers.Interface(ENTRYPOINT_ABI)
 
 // Keccak-256 hash of the event signature — used to identify UserOperationEvent logs
 // Should be 0x49628fd1471006c1482da88028e9ce4dbb080b815c9b0344d39e5a8e6ec1419f
-const USER_OPERATION_EVENT_TOPIC = ethers.id(
-  'UserOperationEvent(bytes32,address,address,uint256,bool,uint256,uint256)'
-)
+const USER_OPERATION_EVENT_TOPIC = ENTRYPOINT_INTERFACE.getEvent('UserOperationEvent')!.topicHash
 
 // In the EntryPoint contract, `UserOperationEvent` includes a `nonce` field.
-// That nonce is structured as: [24-byte nonceKey][8-byte sequential nonce].
+// That nonce is structured as: [24-byte nonceKey][8-byte nonce sequence].
 //
 // nonceKey layout (24 bytes):
 // [ 1B version ][ 13B sha256(miniappId)[0..13) ][ 10B sha256(reference)[0..10) ]
@@ -340,23 +338,20 @@ const MINIAPP_ID_BYTES = 13
 const REFERENCE_BYTES = 10
 
 async function verifyReferenceFromReceipt({
-  transactionId,
+  transactionHash,
   senderAddress,
   reference,
 }: {
-  transactionId: string
+  transactionHash: string // The on-chain transaction hash
   senderAddress: string
   reference: string // The reference you generated when initiating the payment
 }): Promise<boolean> {
 
-  // 1. Poll Get Transaction API until the transaction is mined to get the transaction hash
-  const transactionHash = await checkStatusUntilMined(transactionId)
-
-  // 2. Fetch the transaction receipt
-  const receipt = await PROVIDER.getTransactionReceipt(transactionHash)
+  // 1. Fetch the transaction receipt
+  const receipt = await provider.getTransactionReceipt(transactionHash)
   if (!receipt) throw new Error('Transaction receipt not found')
 
-  // 3. Find the UserOperationEvent for this sender
+  // 2. Find the UserOperationEvent for this sender
   //    topics[0] = event signature hash, topics[2] = sender address (zero-padded to 32 bytes)
   const senderTopic = ethers.zeroPadValue(senderAddress.toLowerCase(), 32)
   const useropEventLog = receipt.logs.find(
@@ -366,7 +361,7 @@ async function verifyReferenceFromReceipt({
   )
   if (!useropEventLog) throw new Error('UserOperationEvent log not found')
 
-  // 4. Parse the UserOperationEvent to extract the nonce
+  // 3. Parse the UserOperationEvent to extract the nonce
   const parsedEvent = ENTRYPOINT_INTERFACE.parseLog({
     topics: useropEventLog.topics as string[],
     data: useropEventLog.data,
@@ -374,15 +369,15 @@ async function verifyReferenceFromReceipt({
   if (!parsedEvent) throw new Error('Failed to parse UserOperationEvent')
   const nonce = parsedEvent.args.nonce as bigint
 
-  // 5. The nonce is structured as: [24-byte nonce key][8-byte sequential nonce]
+  // 4. The nonce is structured as: [24-byte nonce key][8-byte nonce sequence]
   //    Extract the nonce key by shifting right by 64 bits
   const nonceKey = nonce >> 64n
 
-  // 6. Convert the nonce key to bytes (24 bytes)
+  // 5. Convert the nonce key to bytes (24 bytes)
   const nonceKeyHex = nonceKey.toString(16).padStart(48, '0')
   const nonceKeyBytes = Buffer.from(nonceKeyHex, 'hex')
 
-  // 7. Verify miniappId: bytes [1..14) of the nonce key
+  // 6. Verify miniappId: bytes [1..14) of the nonce key
   const expectedMiniappHash = createHash('sha256')
     .update(MINIAPP_ID, 'utf8')
     .digest()
@@ -393,7 +388,7 @@ async function verifyReferenceFromReceipt({
     return false // miniappId does not match
   }
 
-  // 8. Verify reference: bytes [14..24) of the nonce key
+  // 7. Verify reference: bytes [14..24) of the nonce key
   const expectedRefHash = createHash('sha256')
     .update(reference, 'utf8')
     .digest()
