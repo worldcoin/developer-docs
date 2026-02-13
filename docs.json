@@ -177,19 +177,11 @@
               "world-id/reference/idkit",
               "world-id/reference/api",
               "world-id/reference/sign-in",
+              "world-id/reference/poh-issuer",
               "world-id/reference/contracts",
               "world-id/reference/contract-deployments",
               "world-id/reference/errors"
             ]
-          }
-        ]
-      },
-      {
-        "tab": "PoH Issuer",
-        "groups": [
-          {
-            "group": "PoH Issuer",
-            "pages": ["poh-issuer/index"]
           }
         ]
       },
@@ -474,6 +466,14 @@
     {
       "source": "/reference/sign-in",
       "destination": "/world-id/reference/sign-in"
+    },
+    {
+      "source": "/poh-issuer",
+      "destination": "/world-id/reference/poh-issuer"
+    },
+    {
+      "source": "/poh-issuer/index",
+      "destination": "/world-id/reference/poh-issuer"
     },
     {
       "source": "/reference/world-id-2-migration-guide",
