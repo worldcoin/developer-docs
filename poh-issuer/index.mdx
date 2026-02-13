@@ -1,0 +1,192 @@
+---
+title: "PoH Issuer"
+description: "PoH issuer endpoints, including credential refresh for v3 to v4 migration."
+"og:image": "/images/docs/docs-meta.png"
+"twitter:image": "/images/docs/docs-meta.png"
+---
+
+The PoH issuer provides endpoints that issue proof-of-human (PoH) credentials. The main endpoint is credential refresh, which re-issues a PoH credential using a Personal Custody Package (PCP) or a credential-only refresh flow.
+
+<Note>
+  Base URL is environment-specific and served by the signup-service app-api. Contact
+  your World ID point of contact for environment endpoints and access.
+</Note>
+
+<Warning>
+  The refresh endpoint is intended for World ID v3 holders to obtain v4 PoH
+  credentials. It is not a general re-issuance endpoint for v4 holders.
+</Warning>
+
+## Credential refresh
+
+<ParamField path="method" type="POST">
+  /api/v1/refresh
+</ParamField>
+
+**Content-Type:** `multipart/form-data`
+
+## Request
+
+### Headers
+
+| Header | Type | Required | Description |
+| --- | --- | --- | --- |
+| `x-zkp-proof` | `string` | yes | Base64-encoded ZKP string containing `idCommitment` and `sub`. |
+
+### Query parameters
+
+| Query | Type | Required | Description |
+| --- | --- | --- | --- |
+| `idComm` | `string` | yes | User identity commitment. |
+
+### Form fields (always required)
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `sub` | `string` | yes | User account ID (hex with `0x` prefix). Must match previous refreshes for this `idComm`. |
+| `encrypted_user_id` | `string` | no | Temporary field while operator rewards depend on it. |
+
+### PCP form fields (required only when submitting a PCP)
+
+Include all fields below when refreshing with a Personal Custody Package.
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `signup_id` | `string` | Signup ID. |
+| `signup_id_salt` | `string` | Signup ID salt. |
+| `orb_id` | `string` | Orb ID. |
+| `orb_id_salt` | `string` | Orb ID salt. |
+| `operator_id` | `string` | Operator ID. |
+| `operator_id_salt` | `string` | Operator ID salt. |
+| `signup_reason` | `string` | Signup reason. |
+| `signup_reason_salt` | `string` | Signup reason salt. |
+| `timestamp` | `string` | Timestamp. |
+| `timestamp_salt` | `string` | Timestamp salt. |
+| `software_version` | `string` | Software version. |
+| `software_version_salt` | `string` | Software version salt. |
+| `orb_country` | `string` | Orb country. |
+| `orb_country_salt` | `string` | Orb country salt. |
+| `iris_code_shares_0` | `string` | Iris code share 0. |
+| `iris_code_shares_1` | `string` | Iris code share 1. |
+| `iris_code_shares_2` | `string` | Iris code share 2. |
+| `hashes.json` | `file` | PCP hashes JSON file. |
+| `hashes.sign` | `file` | PCP hashes signature file. |
+
+### Example (credential-only refresh)
+
+```bash
+curl -X POST "https://<app-api-host>/api/v1/refresh?idComm=0xabc123..." \
+  -H "x-zkp-proof: <base64-zkp>" \
+  -F "sub=0x1a2b3c"
+```
+
+### Example (refresh with PCP)
+
+```bash
+curl -X POST "https://<app-api-host>/api/v1/refresh?idComm=0xabc123..." \
+  -H "x-zkp-proof: <base64-zkp>" \
+  -F "sub=0x1a2b3c" \
+  -F "signup_id=signup_123" \
+  -F "signup_id_salt=..." \
+  -F "orb_id=orb_abc" \
+  -F "orb_id_salt=..." \
+  -F "operator_id=operator_123" \
+  -F "operator_id_salt=..." \
+  -F "signup_reason=..." \
+  -F "signup_reason_salt=..." \
+  -F "timestamp=1700000000" \
+  -F "timestamp_salt=..." \
+  -F "software_version=1.2.3" \
+  -F "software_version_salt=..." \
+  -F "orb_country=US" \
+  -F "orb_country_salt=..." \
+  -F "iris_code_shares_0=..." \
+  -F "iris_code_shares_1=..." \
+  -F "iris_code_shares_2=..." \
+  -F "hashes.json=@hashes.json" \
+  -F "hashes.sign=@hashes.sign"
+```
+
+## Response
+
+### Success response
+
+```json
+{
+  "success": true,
+  "credential": "<base64-credential>",
+  "message": "Credential refreshed successfully"
+}
+```
+
+### Error responses
+
+| Status | Error | Description |
+| --- | --- | --- |
+| 400 | `INVALID_SUB` | `sub` is missing or invalid. |
+| 400 | `SUB_MISMATCH` | `sub` does not match the one used in previous refreshes. |
+| 404 | `NO_SIGNUP_RECORD` | No enrollment record found. User must re-enroll at an Orb. |
+| 429 | `RATE_LIMIT_EXCEEDED` | Refresh rate limit exceeded for the current window. |
+| 503 | - | Credential refresh is disabled. |
+
+If PCP validation fails, the endpoint returns an error status with `PCP_VALIDATION_FAILED`.
+
+## Credential object format
+
+The `credential` response field is a base64-encoded JSON representation of the World ID `Credential` object defined in `world-id-protocol/crates/primitives/src/credential.rs`.
+
+### Example (decoded)
+
+```json
+{
+  "id": 123456789,
+  "version": "V1",
+  "issuer_schema_id": 42,
+  "sub": "<field-element-hex>",
+  "genesis_issued_at": 1733241600,
+  "expires_at": 1764777600,
+  "claims": ["<field-element-hex>", "<field-element-hex>", "<field-element-hex>"],
+  "associated_data_hash": "<field-element-hex>",
+  "signature": "<signature-hex>",
+  "issuer": {
+    "pk": ["<x-decimal>", "<y-decimal>"]
+  }
+}
+```
+
+### Field definitions
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `id` | `uint64` | Issuer-scoped reference identifier for the credential. |
+| `version` | `string` | Credential version. Current value is `V1`. |
+| `issuer_schema_id` | `uint64` | Identifier for the (issuer, schema) pair registered in `CredentialSchemaIssuerRegistry`. |
+| `sub` | `FieldElement` | Blinded subject identifier derived from the World ID leaf index and an issuer-specific blinding factor. |
+| `genesis_issued_at` | `uint64` | Unix timestamp (seconds) of the first issuance of this credential. |
+| `expires_at` | `uint64` | Unix timestamp (seconds) for expiration. |
+| `claims` | `FieldElement[]` | Up to 16 claim commitments. Unused indices are the zero field element. |
+| `associated_data_hash` | `FieldElement` | Poseidon2 hash of issuer-defined associated data. The associated data itself is not included. |
+| `signature` | `string` | 64-byte compressed EdDSA signature over the credential hash, hex-encoded (128 hex chars, no `0x`). |
+| `issuer` | `EdDSAPublicKey` | Issuer public key that signed the credential. |
+
+### Field representations
+
+- **FieldElement** values (`sub`, `claims`, `associated_data_hash`) are hex strings with a `0x` prefix and 64 hex characters.
+- **Issuer public key** (`issuer.pk`) is serialized as `[x, y]` decimal strings for BabyJubJub affine coordinates.
+- **Signature** is hex-encoded compressed bytes (no `0x` prefix).
+
+### PoH credential semantics
+
+- The user first obtains an Orb credential (currently a PCP in v2.3 format).
+- `claim[0]` is a commitment to the Orb credential, currently `H(hashes.json)`.
+- When refreshing without a PCP, `claims[0]` is derived from issuer-defined refresh data (a hash of `idCommitment`, `sub`, and a timestamp).
+- The PoH credential has no associated data, so `associated_data_hash` is the zero field element.
+- The PoH credential subject is blinded and differs from the Orb credential subject.
+- The issuer may require a proof for the requested `sub` to prevent bricking an identity.
+
+These details are issuer-specific and may evolve as the protocol migrates to the World ID 4.0 credential format.
+
+## References
+
+- [World ID 4.0 specs](https://github.com/worldcoin/world-id-protocol/tree/main/docs/world-id-4-specs)
+- [PoH issuer credential structure (Notion)](https://www.notion.so/worldcoin/WIP-World-ID-Issuers-Credential-Structures-2ca8614bdf8c80c5b1cbfdd7d6becb61?source=copy_link#2ca8614bdf8c80879d9dcd770734ae41)

@@ -185,6 +185,15 @@
         ]
       },
       {
+        "tab": "PoH Issuer",
+        "groups": [
+          {
+            "group": "PoH Issuer",
+            "pages": ["poh-issuer/index"]
+          }
+        ]
+      },
+      {
         "tab": "World Chain",
         "groups": [
           {
