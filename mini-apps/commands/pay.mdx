@@ -282,12 +282,11 @@ The `UserOperationEvent` nonce is a 32-byte value split into two parts:
 
 The `nonceKey` is constructed as:
 
-- **1 byte**: version
+- **1 byte**: version (currently 1)
 - **13 bytes**: truncated SHA-256 hash of your `miniappId`
 - **10 bytes**: truncated SHA-256 hash of your `reference` (the unique ID you passed in `PayCommandInput.reference`)
 
-To verify a payment, extract the `nonceKey` from the `UserOperationEvent` nonce and compare the embedded reference bytes.
-
+To verify a payment, inspect the `UserOperationEvent` logs for the sender address. Find the matching event by comparing the embedded bytes in the `nonceKey` with the expected bytes.
 
 #### Example
 
@@ -296,7 +295,6 @@ import { createHash } from 'crypto'
 import { ethers } from 'ethers'
 
 const MINIAPP_ID = 'app_YOUR_APP_ID'
-const miniappId = MINIAPP_ID
 
 const WORLDCHAIN_RPC_URL = 'https://worldchain-mainnet.g.alchemy.com/public'
 
@@ -323,7 +321,7 @@ const ENTRYPOINT_ABI = [
 
 const ENTRYPOINT_INTERFACE = new ethers.Interface(ENTRYPOINT_ABI)
 
-// Keccak-256 hash of the event signature — used to identify UserOperationEvent logs
+// Used to identify the UserOperationEvent logs
 // Should be 0x49628fd1471006c1482da88028e9ce4dbb080b815c9b0344d39e5a8e6ec1419f
 const USER_OPERATION_EVENT_TOPIC = ENTRYPOINT_INTERFACE.getEvent('UserOperationEvent')!.topicHash
 
@@ -337,66 +335,76 @@ const VERSION_BYTES = 1
 const MINIAPP_ID_BYTES = 13
 const REFERENCE_BYTES = 10
 
-async function verifyReferenceFromReceipt({
-  transactionHash,
+async function verifyPaymentOnChain({
   senderAddress,
   reference,
+  fromBlock,
 }: {
-  transactionHash: string // The on-chain transaction hash
   senderAddress: string
-  reference: string // The reference you generated when initiating the payment
+  /* The reference you generated when initiating the payment */
+  reference: string
+  /* Record provider.getBlockNumber() at payment initiation time */
+  fromBlock: number
 }): Promise<boolean> {
-
-  // 1. Fetch the transaction receipt
-  const receipt = await provider.getTransactionReceipt(transactionHash)
-  if (!receipt) throw new Error('Transaction receipt not found')
-
-  // 2. Find the UserOperationEvent for this sender
-  //    topics[0] = event signature hash, topics[2] = sender address (zero-padded to 32 bytes)
-  const senderTopic = ethers.zeroPadValue(senderAddress.toLowerCase(), 32)
-  const useropEventLog = receipt.logs.find(
-    (log) =>
-      log.topics[0] === USER_OPERATION_EVENT_TOPIC &&
-      log.topics[2]?.toLowerCase() === senderTopic,
-  )
-  if (!useropEventLog) throw new Error('UserOperationEvent log not found')
-
-  // 3. Parse the UserOperationEvent to extract the nonce
-  const parsedEvent = ENTRYPOINT_INTERFACE.parseLog({
-    topics: useropEventLog.topics as string[],
-    data: useropEventLog.data,
+  // 1. Query logs for UserOperationEvent for sender
+  const logs = await provider.getLogs({
+    address: ENTRYPOINT_ADDRESS,
+    topics: [
+      USER_OPERATION_EVENT_TOPIC,
+      null,
+      ethers.zeroPadValue(senderAddress, 32),
+    ],
+    fromBlock
   })
-  if (!parsedEvent) throw new Error('Failed to parse UserOperationEvent')
-  const nonce = parsedEvent.args.nonce as bigint
 
-  // 4. The nonce is structured as: [24-byte nonce key][8-byte nonce sequence]
-  //    Extract the nonce key by shifting right by 64 bits
-  const nonceKey = nonce >> 64n
-
-  // 5. Convert the nonce key to bytes (24 bytes)
-  const nonceKeyHex = nonceKey.toString(16).padStart(48, '0')
-  const nonceKeyBytes = Buffer.from(nonceKeyHex, 'hex')
-
-  // 6. Verify miniappId: bytes [1..14) of the nonce key
+  // 2. Calculate expected hashes
   const expectedMiniappHash = createHash('sha256')
     .update(MINIAPP_ID, 'utf8')
     .digest()
     .subarray(0, MINIAPP_ID_BYTES)
-  const actualMiniappHash = nonceKeyBytes.subarray(VERSION_BYTES, VERSION_BYTES + MINIAPP_ID_BYTES)
 
-  if (Buffer.compare(actualMiniappHash, expectedMiniappHash) !== 0) {
-    return false // miniappId does not match
-  }
-
-  // 7. Verify reference: bytes [14..24) of the nonce key
-  const expectedRefHash = createHash('sha256')
+  const expectedReferenceHash = createHash('sha256')
     .update(reference, 'utf8')
     .digest()
     .subarray(0, REFERENCE_BYTES)
-  const referenceOffset = VERSION_BYTES + MINIAPP_ID_BYTES
-  const actualRefHash = nonceKeyBytes.subarray(referenceOffset, referenceOffset + REFERENCE_BYTES)
+  
+  // 3. Iterate through the logs to find the matching event
+  for (const log of logs) {
+    const parsedEvent = ENTRYPOINT_INTERFACE.parseLog({
+      topics: log.topics as string[],
+      data: log.data,
+    })
+    const nonce = parsedEvent.args.nonce as bigint
+    
+    // The nonce is structured as: [24-byte nonce key][8-byte nonce sequence]
+    // Extract the nonce key by shifting right by 64 bits
+    const nonceKey = nonce >> 64n
 
-  return Buffer.compare(actualRefHash, expectedRefHash) === 0
+    // Convert the nonce key to bytes (24 bytes)
+    const nonceKeyHex = nonceKey.toString(16).padStart(48, '0')
+    const nonceKeyBytes = Buffer.from(nonceKeyHex, 'hex')
+
+    // Verify miniappId: bytes [1..14) of the nonce key
+    const actualMiniappHash = nonceKeyBytes.subarray(VERSION_BYTES, VERSION_BYTES + MINIAPP_ID_BYTES)
+    if (Buffer.compare(actualMiniappHash, expectedMiniappHash) !== 0)
+      continue
+
+    // Verify reference: bytes [14..24) of the nonce key
+    const referenceOffset = VERSION_BYTES + MINIAPP_ID_BYTES
+    const actualReferenceHash = nonceKeyBytes.subarray(referenceOffset, referenceOffset + REFERENCE_BYTES)
+    if (Buffer.compare(actualReferenceHash, expectedReferenceHash) !== 0)
+      continue
+
+    return {
+      verified: true,
+      transactionHash: log.transactionHash,
+    }
+  }
+
+  return {
+    verified: false,
+    transactionHash: null,
+  }
 }
 ```
 
