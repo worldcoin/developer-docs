@@ -300,8 +300,10 @@ const WORLDCHAIN_RPC_URL = 'https://worldchain-mainnet.g.alchemy.com/public'
 
 const provider = new ethers.JsonRpcProvider(WORLDCHAIN_RPC_URL)
 
-// Minimal ABI for the ERC-4337 v0.7 EntryPoint contract
-// Only the UserOperationEvent definition is needed
+// ERC-4337 EntryPoint v0.7 contract address
+const ENTRYPOINT_ADDRESS = '0x0000000071727De22E5E9d8BAf0edAc6f37da032'
+
+// Minimal ABI with only the UserOperationEvent definition
 const ENTRYPOINT_ABI = [
   {
     anonymous: false,
@@ -345,14 +347,14 @@ async function verifyPaymentOnChain({
   reference: string
   /* Record provider.getBlockNumber() at payment initiation time */
   fromBlock: number
-}): Promise<boolean> {
+}): Promise<{ verified: boolean; transactionHash: string | null }> {
   // 1. Query logs for UserOperationEvent for sender
   const logs = await provider.getLogs({
     address: ENTRYPOINT_ADDRESS,
     topics: [
-      USER_OPERATION_EVENT_TOPIC,
-      null,
-      ethers.zeroPadValue(senderAddress, 32),
+      USER_OPERATION_EVENT_TOPIC, // Topic 0: Event signature
+      null, // Topic 1: userOpHash (any)
+      ethers.zeroPadValue(senderAddress, 32), // Topic 2: sender (indexed)
     ],
     fromBlock
   })
