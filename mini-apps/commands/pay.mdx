@@ -265,7 +265,7 @@ export async function POST(req: NextRequest) {
 
 ### On-chain verification (advanced)
 
-Verify payments by inspecting the ERC-4337 `UserOperationEvent` emitted during the pay operation. 
+Verify payments by inspecting the ERC-4337 `UserOperationEvent` emitted during the pay operation.
 
 <Note>
 The `TransferReference` event will no longer be emitted. Instead, the `reference` string is encoded in the `nonceKey` of the `UserOperationEvent` as described below.
@@ -296,6 +296,7 @@ import { createHash } from 'crypto'
 import { ethers } from 'ethers'
 
 const MINIAPP_ID = 'app_YOUR_APP_ID'
+const miniappId = MINIAPP_ID
 
 const WORLDCHAIN_RPC_URL = 'https://worldchain-mainnet.g.alchemy.com/public'
 
@@ -349,7 +350,7 @@ async function verifyReferenceFromReceipt({
 }): Promise<boolean> {
   
   // 1. Poll Get Transaction API until the transaction is mined to get the transaction hash
-  const transactionHash = await checkStatusUntilMined(transactionId);
+  const transactionHash = await checkStatusUntilMined(transactionId)
 
   // 2. Fetch the transaction receipt
   const receipt = await PROVIDER.getTransactionReceipt(transactionHash)
@@ -383,7 +384,7 @@ async function verifyReferenceFromReceipt({
 
   // 7. Verify miniappId: bytes [1..14) of the nonce key
   const expectedMiniappHash = createHash('sha256')
-    .update(miniappId, 'utf8')
+    .update(MINIAPP_ID, 'utf8')
     .digest()
     .subarray(0, MINIAPP_ID_BYTES)
   const actualMiniappHash = nonceKeyBytes.subarray(VERSION_BYTES, VERSION_BYTES + MINIAPP_ID_BYTES)
