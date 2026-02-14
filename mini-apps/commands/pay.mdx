@@ -347,7 +347,11 @@ async function verifyPaymentOnChain({
   reference: string
   /* Record provider.getBlockNumber() at payment initiation time */
   fromBlock: number
-}): Promise<{ verified: boolean; transactionHash: string | null }> {
+}): Promise<{
+  verified: boolean;
+  transactionHash: string | null;
+  userOpHash: string | null;
+}> {
   // 1. Query logs for UserOperationEvent for sender
   const logs = await provider.getLogs({
     address: ENTRYPOINT_ADDRESS,
@@ -379,11 +383,6 @@ async function verifyPaymentOnChain({
     if (!parsedEvent)
       continue
 
-    // Only verify successful UserOperations
-    const success = parsedEvent.args.success as boolean
-    if (!success)
-      continue
-
     const nonce = parsedEvent.args.nonce as bigint
 
     // The nonce is structured as: [24-byte nonce key][8-byte nonce sequence]
@@ -405,15 +404,20 @@ async function verifyPaymentOnChain({
     if (Buffer.compare(actualReferenceHash, expectedReferenceHash) !== 0)
       continue
 
+    // Check if the UserOperation was successful
+    const success = parsedEvent.args.success as boolean
+
     return {
-      verified: true,
+      verified: success,
       transactionHash: log.transactionHash,
+      userOpHash: parsedEvent.args.userOpHash as string,
     }
   }
 
   return {
     verified: false,
     transactionHash: null,
+    userOpHash: null,
   }
 }
 ```
