@@ -107,11 +107,10 @@ Your backend needs two endpoints: one to generate RP signatures, and one to veri
 
 The `signRequest` function must run server-side - it requires your RP signing key.
 
-```typescript
-import { IDKit, signRequest } from "@worldcoin/idkit-core";
+Import from `@worldcoin/idkit-core/signing` — this is a pure JS subpath export that requires no WASM initialization.
 
-// Initialize for Node.js (call once at startup)
-await IDKit.initServer();
+```typescript
+import { signRequest } from "@worldcoin/idkit-core/signing";
 
 const SIGNING_KEY = process.env.RP_SIGNING_KEY; // 32-byte hex private key
 
@@ -122,11 +121,16 @@ app.post("/api/rp-signature", (req, res) => {
   res.json({
     sig: sig.sig,
     nonce: sig.nonce,
-    created_at: Number(sig.createdAt),
-    expires_at: Number(sig.expiresAt),
+    created_at: sig.createdAt,
+    expires_at: sig.expiresAt,
   });
 });
 ```
+
+<Note>
+  If you're using the React package (`@worldcoin/idkit`), the same subpath
+  export is available at `@worldcoin/idkit/signing`.
+</Note>
 
 <Warning>
   Never expose your RP signing key to client-side code. `signRequest()` will
@@ -346,13 +350,49 @@ interface ResponseItemV4 {
 
 You can check `protocol_version` on the result to determine which format you received.
 
-<Note>
-  The `signal_hash` field is returned as a convenience - it's the hash of the signal you
-  provided in the preset. You can also compute it yourself with `hashSignal()`:
+## Hashing utilities
+
+The `hashSignal` function hashes a signal to its field element representation. Import from `@worldcoin/idkit-core/hashing` — this is a pure JS subpath export that requires no WASM initialization.
 
 ```typescript
-import { hashSignal } from "@worldcoin/idkit-core";
-const hash = hashSignal("user-123"); // 0x-prefixed hex string
+import { hashSignal } from "@worldcoin/idkit-core/hashing";
+
+hashSignal("user-123"); // 0x-prefixed hex string
+hashSignal(new Uint8Array([1, 2, 3])); // also accepts raw bytes
+hashSignal("0x68656c6c6f"); // 0x-prefixed hex strings are decoded to bytes first
 ```
 
+A lower-level `hashToField` is also available if you need the raw bytes:
+
+```typescript
+import { hashToField } from "@worldcoin/idkit-core/hashing";
+
+const fieldElement: Uint8Array = hashToField(new Uint8Array([1, 2, 3])); // 32 bytes
+```
+
+<Note>
+  Both `hashSignal` and `hashToField` are also available from the main entry
+  point (`@worldcoin/idkit-core`) but that import pulls in the full WASM module.
+  Prefer the `/hashing` subpath when you only need hashing.
 </Note>
+
+## Subpath exports
+
+Both `@worldcoin/idkit-core` and `@worldcoin/idkit` (React) expose subpath exports for signing and hashing. These are pure JS — no WASM initialization required.
+
+| Subpath      | Exports                                              |
+| ------------ | ---------------------------------------------------- |
+| `/signing`   | `signRequest`, `computeRpSignatureMessage`, `RpSignature` (type) |
+| `/hashing`   | `hashSignal`, `hashToField`                          |
+
+```typescript
+// Core package
+import { signRequest } from "@worldcoin/idkit-core/signing";
+import { hashSignal } from "@worldcoin/idkit-core/hashing";
+
+// React package (re-exports from core)
+import { signRequest } from "@worldcoin/idkit/signing";
+import { hashSignal } from "@worldcoin/idkit/hashing";
+```
+
+This is especially useful in server-side contexts (e.g. Next.js API routes) where importing from the main entry point would pull in React hooks or WASM dependencies.
