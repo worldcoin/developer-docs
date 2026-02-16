@@ -128,11 +128,6 @@ app.post("/api/rp-signature", (req, res) => {
 });
 ```
 
-<Note>
-  If you're using the React package (`@worldcoin/idkit`), the same subpath
-  export is available at `@worldcoin/idkit/signing`.
-</Note>
-
 <Warning>
   Never expose your RP signing key to client-side code. `signRequest()` will
   throw if called outside a server environment.
@@ -371,7 +366,7 @@ hashSignal("0x68656c6c6f"); // 0x-prefixed hex strings are decoded to bytes firs
 
 ## Subpath exports
 
-Both `@worldcoin/idkit-core` and `@worldcoin/idkit` (React) expose subpath exports for signing and hashing. These are pure JS — no WASM initialization required.
+`@worldcoin/idkit-core` exposes subpath exports for signing and hashing. These are pure JS — no WASM initialization required.
 
 | Subpath      | Exports                                              |
 | ------------ | ---------------------------------------------------- |
@@ -379,13 +374,8 @@ Both `@worldcoin/idkit-core` and `@worldcoin/idkit` (React) expose subpath expor
 | `/hashing`   | `hashSignal`                                         |
 
 ```typescript
-// Core package
 import { signRequest } from "@worldcoin/idkit-core/signing";
 import { hashSignal } from "@worldcoin/idkit-core/hashing";
-
-// React package (re-exports from core)
-import { signRequest } from "@worldcoin/idkit/signing";
-import { hashSignal } from "@worldcoin/idkit/hashing";
 ```
 
-This is especially useful in server-side contexts (e.g. Next.js API routes) where importing from the main entry point would pull in React hooks or WASM dependencies.
+This is especially useful in server-side contexts (e.g. Next.js API routes) where importing from the main entry point would pull in WASM dependencies.
