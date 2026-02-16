@@ -95,8 +95,9 @@ const verification = await fetch("/api/verify-proof", {
 ```
 
 <Note>
-  Use `IDKit.init()` in the browser and `IDKit.initServer()` in Node.js. Both
-  are safe to call multiple times - initialization only happens once.
+  `IDKit.init()` initializes the WASM module for browser use. It's safe to call
+  multiple times - initialization only happens once. Server-side functions like
+  `signRequest` use pure JS and need no initialization.
 </Note>
 
 ## Backend setup
