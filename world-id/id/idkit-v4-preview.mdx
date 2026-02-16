@@ -363,17 +363,9 @@ hashSignal(new Uint8Array([1, 2, 3])); // also accepts raw bytes
 hashSignal("0x68656c6c6f"); // 0x-prefixed hex strings are decoded to bytes first
 ```
 
-A lower-level `hashToField` is also available if you need the raw bytes:
-
-```typescript
-import { hashToField } from "@worldcoin/idkit-core/hashing";
-
-const fieldElement: Uint8Array = hashToField(new Uint8Array([1, 2, 3])); // 32 bytes
-```
-
 <Note>
-  Both `hashSignal` and `hashToField` are also available from the main entry
-  point (`@worldcoin/idkit-core`) but that import pulls in the full WASM module.
+  `hashSignal` is also available from the main entry point
+  (`@worldcoin/idkit-core`) but that import pulls in the full WASM module.
   Prefer the `/hashing` subpath when you only need hashing.
 </Note>
 
@@ -384,7 +376,7 @@ Both `@worldcoin/idkit-core` and `@worldcoin/idkit` (React) expose subpath expor
 | Subpath      | Exports                                              |
 | ------------ | ---------------------------------------------------- |
 | `/signing`   | `signRequest`, `computeRpSignatureMessage`, `RpSignature` (type) |
-| `/hashing`   | `hashSignal`, `hashToField`                          |
+| `/hashing`   | `hashSignal`                                         |
 
 ```typescript
 // Core package
