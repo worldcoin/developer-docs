@@ -46,17 +46,14 @@ Before writing code you need:
 ```typescript
 import { IDKit, orbLegacy } from "@worldcoin/idkit-core";
 
-// 1. Initialize (call once on page load)
-await IDKit.init();
-
-// 2. Fetch an RP signature from your backend
+// 1. Fetch an RP signature from your backend
 const rpSig = await fetch("/api/rp-signature", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ action: "my-action" }),
 }).then((r) => r.json());
 
-// 3. Create a verification request
+// 2. Create a verification request
 const request = await IDKit.request({
   app_id: "app_xxxxx",
   action: "my-action",
@@ -71,10 +68,10 @@ const request = await IDKit.request({
   allow_legacy_proofs: true,
 }).preset(orbLegacy({ signal: "user-123" }));
 
-// 4. Display QR code for users to scan with World App
+// 3. Display QR code for users to scan with World App
 console.log("Scan this:", request.connectorURI);
 
-// 5. Wait for the proof (never throws - returns a discriminated union)
+// 4. Wait for the proof (never throws - returns a discriminated union)
 const completion = await request.pollUntilCompletion({
   pollInterval: 2000, // ms between polls
   timeout: 120_000, // 2 minute timeout
@@ -86,19 +83,13 @@ if (!completion.success) {
   return;
 }
 
-// 6. Send result directly to the Developer Portal v4 verify endpoint
+// 5. Send result directly to the Developer Portal v4 verify endpoint
 const verification = await fetch("/api/verify-proof", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify(completion.result),
 });
 ```
-
-<Note>
-  `IDKit.init()` initializes the WASM module for browser use. It's safe to call
-  multiple times - initialization only happens once. Server-side functions like
-  `signRequest` use pure JS and need no initialization.
-</Note>
 
 ## Backend setup
 
@@ -368,10 +359,10 @@ hashSignal("0x68656c6c6f"); // 0x-prefixed hex strings are decoded to bytes firs
 
 `@worldcoin/idkit-core` exposes subpath exports for signing and hashing. These are pure JS — no WASM initialization required.
 
-| Subpath      | Exports                                              |
-| ------------ | ---------------------------------------------------- |
-| `/signing`   | `signRequest`, `computeRpSignatureMessage`, `RpSignature` (type) |
-| `/hashing`   | `hashSignal`                                         |
+| Subpath    | Exports                                                          |
+| ---------- | ---------------------------------------------------------------- |
+| `/signing` | `signRequest`, `computeRpSignatureMessage`, `RpSignature` (type) |
+| `/hashing` | `hashSignal`                                                     |
 
 ```typescript
 import { signRequest } from "@worldcoin/idkit-core/signing";
