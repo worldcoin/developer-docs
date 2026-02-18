@@ -223,7 +223,7 @@ There are two ways to verify a payment:
 
 ### Developer Portal API
 
-Use the [Get Transaction](/api-reference/get-transaction) endpoint to get the current status of the transaction. When the transaction has landed on-chain, the `transaction_status` will be `mined`.
+Use the [Get Transaction](/mini-apps/reference/api#get-transaction) endpoint to get the current status of the transaction. When the transaction has landed on-chain, the `transaction_status` will be `mined`.
 
 ```tsx app/confirm-payment/route.ts
 import { NextRequest, NextResponse } from 'next/server'
