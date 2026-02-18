@@ -168,41 +168,21 @@ const nonce = crypto.randomUUID().replace(/-/g, '');
 await MiniKit.walletAuth({ nonce });
 ```
 
-#### 6) `sendTransaction` now also supports raw calldata
+#### 6) `sendTransaction` 2.0
 
-`Transaction` now supports optional raw
-calldata. When `data` is present, it takes priority over `abi` /
-`functionName` / `args`. This change helps with Wagmi interoperability.
-
-**Old (contract-call only):**
-
+Send Transaction will switch to [Permit2 Approves](https://github.com/Uniswap/permit2/blob/cc56ad0f3439c502c246fc5cfcc3db92bb8b7219/src/AllowanceTransfer.sol#L26-L30) with expiration time 0. 
+Apps that need longer standing approvals will be granted on a case by case basis. This will require a hard migration, but provides much more robust security and flexibility for standing approvals to developers.
+Transactions themselves will now purely be calldata in line with `eth_sendTransaction`. 
 ```ts
-await MiniKit.commandsAsync.sendTransaction({
-  transaction: [
-    {
-      address: tokenAddress,
-      abi: erc20Abi,
-      functionName: 'transfer',
-      args: [to, amount],
-    },
-  ],
-});
-```
-
-**New:**
-
-```ts 
 await MiniKit.sendTransaction({
-  transaction: [
+  transactions: [
     {
-      address: tokenAddress,
-      value: '0x0',
-      data: '0xa9059cbb...', // NEW: takes priority when present
-      abi: erc20Abi,
-      functionName: 'transfer',
-      args: [to, amount],
+        data: // Calldata Hex String
+        value: // Hex encoded string
+        to: // Hex
     },
   ],
+  chainId: 480
 });
 ```
 
@@ -213,22 +193,17 @@ type Transaction = {
   address: string;
   value?: string;
   data?: string; // takes priority when present
-  abi?: Abi | readonly unknown[];
-  functionName?: ContractFunctionName<...>;
-  args?: ContractFunctionArgs<...>;
 };
 
 interface MiniKitSendTransactionOptions<TCustomFallback = SendTransactionResult> {
   transaction: Transaction[];
   chainId?: number; // defaults to 480 on World App
-  permit2?: Permit2[];
-  formatPayload?: boolean;
 }
 ```
 
-### Running your Mini App as a Standalone App
+## Running your Mini App as a Standalone App
 
-#### World ID
+#### 1) World ID
 Migrating to World ID 4.0 with IDKit will allow your verification flow to work out of the box. You can
 optionally add branching logic to show the IDKit widget 
 
@@ -296,7 +271,7 @@ export function VerifyHybrid() {
   );
 }
 ```
-#### Transactions
+#### 2) Transactions
 Adding Wagmi provider
 ```tsx Install dependencies
 pnpm add @worldcoin/minikit-js wagmi viem @tanstack/react-query
@@ -351,20 +326,20 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
 }
 ```
 Once these are set up your application will automatically support transaction logic externally without any refactoring to core command calls.
-#### Non Transaction Command fallbacks
+#### 3) Non Transaction Command fallbacks
 MiniKit v2 is designed to work both inside and outside of World App. By adding custom fallbacks to commands, you can ensure your app behaves gracefully when users access it outside of World App.
 
 
-### Standalone App to Mini App
+## Standalone App to Mini App
 
 
-#### World ID
-Requires no changes, simply enable the configuration to run your app as a mini app in the developer portal.
+#### 1) World ID
+No changes, simply enable the mini app option under configuration in the developer portal.
 
-#### Transactions
-If you are using **wagmi** for transactions, adding the `MiniKitProvider` and `worldApp` connector will allow your existing transaction logic to work seamlessly in World App without any changes. 
+#### 2) Transactions
+**Wagmi**: Add `MiniKitProvider` to your root and use the `worldApp` provider from the examples in the [previous section](/mini-apps/more/minikit-v2#2-transactions)
 
-If you're using another library like **viem** or **ethers**. Check if you're in World App and use the World App provider which will automatically
+If you're using instead using **Viem** or **Ethers**. Add a branch for World App and use the `getWorldAppProvider` helper to automatically
 bridge your commands.
 ```tsx Viem/Ethers
 import { MiniKit, getWorldAppProvider } from '@worldcoin/minikit-js'
