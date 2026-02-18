@@ -273,7 +273,7 @@ export function VerifyHybrid() {
 }
 ```
 #### 2) Transactions
-Adding Wagmi provider
+Adding Wagmi provider. While World App will automatically bundle transactions into `multiCall` most wallets will not do this. Thus you should consider wrapping your call in a multi call when outside of World App for best compatibility.
 ```tsx Install dependencies
 pnpm add @worldcoin/minikit-js wagmi viem @tanstack/react-query
 ```
