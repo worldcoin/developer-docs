@@ -177,14 +177,15 @@ Transactions themselves will now purely be calldata in line with `eth_sendTransa
 await MiniKit.sendTransaction({
   transactions: [
     {
-        data: // Calldata Hex String
-        value: // Hex encoded string
-        to: // Hex
+      data: // Calldata Hex String
+      value: // Hex encoded string
+      to: // Hex
     },
   ],
   chainId: 480
 });
 ```
+<Note>Backwards compatibility with v1 will be supported for a period of time, but we encourage developers to migrate to the new format as soon as possible.</Note>
 
 Type changes:
 
