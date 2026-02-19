@@ -145,6 +145,10 @@
             "pages": ["world-id/concepts"]
           },
           {
+            "group": "Migration",
+            "pages": ["world-id/4-0-migration"]
+          },
+          {
             "group": "ID Kit",
             "pages": [
               "world-id/id/getting-started",
