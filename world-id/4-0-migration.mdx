@@ -209,7 +209,7 @@ function mint({..., nullifier}){
 function mintLegacy({..., nullifierHash}){
   // Check old contracts and new ones
   if (OldContract.hasMinted[msg.sender] || hasMinted[msg.sender]) revert AlreadyMinted();
-  if (OldContract.oldNullifierHashes[msg.sender] || nullifierHashes[nullifierHash]) revert DuplicateNullifier(nullifierHash);
+  if (OldContract.oldNullifierHashes[nullifierHash] || nullifierHashes[nullifierHash]) revert DuplicateNullifier(nullifierHash);
 
   // Verify Legacy Proof
   WorldIDRouter.verify(...)
