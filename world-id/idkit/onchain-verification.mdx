@@ -1,0 +1,258 @@
+---
+title: "On-chain verification"
+description: "Verify World ID proofs directly in Solidity for web3-native flows."
+"og:image": "/images/docs/docs-meta.png"
+"twitter:image": "/images/docs/docs-meta.png"
+---
+
+On-chain verification is best for web3 apps that need proof checks enforced by
+smart contracts (for example gating mints, voting, or claims without backend
+trust assumptions). If you do not need contract-level enforcement, use
+[POST /v4/verify](/world-id/reference/api-v4) instead.
+
+## Contract addresses
+
+Use your deployed addresses for World ID 4.0 verifier contracts. For legacy v3
+proofs, use the current World ID Router addresses below.
+
+<table>
+  <thead>
+    <tr>
+      <th className="p-2 text-left align-middle">Flow</th>
+      <th className="p-2 text-left align-middle">Mainnet</th>
+      <th className="p-2 text-left align-middle">Testnet</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td className="p-2 align-middle">World ID 4.0 (`WorldIDVerifier`)</td>
+      <td className="p-2 align-middle"><code>&lt;VERIFIER_MAINNET_ADDRESS&gt;</code></td>
+      <td className="p-2 align-middle"><code>&lt;VERIFIER_TESTNET_ADDRESS&gt;</code></td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">World ID 3.0 (`WorldIDRouter`) on World Chain</td>
+      <td className="p-2 align-middle">
+        <a href="https://worldscan.org/address/0x17B354dD2595411ff79041f930e491A4Df39A278">
+          0x17B354dD...A278
+        </a>
+      </td>
+      <td className="p-2 align-middle">
+        <a href="https://sepolia.worldscan.org/address/0x57f928158C3EE7CDad1e4D8642503c4D0201f611">
+          0x57f92815...f611
+        </a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+## 1. Verifying Uniqueness proofs in `WorldIDVerifier.sol`
+
+For v4 uniqueness proofs, call `verify(...)` and store used nullifiers to
+enforce one-human-one-action semantics in your contract.
+
+```solidity
+interface IWorldIDVerifier {
+    function verify(
+        uint256 nullifier,
+        uint256 action,
+        uint64 rpId,
+        uint256 nonce,
+        uint256 signalHash,
+        uint64 expiresAtMin,
+        uint64 issuerSchemaId,
+        uint256 credentialGenesisIssuedAtMin,
+        uint256[5] calldata zeroKnowledgeProof
+    ) external view;
+}
+
+contract VerifyUniquenessV4 {
+    IWorldIDVerifier public immutable verifier;
+    mapping(uint256 => bool) public nullifierUsed;
+    error InvalidNullifier();
+
+    constructor(IWorldIDVerifier _verifier) {
+        verifier = _verifier;
+    }
+
+    function verifyAndExecute(
+        uint256 nullifier,
+        uint256 action,
+        uint64 rpId,
+        uint256 nonce,
+        uint256 signalHash,
+        uint64 expiresAtMin,
+        uint64 issuerSchemaId,
+        uint256 credentialGenesisIssuedAtMin,
+        uint256[5] calldata proof
+    ) external {
+        if (nullifierUsed[nullifier]) revert InvalidNullifier();
+
+        verifier.verify(
+            nullifier,
+            action,
+            rpId,
+            nonce,
+            signalHash,
+            expiresAtMin,
+            issuerSchemaId,
+            credentialGenesisIssuedAtMin,
+            proof
+        );
+
+        // Mark nullifier after successful verification (sybil resistance).
+        nullifierUsed[nullifier] = true;
+
+        // Execute protected business logic here.
+    }
+}
+```
+
+Minimal mapping from IDKit result:
+- `nullifier` = `responses[i].nullifier`
+- `action` = `keccak256(action)` as `uint256`
+- `rpId` = numeric `rp_id`
+- `nonce` = top-level `nonce`
+- `signalHash` = `responses[i].signal_hash`
+- `expiresAtMin` = `responses[i].expires_at_min`
+- `issuerSchemaId` = `responses[i].issuer_schema_id`
+- `credentialGenesisIssuedAtMin` = `responses[i].credential_genesis_issued_at_min ?? 0`
+- `proof` = `responses[i].proof` (`uint256[5]`)
+
+## 2. Verifying Session proofs in `WorldIDVerifier.sol`
+
+For v4 session proofs, call `verifySession(...)`.
+
+```solidity
+interface IWorldIDVerifierSession {
+    function verifySession(
+        uint64 rpId,
+        uint256 nonce,
+        uint256 signalHash,
+        uint64 expiresAtMin,
+        uint64 issuerSchemaId,
+        uint256 credentialGenesisIssuedAtMin,
+        uint256 sessionId,
+        uint256[2] calldata sessionNullifier,
+        uint256[5] calldata zeroKnowledgeProof
+    ) external view;
+}
+
+contract VerifySessionV4 {
+    IWorldIDVerifierSession public immutable verifier;
+    mapping(bytes32 => bool) public sessionReplayGuard;
+    error SessionReplay();
+
+    constructor(IWorldIDVerifierSession _verifier) {
+        verifier = _verifier;
+    }
+
+    function verifySessionProof(
+        uint64 rpId,
+        uint256 nonce,
+        uint256 signalHash,
+        uint64 expiresAtMin,
+        uint64 issuerSchemaId,
+        uint256 credentialGenesisIssuedAtMin,
+        uint256 sessionId,
+        uint256[2] calldata sessionNullifier,
+        uint256[5] calldata proof
+    ) external {
+        // Optional replay protection for one-time session actions.
+        bytes32 replayKey = keccak256(
+            abi.encodePacked(sessionId, sessionNullifier[0], nonce)
+        );
+        if (sessionReplayGuard[replayKey]) revert SessionReplay();
+
+        verifier.verifySession(
+            rpId,
+            nonce,
+            signalHash,
+            expiresAtMin,
+            issuerSchemaId,
+            credentialGenesisIssuedAtMin,
+            sessionId,
+            sessionNullifier,
+            proof
+        );
+
+        sessionReplayGuard[replayKey] = true;
+
+        // Execute protected business logic here.
+    }
+}
+```
+
+Minimal mapping from IDKit result:
+- `sessionId` = top-level `session_id`
+- `sessionNullifier` = `responses[i].session_nullifier`
+- other fields map the same way as uniqueness proofs
+
+## 3. Verifying Legacy proofs (World ID 3.0)
+
+For v3 proofs, verify against `WorldIDRouter.verifyProof(...)`.
+
+```solidity
+interface IWorldID {
+    function verifyProof(
+        uint256 root,
+        uint256 groupId,
+        uint256 signalHash,
+        uint256 nullifierHash,
+        uint256 externalNullifierHash,
+        uint256[8] calldata proof
+    ) external view;
+}
+
+contract VerifyLegacyV3 {
+    IWorldID public immutable worldIdRouter;
+    uint256 public constant GROUP_ID = 1; // Orb
+    mapping(uint256 => bool) public nullifierHashes;
+    error InvalidNullifier();
+
+    constructor(IWorldID _worldIdRouter) {
+        worldIdRouter = _worldIdRouter;
+    }
+
+    function verifyLegacyAndExecute(
+        uint256 root,
+        uint256 signalHash,
+        uint256 nullifierHash,
+        uint256 externalNullifierHash,
+        uint256[8] calldata proof
+    ) external {
+        if (nullifierHashes[nullifierHash]) revert InvalidNullifier();
+
+        worldIdRouter.verifyProof(
+            root,
+            GROUP_ID,
+            signalHash,
+            nullifierHash,
+            externalNullifierHash,
+            proof
+        );
+
+        nullifierHashes[nullifierHash] = true;
+
+        // Execute protected business logic here.
+    }
+}
+```
+
+For legacy proofs, ensure `groupId = 1` (Orb-only on-chain path).
+
+If your v3 proof arrives as ABI-encoded bytes, decode it to `uint256[8]` before
+calling `verifyProof`:
+
+<CodeGroup>
+```ts viem
+import { decodeAbiParameters } from "viem";
+
+const unpackedProof = decodeAbiParameters([{ type: "uint256[8]" }], proof)[0];
+```
+
+```ts ethers.js
+import { defaultAbiCoder as abi } from "@ethersproject/abi";
+
+const unpackedProof = abi.decode(["uint256[8]"], proof)[0];
+```
+</CodeGroup>

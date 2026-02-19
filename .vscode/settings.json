@@ -90,5 +90,8 @@
     "Worldscan",
     "Zeth",
     "zrok"
-  ]
+  ],
+  "[mdx]": {
+    "editor.formatOnSave": false
+  }
 }

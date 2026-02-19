@@ -1,0 +1,208 @@
+---
+title: "Getting started"
+description: "Integrate World ID 4.0 with IDKit in four steps"
+"og:image": "/images/docs/docs-meta.png"
+"twitter:image": "/images/docs/docs-meta.png"
+---
+
+# Step 1: Create an app in the Developer Portal
+
+Create your app in the [Developer Portal](https://developer.world.org).
+
+Save these values:
+  - `app_id`
+  - `rp_id`
+  - `signing_key`
+
+You no longer choose cloud or on-chain, or staging or production, at app creation time.
+Keep `signing_key` in your backend only.
+
+# Step 2: Generate an RP signature in your backend
+
+```typescript
+import { signRequest } from "@worldcoin/idkit-core/signing";
+
+export async function POST(request: Request): Promise<Response> {
+  const { action } = await request.json();
+  const signingKey = process.env.RP_SIGNING_KEY;
+
+  if (!signingKey) {
+    return Response.json({ error: "Missing RP_SIGNING_KEY" }, { status: 500 });
+  }
+
+  const { sig, nonce, createdAt, expiresAt } = signRequest(action, signingKey);
+
+  return Response.json({
+    sig,
+    nonce,
+    created_at: createdAt,
+    expires_at: expiresAt,
+  });
+}
+```
+
+<Warning>
+  Never generate RP signatures on the client and never expose your RP signing
+  key. If the key leaks, attackers can forge requests as your app.
+</Warning>
+
+# Step 3: Generate the connect URL and collect proof
+
+- `action`: Use one stable string per intent. Examples: `"event_march_2026"` or `"claim"`.
+  Keep it identical in signing, request creation, and verify.
+- `signal`: Set this when you need to bind app context into the proof. Examples:
+  user ID, wallet address. Your backend should enforce the same value.
+- `constraints`: Define which credentials are accepted, then pass that node to
+  `.constraints`. Use the`any` or `all` operators to create complex constraint logic.
+
+<CodeGroup title="Create request and collect proof">
+```typescript title="JavaScript"
+import { IDKit, CredentialRequest, any } from "@worldcoin/idkit-core";
+
+const rpSig = await fetch("/api/rp-signature", {
+  method: "POST",
+  headers: { "content-type": "application/json" },
+  body: JSON.stringify({ action: "my-action" }),
+}).then((r) => r.json());
+
+const orbCredential = CredentialRequest("orb", { signal: "user-123" });
+
+const request = await IDKit.request({
+  app_id: "app_xxxxx",
+  action: "my-action",
+  rp_context: {
+    rp_id: "rp_xxxxx",
+    nonce: rpSig.nonce,
+    created_at: rpSig.created_at,
+    expires_at: rpSig.expires_at,
+    signature: rpSig.sig,
+  },
+  allow_legacy_proofs: false,
+  environment: "production",
+}).constraints(any(orbCredential));
+
+const connectUrl = request.connectorURI;
+const completion = await request.pollUntilCompletion();
+```
+
+```tsx title="React"
+import {
+  CredentialRequest,
+  IDKitRequestWidget,
+  any,
+  type RpContext,
+} from "@worldcoin/idkit";
+
+const rp_context: RpContext = {
+  rp_id: "rp_xxxxx",
+  nonce: "0x...",
+  created_at: 1735689600,
+  expires_at: 1735689900,
+  signature: "0x...",
+};
+
+const orbCredential = CredentialRequest("orb", { signal: "user-123" });
+
+<IDKitRequestWidget
+  open={open}
+  onOpenChange={setOpen}
+  app_id="app_xxxxx"
+  action="my-action"
+  rp_context={rp_context}
+  allow_legacy_proofs={false}
+  constraints={any(orbCredential)} 
+  onSuccess={(result) => {
+    // Send `result` to your backend /api/verify-proof endpoint
+  }}
+/>;
+```
+
+```swift title="Swift"
+import IDKit
+
+let rpContext = try RpContext(
+  rpId: "rp_xxxxx",
+  nonce: backend.nonce,
+  createdAt: backend.createdAt,
+  expiresAt: backend.expiresAt,
+  signature: backend.sig
+)
+
+let config = IDKitRequestConfig(
+  appId: "app_xxxxx",
+  action: "my-action",
+  rpContext: rpContext,
+  actionDescription: "Verify user",
+  bridgeUrl: nil,
+  allowLegacyProofs: false,
+  overrideConnectBaseUrl: nil,
+  environment: .production
+)
+
+let orbCredential = CredentialRequest.create(.orb, signal: "user-123")
+let request = try IDKit.request(config: config).constraints(anyOf(orbCredential))
+let connectUrl = request.connectorURL
+let completion = await request.pollUntilCompletion()
+```
+
+```kotlin title="Kotlin"
+import com.worldcoin.idkit.CredentialRequest
+import com.worldcoin.idkit.CredentialType
+import com.worldcoin.idkit.IdKit
+import com.worldcoin.idkit.anyOf
+
+val rpContext = IdKit.rpContext(
+  rpId = "rp_xxxxx",
+  nonce = backend.nonce,
+  createdAt = backend.createdAt.toULong(),
+  expiresAt = backend.expiresAt.toULong(),
+  signature = backend.sig,
+)
+
+val config = IdKit.requestConfig(
+  appId = "app_xxxxx",
+  action = "my-action",
+  rpContext = rpContext,
+  allowLegacyProofs = false,
+)
+
+val orbCredential = CredentialRequest(CredentialType.ORB, signal = "user-123")
+val request = IdKit.request(config).constraints(anyOf(orbCredential))
+val connectUrl = request.connectUrl()
+val status = request.pollStatus(pollIntervalMs = 2000u, timeoutMs = 120000u)
+```
+</CodeGroup>
+
+# Step 4: Verify the proof in your backend
+
+After successful completion, send the returned payload to your backend and
+forward it directly to: `POST https://developer.world.org/api/v4/verify/{rp_id}`
+
+<Note>
+  Forward the IDKit result payload as-is. No field remapping is required.
+</Note>
+
+```typescript
+app.post("/api/verify-proof", async (req, res) => {
+  const { rp_id, devPortalPayload } = req.body;
+
+  const response = await fetch(
+    `https://developer.world.org/api/v4/verify/${rp_id}`,
+    {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(devPortalPayload),
+    },
+  );
+
+  const payload = await response.json();
+  res.status(response.ok ? 200 : response.status).json(payload);
+});
+```
+
+
+## Next pages
+
+- [Sessions](/world-id-4/idkit/sessions)
+- [On-chain verification](/world-id-4/idkit/onchain-verification)
+- [POST /v4/verify reference](/world-id/reference/api-v4)
