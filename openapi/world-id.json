@@ -255,7 +255,7 @@
         "properties": {
           "code": { "type": "string" },
           "detail": { "type": "string" },
-          "attribute": { "type": ["string", "null"] }
+          "attribute": { "type": "string", "nullable": true }
         }
       }
     }

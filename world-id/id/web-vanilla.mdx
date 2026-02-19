@@ -117,7 +117,7 @@ app.post("/api/verify", async (req, res) => {
 
   try {
     const verifyRes = await fetch(
-      "https://developer.worldcoin.org/api/v1/verify/app_your_app_id",
+      "https://developer.worldcoin.org/api/v2/verify/app_your_app_id",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

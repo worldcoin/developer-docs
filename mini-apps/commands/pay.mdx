@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
     };
     ```
 
-    For convenience, we offer a public endpoint to query the current price of WLD in various currencies detailed [here](/mini-apps/reference/api#get-prices).
+    For convenience, we offer a public endpoint to query the current price of WLD in various currencies detailed [here](/api-reference/developer-portal/get-prices).
 
     ```tsx app/page.tsx
     import { MiniKit, tokenToDecimals, Tokens, PayCommandInput } from '@worldcoin/minikit-js'
@@ -138,7 +138,7 @@ export async function POST(req: NextRequest) {
     };
     ```
 
-    For convenience, we offer a public endpoint to query the current price of WLD in various currencies detailed [here](/mini-apps/reference/api#get-prices).
+    For convenience, we offer a public endpoint to query the current price of WLD in various currencies detailed [here](/api-reference/developer-portal/get-prices).
 
     ```tsx app/page.tsx
     import { MiniKit, tokenToDecimals, Tokens, PayCommandInput } from '@worldcoin/minikit-js'
@@ -223,7 +223,7 @@ There are two ways to verify a payment:
 
 ### Developer Portal API
 
-Use the [Get Transaction](/mini-apps/reference/api#get-transaction) endpoint to get the current status of the transaction. When the transaction has landed on-chain, the `transaction_status` will be `mined`.
+Use the [Get Transaction](/api-reference/developer-portal/get-transaction) endpoint to get the current status of the transaction. When the transaction has landed on-chain, the `transaction_status` will be `mined`.
 
 ```tsx app/confirm-payment/route.ts
 import { NextRequest, NextResponse } from 'next/server'

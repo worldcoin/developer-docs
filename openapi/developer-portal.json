@@ -1,0 +1,1549 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Developer Portal API",
+    "version": "1.0.0",
+    "description": "OpenAPI reference for Developer Portal endpoints used across Mini Apps and World ID."
+  },
+  "servers": [
+    {
+      "url": "https://developer.world.org",
+      "description": "Primary"
+    },
+    {
+      "url": "https://developer.worldcoin.org",
+      "description": "Legacy domain"
+    },
+    {
+      "url": "https://staging-developer.worldcoin.org",
+      "description": "Staging domain"
+    }
+  ],
+  "paths": {
+    "/api/v2/verify/{app_id}": {
+      "post": {
+        "summary": "Verify (Legacy)",
+        "description": "Verify a World ID proof for a Cloud action.",
+        "x-mint": {
+          "href": "/api-reference/developer-portal/verify-legacy"
+        },
+        "parameters": [
+          {
+            "name": "app_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Your app ID from the Developer Portal"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyProofRequest"
+              },
+              "example": {
+                "nullifier_hash": "0x2bf8406809dcefb1486dadc96c0a897db9bab002053054cf64272db512c6fbd8",
+                "merkle_root": "0x2264a66d162d7893e12ea8e3c072c51e785bc085ad655f64c10c1a61e00f0bc2",
+                "proof": "0x1aa8b8f3b2d2de5ff452c0e1a83e29d6bf46fb83ef35dc5957121ff3d3698a1119090fb...",
+                "verification_level": "orb",
+                "action": "my_action",
+                "signal_hash": "0x00c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a4",
+                "max_age": 3600
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Verified",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "action": "my_action",
+                  "nullifier_hash": "0x2bf8406809dcefb1486dadc96c0a897db9bab002053054cf64272db512c6fbd8",
+                  "created_at": "2023-02-18T11:20:39.530041+00:00"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or already verified",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "invalid_proof": {
+                    "value": {
+                      "code": "invalid_proof",
+                      "detail": "The provided proof is invalid and it cannot be verified. Please check all inputs and try again.",
+                      "attribute": null
+                    }
+                  },
+                  "invalid_merkle_root": {
+                    "value": {
+                      "code": "invalid_merkle_root",
+                      "detail": "The provided Merkle root is invalid. User appears to be unverified.",
+                      "attribute": null
+                    }
+                  },
+                  "root_too_old": {
+                    "value": {
+                      "code": "root_too_old",
+                      "detail": "The provided merkle root is too old. Please generate a new proof and try again.",
+                      "attribute": null
+                    }
+                  },
+                  "invalid_credential_type": {
+                    "value": {
+                      "code": "invalid",
+                      "detail": "Invalid credential type.",
+                      "attribute": "credential_type"
+                    }
+                  },
+                  "exceeded_max_verifications": {
+                    "value": {
+                      "code": "exceeded_max_verifications",
+                      "detail": "This user has exceeded the maximum number of verifications allowed for this proof.",
+                      "attribute": null
+                    }
+                  },
+                  "already_verified": {
+                    "value": {
+                      "code": "already_verified",
+                      "detail": "This person has already verified for this action.",
+                      "attribute": null
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/minikit/send-notification": {
+      "post": {
+        "summary": "Send Notification",
+        "description": "Send notifications to users of your mini app.",
+        "x-mint": {
+          "href": "/api-reference/developer-portal/send-notification"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendNotificationRequest"
+              },
+              "example": {
+                "app_id": "app_id",
+                "wallet_addresses": [
+                  "0x123",
+                  "0x456"
+                ],
+                "title": "title",
+                "message": "Hello ${username}, your transaction is complete!",
+                "mini_app_path": "mini_app_path"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Notification send status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SendNotificationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/minikit/transaction/{transaction_id}": {
+      "get": {
+        "summary": "Get Transaction",
+        "description": "Query transactions for their current status.",
+        "x-mint": {
+          "href": "/api-reference/developer-portal/get-transaction"
+        },
+        "parameters": [
+          {
+            "name": "transaction_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The transaction identifier returned by the API"
+          },
+          {
+            "name": "app_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Your app ID from the Developer Portal"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "payment",
+                "transaction"
+              ]
+            },
+            "description": "Optional. `payment` (default) or `transaction` depending on the command you used."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transaction status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTransactionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/minikit/transaction/debug": {
+      "get": {
+        "summary": "Get Transaction Debug URL",
+        "description": "Debug transactions that failed during the prepare stage. Returns Tenderly URLs when applicable.",
+        "x-mint": {
+          "href": "/api-reference/developer-portal/get-transaction-debug-url"
+        },
+        "parameters": [
+          {
+            "name": "app_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The `app_id` corresponding to the transaction that is being queried."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Debug information list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDebugUrlResponse"
+                },
+                "example": {
+                  "transactions": [
+                    {
+                      "debugUrl": "https://dashboard.tenderly.co/tx/...",
+                      "createdAt": "2024-03-21T10:30:00.000Z",
+                      "block": 12345678,
+                      "simulationRequestId": "sim_abc123def456",
+                      "simulationError": "Permit signature expired",
+                      "walletAddress": "0x1234..."
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/public/v1/miniapps/prices": {
+      "get": {
+        "summary": "Get Prices",
+        "description": "Query latest prices of tokens in various fiat currencies.",
+        "x-mint": {
+          "href": "/api-reference/developer-portal/get-prices"
+        },
+        "servers": [
+          {
+            "url": "https://app-backend.worldcoin.dev"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "fiatCurrencies",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated ISO4217 fiat codes, e.g. USD,EUR,JPY"
+          },
+          {
+            "name": "cryptoCurrencies",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated crypto codes, e.g. USDC,WLD"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Prices response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPricesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/minikit/user-grant-cycle": {
+      "get": {
+        "summary": "Get User Grant Cycle",
+        "description": "Retrieve the next grant claim date for a user of your mini app. Returns the user's humanity (orb-verified) grant cycle date if available, otherwise falls back to their document (passport-verified) grant cycle date.",
+        "x-mint": {
+          "href": "/api-reference/developer-portal/get-user-grant-cycle"
+        },
+        "parameters": [
+          {
+            "name": "wallet_address",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 42,
+              "maxLength": 42
+            },
+            "description": "The `wallet_address` of the user to query. Must be exactly 42 characters long."
+          },
+          {
+            "name": "app_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The `app_id` of your mini app."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Next grant date",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserGrantCycleResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "User not found / app not installed / no active cycles"
+          }
+        }
+      }
+    },
+    "/api/v2/create-action/{app_id}": {
+      "post": {
+        "summary": "Create Incognito Action",
+        "description": "Create an incognito action for your app.",
+        "x-mint": {
+          "href": "/api-reference/developer-portal/create-incognito-action"
+        },
+        "parameters": [
+          {
+            "name": "app_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateActionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Action created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateActionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/precheck/{app_id}": {
+      "post": {
+        "summary": "Get Action Metadata",
+        "description": "Fetch information about a particular app/action to determine eligibility for verification.",
+        "x-mint": {
+          "href": "/api-reference/developer-portal/get-action-metadata"
+        },
+        "parameters": [
+          {
+            "name": "app_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Your app ID from the Developer Portal"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "action": {
+                    "type": "string",
+                    "description": "Action identifier passed to IDKit. Optional for Sign in with World ID flows."
+                  },
+                  "nullifier_hash": {
+                    "type": "string",
+                    "description": "ZKP's nullifier hash, as provided by IDKit"
+                  },
+                  "external_nullifier": {
+                    "type": "string",
+                    "description": "Deprecated. Use action instead."
+                  }
+                }
+              },
+              "example": {
+                "action": "my_custom_action",
+                "nullifier_hash": "0x2bf8406809dcefb1486dadc96c0a897db9bab002053054cf64272db512c6fbd8",
+                "external_nullifier": "0x00949dd9a8c5b600304d010ce3a3cf012352070ae4b77504e17af77ee894cda"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true
+                },
+                "example": {
+                  "id": "app_staging_4cfd049031b0da1e8b62084b09a9f430",
+                  "is_staging": true,
+                  "is_verified": false,
+                  "name": "Default App",
+                  "verified_app_logo": "",
+                  "engine": "cloud",
+                  "__typename": "app",
+                  "sign_in_with_world_id": true,
+                  "can_user_verify": "yes",
+                  "action": {
+                    "external_nullifier": "0x00949dd9a8c5b600304d010ce3a3cf012352070ae4b77504e17af77ee894cda",
+                    "name": "My action",
+                    "action": "my_custom_action",
+                    "description": "My action",
+                    "max_verifications": 0,
+                    "max_accounts_per_user": 1,
+                    "__typename": "action"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "required",
+                  "detail": "This attribute is required.",
+                  "attribute": "action"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/jwks": {
+      "get": {
+        "summary": "Get JWK Keys",
+        "description": "Retrieve JWKs (public keys) used to verify JWT signatures for verification requests.",
+        "x-mint": {
+          "href": "/api-reference/developer-portal/get-jwk-keys"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "keys": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "e": {
+                            "type": "string"
+                          },
+                          "n": {
+                            "type": "string"
+                          },
+                          "kty": {
+                            "type": "string"
+                          },
+                          "kid": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/graphql": {
+      "post": {
+        "summary": "GraphQL Proxy",
+        "description": "Proxy endpoint for Developer Portal GraphQL queries and mutations. Supports user JWTs and API keys.",
+        "x-mint": {
+          "href": "/api-reference/developer-portal/graphql-proxy"
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GraphQLProxyRequest"
+              },
+              "example": {
+                "query": "query MyApps { app { id name } }",
+                "variables": {},
+                "operationName": "MyApps"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "GraphQL response payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GraphQLProxyResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthenticated request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Invalid JSON payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v4/verify/{rp_id}": {
+      "post": {
+        "summary": "Verify",
+        "description": "Verifies World ID 4.0 proofs and legacy 3.0 proofs. Use `rp_id` (`rp_...`) when possible; `app_id` (`app_...`) is still accepted for backward compatibility.",
+        "x-mint": {
+          "href": "/api-reference/developer-portal/verify"
+        },
+        "parameters": [
+          {
+            "name": "rp_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "RP ID (`rp_...`) is recommended. App ID (`app_...`) is also accepted for backward compatibility."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyV4Request"
+              },
+              "examples": {
+                "uniqueness_v3": {
+                  "summary": "Uniqueness proof (protocol 3.0)",
+                  "value": {
+                    "protocol_version": "3.0",
+                    "nonce": "0xabc123",
+                    "action": "my_action",
+                    "responses": [
+                      {
+                        "identifier": "orb",
+                        "merkle_root": "0x2264a66d162d7893e12ea8e3c072c51e785bc085ad655f64c10c1a61e00f0bc2",
+                        "nullifier": "0x2bf8406809dcefb1486dadc96c0a897db9bab002053054cf64272db512c6fbd8",
+                        "proof": "0x1aa8b8f3b2d2de5ff452c0e1a83e29d6bf46fb83ef35dc5957121ff3d3698a1119090fb...",
+                        "signal_hash": "0x00c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a4",
+                        "max_age": 304200
+                      }
+                    ],
+                    "environment": "production"
+                  }
+                },
+                "uniqueness_v4": {
+                  "summary": "Uniqueness proof (protocol 4.0)",
+                  "value": {
+                    "protocol_version": "4.0",
+                    "nonce": "0xabc123",
+                    "action": "my_action",
+                    "responses": [
+                      {
+                        "identifier": "orb",
+                        "issuer_schema_id": 1,
+                        "nullifier": "0x2bf8406809dcefb1486dadc96c0a897db9bab002053054cf64272db512c6fbd8",
+                        "expires_at_min": 49012345,
+                        "proof": [
+                          "0x111",
+                          "0x222",
+                          "0x333",
+                          "0x444",
+                          "0x555"
+                        ],
+                        "signal_hash": "0x0"
+                      }
+                    ]
+                  }
+                },
+                "session_v4": {
+                  "summary": "Session proof (protocol 4.0)",
+                  "value": {
+                    "protocol_version": "4.0",
+                    "nonce": "0xabc123",
+                    "session_id": "1234567890123456789",
+                    "responses": [
+                      {
+                        "identifier": "orb",
+                        "issuer_schema_id": 1,
+                        "session_nullifier": [
+                          "0xaaa",
+                          "0xbbb"
+                        ],
+                        "expires_at_min": 49012345,
+                        "proof": [
+                          "0x111",
+                          "0x222",
+                          "0x333",
+                          "0x444",
+                          "0x555"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "At least one proof verified successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyV4SuccessResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation or verification error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyV4ErrorResponse"
+                },
+                "examples": {
+                  "app_not_migrated": {
+                    "value": {
+                      "success": false,
+                      "code": "app_not_migrated",
+                      "detail": "This app has not been migrated to World ID 4.0. Please use the v2 verify endpoint."
+                    }
+                  },
+                  "all_verifications_failed": {
+                    "value": {
+                      "success": false,
+                      "code": "all_verifications_failed",
+                      "detail": "All proof verifications failed.",
+                      "results": [
+                        {
+                          "identifier": "orb",
+                          "success": false,
+                          "code": "verification_error",
+                          "detail": "On-chain proof verification failed."
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "App not found or no longer active",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyV4ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "VerifyProofRequest": {
+        "type": "object",
+        "required": [
+          "nullifier_hash",
+          "proof",
+          "merkle_root",
+          "verification_level",
+          "action"
+        ],
+        "properties": {
+          "nullifier_hash": {
+            "type": "string",
+            "description": "The unique user identifier (called the nullifier hash in the ZKP), as provided by IDKit. See [IDKit response](/world-id/reference/idkit#types) for details."
+          },
+          "proof": {
+            "type": "string",
+            "description": "The zero-knowledge proof, as provided by IDKit. See [IDKit response](/world-id/reference/idkit#types) for details."
+          },
+          "merkle_root": {
+            "type": "string",
+            "description": "Part of the ZKP, the hash of the Merkle root that proves membership to the set of credentials. As provided by IDKit. See [IDKit response](/world-id/reference/idkit#types) for details."
+          },
+          "verification_level": {
+            "type": "string",
+            "description": "The verification level, as provided by IDKit. See [IDKit response](/world-id/reference/idkit#types) for details."
+          },
+          "action": {
+            "type": "string",
+            "description": "Same action identifier as passed to IDKit."
+          },
+          "signal_hash": {
+            "type": "string",
+            "description": "The hash of the signal that was used to generate the proof. Defaults to the hash of an empty string."
+          },
+          "max_age": {
+            "type": "integer",
+            "minimum": 3600,
+            "maximum": 604800,
+            "default": 7200,
+            "description": "The maximum age of the root in seconds. This parameter controls how old the Merkle root used in the proof can be. Minimum value is 3600 (1 hour) and maximum value is 604800 (7 days). Defaults to 7200 (2 hours)."
+          }
+        }
+      },
+      "SendNotificationRequest": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": [
+              "wallet_addresses",
+              "title",
+              "message",
+              "mini_app_path",
+              "app_id"
+            ],
+            "properties": {
+              "wallet_addresses": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of wallet addresses to notify. Users must have opted in. Max 1000 per call."
+              },
+              "title": {
+                "type": "string",
+                "maxLength": 30
+              },
+              "message": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "mini_app_path": {
+                "type": "string"
+              },
+              "app_id": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "wallet_addresses",
+              "localisations",
+              "mini_app_path",
+              "app_id"
+            ],
+            "properties": {
+              "wallet_addresses": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Array of wallet addresses to notify. Users must have opted in. Max 1000 per call."
+              },
+              "localisations": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "$ref": "#/components/schemas/SendNotificationLocalisation"
+                },
+                "description": "Localized notification content. Include at least `en`."
+              },
+              "mini_app_path": {
+                "type": "string"
+              },
+              "app_id": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "description": "Supports legacy payload (`title` + `message`) and localized payload (`localisations`). If both are provided, localized payload is used."
+      },
+      "SendNotificationResultItem": {
+        "type": "object",
+        "properties": {
+          "walletAddress": {
+            "type": "string"
+          },
+          "sent": {
+            "type": "boolean"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "SendNotificationResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SendNotificationResultItem"
+            }
+          }
+        }
+      },
+      "GetTransactionResponse": {
+        "type": "object",
+        "properties": {
+          "reference": {
+            "type": "string",
+            "description": "Your unique reference for the transaction"
+          },
+          "transaction_hash": {
+            "type": "string",
+            "description": "On-chain transaction hash"
+          },
+          "transaction_status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "mined",
+              "failed"
+            ],
+            "description": "Current status of the transaction"
+          },
+          "from": {
+            "type": "string",
+            "description": "Sender address"
+          },
+          "chain": {
+            "type": "string",
+            "description": "Blockchain network name"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp when created"
+          },
+          "token_amount": {
+            "type": "string",
+            "description": "Amount transferred (BigInt with 6 decimals)"
+          },
+          "token": {
+            "type": "string",
+            "description": "Token symbol"
+          },
+          "to": {
+            "type": "string",
+            "description": "Receiver address"
+          },
+          "app_id": {
+            "type": "string",
+            "description": "Your app ID"
+          }
+        }
+      },
+      "GetDebugUrlItem": {
+        "type": "object",
+        "properties": {
+          "debugUrl": {
+            "type": "string",
+            "description": "Tenderly URL for debugging"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp"
+          },
+          "block": {
+            "type": "integer",
+            "description": "Block number"
+          },
+          "simulationRequestId": {
+            "type": "string",
+            "description": "Simulation request ID"
+          },
+          "simulationError": {
+            "type": "string",
+            "description": "Simulation error message if any"
+          },
+          "walletAddress": {
+            "type": "string",
+            "description": "Associated wallet address"
+          }
+        }
+      },
+      "GetDebugUrlResponse": {
+        "type": "object",
+        "properties": {
+          "transactions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GetDebugUrlItem"
+            }
+          }
+        }
+      },
+      "GetPricesResponse": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "object",
+            "properties": {
+              "prices": {
+                "type": "object",
+                "description": "Nested object keyed by currency codes with price details"
+              }
+            }
+          }
+        }
+      },
+      "UserGrantCycleResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "result": {
+            "type": "object",
+            "properties": {
+              "nextGrantClaimUTCDate": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        }
+      },
+      "CreateActionRequest": {
+        "type": "object",
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "description": "Identifier for the incognito action"
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable name for the action"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description for the action"
+          },
+          "max_verifications": {
+            "type": "integer",
+            "default": 1,
+            "description": "Maximum number of verifications allowed for this action"
+          }
+        }
+      },
+      "CreateActionResponse": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "object",
+            "properties": {
+              "action": {
+                "type": "string",
+                "description": "Action identifier"
+              },
+              "name": {
+                "type": "string",
+                "description": "Action name"
+              },
+              "description": {
+                "type": "string",
+                "description": "Action description"
+              },
+              "max_verifications": {
+                "type": "integer",
+                "description": "Max verifications for the action"
+              },
+              "external_nullifier": {
+                "type": "string",
+                "description": "External nullifier derived from action and app_id"
+              }
+            }
+          }
+        }
+      },
+      "CreditBorrower": {
+        "type": "object",
+        "required": [
+          "state",
+          "score"
+        ],
+        "properties": {
+          "state": {
+            "type": "string",
+            "enum": [
+              "INACTIVE",
+              "ACTIVE",
+              "DEFAULTED"
+            ],
+            "description": "Borrower status on Credit"
+          },
+          "score": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0,
+            "description": "The borrower's credit score"
+          }
+        }
+      },
+      "CreditError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "attribute": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "GraphQLProxyRequest": {
+        "type": "object",
+        "required": [
+          "query"
+        ],
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "GraphQL query or mutation string."
+          },
+          "variables": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Optional GraphQL variables object."
+          },
+          "operationName": {
+            "type": "string",
+            "description": "Optional operation name."
+          }
+        }
+      },
+      "GraphQLProxyResponse": {
+        "type": "object",
+        "additionalProperties": true,
+        "description": "Pass-through GraphQL response. Usually includes `data` and optionally `errors`."
+      },
+      "VerifyV4Request": {
+        "description": "Choose one request type.",
+        "oneOf": [
+          {
+            "title": "Legacy Proofs (v3)",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VerifyV4LegacyProofRequest"
+              }
+            ]
+          },
+          {
+            "title": "Uniqueness Proofs",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VerifyV4UniquenessProofRequest"
+              }
+            ]
+          },
+          {
+            "title": "Session Proofs",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VerifyV4SessionProofRequest"
+              }
+            ]
+          }
+        ]
+      },
+      "VerifyV4LegacyProofRequest": {
+        "title": "Legacy Proofs (v3)",
+        "type": "object",
+        "required": [
+          "protocol_version",
+          "nonce",
+          "action",
+          "responses"
+        ],
+        "description": "Legacy uniqueness proof format (protocol 3.0).",
+        "properties": {
+          "protocol_version": {
+            "type": "string",
+            "enum": [
+              "3.0"
+            ]
+          },
+          "nonce": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "action_description": {
+            "type": "string"
+          },
+          "environment": {
+            "type": "string",
+            "enum": [
+              "production",
+              "staging"
+            ],
+            "default": "production"
+          },
+          "responses": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/VerifyV4ResponseItemV3"
+            }
+          }
+        }
+      },
+      "VerifyV4UniquenessProofRequest": {
+        "title": "Uniqueness Proofs",
+        "type": "object",
+        "required": [
+          "protocol_version",
+          "nonce",
+          "action",
+          "responses"
+        ],
+        "description": "Standard uniqueness proof format (protocol 4.0).",
+        "properties": {
+          "protocol_version": {
+            "type": "string",
+            "enum": [
+              "4.0"
+            ]
+          },
+          "nonce": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "action_description": {
+            "type": "string"
+          },
+          "environment": {
+            "type": "string",
+            "enum": [
+              "production",
+              "staging"
+            ],
+            "default": "production"
+          },
+          "responses": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/VerifyV4ResponseItemV4"
+            }
+          }
+        }
+      },
+      "VerifyV4SessionProofRequest": {
+        "title": "Session Proofs",
+        "type": "object",
+        "required": [
+          "protocol_version",
+          "nonce",
+          "session_id",
+          "responses"
+        ],
+        "description": "Session proof format (protocol 4.0).",
+        "properties": {
+          "protocol_version": {
+            "type": "string",
+            "enum": [
+              "4.0"
+            ]
+          },
+          "nonce": {
+            "type": "string"
+          },
+          "session_id": {
+            "type": "string"
+          },
+          "environment": {
+            "type": "string",
+            "enum": [
+              "production",
+              "staging"
+            ],
+            "default": "production"
+          },
+          "responses": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/VerifyV4SessionResponseItem"
+            }
+          }
+        }
+      },
+      "VerifyV4ResponseItemV3": {
+        "type": "object",
+        "required": [
+          "identifier",
+          "proof",
+          "merkle_root",
+          "nullifier"
+        ],
+        "properties": {
+          "identifier": {
+            "type": "string",
+            "description": "Credential type (e.g. orb)."
+          },
+          "signal_hash": {
+            "type": "string",
+            "default": "0x00c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a4"
+          },
+          "merkle_root": {
+            "type": "string"
+          },
+          "nullifier": {
+            "type": "string"
+          },
+          "proof": {
+            "type": "string"
+          },
+          "max_age": {
+            "type": "integer",
+            "minimum": 3600,
+            "maximum": 604800
+          }
+        }
+      },
+      "VerifyV4ResponseItemV4": {
+        "type": "object",
+        "required": [
+          "identifier",
+          "issuer_schema_id",
+          "nullifier",
+          "expires_at_min",
+          "proof"
+        ],
+        "properties": {
+          "identifier": {
+            "type": "string"
+          },
+          "signal_hash": {
+            "type": "string",
+            "default": "0x0"
+          },
+          "issuer_schema_id": {
+            "type": "integer"
+          },
+          "nullifier": {
+            "type": "string"
+          },
+          "expires_at_min": {
+            "type": "integer"
+          },
+          "credential_genesis_issued_at_min": {
+            "type": "integer"
+          },
+          "proof": {
+            "type": "array",
+            "minItems": 5,
+            "maxItems": 5,
+            "items": {
+              "type": "string"
+            },
+            "description": "Exactly 5 hex elements (4 compressed proof elements + Merkle root)."
+          }
+        }
+      },
+      "VerifyV4SessionResponseItem": {
+        "type": "object",
+        "required": [
+          "identifier",
+          "issuer_schema_id",
+          "session_nullifier",
+          "expires_at_min",
+          "proof"
+        ],
+        "properties": {
+          "identifier": {
+            "type": "string"
+          },
+          "signal_hash": {
+            "type": "string",
+            "default": "0x0"
+          },
+          "issuer_schema_id": {
+            "type": "integer"
+          },
+          "session_nullifier": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "string"
+            },
+            "description": "Tuple `[nullifier, action]`."
+          },
+          "expires_at_min": {
+            "type": "integer"
+          },
+          "credential_genesis_issued_at_min": {
+            "type": "integer"
+          },
+          "proof": {
+            "type": "array",
+            "minItems": 5,
+            "maxItems": 5,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "VerifyV4Result": {
+        "type": "object",
+        "properties": {
+          "identifier": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "nullifier": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          }
+        }
+      },
+      "VerifyV4SuccessResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "results"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              true
+            ]
+          },
+          "action": {
+            "type": "string"
+          },
+          "nullifier": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "environment": {
+            "type": "string",
+            "enum": [
+              "production",
+              "staging"
+            ]
+          },
+          "session_id": {
+            "type": "string"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VerifyV4Result"
+            }
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "VerifyV4ErrorResponse": {
+        "type": "object",
+        "required": [
+          "success",
+          "code",
+          "detail"
+        ],
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "enum": [
+              false
+            ]
+          },
+          "code": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VerifyV4Result"
+            }
+          }
+        }
+      },
+      "SendNotificationLocalisation": {
+        "type": "object",
+        "required": [
+          "language",
+          "title",
+          "message"
+        ],
+        "properties": {
+          "language": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 30
+          },
+          "message": {
+            "type": "string",
+            "maxLength": 200
+          }
+        }
+      }
+    }
+  }
+}

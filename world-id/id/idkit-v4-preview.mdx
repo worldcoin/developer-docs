@@ -126,7 +126,7 @@ app.post("/api/rp-signature", (req, res) => {
 
 ### Verify proofs
 
-The `result` inside a successful `pollUntilCompletion()` response is shaped exactly as the Developer Portal's [`/v4/verify`](/world-id/reference/api-v4) endpoint expects - just forward it directly:
+The `result` inside a successful `pollUntilCompletion()` response is shaped exactly as the Developer Portal's [`/v4/verify`](/api-reference/developer-portal/verify) endpoint expects - just forward it directly:
 
 ```typescript
 app.post("/api/verify-proof", async (req, res) => {
@@ -286,7 +286,7 @@ if (!completion.success) {
 
 ## Response format
 
-On success, `completion.result` can be forwarded directly to the Developer Portal [`/v4/verify`](/world-id/reference/api-v4) endpoint - no transformation needed.
+On success, `completion.result` can be forwarded directly to the Developer Portal [`/v4/verify`](/api-reference/developer-portal/verify) endpoint - no transformation needed.
 
 The response shape depends on which World ID protocol version the user's World App uses.
 

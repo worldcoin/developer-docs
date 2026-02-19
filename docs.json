@@ -83,16 +83,7 @@
           },
           {
             "group": "Technical Reference",
-            "openapi": "openapi/world-miniapps.json",
             "pages": [
-              "mini-apps/reference/api",
-              "POST /api/v2/create-action/{app_id}",
-              "POST /api/v2/minikit/send-notification",
-              "POST /api/v2/verify/{app_id}",
-              "GET /api/v2/minikit/transaction/{transaction_id}",
-              "GET /api/v2/minikit/transaction/debug",
-              "GET /api/v2/minikit/user-grant-cycle",
-              "GET /public/v1/miniapps/prices",
               "mini-apps/reference/errors",
               "mini-apps/reference/address-book",
               "mini-apps/reference/usernames",
@@ -149,8 +140,7 @@
             "pages": [
               "world-id/idkit/getting-started",
               "world-id/idkit/sessions",
-              "world-id/idkit/onchain-verification",
-              "world-id/idkit/design-guidelines"
+              "world-id/idkit/onchain-verification"
             ]
           },
           {
@@ -181,7 +171,6 @@
             "group": "Technical Reference",
             "pages": [
               "world-id/reference/idkit",
-              "world-id/reference/api",
               "world-id/reference/poh-issuer",
               "world-id/reference/contracts",
               "world-id/reference/contract-deployments",
@@ -252,6 +241,27 @@
           {
             "group": "Further Reading",
             "pages": ["world-chain/resources"]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Developer Portal",
+            "openapi": {
+              "source": "openapi/developer-portal.json",
+              "directory": "api-reference/developer-portal"
+            },
+            "pages": [
+              "POST /api/v4/verify/{rp_id}",
+              "POST /api/v2/verify/{app_id}",
+              "POST /api/v2/minikit/send-notification",
+              "GET /api/v2/minikit/transaction/{transaction_id}",
+              "GET /api/v2/minikit/transaction/debug",
+              "GET /api/v2/minikit/user-grant-cycle",
+              "GET /public/v1/miniapps/prices"
+            ]
           }
         ]
       }
@@ -378,7 +388,7 @@
     },
     {
       "source": "/api-docs",
-      "destination": "/world-id/reference/api"
+      "destination": "/api-reference/developer-portal/verify"
     },
     {
       "source": "/advanced/zero-knowledge-proofs",
@@ -454,7 +464,31 @@
     },
     {
       "source": "/reference/api",
-      "destination": "/world-id/reference/api"
+      "destination": "/api-reference/developer-portal/verify"
+    },
+    {
+      "source": "/mini-apps/reference/api",
+      "destination": "/api-reference/developer-portal/verify"
+    },
+    {
+      "source": "/world-id/reference/api",
+      "destination": "/api-reference/developer-portal/verify"
+    },
+    {
+      "source": "/world-id/reference/api-v4",
+      "destination": "/api-reference/developer-portal/verify"
+    },
+    {
+      "source": "/api-reference/developer-portal",
+      "destination": "/api-reference/developer-portal/verify"
+    },
+    {
+      "source": "/api-reference/developer-portal/verify-proof-v4",
+      "destination": "/api-reference/developer-portal/verify"
+    },
+    {
+      "source": "/api-reference/developer-portal/verify-proof",
+      "destination": "/api-reference/developer-portal/verify-legacy"
     },
     {
       "source": "/reference/contracts",
@@ -547,6 +581,10 @@
     {
       "source": "/world-id/sign-in/pitfalls",
       "destination": "/world-id/id/pitfalls"
+    },
+    {
+      "source": "/world-id/idkit/design-guidelines",
+      "destination": "/world-id/id/design-guidelines"
     },
     {
       "source": "/world-id/quick-start/testing",
