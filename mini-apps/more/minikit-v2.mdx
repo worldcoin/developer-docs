@@ -177,7 +177,12 @@ Transactions themselves will now purely be calldata in line with `eth_sendTransa
 await MiniKit.sendTransaction({
   transactions: [
     {
-      data: // Calldata Hex String
+      data: // If you need to spend funds this would be permit.Approve 
+      value: // Hex encoded string
+      to: // Hex
+    },
+    {
+      data: // Calldata Hex String, here you would spend the permit approval
       value: // Hex encoded string
       to: // Hex
     },
