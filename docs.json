@@ -33,7 +33,9 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": ["index"]
+            "pages": [
+              "index"
+            ]
           }
         ]
       },
@@ -42,7 +44,9 @@
         "groups": [
           {
             "group": "Introduction",
-            "pages": ["mini-apps/index"]
+            "pages": [
+              "mini-apps/index"
+            ]
           },
           {
             "group": "Quick Start",
@@ -133,11 +137,15 @@
         "groups": [
           {
             "group": "Introduction",
-            "pages": ["world-id/concepts"]
+            "pages": [
+              "world-id/concepts"
+            ]
           },
           {
             "group": "Migration",
-            "pages": ["world-id/4-0-migration"]
+            "pages": [
+              "world-id/4-0-migration"
+            ]
           },
           {
             "group": "IDKit",
@@ -156,20 +164,6 @@
                   "world-id/idkit/error-codes"
                 ]
               }
-            ]
-          },
-          {
-            "group": "IDKit (Legacy)",
-            "pages": [
-              "world-id/id/getting-started",
-              "world-id/id/web-react",
-              "world-id/id/web-vanilla",
-              "world-id/id/mobile",
-              "world-id/id/cloud",
-              "world-id/id/on-chain",
-              "world-id/id/libraries",
-              "world-id/id/testing",
-              "world-id/id/pitfalls"
             ]
           },
           {
@@ -281,7 +275,9 @@
           },
           {
             "group": "Further Reading",
-            "pages": ["world-chain/resources"]
+            "pages": [
+              "world-chain/resources"
+            ]
           }
         ]
       },
@@ -381,7 +377,7 @@
     },
     {
       "source": "/id/sign-in",
-      "destination": "/world-id/id/sign-in"
+      "destination": "/world-id"
     },
     {
       "source": "/protocol",
@@ -409,7 +405,7 @@
     },
     {
       "source": "/id/anonymous-actions",
-      "destination": "/world-id/id/incognito-actions"
+      "destination": "/world-id/idkit/getting-started"
     },
     {
       "source": "/quick-start",
@@ -417,7 +413,7 @@
     },
     {
       "source": "/id/incognito-actions",
-      "destination": "/world-id/id/cloud"
+      "destination": "/world-id/idkit/getting-started"
     },
     {
       "source": "/id/idkit",
@@ -441,7 +437,7 @@
     },
     {
       "source": "/advanced/on-chain",
-      "destination": "/world-id/id/on-chain"
+      "destination": "/world-id/idkit/onchain-verification"
     },
     {
       "source": "/about/glossary",
@@ -477,15 +473,15 @@
     },
     {
       "source": "/id/cloud",
-      "destination": "/world-id/id/cloud"
+      "destination": "/world-id/idkit/getting-started"
     },
     {
       "source": "/id/libraries",
-      "destination": "/world-id/id/libraries"
+      "destination": "/world-id/idkit/getting-started"
     },
     {
       "source": "/id/on-chain",
-      "destination": "/world-id/id/on-chain"
+      "destination": "/world-id/idkit/onchain-verification"
     },
     {
       "source": "/idkit/reference",
@@ -609,7 +605,7 @@
     },
     {
       "source": "/world-id/id/incognito-actions",
-      "destination": "/world-id/id/cloud"
+      "destination": "/world-id/idkit/getting-started"
     },
     {
       "source": "/world-id/id/sign-in",
@@ -621,7 +617,7 @@
     },
     {
       "source": "/world-id/sign-in/pitfalls",
-      "destination": "/world-id/id/pitfalls"
+      "destination": "/world-id/idkit/getting-started"
     },
     {
       "source": "/world-id/idkit/design-guidelines",
@@ -629,15 +625,15 @@
     },
     {
       "source": "/world-id/quick-start/testing",
-      "destination": "/world-id/id/testing"
+      "destination": "/world-id/idkit/getting-started"
     },
     {
       "source": "/world-id/quick-start/installation",
-      "destination": "/world-id/id/getting-started"
+      "destination": "/world-id/idkit/getting-started"
     },
     {
       "source": "/world-id/quick-start/configuration",
-      "destination": "/world-id/id/getting-started"
+      "destination": "/world-id/idkit/getting-started"
     },
     {
       "source": "/world-id/quick-start/templates",
@@ -662,6 +658,46 @@
     {
       "source": "world-id/id/design-guidelines",
       "destination": "/world-id/idkit/design-guidelines"
+    },
+    {
+      "source": "/world-id/id/getting-started",
+      "destination": "/world-id/idkit/getting-started"
+    },
+    {
+      "source": "/world-id/id/web-react",
+      "destination": "/world-id/idkit/react-widget-and-hooks"
+    },
+    {
+      "source": "/world-id/id/web-vanilla",
+      "destination": "/world-id/idkit/getting-started"
+    },
+    {
+      "source": "/world-id/id/mobile",
+      "destination": "/world-id/idkit/getting-started"
+    },
+    {
+      "source": "/world-id/id/cloud",
+      "destination": "/world-id/idkit/getting-started"
+    },
+    {
+      "source": "/world-id/id/on-chain",
+      "destination": "/world-id/idkit/onchain-verification"
+    },
+    {
+      "source": "/world-id/id/libraries",
+      "destination": "/world-id/idkit/getting-started"
+    },
+    {
+      "source": "/world-id/id/testing",
+      "destination": "/world-id/idkit/getting-started"
+    },
+    {
+      "source": "/world-id/id/pitfalls",
+      "destination": "/world-id/idkit/getting-started"
+    },
+    {
+      "source": "/world-id/id/idkit-v4-preview",
+      "destination": "/world-id/idkit/getting-started"
     }
   ],
   "api": {
@@ -669,7 +705,10 @@
       "display": "interactive"
     },
     "examples": {
-      "languages": ["curl", "javascript"],
+      "languages": [
+        "curl",
+        "javascript"
+      ],
       "defaults": "required",
       "prefill": true
     }
