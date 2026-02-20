@@ -1,23 +1,24 @@
 ---
 title: "Getting started"
-description: "Integrate World ID 4.0 with IDKit in four steps"
+description: "Integrate World ID with IDKit in four steps"
 "og:image": "/images/docs/docs-meta.png"
 "twitter:image": "/images/docs/docs-meta.png"
 ---
 
 # Step 1: Create an app in the Developer Portal
 
-Create your app in the [Developer Portal](https://developer.world.org).
-
-Save these values:
+Create your app in the [Developer Portal](https://developer.world.org). Keep these values:
   - `app_id`
   - `rp_id`
   - `signing_key`
 
-You no longer choose cloud or on-chain, or staging or production, at app creation time.
-Keep `signing_key` in your backend only.
-
 # Step 2: Generate an RP signature in your backend
+
+<Warning>
+  Never generate RP signatures on the client and never expose your RP signing
+  key. If the key leaks, attackers can forge requests as your app.
+</Warning>
+
 
 ```typescript
 import { signRequest } from "@worldcoin/idkit-core/signing";
@@ -26,25 +27,16 @@ export async function POST(request: Request): Promise<Response> {
   const { action } = await request.json();
   const signingKey = process.env.RP_SIGNING_KEY;
 
-  if (!signingKey) {
-    return Response.json({ error: "Missing RP_SIGNING_KEY" }, { status: 500 });
-  }
-
   const { sig, nonce, createdAt, expiresAt } = signRequest(action, signingKey);
 
   return Response.json({
     sig,
     nonce,
-    created_at: createdAt,
-    expires_at: expiresAt,
+    createdAt,
+    expiresAt,
   });
 }
 ```
-
-<Warning>
-  Never generate RP signatures on the client and never expose your RP signing
-  key. If the key leaks, attackers can forge requests as your app.
-</Warning>
 
 # Step 3: Generate the connect URL and collect proof
 
@@ -73,8 +65,8 @@ const request = await IDKit.request({
   rp_context: {
     rp_id: "rp_xxxxx",
     nonce: rpSig.nonce,
-    created_at: rpSig.created_at,
-    expires_at: rpSig.expires_at,
+    created_at: rpSig.createdAt,
+    expires_at: rpSig.expiresAt,
     signature: rpSig.sig,
   },
   allow_legacy_proofs: false,
@@ -82,7 +74,7 @@ const request = await IDKit.request({
 }).constraints(any(orbCredential));
 
 const connectUrl = request.connectorURI;
-const completion = await request.pollUntilCompletion();
+const response = await request.pollUntilCompletion();
 ```
 
 ```tsx title="React"
@@ -203,11 +195,5 @@ app.post("/api/verify-proof", async (req, res) => {
 
 ## Next pages
 
-- [Javascript](/world-id/idkit/js-core-sdk-reference)
-- [React](/world-id/idkit/react-widget-and-hooks)
-- [Kotlin](/world-id/idkit/kotlin)
-- [Swift](/world-id/idkit/swift)
 - [Sessions](/world-id/idkit/sessions)
-- [Error Codes](/world-id/idkit/error-codes)
-- [On-chain verification](/world-id/idkit/onchain-verification)
 - [POST /v4/verify reference](/api-reference/developer-portal/verify)
