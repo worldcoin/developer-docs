@@ -1,0 +1,171 @@
+---
+title: "Kotlin"
+description: "Reference for the IDKit Kotlin API: request/session builders, constraints, presets, and polling patterns."
+"og:image": "/images/docs/docs-meta.png"
+"twitter:image": "/images/docs/docs-meta.png"
+---
+
+<Note>
+  The Kotlin SDK is currently under active development. Expect minor API evolution while the SDK hardens.
+</Note>
+
+## Install
+
+The package is published as `com.worldcoin:idkit` to GitHub Packages.
+
+```kotlin
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        maven {
+            url = uri("https://maven.pkg.github.com/worldcoin/idkit")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN") // requires read:packages
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation("com.worldcoin:idkit:<version>")
+}
+```
+
+## Request flow
+
+```kotlin
+import com.worldcoin.idkit.CredentialRequest
+import com.worldcoin.idkit.CredentialType
+import com.worldcoin.idkit.IdKit
+import com.worldcoin.idkit.anyOf
+import com.worldcoin.idkit.allOf
+import uniffi.idkit_core.Environment
+import uniffi.idkit_core.StatusWrapper
+
+val rpContext = IdKit.rpContext(
+  rpId = "rp_xxxxx",
+  nonce = backend.nonce,
+  createdAt = backend.createdAt.toULong(),
+  expiresAt = backend.expiresAt.toULong(),
+  signature = backend.sig,
+)
+
+val config = IdKit.requestConfig(
+  appId = "app_xxxxx",
+  action = "my-action",
+  rpContext = rpContext,
+  allowLegacyProofs = false,
+  environment = Environment.PRODUCTION,
+)
+
+val orb = CredentialRequest(CredentialType.ORB, signal = "user-123")
+val face = CredentialRequest(CredentialType.FACE, signal = "user-123")
+
+val request = IdKit.request(config).constraints(allOf(anyOf(orb, face)))
+val connectUrl = request.connectUrl()
+val status = request.pollStatus(pollIntervalMs = 2000u, timeoutMs = 120000u)
+
+if (status is StatusWrapper.Confirmed) {
+  val result = status.result
+}
+```
+
+## Presets
+
+```kotlin
+import com.worldcoin.idkit.IdKit
+import com.worldcoin.idkit.orbLegacy
+
+val request = IdKit.request(config).preset(orbLegacy(signal = "user-123"))
+```
+
+<Note>
+  Use presets only for migration from older IDKit versions. They are intended
+  to preserve compatibility with both World ID 4.0 and World ID 3.0 (legacy).
+</Note>
+
+## Session flow
+
+Session configuration lives in `uniffi.idkit_core.IdKitSessionConfig`.
+
+```kotlin
+import com.worldcoin.idkit.CredentialRequest
+import com.worldcoin.idkit.CredentialType
+import com.worldcoin.idkit.anyOf
+import uniffi.idkit_core.Environment
+import uniffi.idkit_core.IdKitSessionConfig
+import uniffi.idkit_core.Preset
+import uniffi.idkit_core.StatusWrapper
+import uniffi.idkit_core.createSession
+import uniffi.idkit_core.proveSession
+
+val sessionConfig = IdKitSessionConfig(
+  appId = "app_xxxxx",
+  rpContext = rpContext,
+  actionDescription = "Sign in",
+  bridgeUrl = null,
+  overrideConnectBaseUrl = null,
+  environment = Environment.PRODUCTION,
+)
+
+val createBuilder = createSession(sessionConfig)
+val createRequest = createBuilder.constraints(anyOf(CredentialRequest(CredentialType.ORB)))
+val createStatus = createRequest.pollStatus(pollIntervalMs = 2000u, timeoutMs = 120000u)
+
+if (createStatus is StatusWrapper.Confirmed) {
+  val sessionId = createStatus.result.sessionId
+
+  val proveBuilder = proveSession(sessionId, sessionConfig)
+  val proveRequest = proveBuilder.preset(Preset.OrbLegacy(signal = null))
+  val proveStatus = proveRequest.pollStatus(pollIntervalMs = 2000u, timeoutMs = 120000u)
+}
+```
+
+<Note>
+  Session flows are always v4. `allowLegacyProofs` is not used for session requests.
+</Note>
+
+## Polling patterns
+
+- `pollStatusOnce()` for manual loops
+- `pollStatus(pollIntervalMs, timeoutMs)` for compatibility with existing call sites
+- `statusFlow()` extension (from `KotlinCompat.kt`) for coroutine-driven updates
+
+```kotlin
+import com.worldcoin.idkit.statusFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlin.time.Duration.Companion.seconds
+import uniffi.idkit_core.StatusWrapper
+
+request.statusFlow(2.seconds).collectLatest { status ->
+  when (status) {
+    StatusWrapper.WaitingForConnection -> Unit
+    StatusWrapper.AwaitingConfirmation -> Unit
+    is StatusWrapper.Confirmed -> println(status.result)
+    is StatusWrapper.Failed -> println(status.error)
+  }
+}
+```
+
+## Constraints reference
+
+Constraint helpers provided in `com.worldcoin.idkit`:
+
+- `CredentialRequest(CredentialType, signal?)`
+- `CredentialRequest(CredentialType, abiEncodedSignalBytes)`
+- `anyOf(...)`
+- `allOf(...)`
+
+For nested logic, use node variants:
+
+- `IdKit.anyOfNodes(...)`
+- `IdKit.allOfNodes(...)`
+
+## Related pages
+
+- [Getting started](/world-id/idkit/getting-started)
+- [Sessions](/world-id/idkit/sessions)
+- [Javascript](/world-id/idkit/js-core-sdk-reference)
+- [Swift](/world-id/idkit/swift)
+- [Error Codes](/world-id/idkit/error-codes)

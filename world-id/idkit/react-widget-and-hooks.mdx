@@ -1,0 +1,184 @@
+---
+title: "React"
+description: "Reference for @worldcoin/idkit React widgets and hooks, including request/session flows and presets."
+"og:image": "/images/docs/docs-meta.png"
+"twitter:image": "/images/docs/docs-meta.png"
+---
+
+Use `@worldcoin/idkit` when you want React-native ergonomics on top of `@worldcoin/idkit-core`.
+
+## Install
+
+<CodeGroup>
+```bash npm
+npm i @worldcoin/idkit
+```
+
+```bash pnpm
+pnpm add @worldcoin/idkit
+```
+
+```bash yarn
+yarn add @worldcoin/idkit
+```
+</CodeGroup>
+
+## Choose your API
+
+- **Widgets**: quickest integration, built-in modal and state handling
+- **Hooks**: headless control for custom UI and flow orchestration
+
+## Controlled widgets
+
+### Request widget
+
+```tsx
+import { IDKitRequestWidget, orbLegacy, type RpContext } from "@worldcoin/idkit";
+
+const rpContext: RpContext = {
+  rp_id: "rp_xxxxx",
+  nonce: "0x...",
+  created_at: 1735689600,
+  expires_at: 1735689900,
+  signature: "0x...",
+};
+
+<IDKitRequestWidget
+  open={open}
+  onOpenChange={setOpen}
+  app_id="app_xxxxx"
+  action="my-action"
+  rp_context={rpContext}
+  allow_legacy_proofs={true}
+  preset={orbLegacy({ signal: "user-123" })}
+  environment="production"
+  onSuccess={async (result) => {
+    await fetch("/api/verify-proof", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ rp_id: rpContext.rp_id, devPortalPayload: result }),
+    });
+  }}
+  onError={(errorCode) => {
+    console.error("IDKit error", errorCode);
+  }}
+/>;
+```
+
+### Session widget
+
+```tsx
+import { IDKitSessionWidget, orbLegacy, type RpContext } from "@worldcoin/idkit";
+
+<IDKitSessionWidget
+  open={open}
+  onOpenChange={setOpen}
+  app_id="app_xxxxx"
+  rp_context={rpContext}
+  existing_session_id={existingSessionId}
+  preset={orbLegacy()}
+  environment="production"
+  onSuccess={(result) => {
+    // Save result.session_id for future proveSession flows
+    console.log(result.session_id);
+  }}
+/>;
+```
+
+<Note>
+  `existing_session_id` switches the widget from create-session mode to prove-session mode.
+</Note>
+
+## Headless hooks
+
+### `useIDKitRequest`
+
+```tsx
+import { useIDKitRequest, orbLegacy } from "@worldcoin/idkit";
+
+const flow = useIDKitRequest({
+  app_id: "app_xxxxx",
+  action: "my-action",
+  rp_context,
+  allow_legacy_proofs: false,
+  preset: orbLegacy({ signal: "user-123" }),
+  polling: {
+    interval: 2_000,
+    timeout: 120_000,
+  },
+});
+
+<button onClick={flow.open} disabled={flow.isAwaitingUserConfirmation}>
+  Verify
+</button>;
+```
+
+### `useIDKitSession`
+
+```tsx
+import { useIDKitSession, orbLegacy } from "@worldcoin/idkit";
+
+const sessionFlow = useIDKitSession({
+  app_id: "app_xxxxx",
+  rp_context,
+  preset: orbLegacy(),
+  existing_session_id: sessionId,
+  polling: {
+    interval: 2_000,
+    timeout: 120_000,
+  },
+});
+
+if (sessionFlow.isSuccess && sessionFlow.result) {
+  console.log("session", sessionFlow.result.session_id);
+}
+```
+
+Shared hook result fields:
+
+- `open()`
+- `reset()`
+- `isAwaitingUserConnection`
+- `isAwaitingUserConfirmation`
+- `isSuccess`
+- `isError`
+- `connectorURI`
+- `result`
+- `errorCode`
+
+## Presets and constraints
+
+React hooks/widgets currently take `preset` directly in config.
+
+<Warning>
+  `constraints` are not currently exposed through React hook/widget config.
+  If you need explicit `any/all/CredentialRequest` trees today, build the flow with
+  `@worldcoin/idkit-core` and use your own React UI.
+</Warning>
+
+<Note>
+  Use presets mainly for migration from older IDKit versions. They are designed
+  to keep compatibility across World ID 4.0 and World ID 3.0 (legacy) flows.
+</Note>
+
+## Localization and UX notes
+
+- Widgets support `language="en" | "es" | "th"`
+- Widgets default to `autoClose={true}` after success
+- Host callback exceptions are swallowed to keep the widget state machine stable
+
+## Backend utilities
+
+For RP signature generation in React/Next.js apps, use the pure JS subpath:
+
+```ts
+import { signRequest } from "@worldcoin/idkit/signing";
+```
+
+## Related pages
+
+- [Javascript](/world-id/idkit/js-core-sdk-reference)
+- [Sessions](/world-id/idkit/sessions)
+- [Kotlin](/world-id/idkit/kotlin)
+- [Swift](/world-id/idkit/swift)
+- [Error Codes](/world-id/idkit/error-codes)

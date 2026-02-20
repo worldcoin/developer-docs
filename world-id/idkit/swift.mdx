@@ -1,0 +1,167 @@
+---
+title: "Swift"
+description: "Reference for the IDKit Swift API: request/session builders, constraints, presets, polling, and errors."
+"og:image": "/images/docs/docs-meta.png"
+"twitter:image": "/images/docs/docs-meta.png"
+---
+
+Use `IDKit` for native iOS/macOS integrations backed by the same Rust core as other SDKs.
+
+## Requirements
+
+- iOS 15+ / macOS 12+
+- Xcode 16+
+
+## Install
+
+Use Swift Package Manager with the published `idkit-swift` repository:
+
+```swift
+.package(url: "https://github.com/worldcoin/idkit-swift.git", from: "<version>")
+```
+
+## Request flow
+
+```swift
+import IDKit
+
+let rpContext = try RpContext(
+  rpId: "rp_xxxxx",
+  nonce: backend.nonce,
+  createdAt: backend.createdAt,
+  expiresAt: backend.expiresAt,
+  signature: backend.sig
+)
+
+let config = IDKitRequestConfig(
+  appId: "app_xxxxx",
+  action: "my-action",
+  rpContext: rpContext,
+  actionDescription: "Verify user",
+  bridgeUrl: nil,
+  allowLegacyProofs: false,
+  overrideConnectBaseUrl: nil,
+  environment: .production
+)
+
+let orb = try CredentialRequest.create(
+  .orb,
+  options: .init(signal: "user-123")
+)
+let face = try CredentialRequest.create(
+  .face,
+  options: .init(signal: "user-123")
+)
+
+let request = try IDKit.request(config: config).constraints(anyOf(orb, face))
+let connectURL = request.connectorURL
+let requestID = request.requestID
+```
+
+## Presets
+
+```swift
+import IDKit
+
+let request = try IDKit.request(config: config).preset(
+  orbLegacy(signal: "user-123")
+)
+```
+
+<Note>
+  Use presets only when migrating from an older IDKit version. Presets are
+  meant to preserve compatibility with both World ID 4.0 and World ID 3.0
+  (legacy) flows.
+</Note>
+
+## Session flow
+
+```swift
+import IDKit
+
+let sessionConfig = IDKitSessionConfig(
+  appId: "app_xxxxx",
+  rpContext: rpContext,
+  actionDescription: "Sign in",
+  bridgeUrl: nil,
+  overrideConnectBaseUrl: nil,
+  environment: .production
+)
+
+let createRequest = try IDKit
+  .createSession(config: sessionConfig)
+  .preset(orbLegacy())
+
+let createResult = await createRequest.pollUntilCompletion()
+
+switch createResult {
+case .success(let result):
+  let sessionId = result.sessionId
+
+  let proveRequest = try IDKit
+    .proveSession(sessionId: sessionId, config: sessionConfig)
+    .preset(orbLegacy())
+
+  let proveResult = await proveRequest.pollUntilCompletion()
+  print(proveResult)
+
+case .failure(let error):
+  print(error.rawValue)
+}
+```
+
+<Note>
+  Session flows are always v4 and return `sessionId` in the result payload.
+</Note>
+
+## Polling API
+
+- `pollStatusOnce() async -> IDKitStatus`
+- `pollUntilCompletion(options:) async -> IDKitCompletionResult`
+- `IDKitPollOptions(pollIntervalMs:timeoutMs:)`
+
+```swift
+let completion = await request.pollUntilCompletion(
+  options: IDKitPollOptions(pollIntervalMs: 2_000, timeoutMs: 120_000)
+)
+
+switch completion {
+case .success(let result):
+  print(result)
+case .failure(let error):
+  print(error)
+}
+```
+
+## Error codes
+
+Swift exposes `IDKitErrorCode` values aligned with JS string codes:
+
+- `user_rejected`
+- `verification_rejected`
+- `credential_unavailable`
+- `malformed_request`
+- `invalid_network`
+- `inclusion_proof_pending`
+- `inclusion_proof_failed`
+- `unexpected_response`
+- `connection_failed`
+- `max_verifications_reached`
+- `failed_by_host_app`
+- `generic_error`
+- `timeout`
+- `cancelled`
+
+## Practical notes
+
+- `connectorURL` and `requestID` are validated when constructing `IDKitRequest`.
+- If either is invalid, Swift throws `IDKitClientError.invalidConnectorURL` or `IDKitClientError.invalidRequestID`.
+- Use `IDKit.hashSignal(_:)` when you need deterministic local signal hashing.
+
+## Related pages
+
+- [Getting started](/world-id/idkit/getting-started)
+- [Sessions](/world-id/idkit/sessions)
+- [Javascript](/world-id/idkit/js-core-sdk-reference)
+- [Kotlin](/world-id/idkit/kotlin)
+- [Error Codes](/world-id/idkit/error-codes)

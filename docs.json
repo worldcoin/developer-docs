@@ -262,6 +262,16 @@
               "GET /api/v2/minikit/user-grant-cycle",
               "GET /public/v1/miniapps/prices"
             ]
+          },
+          {
+            "group": "IDKit API",
+            "pages": [
+              "world-id/idkit/js-core-sdk-reference",
+              "world-id/idkit/react-widget-and-hooks",
+              "world-id/idkit/swift",
+              "world-id/idkit/kotlin",
+              "world-id/idkit/error-codes"
+            ]
           }
         ]
       }
@@ -613,6 +623,10 @@
     {
       "source": "/mini-apps/design/app-guidelines",
       "destination": "/mini-apps/guidelines/app-guidelines"
+    },
+    {
+      "source": "/world-id/reference/idkit",
+      "destination": "/world-id/idkit/getting-started"
     }
   ],
   "api": {

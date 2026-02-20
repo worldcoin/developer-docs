@@ -1,0 +1,136 @@
+---
+title: "Error Codes"
+description: "Reference for IDKit request/session error codes and handling guidance across JS, React, Kotlin, and Swift."
+"og:image": "/images/docs/docs-meta.png"
+"twitter:image": "/images/docs/docs-meta.png"
+---
+
+This page focuses on IDKit SDK and bridge error codes returned during request/session flows.
+
+## Canonical codes
+
+<table>
+  <thead>
+    <tr>
+      <th className="p-2 text-left align-middle">Code</th>
+      <th className="p-2 text-left align-middle">Meaning</th>
+      <th className="p-2 text-left align-middle">Typical action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td className="p-2 align-middle"><code>user_rejected</code></td>
+      <td className="p-2 align-middle">User cancelled in World App.</td>
+      <td className="p-2 align-middle">Treat as user cancellation, allow retry.</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle"><code>verification_rejected</code></td>
+      <td className="p-2 align-middle">Legacy rejection code (older bridge/app behavior).</td>
+      <td className="p-2 align-middle">Handle same as <code>user_rejected</code>.</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle"><code>credential_unavailable</code></td>
+      <td className="p-2 align-middle">Requested credential type is not available for that user.</td>
+      <td className="p-2 align-middle">Offer fallback credential policy or explain requirement.</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle"><code>malformed_request</code></td>
+      <td className="p-2 align-middle">Payload or configuration is invalid.</td>
+      <td className="p-2 align-middle">Check <code>app_id</code>, <code>rp_context</code>, and request shape.</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle"><code>invalid_network</code></td>
+      <td className="p-2 align-middle">Environment mismatch between app config and World App context.</td>
+      <td className="p-2 align-middle">Align staging/production settings.</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle"><code>inclusion_proof_pending</code></td>
+      <td className="p-2 align-middle">Credential inclusion data is not ready yet.</td>
+      <td className="p-2 align-middle">Retry later.</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle"><code>inclusion_proof_failed</code></td>
+      <td className="p-2 align-middle">Inclusion proof retrieval failed.</td>
+      <td className="p-2 align-middle">Retry; if repeated, treat as operational incident.</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle"><code>unexpected_response</code></td>
+      <td className="p-2 align-middle">Malformed or unsupported bridge/app response.</td>
+      <td className="p-2 align-middle">Log diagnostics and retry once.</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle"><code>connection_failed</code></td>
+      <td className="p-2 align-middle">Could not establish/maintain bridge communication.</td>
+      <td className="p-2 align-middle">Check connectivity and bridge reachability.</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle"><code>max_verifications_reached</code></td>
+      <td className="p-2 align-middle">Action already verified the maximum allowed number of times.</td>
+      <td className="p-2 align-middle">Treat as terminal business-rule outcome.</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle"><code>failed_by_host_app</code></td>
+      <td className="p-2 align-middle">Host app callback failed while processing a successful proof.</td>
+      <td className="p-2 align-middle">Fix host callback/backend logic and retry.</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle"><code>generic_error</code></td>
+      <td className="p-2 align-middle">Catch-all unknown failure.</td>
+      <td className="p-2 align-middle">Log details and retry with backoff.</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle"><code>timeout</code></td>
+      <td className="p-2 align-middle">Client-side polling timeout.</td>
+      <td className="p-2 align-middle">Extend timeout or let the user retry.</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle"><code>cancelled</code></td>
+      <td className="p-2 align-middle">Client-side cancellation (abort/task cancel/user close).</td>
+      <td className="p-2 align-middle">Treat as neutral cancellation path.</td>
+    </tr>
+  </tbody>
+</table>
+
+## SDK coverage notes
+
+- **JavaScript core / React**: emit all codes above (including `timeout` and `cancelled`).
+- **Swift**: `IDKitErrorCode` includes all codes above.
+- **Kotlin**: `StatusWrapper.Failed` carries app-level errors; timeout/cancellation handling is usually host-driven.
+
+<Note>
+  `verification_rejected` is retained for backward compatibility. Newer flows typically return `user_rejected`.
+</Note>
+
+## Handling pattern
+
+```ts
+import { IDKitErrorCodes } from "@worldcoin/idkit-core";
+
+function classify(error: IDKitErrorCodes): "retry" | "terminal" | "cancelled" {
+  if (error === IDKitErrorCodes.MaxVerificationsReached) return "terminal";
+  if (error === IDKitErrorCodes.UserRejected || error === IDKitErrorCodes.Cancelled) {
+    return "cancelled";
+  }
+  return "retry";
+}
+```
+
+```swift
+switch error {
+case .maxVerificationsReached:
+    // terminal business outcome
+    break
+case .userRejected, .cancelled:
+    // user-driven cancel path
+    break
+default:
+    // retry/incident path
+    break
+}
+```
+
+## Also check
+
+- [POST /v4/verify reference](/api-reference/developer-portal/verify)
+- [Javascript](/world-id/idkit/js-core-sdk-reference)
+- [React](/world-id/idkit/react-widget-and-hooks)

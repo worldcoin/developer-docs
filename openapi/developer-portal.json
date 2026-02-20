@@ -141,10 +141,7 @@
               },
               "example": {
                 "app_id": "app_id",
-                "wallet_addresses": [
-                  "0x123",
-                  "0x456"
-                ],
+                "wallet_addresses": ["0x123", "0x456"],
                 "title": "title",
                 "message": "Hello ${username}, your transaction is complete!",
                 "mini_app_path": "mini_app_path"
@@ -198,10 +195,7 @@
             "required": false,
             "schema": {
               "type": "string",
-              "enum": [
-                "payment",
-                "transaction"
-              ]
+              "enum": ["payment", "transaction"]
             },
             "description": "Optional. `payment` (default) or `transaction` depending on the command you used."
           }
@@ -650,13 +644,7 @@
                         "issuer_schema_id": 1,
                         "nullifier": "0x2bf8406809dcefb1486dadc96c0a897db9bab002053054cf64272db512c6fbd8",
                         "expires_at_min": 49012345,
-                        "proof": [
-                          "0x111",
-                          "0x222",
-                          "0x333",
-                          "0x444",
-                          "0x555"
-                        ],
+                        "proof": ["0x111", "0x222", "0x333", "0x444", "0x555"],
                         "signal_hash": "0x0"
                       }
                     ]
@@ -672,18 +660,9 @@
                       {
                         "identifier": "orb",
                         "issuer_schema_id": 1,
-                        "session_nullifier": [
-                          "0xaaa",
-                          "0xbbb"
-                        ],
+                        "session_nullifier": ["0xaaa", "0xbbb"],
                         "expires_at_min": 49012345,
-                        "proof": [
-                          "0x111",
-                          "0x222",
-                          "0x333",
-                          "0x444",
-                          "0x555"
-                        ]
+                        "proof": ["0x111", "0x222", "0x333", "0x444", "0x555"]
                       }
                     ]
                   }
@@ -771,23 +750,23 @@
         "properties": {
           "nullifier_hash": {
             "type": "string",
-            "description": "The unique user identifier (called the nullifier hash in the ZKP), as provided by IDKit. See [IDKit response](/world-id/reference/idkit#types) for details."
+            "description": "The unique user identifier (called the nullifier hash in the ZKP), as provided by [IDKit](/world-id/idkit/getting-started)."
           },
           "proof": {
             "type": "string",
-            "description": "The zero-knowledge proof, as provided by IDKit. See [IDKit response](/world-id/reference/idkit#types) for details."
+            "description": "The zero-knowledge proof, as provided by [IDKit](/world-id/idkit/getting-started)."
           },
           "merkle_root": {
             "type": "string",
-            "description": "Part of the ZKP, the hash of the Merkle root that proves membership to the set of credentials. As provided by IDKit. See [IDKit response](/world-id/reference/idkit#types) for details."
+            "description": "Part of the ZKP, the hash of the Merkle root that proves membership to the set of credentials. As provided by [IDKit](/world-id/idkit/getting-started)."
           },
           "verification_level": {
             "type": "string",
-            "description": "The verification level, as provided by IDKit. See [IDKit response](/world-id/reference/idkit#types) for details."
+            "description": "The verification level, as provided by [IDKit](/world-id/idkit/getting-started)."
           },
           "action": {
             "type": "string",
-            "description": "Same action identifier as passed to IDKit."
+            "description": "Same action identifier as passed to [IDKit](/world-id/idkit/getting-started)."
           },
           "signal_hash": {
             "type": "string",
@@ -916,11 +895,7 @@
           },
           "transaction_status": {
             "type": "string",
-            "enum": [
-              "pending",
-              "mined",
-              "failed"
-            ],
+            "enum": ["pending", "mined", "failed"],
             "description": "Current status of the transaction"
           },
           "from": {
@@ -1031,9 +1006,7 @@
       },
       "CreateActionRequest": {
         "type": "object",
-        "required": [
-          "action"
-        ],
+        "required": ["action"],
         "properties": {
           "action": {
             "type": "string",
@@ -1086,18 +1059,11 @@
       },
       "CreditBorrower": {
         "type": "object",
-        "required": [
-          "state",
-          "score"
-        ],
+        "required": ["state", "score"],
         "properties": {
           "state": {
             "type": "string",
-            "enum": [
-              "INACTIVE",
-              "ACTIVE",
-              "DEFAULTED"
-            ],
+            "enum": ["INACTIVE", "ACTIVE", "DEFAULTED"],
             "description": "Borrower status on Credit"
           },
           "score": {
@@ -1134,9 +1100,7 @@
       },
       "GraphQLProxyRequest": {
         "type": "object",
-        "required": [
-          "query"
-        ],
+        "required": ["query"],
         "properties": {
           "query": {
             "type": "string",
@@ -1190,19 +1154,12 @@
       "VerifyV4LegacyProofRequest": {
         "title": "Legacy Proofs (v3)",
         "type": "object",
-        "required": [
-          "protocol_version",
-          "nonce",
-          "action",
-          "responses"
-        ],
+        "required": ["protocol_version", "nonce", "action", "responses"],
         "description": "Legacy uniqueness proof format (protocol 3.0).",
         "properties": {
           "protocol_version": {
             "type": "string",
-            "enum": [
-              "3.0"
-            ]
+            "enum": ["3.0"]
           },
           "nonce": {
             "type": "string"
@@ -1215,10 +1172,7 @@
           },
           "environment": {
             "type": "string",
-            "enum": [
-              "production",
-              "staging"
-            ],
+            "enum": ["production", "staging"],
             "default": "production"
           },
           "responses": {
@@ -1233,19 +1187,12 @@
       "VerifyV4UniquenessProofRequest": {
         "title": "Uniqueness Proofs",
         "type": "object",
-        "required": [
-          "protocol_version",
-          "nonce",
-          "action",
-          "responses"
-        ],
+        "required": ["protocol_version", "nonce", "action", "responses"],
         "description": "Standard uniqueness proof format (protocol 4.0).",
         "properties": {
           "protocol_version": {
             "type": "string",
-            "enum": [
-              "4.0"
-            ]
+            "enum": ["4.0"]
           },
           "nonce": {
             "type": "string"
@@ -1258,10 +1205,7 @@
           },
           "environment": {
             "type": "string",
-            "enum": [
-              "production",
-              "staging"
-            ],
+            "enum": ["production", "staging"],
             "default": "production"
           },
           "responses": {
@@ -1276,19 +1220,12 @@
       "VerifyV4SessionProofRequest": {
         "title": "Session Proofs",
         "type": "object",
-        "required": [
-          "protocol_version",
-          "nonce",
-          "session_id",
-          "responses"
-        ],
+        "required": ["protocol_version", "nonce", "session_id", "responses"],
         "description": "Session proof format (protocol 4.0).",
         "properties": {
           "protocol_version": {
             "type": "string",
-            "enum": [
-              "4.0"
-            ]
+            "enum": ["4.0"]
           },
           "nonce": {
             "type": "string"
@@ -1298,10 +1235,7 @@
           },
           "environment": {
             "type": "string",
-            "enum": [
-              "production",
-              "staging"
-            ],
+            "enum": ["production", "staging"],
             "default": "production"
           },
           "responses": {
@@ -1315,12 +1249,7 @@
       },
       "VerifyV4ResponseItemV3": {
         "type": "object",
-        "required": [
-          "identifier",
-          "proof",
-          "merkle_root",
-          "nullifier"
-        ],
+        "required": ["identifier", "proof", "merkle_root", "nullifier"],
         "properties": {
           "identifier": {
             "type": "string",
@@ -1453,16 +1382,11 @@
       },
       "VerifyV4SuccessResponse": {
         "type": "object",
-        "required": [
-          "success",
-          "results"
-        ],
+        "required": ["success", "results"],
         "properties": {
           "success": {
             "type": "boolean",
-            "enum": [
-              true
-            ]
+            "enum": [true]
           },
           "action": {
             "type": "string"
@@ -1476,10 +1400,7 @@
           },
           "environment": {
             "type": "string",
-            "enum": [
-              "production",
-              "staging"
-            ]
+            "enum": ["production", "staging"]
           },
           "session_id": {
             "type": "string"
@@ -1497,17 +1418,11 @@
       },
       "VerifyV4ErrorResponse": {
         "type": "object",
-        "required": [
-          "success",
-          "code",
-          "detail"
-        ],
+        "required": ["success", "code", "detail"],
         "properties": {
           "success": {
             "type": "boolean",
-            "enum": [
-              false
-            ]
+            "enum": [false]
           },
           "code": {
             "type": "string"
@@ -1525,11 +1440,7 @@
       },
       "SendNotificationLocalisation": {
         "type": "object",
-        "required": [
-          "language",
-          "title",
-          "message"
-        ],
+        "required": ["language", "title", "message"],
         "properties": {
           "language": {
             "type": "string"
