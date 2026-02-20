@@ -145,7 +145,17 @@
               "world-id/idkit/getting-started",
               "world-id/idkit/sessions",
               "world-id/idkit/onchain-verification",
-              "world-id/idkit/design-guidelines"
+              "world-id/idkit/design-guidelines",
+              {
+                "group": "SDK Reference",
+                "pages": [
+                  "world-id/idkit/js-core-sdk-reference",
+                  "world-id/idkit/react-widget-and-hooks",
+                  "world-id/idkit/swift",
+                  "world-id/idkit/kotlin",
+                  "world-id/idkit/error-codes"
+                ]
+              }
             ]
           },
           {
@@ -292,16 +302,6 @@
               "GET /api/v2/minikit/transaction/debug",
               "GET /api/v2/minikit/user-grant-cycle",
               "GET /public/v1/miniapps/prices"
-            ]
-          },
-          {
-            "group": "IDKit API",
-            "pages": [
-              "world-id/idkit/js-core-sdk-reference",
-              "world-id/idkit/react-widget-and-hooks",
-              "world-id/idkit/swift",
-              "world-id/idkit/kotlin",
-              "world-id/idkit/error-codes"
             ]
           }
         ]
