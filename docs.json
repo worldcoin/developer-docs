@@ -130,6 +130,7 @@
             "pages": [
               "mini-apps/more/releases",
               "mini-apps/more/webview-spec",
+              "mini-apps/ecosystem/ecosystem",
               "mini-apps/more/community-tools-perks",
               "mini-apps/more/faq",
               "mini-apps/more/minikit-v2"
