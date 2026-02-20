@@ -1,0 +1,190 @@
+---
+title: "Authenticator Reference"
+---
+
+import {
+  AuthenticatorSDK,
+  UniquenessProof,
+  RpRegistry,
+  Nullifier,
+} from "/snippets/terms.mdx";
+
+## Authenticator Requests & Responses
+
+This section describes how authenticators receive and respond to requests from RPs. This also reflects what is implemented in the <AuthenticatorSDK />.
+
+The authenticator receives a request from an RP in the following format.
+
+### Request Schema
+
+The schema for the request is defined in the `world-id-primitives` crate as [`ProofRequest`](https://docs.rs/world-id-primitives/latest/world_id_primitives/request/struct.ProofRequest.html).
+
+### Request Examples
+
+<Tabs>
+    <Tab title="Single Credential">
+```json
+{
+  "id": "req_18c0f7f03e7d",
+  "version": 1,
+  "created_at": "1771612953",
+  "expires_at": "1771613013",
+  "rp_id": "rp_0000000000000000000000000000000000001",
+  "action": "0x0000000000000000000000000000000000000000000000000000000000000001",
+  "nonce": "0x11d223ce7b91ac212f42cf50f0a3439ae3fcdba4ea32acb7f194d1051ed324c2",
+  "signature": "304502205cce35752b1642327bebf9f203960dc83f92fa919a4567981ce0c157060ca04e022100f328e42ff2609ddc1fbc7da17896ded2687acb3a4eeb8847a6f3a87ce50ed016",
+  "requests": [
+    {
+      "identifier": "passport",
+      "issuer_schema_id": 9303,
+      "signal": "abcd-efgh-ijkl"
+    }
+  ]
+}
+```
+  </Tab>
+  <Tab title="Multiple Credentials">
+    ```json
+    {
+      "id": "req_18c0f7f03e7d",
+      "version": 1,
+      "created_at": "1771612953",
+      "expires_at": "1771613013",
+      "rp_id": "rp_0000000000000000000000000000000000001",
+      "action": "0x0000000000000000000000000000000000000000000000000000000000000001",
+      "nonce": "0x11d223ce7b91ac212f42cf50f0a3439ae3fcdba4ea32acb7f194d1051ed324c2",
+      "signature": "304502205cce35752b1642327bebf9f203960dc83f92fa919a4567981ce0c157060ca04e022100f328e42ff2609ddc1fbc7da17896ded2687acb3a4eeb8847a6f3a87ce50ed016",
+      "requests": [
+        {
+          "type": "passport",
+          "issuer_schema_id": 9303,
+          "signal": "abcd-efgh-ijkl"
+        },
+        {
+          "type": "poh",
+          "issuer_schema_id": 1,
+          "signal": "abcd-efgh-ijkl"
+        }
+      ],
+      "constraints": {
+        "all": ["passport", "poh"]
+      }
+    }
+```
+  </Tab>
+  <Tab title="More Complex Constraints">
+    ```json
+    {
+      "id": "req_18c0f7f03e7d",
+      "version": 1,
+      "created_at": "1771612953",
+      "expires_at": "1771613013",
+      "rp_id": "rp_0000000000000000000000000000000000001",
+      "action": "0x0000000000000000000000000000000000000000000000000000000000000001",
+      "nonce": "0x11d223ce7b91ac212f42cf50f0a3439ae3fcdba4ea32acb7f194d1051ed324c2",
+      "signature": "304502205cce35752b1642327bebf9f203960dc83f92fa919a4567981ce0c157060ca04e022100f328e42ff2609ddc1fbc7da17896ded2687acb3a4eeb8847a6f3a87ce50ed016",
+      "requests": [
+        {
+          "identifier": "passport",
+          "issuer_schema_id": 9303,
+          "signal": "abcd-efgh-ijkl"
+        },
+        {
+          "identifier": "my-number-card",
+          "issuer_schema_id": 9310,
+          "signal": "mnop-qrst-uvwx"
+        },
+        {
+          "identifier": "orb",
+          "issuer_schema_id": 1,
+          "signal": "abcd-efgh-ijkl"
+        }
+      ],
+      "constraints": {
+        "all": [
+          "orb",
+          {
+            "any": ["passport", "my-number-card"]
+          }
+        ]
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+### Constraint Evaluation
+
+When using the `any` constraint, the order of credential types in the array determines **priority order**. The authenticator will attempt to provide the first available credential type in the list. If that credential is not available, it will fall back to the next type in the array, and so on.
+
+<Note>
+  Priority ordering only applies to `any` constraints. For `all` constraints,
+  all specified credential types must be provided regardless of order.
+</Note>
+
+**Example**:
+
+```json
+{
+  "constraints": { "any": ["poh", "passport"] }
+}
+```
+
+In this case:
+
+- If the user has an PoH credential, the authenticator will provide it.
+- If the user does not have an PoH credential but has a passport credential, the authenticator will provide the passport instead.
+- The PoH credential type has priority over passport.
+
+This priority mechanism allows RPs to request their preferred credential type while still accepting fallback options if the preferred type is unavailable.
+
+### Response Schema
+
+The schema for the response is defined in the `world-id-primitives` crate as [`ProofResponse`](https://docs.rs/world-id-primitives/latest/world_id_primitives/request/struct.ProofResponse.html).
+
+### Response Examples
+
+<Tabs>
+  <Tab title="Success (OK)">
+    ```json
+    {
+    "id": "req_18c0f7f03e7d",
+    "version": 1,
+    "responses": [
+        {
+            "identifier": "orb",
+            "issuer_schema_id": 1,
+            "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
+            "nullifier": "nil_00000000000000000000000000000000000000000000000001"
+        }
+    ]
+    }
+    ```
+  </Tab>
+  <Tab title="Failure (Constraints Not Satisfied)">
+    ```json
+    {
+        "id": "req_18c0f7f03e7d",
+        "version": 1,
+        "error": "constraints_not_satisfied",
+        "responses": []
+    }
+    ```
+  </Tab>
+   <Tab title="Success with Session (OK)">
+    ```json
+    {
+    "id": "req_18c0f7f03e7d",
+    "version": 1,
+    "responses": [
+        {
+            "identifier": "orb",
+            "issuer_schema_id": 1,
+            "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
+            "session_nullifier": "00000000000000000000000000000000000000000000000001"
+        }
+    ]
+    }
+    ```
+  </Tab>
+</Tabs>

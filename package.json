@@ -1,0 +1,21 @@
+{
+  "name": "world-docs",
+  "version": "0.0.1",
+  "description": "",
+  "scripts": {
+    "mint": "mint",
+    "dev": "mint dev",
+    "spellcheck": "cspell '**/*.{md,mdx,json,yml,yaml,ts,tsx,js,jsx}' --no-progress",
+    "check-links": "mint broken-links"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "packageManager": "pnpm@10.13.1",
+  "dependencies": {
+    "mint": "^4.2.367"
+  },
+  "devDependencies": {
+    "cspell": "^9"
+  }
+}

@@ -136,6 +136,10 @@
             "pages": ["world-id/concepts"]
           },
           {
+            "group": "Migration",
+            "pages": ["world-id/4-0-migration"]
+          },
+          {
             "group": "IDKit",
             "pages": [
               "world-id/idkit/getting-started",
@@ -171,6 +175,36 @@
             "group": "Technical Reference",
             "pages": [
               "world-id/reference/idkit",
+              "world-id/reference/authenticator",
+              {
+                "group": "API References",
+                "pages": [
+                  {
+                    "group": "Indexer",
+                    "openapi": "https://world-id-indexer.stage-crypto.worldcoin.org/openapi.json",
+                    "pages": [
+                      "POST /inclusion-proof",
+                      "POST /packed-account",
+                      "POST /signature-nonce",
+                      "POST /authenticator-pubkeys"
+                    ]
+                  },
+                  {
+                    "group": "Gateway",
+                    "openapi": "https://world-id-gateway.stage-crypto.worldcoin.org/openapi.json",
+                    "pages": [
+                      "POST /create-account",
+                      "POST /insert-authenticator",
+                      "POST /update-authenticator",
+                      "POST /remove-authenticator",
+                      "POST /recover-account",
+                      "GET /is-valid-root",
+                      "GET /status/{id}"
+                    ]
+                  }
+                ]
+              },
+              "world-id/reference/sign-in",
               "world-id/reference/poh-issuer",
               "world-id/reference/contracts",
               "world-id/reference/contract-deployments",
