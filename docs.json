@@ -144,7 +144,8 @@
             "pages": [
               "world-id/idkit/getting-started",
               "world-id/idkit/sessions",
-              "world-id/idkit/onchain-verification"
+              "world-id/idkit/onchain-verification",
+              "world-id/idkit/design-guidelines"
             ]
           },
           {
@@ -158,8 +159,7 @@
               "world-id/id/on-chain",
               "world-id/id/libraries",
               "world-id/id/testing",
-              "world-id/id/pitfalls",
-              "world-id/id/design-guidelines"
+              "world-id/id/pitfalls"
             ]
           },
           {
@@ -174,7 +174,6 @@
           {
             "group": "Technical Reference",
             "pages": [
-              "world-id/reference/idkit",
               "world-id/reference/authenticator",
               {
                 "group": "API References",
@@ -204,11 +203,9 @@
                   }
                 ]
               },
-              "world-id/reference/sign-in",
               "world-id/reference/poh-issuer",
               "world-id/reference/contracts",
-              "world-id/reference/contract-deployments",
-              "world-id/reference/errors"
+              "world-id/reference/contract-deployments"
             ]
           }
         ]
@@ -661,6 +658,10 @@
     {
       "source": "/world-id/reference/idkit",
       "destination": "/world-id/idkit/getting-started"
+    },
+    {
+      "source": "world-id/id/design-guidelines",
+      "destination": "/world-id/idkit/design-guidelines"
     }
   ],
   "api": {
