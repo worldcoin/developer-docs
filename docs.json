@@ -48,6 +48,7 @@
             "group": "Quick Start",
             "pages": [
               "mini-apps/quick-start/installing",
+              "mini-apps/quick-start/init",
               "mini-apps/quick-start/commands",
               "mini-apps/quick-start/responses",
               "mini-apps/quick-start/testing",
@@ -61,8 +62,8 @@
               "mini-apps/commands/pay",
               "mini-apps/commands/wallet-auth",
               "mini-apps/commands/send-transaction",
+              "mini-apps/commands/chat",
               "mini-apps/commands/sign-message",
-              "mini-apps/commands/sign-typed-data",
               "mini-apps/commands/share-contacts",
               "mini-apps/commands/request-permission",
               "mini-apps/commands/get-permissions",
@@ -84,7 +85,6 @@
             "group": "Technical Reference",
             "openapi": "openapi/world-miniapps.json",
             "pages": [
-              "mini-apps/reference/init",
               "mini-apps/reference/api",
               "POST /api/v2/create-action/{app_id}",
               "POST /api/v2/minikit/send-notification",
@@ -131,7 +131,8 @@
               "mini-apps/more/releases",
               "mini-apps/more/webview-spec",
               "mini-apps/more/community-tools-perks",
-              "mini-apps/more/faq"
+              "mini-apps/more/faq",
+              "mini-apps/more/minikit-v2"
             ]
           }
         ]
@@ -142,6 +143,10 @@
           {
             "group": "Introduction",
             "pages": ["world-id/index", "world-id/concepts"]
+          },
+          {
+            "group": "Migration",
+            "pages": ["world-id/4-0-migration"]
           },
           {
             "group": "ID Kit",
@@ -156,6 +161,15 @@
               "world-id/id/testing",
               "world-id/id/pitfalls",
               "world-id/id/design-guidelines"
+            ]
+          },
+          {
+            "group": "Face Check (Beta)",
+            "hidden": true,
+            "pages": [
+              "world-id/face-check/overview",
+              "world-id/face-check/web-integration",
+              "world-id/face-check/testing"
             ]
           },
           {
@@ -195,6 +209,7 @@
                 ]
               },
               "world-id/reference/sign-in",
+              "world-id/reference/poh-issuer",
               "world-id/reference/contracts",
               "world-id/reference/contract-deployments",
               "world-id/reference/errors"
@@ -483,6 +498,14 @@
     {
       "source": "/reference/sign-in",
       "destination": "/world-id/reference/sign-in"
+    },
+    {
+      "source": "/poh-issuer",
+      "destination": "/world-id/reference/poh-issuer"
+    },
+    {
+      "source": "/poh-issuer/index",
+      "destination": "/world-id/reference/poh-issuer"
     },
     {
       "source": "/reference/world-id-2-migration-guide",

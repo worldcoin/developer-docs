@@ -1,11 +1,11 @@
 ---
 title: "Getting Started"
-description: "Create a Mini App with the official template or install MiniKit-JS manually; initialize, detect environment, and start building."
+description: "Create a Mini App with the official template or install MiniKit-JS manually."
 "og:image": "/images/docs/docs-meta.png"
 "twitter:image": "/images/docs/docs-meta.png"
 ---
 
-[MiniKit-JS](https://github.com/worldcoin/minikit-js) is our official SDK for creating mini apps that work with World App. It provides handy functions and types to make development a breeze.
+[MiniKit-JS](https://github.com/worldcoin/minikit-js) is our official SDK for creating mini apps that work with World App.
 
 ## Quick Start
 
@@ -52,7 +52,7 @@ Or use a CDN like [jsdelivr](https://www.jsdelivr.com/package/npm/@worldcoin/min
 
 ## Usage
 
-1. Wrap your root with the MiniKitProvider component.This provides the MiniKit object to your app.
+1. Wrap your root with the MiniKitProvider component. This will initialize MiniKit and make it available throughout your app.
 
 ```tsx src/index.tsx
 import { MiniKitProvider } from "@worldcoin/minikit-js/minikit-provider";
@@ -71,12 +71,10 @@ export default async function Root({
 }
 ```
 
-2. Check if MiniKit is installed and ready to use
-
-`MiniKit.isInstalled()` will only return true if the app is opened and properly initialized inside the World App. This is useful to distinguish between a user opening your app in the browser or in the World App.
+2. Check if MiniKit is installed.
+`MiniKit.isInstalled()` will only return true if the mini app is opened and initialized inside the World App. This is useful to distinguish between a user opening your app in the browser or in the World App.
 
 ```tsx
-// ...
 console.log(MiniKit.isInstalled());
 ```
 
