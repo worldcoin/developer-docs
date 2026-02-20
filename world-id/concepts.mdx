@@ -7,28 +7,30 @@ description: "Core concepts behind World ID: proof of personhood, verification l
 
 World ID is built for easy integration, but here are a few core concepts that are helpful to understand before you start.
 
-## Credentials
+## World ID
+A user's self-custodial identity which lives in their Authenticator. When referring to the protocol, it's usually written as the _World ID Protocol_.
 
-A credential is generally a verifiable digital statement about a subject (see [W3C](https://www.w3.org/TR/vc-data-model/#credentials) definition). In the case of World ID these statements are about humans, with the most common credentials being Orb verification or document verification. Generally a World ID will have at least one of these credentials.
+## Relying Party (RP)
+A third-party application that wants to verify a user's credential. This is probably you.
+
+## Credential
+A signed attestation about a subject used to generate proofs. It includes issuer, subject, validity window, and claim commitments as defined in the [Credential's World ID 4.0 specs](https://docs.rs/world-id-primitives/latest/world_id_primitives/credential/struct.Credential.html)
+
+## Issuer
+An entity that issues credentials to users. In World ID, issuers are responsible for verifying a user's identity and signing their credential. Issuers must be registered in the `CredentialSchemaIssuerRegistry` to be recognized by the protocol.
 
 
-## Presentations
+## Proof Concepts
 
-A presentation is when the user proves on their credential to a third-party application (called RP for Relying Party). The RP will then verify the credential and take action accordingly.
-
-
-- **World ID**: A user's self-custodial identity, as well as the name of the protocol.
-- **App ID**: The ID of your app that is assigned in our [Developer Portal](https://developer.worldcoin.org/).
 - **Action**: A developer-facing primitive that lets you put any app operation behind a unique-human gate. An app can have one or more actions depending on your use case.
-- **Issuer**: An entity authorized to issue a credential for a specific schema. Issuers sign credentials and publish their public keys in the `CredentialSchemaIssuerRegistry`.
-- **Credential**: A signed attestation about a subject used to generate proofs. It includes issuer, subject, validity window, and claim commitments as defined in the [Credential's World ID 4.0 specs](https://docs.rs/world-id-primitives/latest/world_id_primitives/credential/struct.Credential.html)
 - **Zero-Knowledge Proof (ZKP)**: A cryptographic method to prove that a statement is true without revealing any information about the statement itself. World ID uses ZKPs to prove that a user is verified without revealing the user's identity.
 - **Nullifier Hash**: A component of the World ID ZKP; a unique identifier for a combination of a user, `app_id`, and `action`.
 - **Signal**: A component of the World ID ZKP; data attached to the proof that cannot be tampered with. An example may be a user's choice for an election.
-- **Merkle Root**: A component of the World ID ZKP; The root of the [Merkle Tree](https://en.wikipedia.org/wiki/Merkle_tree) that identity commitments are inserted to.
 
 
-It's important to note the difference between the two types of verification, depending on the context:
 
-- **World ID**: A user's self-custodial identity, as well as the name of the Protocol.
-- **Relying Party** or **Application**: Probably you. A third-party application that wants to verify a user's credential.
+# Legacy Concepts (World ID 3.0)
+
+- **Identity Commitment**: A hash of a user's secret identity nullifier and trapdoor, which is inserted into the Merkle Tree. This is no longer used in World ID 4.0, but you may see it referenced in older documentation.
+- **App ID**: The ID of your app that is assigned in our [Developer Portal](https://developer.worldcoin.org/). In World ID 4.0, this is now referred to as **RP ID**.
+- **Merkle Root**: A component of the World ID ZKP; The root of the [Merkle Tree](https://en.wikipedia.org/wiki/Merkle_tree) that identity commitments are inserted to. While 4.0 still uses Merkle Trees, the root is now encoded within the received ZKP, so you don't need to worry about handling it.

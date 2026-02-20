@@ -142,7 +142,7 @@
         "groups": [
           {
             "group": "Introduction",
-            "pages": ["world-id/index", "world-id/concepts"]
+            "pages": ["world-id/concepts"]
           },
           {
             "group": "Migration",
@@ -190,7 +190,8 @@
                     "pages": [
                       "POST /inclusion-proof",
                       "POST /packed-account",
-                      "POST /signature-nonce"
+                      "POST /signature-nonce",
+                      "POST /authenticator-pubkeys"
                     ]
                   },
                   {

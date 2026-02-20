@@ -2,39 +2,12 @@
 title: "Authenticator Reference"
 ---
 
-import { AuthenticatorSDK, UniquenessProof, RpRegistry, Nullifier } from "/snippets/terms.mdx"
-
-## Action Encoding & Hashing
-
-Actions scope <UniquenessProof />s. When requesting these proofs, the user will prove they have only performed that specific action, for that specific RP and app once. Ultimately this is reflected with the computation of the <Nullifier /> which takes the `rp_id`, `app_id`, and `action` information as inputs (as well as a user-specific input not relevant here).
-
-<Note>Each different action will result in a different <Nullifier />.</Note>
-
-Authenticators expect a pre-encoded action to be able to process requests. ID Kit already does this in the background, but for reference, this is how the action is encoded.
-
-```rust
-    #[serde(Serialize, Deserialize)]
-    struct WorldIdAction {
-        /// The timestamp when the action will expire
-        expires_at: u64,
-        /// Arbitrary data to be included. Typically this would be a string value, which simply gets UTF-8 encoded.
-        data: Vec<u8>,
-        /// Description shown to the user when they are prompted to perform the action
-        description: String,
-    }
-
-    impl WorldIdAction {
-        pub fn encode(&self) -> String {
-            let encoded_bytes = serde_json::to_vec(self).unwrap();
-            let encoded_bytes = STANDARD.encode(&json_bytes);
-            format!("act_{}", encoded_bytes)
-        }
-    }
-```
-
-The authenticator uses the encoded action to:
-- Display the description to the user.
-- Compute the hash of the action and use it in the proof (by removing the `act_` prefix and using the base 64 decoded bytes as the input).
+import {
+  AuthenticatorSDK,
+  UniquenessProof,
+  RpRegistry,
+  Nullifier,
+} from "/snippets/terms.mdx";
 
 ## Authenticator Requests & Responses
 
@@ -44,45 +17,7 @@ The authenticator receives a request from an RP in the following format.
 
 ### Request Schema
 
-<ParamField body="id" type="string" required>
-  A unique identifier for this request.
-</ParamField>
-
-<ParamField body="version" type="number" required>
-  The version of the request. Must equal to `1`.
-</ParamField>
-
-<ParamField body="created_at" type="string">
-  The date and time the request was created.
-</ParamField>
-
-<ParamField body="expires_at" type="string" required>
-  The date and time the request will expire.
-</ParamField>
-
-<ParamField body="rp_id" type="string" required>
-  The ID of the RP requesting the proof. Must be registered in the <RpRegistry />.
-</ParamField>
-
-<ParamField body="app_id" type="string" required>
-  The ID for the app requesting the proof.
-</ParamField>
-
-<ParamField body="encoded_action" type="string" required>
-  The action being performed. See [Action Encoding & Hashing](#action-encoding-hashing) for more details.
-</ParamField>
-
-<ParamField body="requests" type="array" required>
- The credentials being requested for verification.
- - `type` (required): The type of credential being requested.
- - `signal`: An optional commitment which the user signs.
-</ParamField>
-
-<ParamField body="constraints" type="object">
-  Boolean expression over credential types. 
-  - Use one of `all` or `any` at each level.
-  - Values are arrays of credential `type` strings and/or nested constraint objects, with at most one level of nesting.
-</ParamField>
+The schema for the request is defined in the `world-id-primitives` crate as [`ProofRequest`](https://docs.rs/world-id-primitives/latest/world_id_primitives/request/struct.ProofRequest.html).
 
 ### Request Examples
 
@@ -92,14 +27,16 @@ The authenticator receives a request from an RP in the following format.
 {
   "id": "req_18c0f7f03e7d",
   "version": 1,
-  "created_at": "2025-09-03T17:33:12Z",
-  "expires_at": "2025-09-03T17:38:12Z",
+  "created_at": "1771612953",
+  "expires_at": "1771613013",
   "rp_id": "rp_0000000000000000000000000000000000001",
-  "app_id": "app_123",
-  "encoded_action": "act_0000000000000000000000000000000000001",
+  "action": "0x0000000000000000000000000000000000000000000000000000000000000001",
+  "nonce": "0x11d223ce7b91ac212f42cf50f0a3439ae3fcdba4ea32acb7f194d1051ed324c2",
+  "signature": "304502205cce35752b1642327bebf9f203960dc83f92fa919a4567981ce0c157060ca04e022100f328e42ff2609ddc1fbc7da17896ded2687acb3a4eeb8847a6f3a87ce50ed016",
   "requests": [
     {
-      "type": "gov-id",
+      "identifier": "passport",
+      "issuer_schema_id": 9303,
       "signal": "abcd-efgh-ijkl"
     }
   ]
@@ -108,64 +45,70 @@ The authenticator receives a request from an RP in the following format.
   </Tab>
   <Tab title="Multiple Credentials">
     ```json
-{
-  "id": "req_18c0f7f03e7d",
-  "version": 1,
-  "created_at": "2025-09-03T17:33:12Z",
-  "expires_at": "2025-09-03T17:38:12Z",
-  "rp_id": "rp_0000000000000000000000000000000000001",
-  "app_id": "app_123",
-  "encoded_action": "act_0000000000000000000000000000000000001",
-  "requests": [
     {
-      "type": "gov-id",
-      "signal": "abcd-efgh-ijkl"
-    },
-    {
-      "type": "orb",
-      "signal": "abcd-efgh-ijkl",
-      // Include Verification Proof
+      "id": "req_18c0f7f03e7d",
+      "version": 1,
+      "created_at": "1771612953",
+      "expires_at": "1771613013",
+      "rp_id": "rp_0000000000000000000000000000000000001",
+      "action": "0x0000000000000000000000000000000000000000000000000000000000000001",
+      "nonce": "0x11d223ce7b91ac212f42cf50f0a3439ae3fcdba4ea32acb7f194d1051ed324c2",
+      "signature": "304502205cce35752b1642327bebf9f203960dc83f92fa919a4567981ce0c157060ca04e022100f328e42ff2609ddc1fbc7da17896ded2687acb3a4eeb8847a6f3a87ce50ed016",
+      "requests": [
+        {
+          "type": "passport",
+          "issuer_schema_id": 9303,
+          "signal": "abcd-efgh-ijkl"
+        },
+        {
+          "type": "poh",
+          "issuer_schema_id": 1,
+          "signal": "abcd-efgh-ijkl"
+        }
+      ],
+      "constraints": {
+        "all": ["passport", "poh"]
+      }
     }
-  ],
-  "constraints": {
-    "all": ["gov-id", "orb"]
-  }
-  // alternatively { "any": ["gov-id", "orb"] }
-}
 ```
   </Tab>
   <Tab title="More Complex Constraints">
     ```json
-{
-  "id": "req_18c0f7f03e7d",
-  "version": 1,
-  "created_at": "2025-09-03T17:33:12Z",
-  "expires_at": "2025-09-03T17:38:12Z",
-  "rp_id": "rp_0000000000000000000000000000000000001",
-  "app_id": "app_123",
-  "encoded_action": "act_0000000000000000000000000000000000001",
-  "requests": [
     {
-      "type": "passport",
-      "signal": "abcd-efgh-ijkl"
-    },
-    {
-      "type": "my-number-card",
-      "signal": "mnop-qrst-uvwx"
-    },
-    {
-      "type": "orb",
-      "signal": "abcd-efgh-ijkl",
-      // Include Verification Proof
+      "id": "req_18c0f7f03e7d",
+      "version": 1,
+      "created_at": "1771612953",
+      "expires_at": "1771613013",
+      "rp_id": "rp_0000000000000000000000000000000000001",
+      "action": "0x0000000000000000000000000000000000000000000000000000000000000001",
+      "nonce": "0x11d223ce7b91ac212f42cf50f0a3439ae3fcdba4ea32acb7f194d1051ed324c2",
+      "signature": "304502205cce35752b1642327bebf9f203960dc83f92fa919a4567981ce0c157060ca04e022100f328e42ff2609ddc1fbc7da17896ded2687acb3a4eeb8847a6f3a87ce50ed016",
+      "requests": [
+        {
+          "type": "passport",
+          "issuer_schema_id": 9303,
+          "signal": "abcd-efgh-ijkl"
+        },
+        {
+          "type": "my-number-card",
+          "issuer_schema_id": 9310,
+          "signal": "mnop-qrst-uvwx"
+        },
+        {
+          "type": "orb",
+          "issuer_schema_id": 1,
+          "signal": "abcd-efgh-ijkl"
+        }
+      ],
+      "constraints": {
+        "all": [
+          "orb",
+          {
+            "any": ["passport", "my-number-card"]
+          }
+        ]
+      }
     }
-  ],
-  "constraints": {
-    "all": [
-      "orb",
-      { "any": ["passport", "my-number-card"] }
-    ]
-  }
-}
     ```
   </Tab>
 </Tabs>
@@ -175,45 +118,29 @@ The authenticator receives a request from an RP in the following format.
 When using the `any` constraint, the order of credential types in the array determines **priority order**. The authenticator will attempt to provide the first available credential type in the list. If that credential is not available, it will fall back to the next type in the array, and so on.
 
 <Note>
-  Priority ordering only applies to `any` constraints. For `all` constraints, all specified credential types must be provided regardless of order.
+  Priority ordering only applies to `any` constraints. For `all` constraints,
+  all specified credential types must be provided regardless of order.
 </Note>
 
 **Example**:
+
 ```json
 {
-  "constraints": { "any": ["orb", "document"] }
+  "constraints": { "any": ["poh", "passport"] }
 }
 ```
 
 In this case:
-- If the user has an orb credential, the authenticator will provide it
-- If the user does not have an orb credential but has a document credential, the authenticator will provide the document instead
-- The orb credential type has priority over document
+
+- If the user has an PoH credential, the authenticator will provide it.
+- If the user does not have an PoH credential but has a passport credential, the authenticator will provide the passport instead.
+- The PoH credential type has priority over passport.
 
 This priority mechanism allows RPs to request their preferred credential type while still accepting fallback options if the preferred type is unavailable.
 
 ### Response Schema
 
-<ParamField body="id" type="string" required>
-  The request identifier this response corresponds to.
-</ParamField>
-
-<ParamField body="version" type="number" required>
-  The response version. Must equal to `1`.
-</ParamField>
-
-<ParamField body="responses" type="array" required>
-  Per-credential results. Each item contains:
-  - `type` (string, required): Credential type this item refers to.
-  - `proof` (string): Proof payload when applicable (e.g., uniqueness proof).
-  - `nullifier` (string): The computed <Nullifier /> for the action when applicable.
-  - `session_id` (string): Session identifier if a session is established.
-  - `error` (string): Present if the credential could not be provided.
-</ParamField>
-
-<Note>
-  Success is implicit. If a response item is present without an `error`, the credential was provided successfully. Do not include a `success` boolean.
-</Note>
+The schema for the response is defined in the `world-id-primitives` crate as [`ProofResponse`](https://docs.rs/world-id-primitives/latest/world_id_primitives/request/struct.ProofResponse.html).
 
 ### Response Examples
 
@@ -225,7 +152,8 @@ This priority mechanism allows RPs to request their preferred credential type wh
     "version": 1,
     "responses": [
         {
-            "type": "orb",
+            "identifier": "orb",
+            "issuer_schema_id": 1,
             "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
             "nullifier": "nil_00000000000000000000000000000000000000000000000001"
         }
@@ -236,19 +164,10 @@ This priority mechanism allows RPs to request their preferred credential type wh
   <Tab title="Failure (Constraints Not Satisfied)">
     ```json
     {
-    "id": "req_18c0f7f03e7d",
-    "version": 1,
-    "responses": [
-        {
-            "type": "orb",
-            "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
-            "nullifier": "nil_00000000000000000000000000000000000000000000000001"
-        },
-        {
-            "type": "gov-id",
-            "error": "credential_not_available"
-        }
-    ]
+        "id": "req_18c0f7f03e7d",
+        "version": 1,
+        "error": "constraints_not_satisfied",
+        "responses": []
     }
     ```
   </Tab>
@@ -259,146 +178,13 @@ This priority mechanism allows RPs to request their preferred credential type wh
     "version": 1,
     "responses": [
         {
-            "type": "orb",
+            "identifier": "orb",
+            "issuer_schema_id": 1,
             "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
-            "nullifier": "nil_00000000000000000000000000000000000000000000000001",
-            "session_id": "psub_0fff0000000000000000000000000000000000000000000002"
+            "session_nullifier": "00000000000000000000000000000000000000000000000001",
         }
     ]
     }
     ```
-  </Tab>
-</Tabs>
-
-### Paired Request/Response Examples
-
-<Note>
-  A request is considered successful if the provided response items satisfy the declared `constraints`. Items with an `error` do not satisfy constraints.
-</Note>
-
-<Tabs>
-  <Tab title="AND Constraint (all)">
-    <CodeBlock title="Request">
-```json
-{
-  "id": "req_18c0f7f03e7d",
-  "version": 1,
-  "created_at": "2025-09-03T17:33:12Z",
-  "expires_at": "2025-09-03T17:38:12Z",
-  "rp_id": "rp_0000000000000000000000000000000000001",
-  "app_id": "app_123",
-  "encoded_action": "act_0000000000000000000000000000000000001",
-  "requests": [
-    { "type": "orb", "signal": "abcd-efgh-ijkl" },
-    { "type": "passport", "signal": "abcd-efgh-ijkl" }
-  ],
-  "constraints": { "all": ["orb", "passport"] }
-}
-```
-    </CodeBlock>
-    <CodeBlock title="Response">
-```json
-{
-  "id": "req_18c0f7f03e7d",
-  "version": 1,
-  "responses": [
-    {
-      "type": "orb",
-      "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
-      "nullifier": "nil_00000000000000000000000000000000000000000000000001"
-    },
-    {
-      "type": "passport",
-      "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
-      "nullifier": "nil_00000000000000000000000000000000000000000000000001"
-    }
-  ]
-}
-```
-    </CodeBlock>
-  </Tab>
-  <Tab title="Any Constraint (implicit priority)">
-    <CodeBlock title="Request">
-```json
-{
-  "id": "req_18c0f7f03e7d",
-  "version": 1,
-  "created_at": "2025-09-03T17:33:12Z",
-  "expires_at": "2025-09-03T17:38:12Z",
-  "rp_id": "rp_0000000000000000000000000000000000001",
-  "app_id": "app_123",
-  "encoded_action": "act_0000000000000000000000000000000000001",
-  "requests": [
-    { "type": "orb", "signal": "abcd-efgh-ijkl" },
-    { "type": "passport", "signal": "abcd-efgh-ijkl" }
-  ],
-  "constraints": { "any": ["orb", "passport"] }
-}
-```
-    </CodeBlock>
-    <CodeBlock title="Response">
-```json
-{
-  "id": "req_18c0f7f03e7d",
-  "version": 1,
-  "responses": [
-    {
-      "type": "orb",
-      "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
-      "nullifier": "nil_00000000000000000000000000000000000000000000000001"
-    }
-  ]
-}
-```
-    </CodeBlock>
-    <Note>
-      Even though both `orb` and `passport` credentials were requested, only `orb` is returned in the response. This is because the `any` constraint is satisfied by providing just one credential, and `orb` appears first in the priority order. The authenticator provides the highest-priority available credential that satisfies the constraint.
-    </Note>
-  </Tab>
-  <Tab title="Nested (all + any)">
-    <CodeBlock title="Request">
-```json
-{
-  "id": "req_18c0f7f03e7d",
-  "version": 1,
-  "created_at": "2025-09-03T17:33:12Z",
-  "expires_at": "2025-09-03T17:38:12Z",
-  "rp_id": "rp_0000000000000000000000000000000000001",
-  "app_id": "app_123",
-  "encoded_action": "act_0000000000000000000000000000000000001",
-  "requests": [
-    { "type": "orb", "signal": "abcd-efgh-ijkl" },
-    { "type": "passport", "signal": "abcd-efgh-ijkl" },
-    { "type": "national-id", "signal": "abcd-efgh-ijkl" }
-  ],
-  "constraints": {
-    "all": [
-      "orb",
-      { "any": ["passport", "national-id"] }
-    ]
-  }
-}
-```
-    </CodeBlock>
-    <CodeBlock title="Response (success – nested satisfied)">
-```json
-{
-  "id": "req_18c0f7f03e7d",
-  "version": 1,
-  "responses": [
-    {
-      "type": "orb",
-      "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
-      "nullifier": "nil_00000000000000000000000000000000000000000000000001"
-    },
-    {
-      "type": "passport",
-      "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
-      "nullifier": "nil_00000000000000000000000000000000000000000000000001"
-    }
-  ]
-}
-```
-    </CodeBlock>
   </Tab>
 </Tabs>
