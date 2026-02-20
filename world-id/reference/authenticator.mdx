@@ -85,17 +85,17 @@ The schema for the request is defined in the `world-id-primitives` crate as [`Pr
       "signature": "304502205cce35752b1642327bebf9f203960dc83f92fa919a4567981ce0c157060ca04e022100f328e42ff2609ddc1fbc7da17896ded2687acb3a4eeb8847a6f3a87ce50ed016",
       "requests": [
         {
-          "type": "passport",
+          "identifier": "passport",
           "issuer_schema_id": 9303,
           "signal": "abcd-efgh-ijkl"
         },
         {
-          "type": "my-number-card",
+          "identifier": "my-number-card",
           "issuer_schema_id": 9310,
           "signal": "mnop-qrst-uvwx"
         },
         {
-          "type": "orb",
+          "identifier": "orb",
           "issuer_schema_id": 1,
           "signal": "abcd-efgh-ijkl"
         }
@@ -181,7 +181,7 @@ The schema for the response is defined in the `world-id-primitives` crate as [`P
             "identifier": "orb",
             "issuer_schema_id": 1,
             "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
-            "session_nullifier": "00000000000000000000000000000000000000000000000001",
+            "session_nullifier": "00000000000000000000000000000000000000000000000001"
         }
     ]
     }
