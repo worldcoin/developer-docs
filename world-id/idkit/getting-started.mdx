@@ -44,20 +44,16 @@ export async function POST(request: Request): Promise<Response> {
   Keep it identical in signing, request creation, and verify.
 - `signal`: Set this when you need to bind app context into the proof. Examples:
   user ID, wallet address. Your backend should enforce the same value.
-- `constraints`: Define which credentials are accepted, then pass that node to
-  `.constraints`. Use the`any` or `all` operators to create complex constraint logic.
 
 <CodeGroup title="Create request and collect proof">
 ```typescript title="JavaScript"
-import { IDKit, CredentialRequest, any } from "@worldcoin/idkit-core";
+import { IDKit, orbLegacy } from "@worldcoin/idkit-core";
 
 const rpSig = await fetch("/api/rp-signature", {
   method: "POST",
   headers: { "content-type": "application/json" },
   body: JSON.stringify({ action: "my-action" }),
 }).then((r) => r.json());
-
-const orbCredential = CredentialRequest("orb", { signal: "user-123" });
 
 const request = await IDKit.request({
   app_id: "app_xxxxx",
@@ -69,9 +65,9 @@ const request = await IDKit.request({
     expires_at: rpSig.expiresAt,
     signature: rpSig.sig,
   },
-  allow_legacy_proofs: false,
+  allow_legacy_proofs: true,
   environment: "production",
-}).constraints(any(orbCredential));
+}).preset(orbLegacy());
 
 const connectUrl = request.connectorURI;
 const response = await request.pollUntilCompletion();
@@ -79,9 +75,8 @@ const response = await request.pollUntilCompletion();
 
 ```tsx title="React"
 import {
-  CredentialRequest,
   IDKitRequestWidget,
-  any,
+  orbLegacy,
   type RpContext,
 } from "@worldcoin/idkit";
 
@@ -93,16 +88,14 @@ const rp_context: RpContext = {
   signature: "0x...",
 };
 
-const orbCredential = CredentialRequest("orb", { signal: "user-123" });
-
 <IDKitRequestWidget
   open={open}
   onOpenChange={setOpen}
   app_id="app_xxxxx"
   action="my-action"
   rp_context={rp_context}
-  allow_legacy_proofs={false}
-  constraints={any(orbCredential)} 
+  allow_legacy_proofs={true}
+  preset={orbLegacy()} 
   onSuccess={(result) => {
     // Send `result` to your backend /api/verify-proof endpoint
   }}
@@ -126,22 +119,19 @@ let config = IDKitRequestConfig(
   rpContext: rpContext,
   actionDescription: "Verify user",
   bridgeUrl: nil,
-  allowLegacyProofs: false,
+  allowLegacyProofs: true,
   overrideConnectBaseUrl: nil,
   environment: .production
 )
 
-let orbCredential = CredentialRequest.create(.orb, signal: "user-123")
-let request = try IDKit.request(config: config).constraints(anyOf(orbCredential))
+let request = try IDKit.request(config: config).preset(orbLegacy())
 let connectUrl = request.connectorURL
 let completion = await request.pollUntilCompletion()
 ```
 
 ```kotlin title="Kotlin"
-import com.worldcoin.idkit.CredentialRequest
-import com.worldcoin.idkit.CredentialType
+import com.worldcoin.idkit.orbLegacy
 import com.worldcoin.idkit.IdKit
-import com.worldcoin.idkit.anyOf
 
 val rpContext = IdKit.rpContext(
   rpId = "rp_xxxxx",
@@ -155,11 +145,10 @@ val config = IdKit.requestConfig(
   appId = "app_xxxxx",
   action = "my-action",
   rpContext = rpContext,
-  allowLegacyProofs = false,
+  allowLegacyProofs = true,
 )
 
-val orbCredential = CredentialRequest(CredentialType.ORB, signal = "user-123")
-val request = IdKit.request(config).constraints(anyOf(orbCredential))
+val request = IdKit.request(config).preset(orbLegacy())
 val connectUrl = request.connectUrl()
 val status = request.pollStatus(pollIntervalMs = 2000u, timeoutMs = 120000u)
 ```
@@ -195,5 +184,4 @@ app.post("/api/verify-proof", async (req, res) => {
 
 ## Next pages
 
-- [Sessions](/world-id/idkit/sessions)
 - [POST /v4/verify reference](/api-reference/developer-portal/verify)

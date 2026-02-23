@@ -151,7 +151,6 @@
             "group": "IDKit",
             "pages": [
               "world-id/idkit/getting-started",
-              "world-id/idkit/sessions",
               "world-id/idkit/onchain-verification",
               "world-id/idkit/design-guidelines",
               {

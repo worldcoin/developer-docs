@@ -27,12 +27,9 @@ yarn add @worldcoin/idkit-core
 ## Entry points
 
 - `IDKit.request(config)` for uniqueness proofs
-- `IDKit.createSession(config)` for first-time session creation
-- `IDKit.proveSession(sessionId, config)` for returning users
-- `CredentialRequest`, `any`, `all` for explicit constraints
 - `orbLegacy`, `secureDocumentLegacy`, `documentLegacy` for presets
 
-Each entry point returns a builder. Finalize it with either `.constraints(...)` or `.preset(...)`.
+Each entry point returns a builder. Finalize it with `.preset(...)`.
 
 ## Request config
 
@@ -51,7 +48,7 @@ const builder = IDKit.request({
   },
   action_description: "Verify user",
   bridge_url: undefined,
-  allow_legacy_proofs: false,
+  allow_legacy_proofs: true,
   override_connect_base_url: undefined,
   environment: "production",
 });
@@ -60,39 +57,6 @@ const builder = IDKit.request({
 <Warning>
   Generate `rp_context` in your backend only. Never expose your RP signing key in client code.
 </Warning>
-
-## Constraints
-
-Use constraints when you want explicit credential logic.
-
-```ts
-import { IDKit, CredentialRequest, any, all } from "@worldcoin/idkit-core";
-
-const orb = CredentialRequest("orb", { signal: "user-123" });
-const face = CredentialRequest("face", { signal: "user-123" });
-
-const secureDocWithMinGenesis = CredentialRequest("secure_document", {
-  signal: "user-123",
-  genesis_issued_at_min: 1_735_689_600,
-});
-
-const request = await IDKit.request({
-  app_id: "app_xxxxx",
-  action: "my-action",
-  rp_context,
-  allow_legacy_proofs: false,
-}).constraints(all(any(orb, face), secureDocWithMinGenesis));
-```
-
-`CredentialRequest` supports:
-
-- `signal`: Extra context bound into the proof (for example `wallet_address` or
-  `user_id`). The value is hashed and committed in the proof.
-- `genesis_issued_at_min`: Only accept credentials with
-  `credential.genesis_issued_at >= genesis_issued_at_min`.
-- `expires_at_min`: Only accept credentials with
-  `credential.expires_at > expires_at_min`. If you omit it, IDKit uses the
-  request `created_at` timestamp.
 
 ## Presets
 
@@ -107,48 +71,9 @@ const request = await IDKit.request({
 }).preset(orbLegacy({ signal: "user-123" }));
 ```
 
-<Note>
-  Use presets only when migrating from an older IDKit version. Preset-based
-  requests are backward compatible and can work with both World ID 4.0 and
-  World ID 3.0 (legacy) flows.
-</Note>
-
-## Sessions
-
-Sessions are v4-only and return `session_id`.
-
-```ts
-import { IDKit, CredentialRequest, any, orbLegacy } from "@worldcoin/idkit-core";
-
-const sessionConfig = {
-  app_id: "app_xxxxx",
-  rp_context,
-  action_description: "Sign in",
-  environment: "production" as const,
-};
-
-const createRequest = await IDKit.createSession(sessionConfig).constraints(
-  any(CredentialRequest("orb")),
-);
-
-const createResult = await createRequest.pollUntilCompletion();
-if (!createResult.success) throw new Error(createResult.error);
-
-const sessionId = createResult.result.session_id;
-
-const proveRequest = await IDKit.proveSession(sessionId, sessionConfig).preset(
-  orbLegacy({ signal: "user-123" }),
-);
-const proveResult = await proveRequest.pollUntilCompletion();
-```
-
-<Note>
-  In session flows, there is no `allow_legacy_proofs` toggle. Sessions are always World ID 4.0.
-</Note>
-
 ## Polling and status
 
-After `.constraints(...)` or `.preset(...)`, you get an `IDKitRequest` object:
+After `.preset(...)`, you get an `IDKitRequest` object:
 
 - `connectorURI`
 - `requestId`
@@ -199,7 +124,6 @@ const signalHash = hashSignal("user-123");
 ## Related pages
 
 - [Getting started](/world-id/idkit/getting-started)
-- [Sessions](/world-id/idkit/sessions)
 - [React](/world-id/idkit/react-widget-and-hooks)
 - [Error Codes](/world-id/idkit/error-codes)
 - [POST /v4/verify reference](/api-reference/developer-portal/verify)

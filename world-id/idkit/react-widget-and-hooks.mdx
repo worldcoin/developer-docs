@@ -1,6 +1,6 @@
 ---
 title: "React"
-description: "Reference for @worldcoin/idkit React widgets and hooks, including request/session flows and presets."
+description: "Reference for @worldcoin/idkit React widgets and hooks, including request flows and presets."
 "og:image": "/images/docs/docs-meta.png"
 "twitter:image": "/images/docs/docs-meta.png"
 ---
@@ -65,30 +65,6 @@ const rpContext: RpContext = {
 />;
 ```
 
-### Session widget
-
-```tsx
-import { IDKitSessionWidget, orbLegacy, type RpContext } from "@worldcoin/idkit";
-
-<IDKitSessionWidget
-  open={open}
-  onOpenChange={setOpen}
-  app_id="app_xxxxx"
-  rp_context={rpContext}
-  existing_session_id={existingSessionId}
-  preset={orbLegacy()}
-  environment="production"
-  onSuccess={(result) => {
-    // Save result.session_id for future proveSession flows
-    console.log(result.session_id);
-  }}
-/>;
-```
-
-<Note>
-  `existing_session_id` switches the widget from create-session mode to prove-session mode.
-</Note>
-
 ## Headless hooks
 
 ### `useIDKitRequest`
@@ -100,7 +76,7 @@ const flow = useIDKitRequest({
   app_id: "app_xxxxx",
   action: "my-action",
   rp_context,
-  allow_legacy_proofs: false,
+  allow_legacy_proofs: true,
   preset: orbLegacy({ signal: "user-123" }),
   polling: {
     interval: 2_000,
@@ -113,28 +89,7 @@ const flow = useIDKitRequest({
 </button>;
 ```
 
-### `useIDKitSession`
-
-```tsx
-import { useIDKitSession, orbLegacy } from "@worldcoin/idkit";
-
-const sessionFlow = useIDKitSession({
-  app_id: "app_xxxxx",
-  rp_context,
-  preset: orbLegacy(),
-  existing_session_id: sessionId,
-  polling: {
-    interval: 2_000,
-    timeout: 120_000,
-  },
-});
-
-if (sessionFlow.isSuccess && sessionFlow.result) {
-  console.log("session", sessionFlow.result.session_id);
-}
-```
-
-Shared hook result fields:
+Hook result fields:
 
 - `open()`
 - `reset()`
@@ -146,20 +101,9 @@ Shared hook result fields:
 - `result`
 - `errorCode`
 
-## Presets and constraints
+## Presets
 
-React hooks/widgets currently take `preset` directly in config.
-
-<Warning>
-  `constraints` are not currently exposed through React hook/widget config.
-  If you need explicit `any/all/CredentialRequest` trees today, build the flow with
-  `@worldcoin/idkit-core` and use your own React UI.
-</Warning>
-
-<Note>
-  Use presets mainly for migration from older IDKit versions. They are designed
-  to keep compatibility across World ID 4.0 and World ID 3.0 (legacy) flows.
-</Note>
+React hooks/widgets take `preset` directly in config.
 
 ## Localization and UX notes
 
@@ -178,7 +122,6 @@ import { signRequest } from "@worldcoin/idkit/signing";
 ## Related pages
 
 - [Javascript](/world-id/idkit/js-core-sdk-reference)
-- [Sessions](/world-id/idkit/sessions)
 - [Kotlin](/world-id/idkit/kotlin)
 - [Swift](/world-id/idkit/swift)
 - [Error Codes](/world-id/idkit/error-codes)
