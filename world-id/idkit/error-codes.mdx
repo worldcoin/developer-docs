@@ -91,40 +91,23 @@ This page focuses on IDKit SDK and bridge error codes returned during request fl
   </tbody>
 </table>
 
-## SDK coverage notes
+## Handling errors
 
-- **JavaScript core / React**: emit all codes above (including `timeout` and `cancelled`).
-- **Swift**: `IDKitErrorCode` includes all codes above.
-- **Kotlin**: `StatusWrapper.Failed` carries app-level errors; timeout/cancellation handling is usually host-driven.
+Widgets expose an `onError` callback. Hooks expose `isError` and `errorCode` on the result object.
 
-<Note>
-  `verification_rejected` is retained for backward compatibility. Newer flows typically return `user_rejected`.
-</Note>
-
-## Handling pattern
-
-```ts
-import { IDKitErrorCodes } from "@worldcoin/idkit-core";
-
-function classify(error: IDKitErrorCodes): "retry" | "terminal" | "cancelled" {
-  if (error === IDKitErrorCodes.MaxVerificationsReached) return "terminal";
-  if (error === IDKitErrorCodes.UserRejected || error === IDKitErrorCodes.Cancelled) {
-    return "cancelled";
-  }
-  return "retry";
-}
+```tsx
+<IDKitRequestWidget
+  // ...
+  onError={(errorCode) => {
+    console.error("IDKit error", errorCode);
+  }}
+/>
 ```
 
-```swift
-switch error {
-case .maxVerificationsReached:
-    // terminal business outcome
-    break
-case .userRejected, .cancelled:
-    // user-driven cancel path
-    break
-default:
-    // retry/incident path
-    break
+```tsx
+const flow = useIDKitRequest({ /* ... */ });
+
+if (flow.isError) {
+  console.error(flow.errorCode);
 }
 ```
