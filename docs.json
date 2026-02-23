@@ -33,9 +33,7 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": [
-              "index"
-            ]
+            "pages": ["index"]
           }
         ]
       },
@@ -44,9 +42,7 @@
         "groups": [
           {
             "group": "Introduction",
-            "pages": [
-              "mini-apps/index"
-            ]
+            "pages": ["mini-apps/index"]
           },
           {
             "group": "Quick Start",
@@ -137,15 +133,11 @@
         "groups": [
           {
             "group": "Introduction",
-            "pages": [
-              "world-id/concepts"
-            ]
+            "pages": ["world-id/concepts"]
           },
           {
             "group": "Migration",
-            "pages": [
-              "world-id/4-0-migration"
-            ]
+            "pages": ["world-id/4-0-migration"]
           },
           {
             "group": "IDKit",
@@ -156,8 +148,8 @@
               {
                 "group": "SDK Reference",
                 "pages": [
-                  "world-id/idkit/js-core-sdk-reference",
-                  "world-id/idkit/react-widget-and-hooks",
+                  "world-id/idkit/javascript",
+                  "world-id/idkit/react",
                   "world-id/idkit/swift",
                   "world-id/idkit/kotlin",
                   "world-id/idkit/error-codes"
@@ -274,9 +266,7 @@
           },
           {
             "group": "Further Reading",
-            "pages": [
-              "world-chain/resources"
-            ]
+            "pages": ["world-chain/resources"]
           }
         ]
       },
@@ -704,10 +694,7 @@
       "display": "interactive"
     },
     "examples": {
-      "languages": [
-        "curl",
-        "javascript"
-      ],
+      "languages": ["curl", "javascript"],
       "defaults": "required",
       "prefill": true
     }
