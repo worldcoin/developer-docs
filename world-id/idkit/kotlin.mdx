@@ -1,6 +1,6 @@
 ---
 title: "Kotlin"
-description: "Reference for the IDKit Kotlin API: request builders, presets, and polling patterns."
+description: "Reference for the IDKit Kotlin API: request builders, presets, and polling."
 "og:image": "/images/docs/docs-meta.png"
 "twitter:image": "/images/docs/docs-meta.png"
 ---
@@ -35,12 +35,14 @@ dependencies {
 ## Request flow
 
 ```kotlin
-import com.worldcoin.idkit.IdKit
+import com.worldcoin.idkit.IDKit
+import com.worldcoin.idkit.IDKitPollOptions
+import com.worldcoin.idkit.IDKitCompletionResult
 import com.worldcoin.idkit.orbLegacy
 import uniffi.idkit_core.Environment
-import uniffi.idkit_core.StatusWrapper
+import uniffi.idkit_core.RpContext
 
-val rpContext = IdKit.rpContext(
+val rpContext = RpContext(
   rpId = "rp_xxxxx",
   nonce = backend.nonce,
   createdAt = backend.createdAt.toULong(),
@@ -48,50 +50,55 @@ val rpContext = IdKit.rpContext(
   signature = backend.sig,
 )
 
-val config = IdKit.requestConfig(
+val config = IDKitRequestConfig(
   appId = "app_xxxxx",
   action = "my-action",
   rpContext = rpContext,
+  actionDescription = "Verify user",
+  bridgeUrl = null,
   allowLegacyProofs = true,
+  overrideConnectBaseUrl = null,
   environment = Environment.PRODUCTION,
 )
 
-val request = IdKit.request(config).preset(orbLegacy(signal = "user-123"))
-val connectUrl = request.connectUrl()
-val status = request.pollStatus(pollIntervalMs = 2000u, timeoutMs = 120000u)
+val request = IDKit.request(config).preset(orbLegacy(signal = "user-123"))
+val connectorURI = request.connectorURI
+val completion = request.pollUntilCompletion(
+  options = IDKitPollOptions(pollIntervalMs = 2_000u, timeoutMs = 120_000u)
+)
 
-if (status is StatusWrapper.Confirmed) {
-  val result = status.result
+if (completion is IDKitCompletionResult.Success) {
+  val result = completion.result
 }
 ```
 
 ## Presets
 
 ```kotlin
-import com.worldcoin.idkit.IdKit
+import com.worldcoin.idkit.IDKit
 import com.worldcoin.idkit.orbLegacy
 
-val request = IdKit.request(config).preset(orbLegacy(signal = "user-123"))
+val request = IDKit.request(config).preset(orbLegacy(signal = "user-123"))
 ```
 
 ## Polling patterns
 
 - `pollStatusOnce()` for manual loops
-- `pollStatus(pollIntervalMs, timeoutMs)` for compatibility with existing call sites
-- `statusFlow()` extension (from `KotlinCompat.kt`) for coroutine-driven updates
+- `pollUntilCompletion(options)` for blocking until terminal state
+- `statusFlow(pollInterval)` extension for coroutine-driven updates
 
 ```kotlin
+import com.worldcoin.idkit.IDKitStatus
 import com.worldcoin.idkit.statusFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.time.Duration.Companion.seconds
-import uniffi.idkit_core.StatusWrapper
 
 request.statusFlow(2.seconds).collectLatest { status ->
   when (status) {
-    StatusWrapper.WaitingForConnection -> Unit
-    StatusWrapper.AwaitingConfirmation -> Unit
-    is StatusWrapper.Confirmed -> println(status.result)
-    is StatusWrapper.Failed -> println(status.error)
+    IDKitStatus.WaitingForConnection -> Unit
+    IDKitStatus.AwaitingConfirmation -> Unit
+    is IDKitStatus.Confirmed -> println(status.result)
+    is IDKitStatus.Failed -> println(status.error)
   }
 }
 ```

@@ -130,10 +130,12 @@ let completion = await request.pollUntilCompletion()
 ```
 
 ```kotlin title="Kotlin"
+import com.worldcoin.idkit.IDKit
 import com.worldcoin.idkit.orbLegacy
-import com.worldcoin.idkit.IdKit
+import uniffi.idkit_core.Environment
+import uniffi.idkit_core.RpContext
 
-val rpContext = IdKit.rpContext(
+val rpContext = RpContext(
   rpId = "rp_xxxxx",
   nonce = backend.nonce,
   createdAt = backend.createdAt.toULong(),
@@ -141,16 +143,16 @@ val rpContext = IdKit.rpContext(
   signature = backend.sig,
 )
 
-val config = IdKit.requestConfig(
+val config = IDKitRequestConfig(
   appId = "app_xxxxx",
   action = "my-action",
   rpContext = rpContext,
   allowLegacyProofs = true,
 )
 
-val request = IdKit.request(config).preset(orbLegacy())
-val connectUrl = request.connectUrl()
-val status = request.pollStatus(pollIntervalMs = 2000u, timeoutMs = 120000u)
+val request = IDKit.request(config).preset(orbLegacy())
+val connectorURI = request.connectorURI
+val completion = request.pollUntilCompletion()
 ```
 </CodeGroup>
 

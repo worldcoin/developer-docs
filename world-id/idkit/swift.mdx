@@ -1,6 +1,6 @@
 ---
 title: "Swift"
-description: "Reference for the IDKit Swift API: request builders, presets, polling, and errors."
+description: "Reference for the IDKit Swift API: request builders, presets, and polling."
 "og:image": "/images/docs/docs-meta.png"
 "twitter:image": "/images/docs/docs-meta.png"
 ---
@@ -77,28 +77,3 @@ case .failure(let error):
   print(error)
 }
 ```
-
-## Error codes
-
-Swift exposes `IDKitErrorCode` values aligned with JS string codes:
-
-- `user_rejected`
-- `verification_rejected`
-- `credential_unavailable`
-- `malformed_request`
-- `invalid_network`
-- `inclusion_proof_pending`
-- `inclusion_proof_failed`
-- `unexpected_response`
-- `connection_failed`
-- `max_verifications_reached`
-- `failed_by_host_app`
-- `generic_error`
-- `timeout`
-- `cancelled`
-
-## Practical notes
-
-- `connectorURL` and `requestID` are validated when constructing `IDKitRequest`.
-- If either is invalid, Swift throws `IDKitClientError.invalidConnectorURL` or `IDKitClientError.invalidRequestID`.
-- Use `IDKit.hashSignal(_:)` when you need deterministic local signal hashing.
