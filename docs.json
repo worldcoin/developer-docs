@@ -132,14 +132,6 @@
         "tab": "World ID",
         "groups": [
           {
-            "group": "Introduction",
-            "pages": ["world-id/concepts"]
-          },
-          {
-            "group": "Migration",
-            "pages": ["world-id/4-0-migration"]
-          },
-          {
             "group": "IDKit",
             "pages": [
               "world-id/idkit/getting-started",
@@ -158,6 +150,10 @@
             ]
           },
           {
+            "group": "Migration",
+            "pages": ["world-id/4-0-migration"]
+          },
+          {
             "group": "Face Check (Beta)",
             "hidden": true,
             "pages": [
@@ -169,6 +165,7 @@
           {
             "group": "Technical Reference",
             "pages": [
+              "world-id/concepts",
               "world-id/reference/authenticator",
               {
                 "group": "API References",
