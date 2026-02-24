@@ -23,20 +23,21 @@ Create your app in the [Developer Portal](https://developer.world.org). Keep the
 </Warning>
 
 
-```typescript
-import { signRequest } from "@worldcoin/idkit-core/signing";
+```typescript title="app/api/rp-signature/route.ts"
+import { NextResponse } from "next/server";
+import { signRequest } from "@worldcoin/idkit/signing";
 
 export async function POST(request: Request): Promise<Response> {
   const { action } = await request.json();
-  const signingKey = process.env.RP_SIGNING_KEY;
+  const signingKey = process.env.RP_SIGNING_KEY!;
 
   const { sig, nonce, createdAt, expiresAt } = signRequest(action, signingKey);
 
-  return Response.json({
+  return NextResponse.json({
     sig,
     nonce,
-    createdAt,
-    expiresAt,
+    created_at: createdAt,
+    expires_at: expiresAt,
   });
 }
 ```
@@ -64,8 +65,8 @@ const request = await IDKit.request({
   rp_context: {
     rp_id: "rp_xxxxx",
     nonce: rpSig.nonce,
-    created_at: rpSig.createdAt,
-    expires_at: rpSig.expiresAt,
+    created_at: rpSig.created_at,
+    expires_at: rpSig.expires_at,
     signature: rpSig.sig,
   },
   allow_legacy_proofs: true,
@@ -168,9 +169,15 @@ forward it directly to: `POST https://developer.world.org/api/v4/verify/{rp_id}`
   Forward the IDKit result payload as-is. No field remapping is required.
 </Note>
 
-```typescript
-app.post("/api/verify-proof", async (req, res) => {
-  const { rp_id, devPortalPayload } = req.body;
+```typescript title="app/api/verify-proof/route.ts"
+import { NextResponse } from "next/server";
+import type { IDKitResult } from "@worldcoin/idkit";
+
+export async function POST(request: Request): Promise<Response> {
+  const { rp_id, devPortalPayload } = (await request.json()) as {
+    rp_id: string;
+    devPortalPayload: IDKitResult;
+  };
 
   const response = await fetch(
     `https://developer.world.org/api/v4/verify/${rp_id}`,
@@ -182,8 +189,8 @@ app.post("/api/verify-proof", async (req, res) => {
   );
 
   const payload = await response.json();
-  res.status(response.ok ? 200 : response.status).json(payload);
-});
+  return NextResponse.json(payload, { status: response.status });
+}
 ```
 
 
