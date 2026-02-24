@@ -750,23 +750,23 @@
         "properties": {
           "nullifier_hash": {
             "type": "string",
-            "description": "The unique user identifier (called the nullifier hash in the ZKP), as provided by [IDKit](/world-id/idkit/getting-started)."
+            "description": "The unique user identifier (called the nullifier hash in the ZKP), as provided by [IDKit](/world-id/idkit/integrate)."
           },
           "proof": {
             "type": "string",
-            "description": "The zero-knowledge proof, as provided by [IDKit](/world-id/idkit/getting-started)."
+            "description": "The zero-knowledge proof, as provided by [IDKit](/world-id/idkit/integrate)."
           },
           "merkle_root": {
             "type": "string",
-            "description": "Part of the ZKP, the hash of the Merkle root that proves membership to the set of credentials. As provided by [IDKit](/world-id/idkit/getting-started)."
+            "description": "Part of the ZKP, the hash of the Merkle root that proves membership to the set of credentials. As provided by [IDKit](/world-id/idkit/integrate)."
           },
           "verification_level": {
             "type": "string",
-            "description": "The verification level, as provided by [IDKit](/world-id/idkit/getting-started)."
+            "description": "The verification level, as provided by [IDKit](/world-id/idkit/integrate)."
           },
           "action": {
             "type": "string",
-            "description": "Same action identifier as passed to [IDKit](/world-id/idkit/getting-started)."
+            "description": "Same action identifier as passed to [IDKit](/world-id/idkit/integrate)."
           },
           "signal_hash": {
             "type": "string",

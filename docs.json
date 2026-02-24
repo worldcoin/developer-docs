@@ -134,7 +134,7 @@
           {
             "group": "IDKit",
             "pages": [
-              "world-id/idkit/getting-started",
+              "world-id/idkit/integrate",
               "world-id/idkit/onchain-verification",
               "world-id/idkit/design-guidelines",
               {
@@ -394,7 +394,7 @@
     },
     {
       "source": "/id/anonymous-actions",
-      "destination": "/world-id/idkit/getting-started"
+      "destination": "/world-id/idkit/integrate"
     },
     {
       "source": "/quick-start",
@@ -402,7 +402,7 @@
     },
     {
       "source": "/id/incognito-actions",
-      "destination": "/world-id/idkit/getting-started"
+      "destination": "/world-id/idkit/integrate"
     },
     {
       "source": "/id/idkit",
@@ -462,11 +462,11 @@
     },
     {
       "source": "/id/cloud",
-      "destination": "/world-id/idkit/getting-started"
+      "destination": "/world-id/idkit/integrate"
     },
     {
       "source": "/id/libraries",
-      "destination": "/world-id/idkit/getting-started"
+      "destination": "/world-id/idkit/integrate"
     },
     {
       "source": "/id/on-chain",
@@ -594,7 +594,7 @@
     },
     {
       "source": "/world-id/id/incognito-actions",
-      "destination": "/world-id/idkit/getting-started"
+      "destination": "/world-id/idkit/integrate"
     },
     {
       "source": "/world-id/id/sign-in",
@@ -606,7 +606,7 @@
     },
     {
       "source": "/world-id/sign-in/pitfalls",
-      "destination": "/world-id/idkit/getting-started"
+      "destination": "/world-id/idkit/integrate"
     },
     {
       "source": "/world-id/idkit/design-guidelines",
@@ -614,15 +614,15 @@
     },
     {
       "source": "/world-id/quick-start/testing",
-      "destination": "/world-id/idkit/getting-started"
+      "destination": "/world-id/idkit/integrate"
     },
     {
       "source": "/world-id/quick-start/installation",
-      "destination": "/world-id/idkit/getting-started"
+      "destination": "/world-id/idkit/integrate"
     },
     {
       "source": "/world-id/quick-start/configuration",
-      "destination": "/world-id/idkit/getting-started"
+      "destination": "/world-id/idkit/integrate"
     },
     {
       "source": "/world-id/quick-start/templates",
@@ -642,7 +642,7 @@
     },
     {
       "source": "/world-id/reference/idkit",
-      "destination": "/world-id/idkit/getting-started"
+      "destination": "/world-id/idkit/integrate"
     },
     {
       "source": "world-id/id/design-guidelines",
@@ -650,7 +650,7 @@
     },
     {
       "source": "/world-id/id/getting-started",
-      "destination": "/world-id/idkit/getting-started"
+      "destination": "/world-id/idkit/integrate"
     },
     {
       "source": "/world-id/id/web-react",
@@ -658,15 +658,15 @@
     },
     {
       "source": "/world-id/id/web-vanilla",
-      "destination": "/world-id/idkit/getting-started"
+      "destination": "/world-id/idkit/integrate"
     },
     {
       "source": "/world-id/id/mobile",
-      "destination": "/world-id/idkit/getting-started"
+      "destination": "/world-id/idkit/integrate"
     },
     {
       "source": "/world-id/id/cloud",
-      "destination": "/world-id/idkit/getting-started"
+      "destination": "/world-id/idkit/integrate"
     },
     {
       "source": "/world-id/id/on-chain",
@@ -674,19 +674,19 @@
     },
     {
       "source": "/world-id/id/libraries",
-      "destination": "/world-id/idkit/getting-started"
+      "destination": "/world-id/idkit/integrate"
     },
     {
       "source": "/world-id/id/testing",
-      "destination": "/world-id/idkit/getting-started"
+      "destination": "/world-id/idkit/integrate"
     },
     {
       "source": "/world-id/id/pitfalls",
-      "destination": "/world-id/idkit/getting-started"
+      "destination": "/world-id/idkit/integrate"
     },
     {
       "source": "/world-id/id/idkit-v4-preview",
-      "destination": "/world-id/idkit/getting-started"
+      "destination": "/world-id/idkit/integrate"
     }
   ],
   "api": {
