@@ -609,10 +609,6 @@
       "destination": "/world-id/idkit/integrate"
     },
     {
-      "source": "/world-id/idkit/design-guidelines",
-      "destination": "/world-id/id/design-guidelines"
-    },
-    {
       "source": "/world-id/quick-start/testing",
       "destination": "/world-id/idkit/integrate"
     },
