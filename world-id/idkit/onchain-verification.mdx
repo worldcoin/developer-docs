@@ -10,15 +10,21 @@ smart contracts (for example gating mints, voting, or claims without backend
 trust assumptions). If you do not need contract-level enforcement, use
 [POST /v4/verify](/api-reference/developer-portal/verify) instead.
 
-## Contract addresses
-
-| Contract | Mainnet | Testnet |
-|---|---|---|
-| World ID 3.0 (`WorldIDRouter`) on World Chain | [0x17B354dD...A278](https://worldscan.org/address/0x17B354dD2595411ff79041f930e491A4Df39A278) | [0x57f92815...f611](https://sepolia.worldscan.org/address/0x57f928158C3EE7CDad1e4D8642503c4D0201f611) |
-
 ## 1. Verifying Legacy proofs (World ID 3.0)
 
-For v3 proofs, verify against `WorldIDRouter.verifyProof(...)`.
+<Warning>
+  If you are integrating World ID on-chain, we strongly recommend deploying your contract behind an upgradable proxy (e.g. UUPS or Transparent Proxy). This allows you to upgrade your verification logic as new World ID versions are released. See the [World ID 4.0 Migration guide](/world-id/4-0-migration) for details.
+</Warning>
+
+For v3 proofs, verify against `WorldIDRouter.verifyProof(...)`. Use the Router address for the chain you're deploying to:
+
+| Chain | `WorldIDRouter` Mainnet | `WorldIDRouter` Testnet |
+|---|---|---|
+| World Chain | [0x17B354dD...A278](https://worldscan.org/address/0x17B354dD2595411ff79041f930e491A4Df39A278) | [0x57f92815...f611](https://sepolia.worldscan.org/address/0x57f928158C3EE7CDad1e4D8642503c4D0201f611) |
+| Ethereum | [id.worldcoin.eth](https://etherscan.io/address/0x163b09b4fe21177c455d850bd815b6d583732432#code) | [0x469449f2...2157](https://sepolia.etherscan.io/address/0x469449f251692e0779667583026b5a1e99512157#code) |
+| Optimism | [optimism.id.worldcoin.eth](https://optimistic.etherscan.io/address/0x57f928158C3EE7CDad1e4D8642503c4D0201f611#code) | [0x11cA3127...4334](https://sepolia-optimism.etherscan.io/address/0x11cA3127182f7583EfC416a8771BD4d11Fae4334#code) |
+| Polygon | [polygon.id.worldcoin.eth](https://polygonscan.com/address/0x515f06B36E6D3b707eAecBdeD18d8B384944c87f#code) | — |
+| Base | [0xBCC7e591...4163](https://basescan.org/address/0xBCC7e5910178AFFEEeBA573ba6903E9869594163#code) | [0x42FF98C4...C02](https://sepolia.basescan.org/address/0x42FF98C4E85212a5D31358ACbFe76a621b50fC02#code) |
 
 ```solidity
 interface IWorldID {

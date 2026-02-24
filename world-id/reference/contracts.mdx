@@ -1,9 +1,13 @@
 ---
-title: "Smart Contracts"
-description: "World ID smart contracts overview: supported chains, architecture, World ID Router verifyProof, and sybil resistance."
+title: "Smart Contracts (Legacy)"
+description: "World ID 3.0 smart contracts overview: supported chains, architecture, World ID Router verifyProof, and sybil resistance."
 "og:image": "/images/docs/docs-meta.png"
 "twitter:image": "/images/docs/docs-meta.png"
 ---
+
+<Warning>
+  This page documents World ID 3.0 (legacy) smart contracts. For the latest on-chain verification guide including World ID 4.0, see the [On-chain Verification page](/world-id/idkit/onchain-verification) and the [World ID 4.0 Migration guide](/world-id/4-0-migration).
+</Warning>
 
 All of our smart contracts are available on GitHub:
 
@@ -96,8 +100,8 @@ All of our smart contracts are available on GitHub:
 </table>
 
 <Note>
-  Find our smart contract [address book
-  here](/world-id/reference/contract-deployments).
+  Find our smart contract addresses in the
+  [On-chain Verification guide](/world-id/idkit/onchain-verification).
 </Note>
 
 ## Architecture
@@ -142,7 +146,6 @@ The `verifyProof` method of the **World ID Router** is used to verify proofs on-
     <tr>
       <th className="p-2 text-left align-middle">Parameter</th>
       <th className="p-2 text-left align-middle">Type</th>
-      <th className="p-2 text-left align-middle">Required</th>
       <th className="p-2 text-left align-middle">Description</th>
     </tr>
   </thead>
@@ -154,9 +157,6 @@ The `verifyProof` method of the **World ID Router** is used to verify proofs on-
       <td className="p-2 align-middle">
         <code>uint256</code>
       </td>
-      <td className="p-2 align-middle">
-        <strong>Yes</strong>
-      </td>
       <td className="p-2 align-middle">The World ID root to verify against.</td>
     </tr>
     <tr>
@@ -165,9 +165,6 @@ The `verifyProof` method of the **World ID Router** is used to verify proofs on-
       </td>
       <td className="p-2 align-middle">
         <code>uint256</code>
-      </td>
-      <td className="p-2 align-middle">
-        <strong>Yes</strong>
       </td>
       <td className="p-2 align-middle">
         Determines which Credential Type to verify against. As only Orb
@@ -182,9 +179,6 @@ The `verifyProof` method of the **World ID Router** is used to verify proofs on-
         <code>uint256</code>
       </td>
       <td className="p-2 align-middle">
-        <strong>Yes</strong>
-      </td>
-      <td className="p-2 align-middle">
         The <code>keccak256</code> hash of the signal to verify.
       </td>
     </tr>
@@ -194,9 +188,6 @@ The `verifyProof` method of the **World ID Router** is used to verify proofs on-
       </td>
       <td className="p-2 align-middle">
         <code>uint256</code>
-      </td>
-      <td className="p-2 align-middle">
-        <strong>Yes</strong>
       </td>
       <td className="p-2 align-middle">
         The root of the merkle tree to verify against. This is obtained from the
@@ -213,9 +204,6 @@ The `verifyProof` method of the **World ID Router** is used to verify proofs on-
         <code>uint256</code>
       </td>
       <td className="p-2 align-middle">
-        <strong>Yes</strong>
-      </td>
-      <td className="p-2 align-middle">
         The <code>keccak256</code> hash of the <code>externalNullifier</code> to
         verify. The <code>externalNullifier</code> is computed from the{" "}
         <code>app_id</code> and <code>action</code>.
@@ -227,9 +215,6 @@ The `verifyProof` method of the **World ID Router** is used to verify proofs on-
       </td>
       <td className="p-2 align-middle">
         <code>uint256[8]</code>
-      </td>
-      <td className="p-2 align-middle">
-        <strong>Yes</strong>
       </td>
       <td className="p-2 align-middle">
         The zero-knowledge proof to verify. This is obtained from the IDKit

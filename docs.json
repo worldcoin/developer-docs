@@ -200,8 +200,7 @@
                   }
                 ]
               },
-              "world-id/reference/contracts",
-              "world-id/reference/contract-deployments"
+              "world-id/reference/contracts"
             ]
           }
         ]
@@ -631,7 +630,11 @@
     },
     {
       "source": "/world-id/reference/address-book",
-      "destination": "/world-id/reference/contract-deployments"
+      "destination": "/world-id/reference/contracts"
+    },
+    {
+      "source": "/world-id/reference/contract-deployments",
+      "destination": "/world-id/reference/contracts"
     },
     {
       "source": "/mini-apps/virality/sharing",
