@@ -4,25 +4,19 @@ title: "Integrate"
 "twitter:image": "/images/docs/docs-meta.png"
 ---
 
-IDKit is our solution for integrating World ID. You can use the React SDK for a pre-built widget or the Javascript/Modile SDKs for a custom integration. Both options let you integrate permissionless.
+IDKit is our solution for integrating World ID. You can use the React SDK for a pre-built widget or the JS and Mobile SDKs for a custom integration. 
 
-If you want to familiarize yourself with the core concepts of World ID, check out this [page](/world-id/concepts).
+To familiarize yourself with the core concepts of World ID, check out this [page](/world-id/concepts).
 
 # Step 1: Create an app in the Developer Portal
 
 Create your app in the [Developer Portal](https://developer.world.org). Keep these values:
   - `app_id`
   - `rp_id`
-  - `signing_key`
+  - `signing_key` - this should be stored as a secret.
 
 # Step 2: Generate an RP signature in your backend
-
-<Warning>
-  Never generate RP signatures on the client and never expose your RP signing
-  key. If the key leaks, attackers can forge requests as your app.
-</Warning>
-
-
+Signatures verify that proof requests genuinely come from your app, preventing attackers from performing impersonation attacks.
 ```typescript title="app/api/rp-signature/route.ts"
 import { NextResponse } from "next/server";
 import { signRequest } from "@worldcoin/idkit/signing";
@@ -41,13 +35,13 @@ export async function POST(request: Request): Promise<Response> {
   });
 }
 ```
+<Warning>
+  Never generate RP signatures on the client and never expose your RP signing
+  key. If the key leaks, attackers can forge requests from your app.
+</Warning>
+
 
 # Step 3: Generate the connect URL and collect proof
-
-- `action`: Use one stable string per intent. Examples: `"event_march_2026"` or `"claim"`.
-  Keep it identical in signing, request creation, and verify.
-- `signal`: Set this when you need to bind app context into the proof. Examples:
-  user ID, wallet address. Your backend should enforce the same value.
 
 <CodeGroup title="Create request and collect proof">
 ```typescript title="JavaScript"
@@ -60,10 +54,13 @@ const rpSig = await fetch("/api/rp-signature", {
 }).then((r) => r.json());
 
 const request = await IDKit.request({
+  // App ID: `app_id` from the Developer Portal
   app_id: "app_xxxxx",
-  action: "my-action",
+  // Action: Context that scopes what the user is proving uniqueness for
+  // e.g., "verify-account-2026" or "claim-airdrop-2026".
+  action: "my-action", 
   rp_context: {
-    rp_id: "rp_xxxxx",
+    rp_id: "rp_xxxxx", // Your app's `rp_id` from the Developer Portal
     nonce: rpSig.nonce,
     created_at: rpSig.created_at,
     expires_at: rpSig.expires_at,
@@ -71,7 +68,9 @@ const request = await IDKit.request({
   },
   allow_legacy_proofs: true,
   environment: "production",
-}).preset(orbLegacy());
+  // Signal (optional): Bind specific context into the requested proof. 
+  // Examples: user ID, wallet address. Your backend should enforce the same value.
+}).preset(orbLegacy(signal));
 
 const connectUrl = request.connectorURI;
 const response = await request.pollUntilCompletion();
@@ -84,24 +83,41 @@ import {
   type RpContext,
 } from "@worldcoin/idkit";
 
+const rpSig = await fetch("/api/rp-signature", {
+  method: "POST",
+  headers: { "content-type": "application/json" },
+  body: JSON.stringify({ action: "my-action" }),
+}).then((r) => r.json());
+
 const rp_context: RpContext = {
-  rp_id: "rp_xxxxx",
-  nonce: "0x...",
-  created_at: 1735689600,
-  expires_at: 1735689900,
-  signature: "0x...",
+  rp_id: "rp_xxxxx", // Your app's `rp_id` from the Developer Portal
+  nonce: rpSig.nonce,
+  created_at: rpSig.created_at,
+  expires_at: rpSig.expires_at,
+  signature: rpSig.sig,
 };
 
+// ...
+ 
 <IDKitRequestWidget
   open={open}
   onOpenChange={setOpen}
-  app_id="app_xxxxx"
+  app_id="app_xxxxx" // Your app's `app_id` from the Developer Portal
+  // Action: Context that scopes what the user is proving uniqueness for
+  // e.g., "verify-account-2026" or "claim-airdrop-2026".
   action="my-action"
   rp_context={rp_context}
   allow_legacy_proofs={true}
-  preset={orbLegacy()} 
-  onSuccess={(result) => {
-    // Send `result` to your backend /api/verify-proof endpoint
+  // Signal (optional): Bind specific context into the requested proof.
+  // Examples: user ID, wallet address. Your backend should enforce the same value.
+  preset={orbLegacy(signal)} 
+  onSuccess={async (result) => {
+    const verification = await fetch("/api/verify-proof", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(result),
+    }).then((r) => r.json());
+    // Verified! Mark the user as verified in your app and show a success message.
   }}
 />;
 ```
@@ -109,16 +125,22 @@ const rp_context: RpContext = {
 ```swift title="Swift"
 import IDKit
 
+// Fetch the RP signature from your backend
+let rpSig = try await yourBackend.fetchRpSignature(action: "my-action")
+
 let rpContext = try RpContext(
-  rpId: "rp_xxxxx",
-  nonce: backend.nonce,
-  createdAt: backend.createdAt,
-  expiresAt: backend.expiresAt,
-  signature: backend.sig
+  rpId: "rp_xxxxx", // Your app's `rp_id` from the Developer Portal
+  nonce: rpSig.nonce,
+  createdAt: rpSig.createdAt,
+  expiresAt: rpSig.expiresAt,
+  signature: rpSig.sig
 )
 
 let config = IDKitRequestConfig(
-  appId: "app_xxxxx",
+  // App ID: `app_id` from the Developer Portal
+  appId: "app_xxxxx", 
+  // Action: Context that scopes what the user is proving uniqueness for
+  // e.g., "verify-account-2026" or "claim-airdrop-2026".
   action: "my-action",
   rpContext: rpContext,
   actionDescription: "Verify user",
@@ -128,33 +150,44 @@ let config = IDKitRequestConfig(
   environment: .production
 )
 
-let request = try IDKit.request(config: config).preset(orbLegacy())
+// Signal (optional): Bind specific context into the requested proof.
+// Examples: user ID, wallet address. Your backend should enforce the same value.
+let request = try IDKit.request(config: config).preset(orbLegacy(signal))
 let connectUrl = request.connectorURL
 let completion = await request.pollUntilCompletion()
 ```
 
 ```kotlin title="Kotlin"
 import com.worldcoin.idkit.IDKit
+import com.worldcoin.idkit.IDKitRequestConfig
+import com.worldcoin.idkit.RpContext
+import com.worldcoin.idkit.Environment
 import com.worldcoin.idkit.orbLegacy
-import uniffi.idkit_core.Environment
-import uniffi.idkit_core.RpContext
+
+// Fetch the RP signature from your backend (see Step 2)
+val rpSig = yourBackend.fetchRpSignature(action = "my-action")
 
 val rpContext = RpContext(
-  rpId = "rp_xxxxx",
-  nonce = backend.nonce,
-  createdAt = backend.createdAt.toULong(),
-  expiresAt = backend.expiresAt.toULong(),
-  signature = backend.sig,
+  rpId = "rp_xxxxx", // Your app's `rp_id` from the Developer Portal
+  nonce = rpSig.nonce,
+  createdAt = rpSig.createdAt.toULong(),
+  expiresAt = rpSig.expiresAt.toULong(),
+  signature = rpSig.sig,
 )
 
 val config = IDKitRequestConfig(
-  appId = "app_xxxxx",
+  // App ID: `app_id` from the Developer Portal
+  appId = "app_xxxxx", 
+  // Action: Context that scopes what the user is proving uniqueness for
+  // e.g., "verify-account-2026" or "claim-airdrop-2026".
   action = "my-action",
   rpContext = rpContext,
   allowLegacyProofs = true,
 )
 
-val request = IDKit.request(config).preset(orbLegacy())
+// Signal (optional): Bind specific context into the requested proof.
+// Examples: user ID, wallet address. Your backend should enforce the same value.
+val request = IDKit.request(config).preset(orbLegacy(signal))
 val connectorURI = request.connectorURI
 val completion = request.pollUntilCompletion()
 ```

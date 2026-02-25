@@ -6,9 +6,9 @@ description: "Deploy the World ID on-chain template to a World Chain Sepolia for
 ---
 
 In this tutorial we are going to deploy a [World ID template app](https://github.com/worldcoin/world-id-onchain-template) on a World Chain Sepolia local fork using anvil.
-This app will be a simple web application that allows users to create a World ID proof of personhood and verify it.
+This app will be a simple web application that allows users to create a World ID proof of unique human and verify it.
 The app will be deployed on World Chain Sepolia and will interact with the `WorldIDRouter` smart contract
-to verify the ZK proofs of personhood.
+to verify the ZK proofs of unique human.
 
 ## Prerequisites
 
@@ -135,7 +135,7 @@ But we will go over the main parts of the contract here:
 2. The [`nullifierHashes` mapping](https://docs.worldcoin.org/reference/contracts#sybil-resistance) is used to keep track of
    the nullifier hashes that have been used already. This is used to guarantee that an action is only performed once by a single
    person in order to achieve sybil resistance.
-3. The `verifyAndExecute` function is the main function that will be called by the user to verify their proof of personhood.
+3. The `verifyAndExecute` function is the main function that will be called by the user to verify their proof of unique human.
    It takes the user's wallet address, the root of the Merkle tree, the nullifier hash, and the proof as parameters.
 4. The function first checks if the nullifier hash has been used already and reverts if it has.
 5. It then verifies the proof using the `worldId.verifyProof` function which is part of the `IWorldID` interface.
