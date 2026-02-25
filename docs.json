@@ -173,7 +173,7 @@
                 "pages": [
                   {
                     "group": "Indexer",
-                    "openapi": "https://world-id-indexer.stage-crypto.worldcoin.org/openapi.json",
+                    "openapi": "https://indexer.us.id-infra.worldcoin.dev/openapi.json",
                     "pages": [
                       "POST /inclusion-proof",
                       "POST /packed-account",
@@ -183,7 +183,7 @@
                   },
                   {
                     "group": "Gateway",
-                    "openapi": "https://world-id-gateway.stage-crypto.worldcoin.org/openapi.json",
+                    "openapi": "https://gateway.id-infra.worldcoin.dev/openapi.json",
                     "pages": [
                       "POST /create-account",
                       "POST /insert-authenticator",
