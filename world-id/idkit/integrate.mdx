@@ -92,7 +92,7 @@ const request = await IDKit.request({
   environment: "production",
   // Signal (optional): Bind specific context into the requested proof. 
   // Examples: user ID, wallet address. Your backend should enforce the same value.
-}).preset(orbLegacy(signal));
+}).preset(orbLegacy({ signal: "local-election-1" }));
 
 const connectUrl = request.connectorURI;
 const response = await request.pollUntilCompletion();
@@ -132,7 +132,7 @@ const rp_context: RpContext = {
   allow_legacy_proofs={true}
   // Signal (optional): Bind specific context into the requested proof.
   // Examples: user ID, wallet address. Your backend should enforce the same value.
-  preset={orbLegacy(signal)} 
+  preset={orbLegacy({ signal: "local-election-1" })}
   onSuccess={async (result) => {
     const verification = await fetch("/api/verify-proof", {
       method: "POST",
@@ -174,7 +174,7 @@ let config = IDKitRequestConfig(
 
 // Signal (optional): Bind specific context into the requested proof.
 // Examples: user ID, wallet address. Your backend should enforce the same value.
-let request = try IDKit.request(config: config).preset(orbLegacy(signal))
+let request = try IDKit.request(config: config).preset(orbLegacy(signal: "local-election-1"))
 let connectUrl = request.connectorURL
 let completion = await request.pollUntilCompletion()
 ```
@@ -209,7 +209,7 @@ val config = IDKitRequestConfig(
 
 // Signal (optional): Bind specific context into the requested proof.
 // Examples: user ID, wallet address. Your backend should enforce the same value.
-val request = IDKit.request(config).preset(orbLegacy(signal))
+val request = IDKit.request(config).preset(orbLegacy(signal = "local-election-1"))
 val connectorURI = request.connectorURI
 val completion = request.pollUntilCompletion()
 ```
