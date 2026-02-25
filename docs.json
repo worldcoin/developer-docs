@@ -151,17 +151,20 @@
             ]
           },
           {
+            "group": "Credentials",
+            "pages": [
+              "world-id/credentials/presets",
+              "world-id/credentials/legacy-presets"
+            ]
+          },
+          {
             "group": "Migration",
             "pages": ["world-id/4-0-migration"]
           },
           {
             "group": "Selfie Check (Beta)",
             "hidden": true,
-            "pages": [
-              "world-id/selfie-check/overview",
-              "world-id/selfie-check/web-integration",
-              "world-id/selfie-check/testing"
-            ]
+            "pages": ["world-id/selfie-check/overview"]
           },
           {
             "group": "Technical Reference",
@@ -699,11 +702,11 @@
     },
     {
       "source": "/world-id/face-check/web-integration",
-      "destination": "/world-id/selfie-check/web-integration"
+      "destination": "/world-id/selfie-check/credentials/presets#selfie-check-beta"
     },
     {
       "source": "/world-id/face-check/testing",
-      "destination": "/world-id/selfie-check/testing"
+      "destination": "/world-id/selfie-check/credentials/presets#selfie-check-beta"
     }
   ],
   "api": {

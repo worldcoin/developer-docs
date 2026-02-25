@@ -269,8 +269,8 @@ const unpackedProof = abi.decode(['uint256[8]'], proof)[0]
 
 While the World ID protocol makes it very easy to make your contracts sybil resistant, this takes a little more than just calling the `verifyProof` function. To make your contract sybil-resistant, you'll need to do the following:
 
-- Store the `nullifierHash` of each user that has successfully verified a proof.
-- When a user attempts to verify a proof, check that the `nullifierHash` is not already in the list of used `nullifierHash`es.
+- Store the `nullifier` of each user that has successfully verified a proof.
+- When a user attempts to verify a proof, check that the `nullifier` is not already in the list of used `nullifier`s.
 
 Here's an example function doing the above. You can also use the [World ID starter kits](/world-id/idkit/onchain-verification) to get started with sybil resistance.
 
@@ -278,29 +278,29 @@ Here's an example function doing the above. You can also use the [World ID start
 /// @param root The root (returned by the IDKit widget).
 /// @param groupId The group ID
 /// @param signal An arbitrary input from the user, usually the user's wallet address
-/// @param nullifierHash The nullifier hash for this proof, preventing double signaling (returned by the IDKit widget).
+/// @param nullifier The nullifier for this proof, preventing double signaling (returned by the IDKit widget).
 /// @param proof The zero-knowledge proof that demonstrates the claimer is registered with World ID (returned by the IDKit widget).
 function verifyAndExecute(
     address signal,
     uint256 root,
-    uint256 nullifierHash,
+    uint256 nullifier,
     uint256[8] calldata proof
 ) public {
     // First make sure this person hasn't done this before
-    if (nullifierHashes[nullifierHash]) revert InvalidNullifier();
+    if (nullifiers[nullifier]) revert InvalidNullifier();
 
     // Verify the provided proof is valid and the user is verified by World ID
     worldId.verifyProof(
         root,
         groupId,
         abi.encodePacked(signal).hashToField(),
-        nullifierHash,
+        nullifier,
         externalNullifierHash,
         proof
     );
 
     // Record the user has done this, so they can't do it again (sybil-resistance)
-    nullifierHashes[nullifierHash] = true;
+    nullifiers[nullifier] = true;
 
     // Finally, execute your logic here, for example issue a token, NFT, etc...
 }
