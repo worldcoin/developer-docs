@@ -33,7 +33,9 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": ["index"]
+            "pages": [
+              "index"
+            ]
           }
         ]
       },
@@ -42,7 +44,9 @@
         "groups": [
           {
             "group": "Introduction",
-            "pages": ["mini-apps/index"]
+            "pages": [
+              "mini-apps/index"
+            ]
           },
           {
             "group": "Quick Start",
@@ -133,78 +137,66 @@
         "tab": "World ID",
         "groups": [
           {
-            "group": "IDKit",
+            "group": "Get started",
             "pages": [
-              "world-id/idkit/integrate",
-              "world-id/idkit/build-with-llms",
-              "world-id/idkit/onchain-verification",
-              "world-id/idkit/design-guidelines",
-              {
-                "group": "SDK Reference",
-                "pages": [
-                  "world-id/idkit/javascript",
-                  "world-id/idkit/react",
-                  "world-id/idkit/swift",
-                  "world-id/idkit/kotlin",
-                  "world-id/idkit/error-codes"
-                ]
-              }
+              "world-id/overview",
+              "world-id/get-started/quickstart",
+              "world-id/get-started/developer-portal"
             ]
           },
           {
             "group": "Credentials",
             "pages": [
-              "world-id/credentials/presets",
-              "world-id/credentials/legacy-presets"
+              "world-id/credentials/proof-of-human",
+              "world-id/credentials/document",
+              "world-id/credentials/face",
+              "world-id/credentials/comparing-credentials"
             ]
           },
           {
-            "group": "Migration",
-            "pages": ["world-id/4-0-migration"]
-          },
-          {
-            "group": "Selfie Check (Beta)",
-            "hidden": true,
-            "pages": ["world-id/selfie-check/overview"]
-          },
-          {
-            "group": "Technical Reference",
+            "group": "Core concepts",
             "pages": [
-              "world-id/concepts",
-              "world-id/reference/authenticator",
+              "world-id/core-concepts/zero-knowledge-proofs",
+              "world-id/core-concepts/nullifiers-and-uniqueness",
+              "world-id/core-concepts/sybil-resistance",
+              "world-id/core-concepts/identity-attestations",
+              "world-id/core-concepts/credential-expiry"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "world-id/guides/cloud-verification",
+              "world-id/guides/on-chain-verification",
+              "world-id/guides/age-verification",
+              "world-id/guides/bot-prevention",
+              "world-id/guides/incognito-actions"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
               {
-                "group": "API References",
+                "group": "IDKit",
                 "pages": [
-                  {
-                    "group": "Indexer",
-                    "openapi": "https://indexer.us.id-infra.worldcoin.dev/openapi.json",
-                    "pages": [
-                      "POST /inclusion-proof",
-                      "POST /packed-account",
-                      "POST /signature-nonce",
-                      "POST /authenticator-pubkeys"
-                    ]
-                  },
-                  {
-                    "group": "Gateway",
-                    "openapi": "https://gateway.id-infra.worldcoin.dev/openapi.json",
-                    "pages": [
-                      "POST /create-account",
-                      "POST /insert-authenticator",
-                      "POST /update-authenticator",
-                      "POST /remove-authenticator",
-                      "POST /recover-account",
-                      "GET /is-valid-root",
-                      "GET /status/{id}"
-                    ]
-                  },
-                  {
-                    "group": "Issuers",
-                    "pages": ["world-id/reference/poh-issuer"]
-                  }
+                  "world-id/reference/idkit/components",
+                  "world-id/reference/idkit/hooks",
+                  "world-id/reference/idkit/session-api",
+                  "world-id/reference/idkit/types"
                 ]
               },
-              "world-id/reference/contracts"
+              "world-id/reference/rest-api",
+              "world-id/reference/contracts",
+              "world-id/idkit/error-codes"
+            ]
+          },
+          {
+            "group": "SDKs",
+            "pages": [
+              "world-id/sdks/javascript-react",
+              "world-id/idkit/swift",
+              "world-id/idkit/kotlin",
+              "world-id/sdks/rust"
             ]
           }
         ]
@@ -270,7 +262,9 @@
           },
           {
             "group": "Further Reading",
-            "pages": ["world-chain/resources"]
+            "pages": [
+              "world-chain/resources"
+            ]
           }
         ]
       },
@@ -715,7 +709,10 @@
       "display": "interactive"
     },
     "examples": {
-      "languages": ["curl", "javascript"],
+      "languages": [
+        "curl",
+        "javascript"
+      ],
       "defaults": "required",
       "prefill": true
     }
