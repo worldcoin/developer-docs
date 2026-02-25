@@ -1,0 +1,40 @@
+---
+title: "Build with LLMs"
+"og:image": "/images/docs/docs-meta.png"
+"twitter:image": "/images/docs/docs-meta.png"
+---
+
+Copy this prompt and paste it into Claude, Cursor, or your preferred AI coding assistant to integrate World ID into your existing project.
+
+Add your values from the [Developer Portal](https://developer.world.org) to your `.env` or secrets manager, then copy the prompt below.
+
+```text title="Copy this prompt"
+Integrate World ID into my project using IDKit.
+
+My app credentials are stored in environment variables:
+- WORLD_APP_ID (app_id from the Developer Portal)
+- WORLD_RP_ID (rp_id from the Developer Portal)
+- RP_SIGNING_KEY (signing key — must stay secret, backend only)
+
+## Steps
+
+1. Install the IDKit SDK for my platform.
+
+2. Create a backend endpoint that generates RP signatures.
+   Signatures verify that proof requests come from my app.
+   Use `signRequest(action, signingKey)` which returns `{ sig, nonce, createdAt, expiresAt }`.
+   Never expose the signing key to the client.
+
+3. On the client, fetch the RP signature from my backend, then create an IDKit request with:
+   - `app_id`, `action`, and `rp_context` (containing `rp_id`, `nonce`, `created_at`, `expires_at`, `signature` from the RP signature)
+   - `allow_legacy_proofs: true`
+   - `.preset(orbLegacy())` for Orb verification
+   - Signal is optional — use it to bind context like a user ID or wallet address into the proof. The backend should enforce the same value.
+
+4. On success, send the IDKit result to my backend.
+   The backend should forward the payload as-is to: POST https://developer.world.org/api/v4/verify/{rp_id}
+   No field remapping is needed.
+
+## Reference
+- Full docs: https://docs.world.org/llms.txt
+```
