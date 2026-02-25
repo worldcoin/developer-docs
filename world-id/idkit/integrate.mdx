@@ -8,14 +8,36 @@ IDKit is our solution for integrating World ID. You can use the React SDK for a 
 
 To familiarize yourself with the core concepts of World ID, check out this [page](/world-id/concepts).
 
-# Step 1: Create an app in the Developer Portal
+# Step 1: Install IDKit
+
+<CodeGroup title="Install">
+```bash title="JavaScript"
+npm i @worldcoin/idkit-core
+```
+
+```bash title="React"
+npm i @worldcoin/idkit
+```
+
+```swift title="Swift (SPM)"
+.package(url: "https://github.com/worldcoin/idkit-swift.git", from: "<version>")
+```
+
+```kotlin title="Kotlin (Gradle)"
+dependencies {
+    implementation("com.worldcoin:idkit:<version>")
+}
+```
+</CodeGroup>
+
+# Step 2: Create an app in the Developer Portal
 
 Create your app in the [Developer Portal](https://developer.world.org). Keep these values:
   - `app_id`
   - `rp_id`
   - `signing_key` - this should be stored as a secret.
 
-# Step 2: Generate an RP signature in your backend
+# Step 3: Generate an RP signature in your backend
 Signatures verify that proof requests genuinely come from your app, preventing attackers from performing impersonation attacks.
 ```typescript title="app/api/rp-signature/route.ts"
 import { NextResponse } from "next/server";
@@ -41,7 +63,7 @@ export async function POST(request: Request): Promise<Response> {
 </Warning>
 
 
-# Step 3: Generate the connect URL and collect proof
+# Step 4: Generate the connect URL and collect proof
 
 <CodeGroup title="Create request and collect proof">
 ```typescript title="JavaScript"
@@ -193,7 +215,7 @@ val completion = request.pollUntilCompletion()
 ```
 </CodeGroup>
 
-# Step 4: Verify the proof in your backend
+# Step 5: Verify the proof in your backend
 
 After successful completion, send the returned payload to your backend and
 forward it directly to: `POST https://developer.world.org/api/v4/verify/{rp_id}`

@@ -155,12 +155,12 @@
             "pages": ["world-id/4-0-migration"]
           },
           {
-            "group": "Face Check (Beta)",
+            "group": "Selfie Check (Beta)",
             "hidden": true,
             "pages": [
-              "world-id/face-check/overview",
-              "world-id/face-check/web-integration",
-              "world-id/face-check/testing"
+              "world-id/selfie-check/overview",
+              "world-id/selfie-check/web-integration",
+              "world-id/selfie-check/testing"
             ]
           },
           {
@@ -295,9 +295,14 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Telegram",
+          "anchor": "Telegram Support Channel",
           "href": "https://t.me/worlddevelopersupport",
           "icon": "telegram"
+        },
+        {
+          "anchor": "Email Support",
+          "href": "mailto:andy@toolsforhumanity.com,takis@toolsforhumanity.com",
+          "icon": "envelope"
         },
         {
           "anchor": "GitHub",
@@ -687,6 +692,18 @@
     {
       "source": "/world-id/id/idkit-v4-preview",
       "destination": "/world-id/idkit/integrate"
+    },
+    {
+      "source": "/world-id/face-check/overview",
+      "destination": "/world-id/selfie-check/overview"
+    },
+    {
+      "source": "/world-id/face-check/web-integration",
+      "destination": "/world-id/selfie-check/web-integration"
+    },
+    {
+      "source": "/world-id/face-check/testing",
+      "destination": "/world-id/selfie-check/testing"
     }
   ],
   "api": {

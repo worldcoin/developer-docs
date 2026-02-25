@@ -1,12 +1,12 @@
 ---
 title: "Web Integration Guide"
-description: "This guide describes how to integrate Face Check (Beta) in your standalone web applications."
+description: "This guide describes how to integrate Selfie Check (Beta) in your standalone web applications."
 "og:image": "/images/docs/docs-meta.png"
 "twitter:image": "/images/docs/docs-meta.png"
 ---
 
 <Note>
-Face Check (Beta) is only available by request at present. Please reach out if you are a developer interested in testing this feature.
+Selfie Check (Beta) is only available by request at present. Please reach out if you are a developer interested in testing this feature.
 </Note>
 
 ## Prerequisites
@@ -20,7 +20,7 @@ You will need to register your application in the World Developer Portal (Stagin
 
 ## Client-Side Implementation
 
-You need to use a special standalone version of IDKit to integrate Face Check (Beta).
+You need to use a special standalone version of IDKit to integrate Selfie Check (Beta).
 
 Add the IDKit library to your application's `<head>`.
 
@@ -44,7 +44,7 @@ import { IDKitWidget, VerificationLevel } from '@worldcoin/idkit'
     action="your-action-id" // Your action ID from Developer Portal
     onSuccess={onSuccess} // Callback when the modal closes
     handleVerify={handleVerify} // Callback when the proof is received
-    verification_level={VerificationLevel.Face} // REQUIRED for Face Check
+    verification_level={VerificationLevel.Face} // REQUIRED for Selfie Check
 >
     {({ open }) => (
         <button onClick={open}>Verify with World ID</button>
@@ -55,7 +55,7 @@ import { IDKitWidget, VerificationLevel } from '@worldcoin/idkit'
 
 ## Server-Side Verification
 
-After the user completes the Face Check (Beta) flow in the World App, your web application will receive a proof. This proof should be sent to your backend for validation. Your backend will call a special Face Check (Beta) endpoint for the verification.
+After the user completes the Selfie Check (Beta) flow in the World App, your web application will receive a proof. This proof should be sent to your backend for validation. Your backend will call a special Selfie Check (Beta) endpoint for the verification.
 
 **Example Implementation (Node.js/Next.js)**
 
