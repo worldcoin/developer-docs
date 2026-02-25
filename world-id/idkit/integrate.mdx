@@ -227,6 +227,31 @@ export async function POST(request: Request): Promise<Response> {
 ```
 
 
+## Architecture overview
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Client
+    participant Backend
+    participant Portal as Developer Portal
+
+    Client->>Backend: 1. Request RP signature
+    Backend->>Backend: Sign with signing_key
+    Backend-->>Client: { sig, nonce, created_at, expires_at }
+
+    Client->>Client: 2. Create IDKit request with RP signature
+    Client->>User: 3. Show connect URL / QR code
+    User->>User: 4. Prove uniqueness in World App
+
+    User-->>Client: 5. Proof returned via IDKit
+
+    Client->>Backend: 6. Forward proof payload
+    Backend->>Portal: POST /v4/verify/{rp_id}
+    Portal-->>Backend: Verification result
+    Backend-->>Client: Success / failure
+```
+
 ## Next pages
 
 - [POST /v4/verify reference](/api-reference/developer-portal/verify)
