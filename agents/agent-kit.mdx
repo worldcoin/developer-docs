@@ -6,10 +6,6 @@ description: "Verify that an agent is backed by a real, World ID-verified human.
 "twitter:image": "/images/docs/docs-meta.png"
 ---
 
-# AgentKit Extension
-
-Verify that an agent is backed by a real, World ID-verified human.
-
 ## Overview
 
 Services that deal with automated traffic increasingly need to distinguish between "random bot" and "bot acting on behalf of a human". AgentKit solves this by combining the wallet every x402 agent already has with World ID's proof-of-personhood and an on-chain agent registry (the AgentBook).
@@ -29,7 +25,7 @@ AgentKit supports three configurable modes that control what happens when a huma
 | ------------ | ---------------------------------------------------------------------------------------------------------- |
 | `free`       | Human-backed agents always bypass payment.                                                                 |
 | `free-trial` | Human-backed agents bypass payment the first N times (default: 1). After that, normal payment is required. |
-| `discount`   | Human-backed agents get a N% discount (optionally, only for the first N times).                            |
+| `discount`   | Human-backed agents get an N% discount (optionally, only for the first N times).                           |
 
 Usage counters are tracked per **human** per **endpoint** — so two agents backed by the same human share the same counter.
 
@@ -181,10 +177,10 @@ const hooks = createAgentkitHooks({
 
 ```typescript
 // Uses known deployments — no config needed for supported chains
-const agentBook = createAgentBookVerifier()
+const defaultAgentBook = createAgentBookVerifier()
 
 // Custom deployment (e.g., local Anvil)
-const agentBook = createAgentBookVerifier({
+const customAgentBook = createAgentBookVerifier({
 	contractAddress: '0xYourCustomContract',
 	rpcUrl: 'http://localhost:8545',
 })
@@ -193,7 +189,7 @@ const agentBook = createAgentBookVerifier({
 import { base } from 'viem/chains'
 import { createPublicClient, http } from 'viem'
 
-const agentBook = createAgentBookVerifier({
+const customClientAgentBook = createAgentBookVerifier({
 	client: createPublicClient({ chain: base, transport: http() }),
 })
 ```
