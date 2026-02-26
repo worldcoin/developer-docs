@@ -20,18 +20,19 @@ description: "World ID overview UX shell page."
       <div className="rounded-lg border border-[#242424] bg-[#111111] p-4">
         <div className="mb-3 text-xs font-medium uppercase tracking-wide text-gray-400">react</div>
         <div className="overflow-x-auto font-mono text-sm leading-6 text-gray-200">
-          <div><span style={{ color: '#c792ea' }}>import</span> {'{'} <span style={{ color: '#82aaff' }}>IDKitWidget</span> {'}'} <span style={{ color: '#c792ea' }}>from</span> <span style={{ color: '#c3e88d' }}>'@worldcoin/idkit'</span></div>
+          <div><span style={{ color: '#c792ea' }}>import</span> {'{'} <span style={{ color: '#82aaff' }}>IDKitRequestWidget</span>, <span style={{ color: '#82aaff' }}>orbLegacy</span> {'}'} <span style={{ color: '#c792ea' }}>from</span> <span style={{ color: '#c3e88d' }}>'@worldcoin/idkit'</span></div>
           <div>&nbsp;</div>
-          <div><span style={{ color: '#c792ea' }}>function</span> <span style={{ color: '#82aaff' }}>VerifyHuman</span>() {'{'}</div>
-          <div>&nbsp;&nbsp;<span style={{ color: '#c792ea' }}>return</span> (</div>
-          <div>&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span style={{ color: '#82aaff' }}>IDKitWidget</span></div>
-          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#f78c6c' }}>app_id</span>=<span style={{ color: '#c3e88d' }}>&quot;app_your_app_id&quot;</span></div>
-          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#f78c6c' }}>action</span>=<span style={{ color: '#c3e88d' }}>&quot;verify-human&quot;</span></div>
-          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#f78c6c' }}>onSuccess</span>=<span>{'{'}</span><span style={{ color: '#82aaff' }}>handleProof</span><span>{'}'}</span></div>
-          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#f78c6c' }}>credential_types</span>=<span>{'{'}</span>[<span style={{ color: '#c3e88d' }}>'orb'</span>, <span style={{ color: '#c3e88d' }}>'face'</span>]<span>{'}'}</span></div>
-          <div>&nbsp;&nbsp;&nbsp;&nbsp;/&gt;</div>
-          <div>&nbsp;&nbsp;)</div>
+          <div><span style={{ color: '#c792ea' }}>const</span> <span style={{ color: '#82aaff' }}>rp_context</span> = {'{'}</div>
+          <div>&nbsp;&nbsp;<span style={{ color: '#f78c6c' }}>rp_id</span>: <span style={{ color: '#c3e88d' }}>&quot;rp_your_rp_id&quot;</span>, ...</div>
           <div>{'}'}</div>
+          <div>&nbsp;</div>
+          <div>&lt;<span style={{ color: '#82aaff' }}>IDKitRequestWidget</span></div>
+          <div>&nbsp;&nbsp;<span style={{ color: '#f78c6c' }}>app_id</span>=<span style={{ color: '#c3e88d' }}>&quot;app_your_app_id&quot;</span></div>
+          <div>&nbsp;&nbsp;<span style={{ color: '#f78c6c' }}>action</span>=<span style={{ color: '#c3e88d' }}>&quot;my-action&quot;</span></div>
+          <div>&nbsp;&nbsp;<span style={{ color: '#f78c6c' }}>rp_context</span>=<span>{'{'}</span><span style={{ color: '#82aaff' }}>rp_context</span><span>{'}'}</span></div>
+          <div>&nbsp;&nbsp;<span style={{ color: '#f78c6c' }}>preset</span>=<span>{'{'}</span><span style={{ color: '#82aaff' }}>orbLegacy</span>({'{'} <span style={{ color: '#f78c6c' }}>signal</span>: <span style={{ color: '#c3e88d' }}>&quot;user-123&quot;</span> {'}'})<span>{'}'}</span></div>
+          <div>&nbsp;&nbsp;<span style={{ color: '#f78c6c' }}>onSuccess</span>=<span>{'{'}</span><span style={{ color: '#82aaff' }}>handleProof</span><span>{'}'}</span></div>
+          <div>/&gt;</div>
         </div>
       </div>
     </div>
