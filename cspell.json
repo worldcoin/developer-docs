@@ -1,7 +1,6 @@
 {
   "version": "0.2",
   "language": "en",
-  // Skip URL-encoded paths (%2Fbridge) and long tokens/hashes (app IDs, JWTs, nonces)
   "ignoreRegExpList": [
     "/%2F\\w+/gi",
     "/[a-zA-Z0-9_-]{20,}/g"
