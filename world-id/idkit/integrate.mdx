@@ -136,16 +136,32 @@ const rp_context: RpContext = {
   // Signal (optional): Bind specific context into the requested proof.
   // Examples: user ID, wallet address. Your backend should enforce the same value.
   preset={orbLegacy({ signal: "local-election-1" })}
-  onSuccess={async (result) => {
-    const verification = await fetch("/api/verify-proof", {
+  handleVerify={async (result) => {
+    const response = await fetch("/api/verify-proof", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify(result),
-    }).then((r) => r.json());
-    // Verified! Mark the user as verified in your app and show a success message.
+      body: JSON.stringify({
+        rp_id: rp_context.rp_id,
+        idkitResponse: result,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Backend verification failed");
+    }
+  }}
+  onSuccess={(result) => {
+    // Runs after `handleVerify` succeeds. Update app state/UI here.
   }}
 />;
 ```
+
+<Note>
+  In React widgets, use `handleVerify` to run backend verification inside the
+  modal flow. If it throws/rejects, the widget shows `failed_by_host_app`,
+  keeps the error state open, and allows retry. `onSuccess` is required and
+  fires only after `handleVerify` succeeds.
+</Note>
 
 ```swift title="Swift"
 import IDKit

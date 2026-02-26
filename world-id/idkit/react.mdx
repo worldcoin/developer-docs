@@ -52,18 +52,33 @@ const rpContext: RpContext = {
   allow_legacy_proofs={true}
   preset={orbLegacy({ signal: "user-123" })}
   environment="production"
-  onSuccess={async (result) => {
-    await fetch("/api/verify-proof", {
+  handleVerify={async (result) => {
+    const response = await fetch("/api/verify-proof", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ rp_id: rpContext.rp_id, devPortalPayload: result }),
+      body: JSON.stringify({ rp_id: rpContext.rp_id, idkitResponse: result }),
     });
+
+    if (!response.ok) {
+      throw new Error("Backend verification failed");
+    }
+  }}
+  onSuccess={() => {
+    // Called after `handleVerify` resolves (or immediately if omitted).
+    // Update your app state/UI here.
   }}
   onError={(errorCode) => {
     console.error("IDKit error", errorCode);
   }}
 />;
 ```
+
+### Widget callbacks
+
+- `onSuccess` is required for `IDKitRequestWidget` and `IDKitSessionWidget`.
+- `handleVerify` is optional and only available on widgets. Use it to verify the proof in your backend before success is emitted.
+- If `handleVerify` throws/rejects, the widget enters an error state, emits `onError("failed_by_host_app")`, and does not call `onSuccess`.
+- `onError` is optional.
 
 ## Headless hooks
 
@@ -109,7 +124,7 @@ React hooks/widgets take `preset` directly in config.
 
 - Widgets support `language="en" | "es" | "th"`
 - Widgets default to `autoClose={true}` after success
-- Host callback exceptions are swallowed to keep the widget state machine stable
+- `handleVerify` failure keeps the modal on error with retry
 
 ## Backend utilities
 
