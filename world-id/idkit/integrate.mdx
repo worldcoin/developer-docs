@@ -295,9 +295,9 @@ import { NextResponse } from "next/server";
 import type { IDKitResult } from "@worldcoin/idkit";
 
 export async function POST(request: Request): Promise<Response> {
-  const { rp_id, devPortalPayload } = (await request.json()) as {
+  const { rp_id, idkitResponse } = (await request.json()) as {
     rp_id: string;
-    devPortalPayload: IDKitResult;
+    idkitResponse: IDKitResult;
   };
 
   const response = await fetch(
@@ -305,7 +305,7 @@ export async function POST(request: Request): Promise<Response> {
     {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify(devPortalPayload),
+      body: JSON.stringify(idkitResponse),
     },
   );
 
