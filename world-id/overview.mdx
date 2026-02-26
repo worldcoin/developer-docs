@@ -1,0 +1,132 @@
+---
+title: "World ID"
+sidebarTitle: "Overview"
+description: "World ID overview UX shell page."
+---
+
+<div className="not-prose space-y-10">
+  <div className="rounded-[10px] border border-[#1f1f1f] bg-[#0d0d0d] p-6 text-white">
+    <div className="grid gap-6 md:grid-cols-[240px_1fr] md:items-center">
+      <div>
+        <h2 className="m-0 text-xl font-semibold text-white">Developer quickstart</h2>
+        <p className="mt-3 text-sm leading-6 text-gray-300">
+          Add human verification to your app in minutes. Install IDKit, add the widget, and verify proofs server-side.
+        </p>
+        <button type="button" className="mt-4 inline-flex items-center rounded-md bg-white px-4 py-2 text-sm font-medium text-black">
+          Get started
+        </button>
+      </div>
+
+      <div className="rounded-lg border border-[#242424] bg-[#111111] p-4">
+        <div className="mb-3 text-xs font-medium uppercase tracking-wide text-gray-400">react</div>
+        <div className="overflow-x-auto font-mono text-sm leading-6 text-gray-200">
+          <div><span style={{ color: '#c792ea' }}>import</span> {'{'} <span style={{ color: '#82aaff' }}>IDKitWidget</span> {'}'} <span style={{ color: '#c792ea' }}>from</span> <span style={{ color: '#c3e88d' }}>'@worldcoin/idkit'</span></div>
+          <div>&nbsp;</div>
+          <div><span style={{ color: '#c792ea' }}>function</span> <span style={{ color: '#82aaff' }}>VerifyHuman</span>() {'{'}</div>
+          <div>&nbsp;&nbsp;<span style={{ color: '#c792ea' }}>return</span> (</div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&lt;<span style={{ color: '#82aaff' }}>IDKitWidget</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#f78c6c' }}>app_id</span>=<span style={{ color: '#c3e88d' }}>&quot;app_your_app_id&quot;</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#f78c6c' }}>action</span>=<span style={{ color: '#c3e88d' }}>&quot;verify-human&quot;</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#f78c6c' }}>onSuccess</span>=<span>{'{'}</span><span style={{ color: '#82aaff' }}>handleProof</span><span>{'}'}</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style={{ color: '#f78c6c' }}>credential_types</span>=<span>{'{'}</span>[<span style={{ color: '#c3e88d' }}>'orb'</span>, <span style={{ color: '#c3e88d' }}>'face'</span>]<span>{'}'}</span></div>
+          <div>&nbsp;&nbsp;&nbsp;&nbsp;/&gt;</div>
+          <div>&nbsp;&nbsp;)</div>
+          <div>{'}'}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <div className="mb-4 flex items-center justify-between">
+      <h2 className="m-0 text-[18px] font-semibold text-black">Credentials</h2>
+      <span className="text-sm text-gray-600">View all</span>
+    </div>
+    <div className="grid gap-3 md:grid-cols-3">
+      <div className="overflow-hidden rounded-[10px] border border-[#ebebeb] bg-white"><div className="flex h-[100px] items-center justify-center bg-gradient-to-r from-[#111827] to-[#1f2937] text-sm font-medium text-white">proof-of-human</div><div className="p-4"><h3 className="m-0 text-base font-semibold text-black">Proof of Human</h3><p className="mt-2 text-sm text-gray-600">Iris-verified at an Orb. Strongest uniqueness guarantee for high-stakes verification.</p></div></div>
+      <div className="overflow-hidden rounded-[10px] border border-[#ebebeb] bg-white"><div className="flex h-[100px] items-center justify-center bg-gradient-to-r from-[#047857] to-[#059669] text-sm font-medium text-white">document</div><div className="p-4"><h3 className="m-0 text-base font-semibold text-black">Document</h3><p className="mt-2 text-sm text-gray-600">NFC passport or ID scan. Proves name, age, nationality, and document attributes.</p></div></div>
+      <div className="overflow-hidden rounded-[10px] border border-[#ebebeb] bg-white"><div className="flex h-[100px] items-center justify-center bg-gradient-to-r from-[#6d28d9] to-[#7c3aed] text-sm font-medium text-white">face</div><div className="p-4"><h3 className="m-0 text-base font-semibold text-black">Face</h3><p className="mt-2 text-sm text-gray-600">Selfie-based liveness and face uniqueness check. No hardware required.</p></div></div>
+    </div>
+  </section>
+
+  <section>
+  <h2 className="mb-4 mt-0 text-[18px] font-semibold text-black">Start building</h2>
+  <div className="overflow-hidden rounded-[10px] border border-[#ebebeb] bg-white">
+    <div className="grid md:grid-cols-2">
+      {[
+        ["Sybil-resistant actions", "One person, one vote. One airdrop per human. Prevent duplicate claims with uniqueness proofs."],
+        ["Age verification", "Verify 18+ from a document credential without collecting date of birth."],
+        ["Bot prevention", "Prove every user is a real human, not an AI agent or bot. Works at sign-up or on any action."],
+        ["Identity attestations", "Verify name, nationality, or document attributes. Checked on-device, only a yes/no proof is shared."],
+        ["Deepfake protection", "Confirm the person on a video call is real and who they claim to be."],
+        ["Fair distribution", "Distribute benefits, grants, or tokens to verified unique individuals."],
+      ].map(([title, description]) => (
+        <div className="border-b border-r border-[#ebebeb] p-4 last:border-b-0 md:[&:nth-child(2n)]:border-r-0 md:[&:nth-last-child(-n+2)]:border-b-0" key={title}>
+          <h3 className="m-0 text-sm font-semibold text-black">{title}</h3>
+          <p className="mt-1 text-sm text-gray-600">{description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+  <section className="mt-10">
+  <h2 className="mb-4 mt-0 text-[18px] font-semibold text-black">Choosing a credential</h2>
+  <div className="overflow-hidden rounded-[10px] border border-[#ebebeb] bg-white">
+    <table className="w-full border-collapse text-sm">
+      <thead>
+        <tr className="bg-[#f5f5f5] text-left text-gray-700">
+          <th className="px-4 py-3 font-medium"> </th>
+          <th className="px-4 py-3 font-medium">Proof of Human</th>
+          <th className="px-4 py-3 font-medium">Document</th>
+          <th className="px-4 py-3 font-medium">Face</th>
+        </tr>
+      </thead>
+      <tbody>
+        {[
+          ["Verification method", "Orb (iris scan)", "NFC passport / national ID", "Selfie capture"],
+          ["Uniqueness guarantee", "Strong (population scale)", "Per document", "Unique face"],
+          ["Attestable attributes", "Unique human", "Name, age, nationality", "Unique face"],
+          ["User friction", "Orb visit (one-time)", "Passport tap", "Selfie (lowest)"],
+          ["Best for", "Financial, governance, voting", "KYC-lite, age gates, attestations", "Bot prevention, sign-ups"],
+        ].map((row) => (
+          <tr className="border-t border-[#ebebeb]" key={row[0]}>
+            <td className="px-4 py-3 font-medium text-gray-900">{row[0]}</td>
+            <td className="px-4 py-3 text-gray-700">{row[1]}</td>
+            <td className="px-4 py-3 text-gray-700">{row[2]}</td>
+            <td className="px-4 py-3 text-gray-700">{row[3]}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+  <section className="mt-10 rounded-[10px] border border-[#ebebeb] bg-white p-6">
+  <h2 className="m-0 text-[18px] font-semibold text-black">Privacy by architecture</h2>
+  <p className="mt-2 text-sm text-gray-600">World ID is built so that privacy is cryptographic, not just a policy promise.</p>
+  <div className="mt-6 grid gap-4 md:grid-cols-3">
+    <div><h3 className="m-0 text-sm font-semibold text-black">Zero-knowledge proofs</h3><p className="mt-2 text-sm text-gray-600">Users prove they're verified without revealing which credential or World ID they hold. Verifications are unlinkable across apps.</p></div>
+    <div><h3 className="m-0 text-sm font-semibold text-black">Multi-party computation</h3><p className="mt-2 text-sm text-gray-600">Biometric data is split into encrypted shares across independent nodes. No single party — including World — ever holds the complete data.</p></div>
+    <div><h3 className="m-0 text-sm font-semibold text-black">On-device processing</h3><p className="mt-2 text-sm text-gray-600">Biometric capture and proof generation happen on the user's device. Your app never receives biometric data — only a cryptographic proof.</p></div>
+  </div>
+</section>
+
+  <section className="mt-10">
+  <div className="grid gap-4 md:grid-cols-4">
+    {[
+      ["Help center", "Frequently asked account and billing questions"],
+      ["Developer forum", "Discuss topics with other developers"],
+      ["Cookbook", "Open-source collection of examples and guides"],
+      ["Status", "Check the status of World ID services"],
+    ].map(([title, description]) => (
+      <div key={title} className="rounded-[10px] border border-[#ebebeb] bg-white p-4 text-center">
+        <div className="mx-auto mb-2 h-4 w-4 rounded-full border border-gray-300" />
+        <h3 className="m-0 text-sm font-semibold text-black">{title}</h3>
+        <p className="mt-1 text-xs text-gray-600">{description}</p>
+      </div>
+    ))}
+  </div>
+</section>
+
+</div>
