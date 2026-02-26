@@ -152,6 +152,25 @@
     "profilecard",
     "signups",
     "touchpoints",
-    "walletauth"
+    "walletauth",
+    "agentkit",
+    "agentic",
+    "CAIP",
+    "cutover",
+    "efgh",
+    "ethersproject",
+    "getenv",
+    "ijkl",
+    "kotlinx",
+    "Mintv",
+    "mnop",
+    "qrst",
+    "siws",
+    "Solana",
+    "uniffi",
+    "UUPS",
+    "uvwx",
+    "wagmi",
+    "worldid"
   ]
 }
