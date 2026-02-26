@@ -137,66 +137,90 @@
         "tab": "World ID",
         "groups": [
           {
-            "group": "Get started",
+            "group": "Overview",
             "pages": [
-              "world-id/overview",
-              "world-id/get-started/quickstart",
-              "world-id/get-started/developer-portal"
+              "world-id/overview"
+            ]
+          },
+          {
+            "group": "IDKit",
+            "pages": [
+              "world-id/idkit/integrate",
+              "world-id/idkit/build-with-llms",
+              "world-id/idkit/onchain-verification",
+              "world-id/idkit/design-guidelines",
+              {
+                "group": "SDK Reference",
+                "pages": [
+                  "world-id/idkit/javascript",
+                  "world-id/idkit/react",
+                  "world-id/idkit/swift",
+                  "world-id/idkit/kotlin",
+                  "world-id/idkit/error-codes"
+                ]
+              }
             ]
           },
           {
             "group": "Credentials",
             "pages": [
-              "world-id/credentials/proof-of-human",
-              "world-id/credentials/document",
-              "world-id/credentials/face",
-              "world-id/credentials/comparing-credentials"
+              "world-id/credentials/presets",
+              "world-id/credentials/legacy-presets"
             ]
           },
           {
-            "group": "Core concepts",
+            "group": "Migration",
             "pages": [
-              "world-id/core-concepts/zero-knowledge-proofs",
-              "world-id/core-concepts/nullifiers-and-uniqueness",
-              "world-id/core-concepts/sybil-resistance",
-              "world-id/core-concepts/identity-attestations",
-              "world-id/core-concepts/credential-expiry"
+              "world-id/4-0-migration"
             ]
           },
           {
-            "group": "Guides",
+            "group": "Selfie Check (Beta)",
+            "hidden": true,
             "pages": [
-              "world-id/guides/cloud-verification",
-              "world-id/guides/on-chain-verification",
-              "world-id/guides/age-verification",
-              "world-id/guides/bot-prevention",
-              "world-id/guides/incognito-actions"
+              "world-id/selfie-check/overview"
             ]
           },
           {
-            "group": "Reference",
+            "group": "Technical Reference",
             "pages": [
+              "world-id/concepts",
+              "world-id/reference/authenticator",
               {
-                "group": "IDKit",
+                "group": "API References",
                 "pages": [
-                  "world-id/reference/idkit/components",
-                  "world-id/reference/idkit/hooks",
-                  "world-id/reference/idkit/session-api",
-                  "world-id/reference/idkit/types"
+                  {
+                    "group": "Indexer",
+                    "openapi": "https://indexer.us.id-infra.worldcoin.dev/openapi.json",
+                    "pages": [
+                      "POST /inclusion-proof",
+                      "POST /packed-account",
+                      "POST /signature-nonce",
+                      "POST /authenticator-pubkeys"
+                    ]
+                  },
+                  {
+                    "group": "Gateway",
+                    "openapi": "https://gateway.id-infra.worldcoin.dev/openapi.json",
+                    "pages": [
+                      "POST /create-account",
+                      "POST /insert-authenticator",
+                      "POST /update-authenticator",
+                      "POST /remove-authenticator",
+                      "POST /recover-account",
+                      "GET /is-valid-root",
+                      "GET /status/{id}"
+                    ]
+                  },
+                  {
+                    "group": "Issuers",
+                    "pages": [
+                      "world-id/reference/poh-issuer"
+                    ]
+                  }
                 ]
               },
-              "world-id/reference/rest-api",
-              "world-id/reference/contracts",
-              "world-id/idkit/error-codes"
-            ]
-          },
-          {
-            "group": "SDKs",
-            "pages": [
-              "world-id/sdks/javascript-react",
-              "world-id/idkit/swift",
-              "world-id/idkit/kotlin",
-              "world-id/sdks/rust"
+              "world-id/reference/contracts"
             ]
           }
         ]
