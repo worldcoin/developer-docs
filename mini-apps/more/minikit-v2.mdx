@@ -195,6 +195,16 @@ await MiniKit.sendTransaction({
 Type changes:
 
 ```ts Transaction Types
+type SendTransactionResult = {
+  status: 'success';
+  version: number; // 2
+  userOpHash: string;
+  from: string;
+  timestamp: string;
+};
+```
+
+```ts Response Types
 type Transaction = {
   address: string;
   value?: string;
