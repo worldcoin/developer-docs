@@ -143,13 +143,12 @@ description: "Privacy preserving proof of human protocol"
 
   <section className="mt-10 rounded-[10px] border border-[#ebebeb] bg-white p-6">
     <h2 className="m-0 text-[18px] font-semibold text-black">Privacy by architecture</h2>
-  <p className="mt-2 text-sm text-gray-600">World ID is built so that privacy is cryptographic, not just a policy promise.</p>
-  <div className="mt-6 grid gap-4 md:grid-cols-3">
-    <div><h3 className="m-0 text-sm font-semibold text-black">Zero-knowledge proofs</h3><p className="mt-2 text-sm text-gray-600">Users prove they're verified without revealing which credential or World ID they hold. Verifications are unlinkable across apps.</p></div>
-    <div><h3 className="m-0 text-sm font-semibold text-black">Multi-party computation</h3><p className="mt-2 text-sm text-gray-600">Biometric data is split into encrypted shares across independent nodes. No single party — including World — ever holds the complete data.</p></div>
-    <div><h3 className="m-0 text-sm font-semibold text-black">On-device processing</h3><p className="mt-2 text-sm text-gray-600">Biometric capture and proof generation happen on the user's device. Your app never receives biometric data — only a cryptographic proof.</p></div>
-  </div>
-</section>
+    <div className="mt-6 grid gap-4 md:grid-cols-3">
+      <div><h3 className="m-0 text-sm font-semibold text-black">Zero-knowledge proofs</h3><p className="mt-2 text-sm text-gray-600">Users prove things about themselves without sharing any personal information. Verifications are unlinkable across apps — no one can track a user's activity between services.</p></div>
+      <div><h3 className="m-0 text-sm font-semibold text-black">Multi-party computation</h3><p className="mt-2 text-sm text-gray-600">Hashed embeddings are split into encrypted shares across independent nodes. No single party holds any data, even in encrypted form.</p></div>
+      <div><h3 className="m-0 text-sm font-semibold text-black">Self-custodial</h3><p className="mt-2 text-sm text-gray-600">Capture and proof generation happen on the user's device. Your app never receives personal data — only a yes/no proof.</p></div>
+    </div>
+  </section>
 
   <section className="mt-10">
     <div className="grid gap-4 md:grid-cols-4">
