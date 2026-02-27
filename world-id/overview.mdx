@@ -4,7 +4,7 @@ sidebarTitle: "Overview"
 description: "Privacy preserving proof of human protocol"
 ---
 
-{/* cspell:ignore worldcoin idkit orblegacy rp_context app_id rp_id selfie-check sybil PoH CAPTCHAs NFC unlinkable */}
+{/* cspell:ignore worldcoin idkit orblegacy rp_context app_id rp_id selfie-check sybil PoH CAPTCHAs NFC unlinkable nullifier */}
 
 <div className="not-prose space-y-12">
   <div className="max-w-3xl space-y-5 text-[17px] leading-8 text-gray-600">
@@ -131,7 +131,7 @@ description: "Privacy preserving proof of human protocol"
           {[
             ["Verification method", "Orb (iris biometrics)", "NFC passport / national ID", "Selfie capture"],
             ["Uniqueness guarantee", "Strong (population scale)", "Per document", "Unique face"],
-            ["Attestable attributes", "Unique human", "Name, age, nationality", "Unique face"],
+            ["Attestable attributes", "Unique human", "Possession of unique document", "Unique face"],
             ["User friction", "Orb visit (one-time)", "Passport tap", "Selfie (lowest)"],
           ].map((row) => (
             <tr className="border-t border-[#ececec]" key={row[0]}>
