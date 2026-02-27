@@ -22,7 +22,7 @@ description: "Privacy preserving proof of human protocol"
       <div>
         <h2 className="m-0 text-[22px] font-semibold text-white">Developer quickstart</h2>
         <p className="mt-3 text-sm leading-6 text-gray-300/95">
-          Add human verification to your app in minutes. Install IDKit, add the widget, and verify proofs server-side.
+          Add World ID to your app in minutes. Install IDKit, choose a credential, and start verifying users.
         </p>
         <button type="button" className="mt-5 inline-flex items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-black transition hover:bg-gray-100">
           Get started
@@ -97,12 +97,9 @@ description: "Privacy preserving proof of human protocol"
             key={title}
             className="group border-b border-[#ebebeb] p-6 no-underline transition-colors last:border-b-0 hover:bg-[#fafafa] focus-visible:bg-[#fafafa]"
           >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h3 className="m-0 text-[22px] font-semibold leading-tight text-black">{title}</h3>
-                <p className="mt-2 text-[15px] leading-7 text-gray-600">{description}</p>
-              </div>
-              <span className="mt-1 inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#e4e4e4] text-gray-400 transition-all group-hover:translate-x-1 group-hover:border-gray-300 group-hover:text-gray-600">→</span>
+            <div className="max-w-[980px]">
+              <h3 className="m-0 text-[22px] font-semibold leading-tight text-black">{title}</h3>
+              <p className="mt-4 text-[15px] leading-7 text-gray-600">{description}</p>
             </div>
           </a>
         ))}
@@ -113,7 +110,13 @@ description: "Privacy preserving proof of human protocol"
   <section className="mt-10">
     <h2 className="mb-4 mt-0 text-[18px] font-semibold text-black">Choosing a credential</h2>
     <div className="overflow-hidden rounded-[12px] border border-[#e7e7e7] bg-white shadow-[0_1px_0_rgba(0,0,0,0.03)]">
-      <table className="w-full border-collapse text-sm">
+      <table className="w-full table-fixed border-collapse text-sm">
+        <colgroup>
+          <col className="w-1/4" />
+          <col className="w-1/4" />
+          <col className="w-1/4" />
+          <col className="w-1/4" />
+        </colgroup>
         <thead>
           <tr className="bg-[#f6f6f7] text-left text-gray-700">
             <th className="px-5 py-4 font-medium"> </th>
@@ -143,28 +146,11 @@ description: "Privacy preserving proof of human protocol"
 
   <section className="mt-10 rounded-[12px] border border-[#e7e7e7] bg-white p-6 shadow-[0_1px_0_rgba(0,0,0,0.03)]">
     <h2 className="m-0 text-[18px] font-semibold text-black">Privacy by architecture</h2>
-    <div className="mt-6 grid gap-4 md:grid-cols-3">
-      <div><h3 className="m-0 text-sm font-semibold text-black">Zero-knowledge proofs</h3><p className="mt-2 text-sm text-gray-600">Users prove things about themselves without sharing any personal information. Verifications are unlinkable across apps — no one can track a user's activity between services.</p></div>
-      <div><h3 className="m-0 text-sm font-semibold text-black">Multi-party computation</h3><p className="mt-2 text-sm text-gray-600">Hashed embeddings are split into encrypted shares across independent nodes. No single party holds any data, even in encrypted form.</p></div>
-      <div><h3 className="m-0 text-sm font-semibold text-black">Self-custodial</h3><p className="mt-2 text-sm text-gray-600">Capture and proof generation happen on the user's device. Your app never receives personal data — only a yes/no proof.</p></div>
+    <div className="mt-6 grid gap-4 md:auto-rows-fr md:grid-cols-3">
+      <div className="h-full rounded-lg border border-[#efefef] p-4"><h3 className="m-0 text-sm font-semibold text-black">Zero-knowledge proofs</h3><p className="mt-3 text-sm leading-6 text-gray-600">Users prove things about themselves without sharing any personal information. Verifications are unlinkable across apps — no one can track a user's activity between services.</p></div>
+      <div className="h-full rounded-lg border border-[#efefef] p-4"><h3 className="m-0 text-sm font-semibold text-black">Multi-party computation</h3><p className="mt-3 text-sm leading-6 text-gray-600">Hashed embeddings are split into encrypted shares across independent nodes. No single party holds any data, even in encrypted form.</p></div>
+      <div className="h-full rounded-lg border border-[#efefef] p-4"><h3 className="m-0 text-sm font-semibold text-black">Self-custodial</h3><p className="mt-3 text-sm leading-6 text-gray-600">Capture and proof generation happen on the user's device. Your app never receives personal data — only a yes/no proof.</p></div>
     </div>
   </section>
-
-  <section className="mt-10">
-    <div className="grid gap-4 md:grid-cols-4">
-    {[
-      ["Help center", "Frequently asked account and billing questions"],
-      ["Developer forum", "Discuss topics with other developers"],
-      ["Cookbook", "Open-source collection of examples and guides"],
-      ["Status", "Check the status of World ID services"],
-    ].map(([title, description]) => (
-      <div key={title} className="rounded-[12px] border border-[#e7e7e7] bg-white p-5 text-center transition-all hover:-translate-y-0.5 hover:shadow-[0_10px_26px_rgba(15,23,42,0.06)]">
-        <div className="mx-auto mb-2 h-4 w-4 rounded-full border border-gray-300" />
-        <h3 className="m-0 text-sm font-semibold text-black">{title}</h3>
-        <p className="mt-1 text-xs text-gray-600">{description}</p>
-      </div>
-    ))}
-  </div>
-</section>
 
 </div>
