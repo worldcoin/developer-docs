@@ -372,6 +372,10 @@
   },
   "redirects": [
     {
+      "source": "/world-id",
+      "destination": "/world-id/overview"
+    },
+    {
       "source": "/apps",
       "destination": "https://world.org/apps"
     },
@@ -389,11 +393,11 @@
     },
     {
       "source": "/id",
-      "destination": "/world-id"
+      "destination": "/world-id/overview"
     },
     {
       "source": "/id/sign-in",
-      "destination": "/world-id"
+      "destination": "/world-id/overview"
     },
     {
       "source": "/protocol",
@@ -573,7 +577,7 @@
     },
     {
       "source": "/sign-in",
-      "destination": "/world-id"
+      "destination": "/world-id/overview"
     },
     {
       "source": "/try",
@@ -625,11 +629,11 @@
     },
     {
       "source": "/world-id/id/sign-in",
-      "destination": "/world-id"
+      "destination": "/world-id/overview"
     },
     {
       "source": "/world-id/sign-in",
-      "destination": "/world-id"
+      "destination": "/world-id/overview"
     },
     {
       "source": "/world-id/sign-in/pitfalls",
