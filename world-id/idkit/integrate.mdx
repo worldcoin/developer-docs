@@ -156,13 +156,6 @@ const rp_context: RpContext = {
 />;
 ```
 
-<Note>
-  In React widgets, use `handleVerify` to run backend verification inside the
-  modal flow. If it throws/rejects, the widget shows `failed_by_host_app`,
-  keeps the error state open, and allows retry. `onSuccess` is required and
-  fires only after `handleVerify` succeeds.
-</Note>
-
 ```swift title="Swift"
 import IDKit
 
