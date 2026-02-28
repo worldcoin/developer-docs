@@ -1,16 +1,8 @@
 {
   "version": "0.2",
   "language": "en",
-  "ignoreRegExpList": [
-    "/%2F\\w+/gi",
-    "/[a-zA-Z0-9_-]{20,}/g"
-  ],
-  "ignorePaths": [
-    "pnpm-lock.yaml",
-    "node_modules",
-    ".vscode",
-    "openapi"
-  ],
+  "ignoreRegExpList": ["/%2F\\w+/gi", "/[a-zA-Z0-9_-]{20,}/g"],
+  "ignorePaths": ["pnpm-lock.yaml", "node_modules", ".vscode", "openapi"],
   "words": [
     "AQAB",
     "blockchain",
@@ -170,6 +162,7 @@
     "UUPS",
     "uvwx",
     "wagmi",
-    "worldid"
+    "worldid",
+    "Shiki"
   ]
 }
