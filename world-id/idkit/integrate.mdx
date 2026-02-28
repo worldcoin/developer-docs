@@ -60,6 +60,9 @@ export async function POST(request: Request): Promise<Response> {
   });
 }
 ```
+<Note>
+  For RP signature generation, use `@worldcoin/idkit-server` in JavaScript/TypeScript backends. This is currently only available in JS. If you need support in another language, please reach out on [Telegram](https://t.me/worlddevelopersupport).
+</Note>
 <Warning>
   Never generate RP signatures on the client and never expose your RP signing
   key. If the key leaks, attackers can forge requests from your app.

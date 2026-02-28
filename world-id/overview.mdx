@@ -4,71 +4,59 @@ sidebarTitle: "Overview"
 description: "Privacy preserving proof of human protocol"
 ---
 
+import { Quickstart } from "/snippets/quickstart.jsx";
+
+World ID is the highest-assurance way to prove you are a unique human online - without revealing who you are.
+
+As AI agents, bots, and deepfakes make it increasingly difficult to distinguish real people online, World ID gives individuals a privacy-preserving way to verify their humanness and uniqueness.
+
+At its core, World ID is built around credentials - proofs that verify something about a person (that they’re a unique human, that they’re over 18, that they hold a valid document etc.) without exposing any personal data. Different credentials offer different levels of assurance, and any application can use them as a trust signal through a simple integration.
+
 {/* cspell:ignore worldcoin idkit orblegacy rp_context app_id rp_id selfie-check sybil PoH CAPTCHAs NFC unlinkable nullifier */}
 
+<Quickstart
+  title="Developer Quickstart"
+  description="Integrate World ID into your app with our drop-in react widget."
+  buttonHref="/world-id/idkit/integrate"
+  buttonLabel="Get started"
+>
+  ```tsx lines
+  import { IDKitRequestWidget } from "@worldcoin/idkit";
+  const rpContext = await getRpContext("verify-account");
+  <IDKitRequestWidget
+    app_id="app_xxxxx"
+    action="verify-account"
+    rp_context={rpContext}
+    // verify proof + nullifier on your backend
+    handleVerify={verifyOnBackend}
+    onSuccess={unlockFeature}
+  />
+  ```
+</Quickstart>
+
 <div className="not-prose space-y-12">
-  <div className="max-w-3xl space-y-5 text-[17px] leading-8 text-gray-600">
-    <p>
-      World ID is the highest-assurance way to prove you are a unique human online - without revealing who you are.
-    </p>
-    <p>
-      As AI agents, bots, and deepfakes make it increasingly difficult to distinguish real people online, World ID gives individuals a privacy-preserving way to verify their humanness and uniqueness.
-    </p>
-    <p>
-      At its core, World ID is built around credentials - proofs that verify something about a person (that they’re a unique human, that they’re over 18, that they hold a valid document etc.) without exposing any personal data. Different credentials offer different levels of assurance, and any application can use them as a trust signal through a simple integration.
-    </p>
-  </div>
-
-  <div className="rounded-[12px] border border-[#222] bg-[#111] p-7 text-white shadow-[0_12px_36px_rgba(0,0,0,0.22)]">
-    <div className="grid gap-8 md:grid-cols-[250px_1fr] md:items-center">
-      <div>
-        <h2 className="m-0 text-[22px] font-semibold text-white">Developer quickstart</h2>
-        <p className="mt-3 text-sm leading-6 text-gray-300/95">
-          Add World ID to your app in minutes. Install IDKit, choose a credential, and start verifying users.
-        </p>
-        <button type="button" className="mt-5 inline-flex items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-black transition hover:bg-gray-100">
-          Get started
-        </button>
-      </div>
-
-      <div className="rounded-xl border border-[#2b2b2b] bg-[#151515] p-5">
-        <div className="mb-3 text-xs font-medium uppercase tracking-wide text-gray-400">react</div>
-        <div className="overflow-x-auto font-mono text-sm leading-6 text-gray-200">
-          <div><span style={{ color: '#c792ea' }}>import</span> {'{'} <span style={{ color: '#82aaff' }}>IDKitRequestWidget</span>, <span style={{ color: '#82aaff' }}>orbLegacy</span> {'}'} <span style={{ color: '#c792ea' }}>from</span> <span style={{ color: '#c3e88d' }}>'@worldcoin/idkit'</span></div>
-          <div>&nbsp;</div>
-          <div><span style={{ color: '#c792ea' }}>const</span> <span style={{ color: '#82aaff' }}>rp_context</span> = {'{'}</div>
-          <div>&nbsp;&nbsp;<span style={{ color: '#f78c6c' }}>rp_id</span>: <span style={{ color: '#c3e88d' }}>&quot;rp_your_rp_id&quot;</span>, ...</div>
-          <div>{'}'}</div>
-          <div>&nbsp;</div>
-          <div>&lt;<span style={{ color: '#82aaff' }}>IDKitRequestWidget</span></div>
-          <div>&nbsp;&nbsp;<span style={{ color: '#f78c6c' }}>app_id</span>=<span style={{ color: '#c3e88d' }}>&quot;app_your_app_id&quot;</span></div>
-          <div>&nbsp;&nbsp;<span style={{ color: '#f78c6c' }}>action</span>=<span style={{ color: '#c3e88d' }}>&quot;my-action&quot;</span></div>
-          <div>&nbsp;&nbsp;<span style={{ color: '#f78c6c' }}>rp_context</span>=<span>{'{'}</span><span style={{ color: '#82aaff' }}>rp_context</span><span>{'}'}</span></div>
-          <div>&nbsp;&nbsp;<span style={{ color: '#f78c6c' }}>preset</span>=<span>{'{'}</span><span style={{ color: '#82aaff' }}>orbLegacy</span>({'{'} <span style={{ color: '#f78c6c' }}>signal</span>: <span style={{ color: '#c3e88d' }}>&quot;user-123&quot;</span> {'}'})<span>{'}'}</span></div>
-          <div>&nbsp;&nbsp;<span style={{ color: '#f78c6c' }}>onSuccess</span>=<span>{'{'}</span><span style={{ color: '#82aaff' }}>handleProof</span><span>{'}'}</span></div>
-          <div>/&gt;</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <section>
     <div className="mb-5 flex items-center justify-between">
       <h2 className="m-0 text-[18px] font-semibold text-black">Credentials</h2>
-      <span className="text-sm text-gray-600">View all</span>
     </div>
     <div className="grid gap-4 md:grid-cols-3">
       <div className="overflow-hidden rounded-[12px] border border-[#e7e7e7] bg-white shadow-[0_1px_0_rgba(0,0,0,0.03)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_26px_rgba(15,23,42,0.08)]">
-        <div className="flex h-[100px] items-center justify-center bg-gradient-to-r from-[#111827] to-[#1f2937] text-sm font-medium text-white">proof-of-human</div>
+        <div className="flex items-center justify-center bg-white" style={{ height: 120 }}>
+          <img src="/images/docs/verification-badge.svg" alt="Proof of Human" style={{ height: 72, width: 72, objectFit: 'contain' }} />
+        </div>
         <div className="p-4"><h3 className="m-0 text-base font-semibold text-black">Proof of Human</h3><p className="mt-2 text-sm text-gray-600">Strongest uniqueness signal available. Iris biometrics verified through a trusted hardware - Orb - provide population-scale sybil resistance and liveness guarantees. Best for high-stakes actions where one-person-one-action matters most.</p></div>
       </div>
       <div className="overflow-hidden rounded-[12px] border border-[#e7e7e7] bg-white shadow-[0_1px_0_rgba(0,0,0,0.03)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_26px_rgba(15,23,42,0.08)]">
-        <div className="flex h-[100px] items-center justify-center bg-gradient-to-r from-[#047857] to-[#059669] text-sm font-medium text-white">document</div>
+        <div className="flex items-center justify-center bg-white" style={{ height: 120 }}>
+          <img src="/images/docs/passport.png" alt="Document" style={{ width: 72, objectFit: 'contain' }} />
+        </div>
         <div className="p-4"><h3 className="m-0 text-base font-semibold text-black">Document</h3><p className="mt-2 text-sm text-gray-600">Proves possession of a unique, government-issued identity document. NFC chip verification of passports and national IDs provides document-level uniqueness and 18+ proof.</p></div>
       </div>
       <div className="overflow-hidden rounded-[12px] border border-[#e7e7e7] bg-white shadow-[0_1px_0_rgba(0,0,0,0.03)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_26px_rgba(15,23,42,0.08)]">
-        <div className="flex h-[100px] items-center justify-center bg-gradient-to-r from-[#6d28d9] to-[#7c3aed] text-sm font-medium text-white">selfie-check</div>
-        <div className="p-4"><h3 className="m-0 flex items-center gap-2 text-base font-semibold text-black">Selfie Check <span className="rounded-full border border-[#d9d9d9] bg-[#f8f8f8] px-2 py-0.5 text-[11px] font-medium text-gray-600">Beta</span></h3><p className="mt-2 text-sm text-gray-600">Unique human signal with the lowest friction. Mobile selfie-based liveness and face uniqueness check. Best for bot prevention, sign-ups, and actions where fast verification matters more than maximum assurance.</p></div>
+        <div className="flex items-center justify-center bg-white" style={{ height: 120 }}>
+          <img src="/images/docs/selfie-check.png" alt="Selfie Check" style={{ height: 72, width: 72, objectFit: 'contain' }} />
+        </div>
+        <div className="p-4"><h3 className="m-0 flex items-center gap-2 text-base font-semibold text-black">Selfie Check <div class="method-pill rounded-lg font-semibold px-1.5 py-0.5 text-sm leading-5 bg-blue-400/20 dark:bg-blue-400/20 text-blue-700 dark:text-blue-400">Beta</div>    </h3><p className="mt-2 text-sm text-gray-600">Unique human signal with the lowest friction. Mobile selfie-based liveness and face uniqueness check. Best for bot prevention, sign-ups, and actions where fast verification matters more than maximum assurance.</p></div>
       </div>
     </div>
   </section>

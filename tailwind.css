@@ -52,4 +52,17 @@
     background-color: #0b1220; /* near slate-950 */
     color: #e5e7eb; /* gray-200 */
   }
+
+  /* Quickstart: remove code block background while keeping syntax colors */
+  .quickstart-code .code-block .code-block-background,
+  .quickstart-code .code-block .code-block-background pre.shiki {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
+  /* Quickstart: hide code fade overlay to avoid white brush near copy button */
+  .quickstart-code .code-block [data-fade-overlay="true"] {
+    display: none !important;
+  }
+
 }
