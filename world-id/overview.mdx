@@ -61,40 +61,17 @@ At its core, World ID is built around credentials - proofs that verify something
 
 ## Start building
 
-<div className="not-prose mt-5">
-  <div className="overflow-hidden rounded-[12px] border border-zinc-200 bg-white shadow-[0_1px_0_rgba(0,0,0,0.03)] dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-none">
-    <div className="grid md:grid-cols-1">
-      {[
-        [
-          "Sybil-resistant actions",
-          "One trial per person. Each verified user gets a unique nullifier per action, so duplicates are rejected at the protocol level. Use PoH credential for high-stakes actions, Face credential for moderate assurance.",
-          "#",
-        ],
-        [
-          "Bot prevention",
-          "Block bots and AI agents at sign-up or on any action. Request a liveness-verified credential - Face for low-friction flows, Orb for maximum assurance. No CAPTCHAs, no phone numbers needed.",
-          "#",
-        ],
-        [
-          "Age verification",
-          "Verify a user is 18+ without collecting date of birth or any personal data. Use Document credential - the user's NFC-verified passport or national ID is checked locally and only a yes/no proof is returned.",
-          "#",
-        ],
-      ].map(([title, description, href]) => (
-        <a
-          href={href}
-          key={title}
-          className="group border-b border-zinc-200 p-6 no-underline transition-colors last:border-b-0 hover:bg-zinc-50 focus-visible:bg-zinc-50 dark:border-zinc-700 dark:hover:bg-zinc-800/70 dark:focus-visible:bg-zinc-800/70"
-        >
-          <div className="max-w-[980px]">
-            <h3 className="m-0 text-[22px] font-semibold leading-tight text-zinc-900 dark:text-zinc-100">{title}</h3>
-            <p className="mt-4 text-[15px] leading-7 text-zinc-600 dark:text-zinc-300">{description}</p>
-          </div>
-        </a>
-      ))}
-    </div>
-  </div>
-</div>
+<CardGroup cols={1}>
+  <Card title="Sybil-resistant actions">
+    One trial per person. Each verified user gets a unique nullifier per action, so duplicates are rejected at the protocol level. Use PoH credential for high-stakes actions, Face credential for moderate assurance.
+  </Card>
+  <Card title="Bot prevention">
+    Block bots and AI agents at sign-up or on any action. Request a liveness-verified credential - Face for low-friction flows, Orb for maximum assurance. No CAPTCHAs, no phone numbers needed.
+  </Card>
+  <Card title="Age verification">
+    Verify a user is 18+ without collecting date of birth or any personal data. Use Document credential - the user's NFC-verified passport or national ID is checked locally and only a yes/no proof is returned.
+  </Card>
+</CardGroup>
 
 ## Choosing a credential
 
@@ -134,10 +111,14 @@ At its core, World ID is built around credentials - proofs that verify something
 
 ## Privacy by architecture
 
-<div className="not-prose mt-5 rounded-[12px] border border-zinc-200 bg-white p-6 shadow-[0_1px_0_rgba(0,0,0,0.03)] dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-none">
-  <div className="grid gap-4 md:auto-rows-fr md:grid-cols-3">
-    <div className="h-full rounded-lg border border-zinc-200 p-4 dark:border-zinc-700 dark:bg-zinc-800/70"><h3 className="m-0 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Zero-knowledge proofs</h3><p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">Users prove things about themselves without sharing any personal information. Verifications are unlinkable across apps — no one can track a user's activity between services.</p></div>
-    <div className="h-full rounded-lg border border-zinc-200 p-4 dark:border-zinc-700 dark:bg-zinc-800/70"><h3 className="m-0 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Multi-party computation</h3><p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">Hashed embeddings are split into encrypted shares across independent nodes. No single party holds any data, even in encrypted form.</p></div>
-    <div className="h-full rounded-lg border border-zinc-200 p-4 dark:border-zinc-700 dark:bg-zinc-800/70"><h3 className="m-0 text-sm font-semibold text-zinc-900 dark:text-zinc-100">Self-custodial</h3><p className="mt-3 text-sm leading-6 text-zinc-600 dark:text-zinc-300">Capture and proof generation happen on the user's device. Your app never receives personal data — only a yes/no proof.</p></div>
-  </div>
-</div>
+<CardGroup cols={3}>
+  <Card title="Zero-knowledge proofs">
+    Users prove things about themselves without sharing any personal information. Verifications are unlinkable across apps — no one can track a user's activity between services.
+  </Card>
+  <Card title="Multi-party computation">
+    Hashed embeddings are split into encrypted shares across independent nodes. No single party holds any data, even in encrypted form.
+  </Card>
+  <Card title="Self-custodial">
+    Capture and proof generation happen on the user's device. Your app never receives personal data — only a yes/no proof.
+  </Card>
+</CardGroup>
