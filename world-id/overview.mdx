@@ -73,41 +73,6 @@ At its core, World ID is built around credentials - proofs that verify something
   </Card>
 </CardGroup>
 
-## Choosing a credential
-
-<div className="not-prose mt-5 overflow-hidden rounded-[12px] border border-zinc-200 bg-white shadow-[0_1px_0_rgba(0,0,0,0.03)] dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-none">
-  <table className="w-full table-fixed border-collapse text-sm">
-    <colgroup>
-      <col className="w-1/4" />
-      <col className="w-1/4" />
-      <col className="w-1/4" />
-      <col className="w-1/4" />
-    </colgroup>
-    <thead>
-      <tr className="bg-zinc-100 text-left text-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">
-        <th className="px-5 py-4 font-medium"> </th>
-        <th className="px-5 py-4 font-medium">Proof of Human</th>
-        <th className="px-5 py-4 font-medium">Document</th>
-        <th className="px-5 py-4 font-medium">Selfie Check (Beta)</th>
-      </tr>
-    </thead>
-    <tbody>
-      {[
-        ["Verification method", "Orb (iris biometrics)", "NFC passport / national ID", "Selfie capture"],
-        ["Uniqueness guarantee", "Strong (population scale)", "Per document", "Unique face"],
-        ["Attestable attributes", "Unique human", "Possession of unique document", "Unique face"],
-        ["User friction", "Orb visit (one-time)", "Passport tap", "Selfie (lowest)"],
-      ].map((row) => (
-        <tr className="border-t border-zinc-200 dark:border-zinc-700" key={row[0]}>
-          <td className="px-5 py-4 font-medium text-zinc-900 dark:text-zinc-100">{row[0]}</td>
-          <td className="px-5 py-4 text-zinc-700 dark:text-zinc-300">{row[1]}</td>
-          <td className="px-5 py-4 text-zinc-700 dark:text-zinc-300">{row[2]}</td>
-          <td className="px-5 py-4 text-zinc-700 dark:text-zinc-300">{row[3]}</td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
 
 ## Privacy by architecture
 
