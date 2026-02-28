@@ -31,7 +31,7 @@ export const Quickstart = ({
       <div className="mt-6 md:mt-4">
         <a
           href={buttonHref}
-          className="inline-flex items-center justify-center rounded-full border border-transparent bg-zinc-950 px-6 py-3 text-[16px] font-medium !text-white no-underline transition-colors hover:bg-black dark:border-zinc-300 dark:bg-white dark:!text-zinc-950 dark:hover:bg-zinc-100"
+          className="inline-flex items-center justify-center rounded-full border border-transparent bg-zinc-950 px-6 py-3 text-[16px] font-medium !text-white no-underline transition-colors hover:bg-black dark:border-zinc-700 dark:bg-zinc-800 dark:!text-zinc-100 dark:hover:bg-zinc-700"
         >
           {buttonLabel}
         </a>

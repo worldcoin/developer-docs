@@ -53,6 +53,12 @@
     color: #e5e7eb; /* gray-200 */
   }
 
+  /* Quickstart: tighten code block spacing within the card */
+  .quickstart-code .code-block {
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+
   /* Quickstart: remove code block background while keeping syntax colors */
   .quickstart-code .code-block .code-block-background,
   .quickstart-code .code-block .code-block-background pre.shiki {
