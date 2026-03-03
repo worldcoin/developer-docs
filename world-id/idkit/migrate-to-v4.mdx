@@ -39,11 +39,11 @@ If you need Rust or React Native support, contact us on [Telegram](https://t.me/
 
 ## Migration checklist
 
-- [ ] Enable World ID 4.0 for your app in Developer Portal
-- [ ] Upgrade SDK package(s) to v4
-- [ ] Generate RP signature from your backend
-- [ ] Replace `VerificationLevel` with a legacy preset
-- [ ] Move backend verification to `/api/v4/verify/{rp_id}`
+- Enable World ID 4.0 for your app in Developer Portal
+- Upgrade SDK package(s) to v4
+- Generate RP signature from your backend
+- Replace `VerificationLevel` with a legacy preset
+- Move backend verification to `/api/v4/verify/{rp_id}`
 
 ## Step 1: Upgrade your app in Developer Portal
 
@@ -136,7 +136,7 @@ rpContext := map[string]any{
 ```
 </CodeGroup>
 
-### Step 6: Handle new IDKit response
+## Step 5: Handle new IDKit response
 
 IDKit returns 3.0 or 4.0 proofs, depending on the initiated flow. 
 - Legacy presets will **only** return World ID 3.0 proofs.
@@ -144,7 +144,7 @@ IDKit returns 3.0 or 4.0 proofs, depending on the initiated flow.
 
 <IDKitResponse />
 
-## Step 5: Adopt `/v4/verify` endpoint 
+## Step 6: Adopt `/v4/verify` endpoint 
 
 The [v4 endpoint](/api-reference/developer-portal/verify) accepts both:
 
