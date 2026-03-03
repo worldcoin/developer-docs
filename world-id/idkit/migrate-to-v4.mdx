@@ -1,5 +1,5 @@
 ---
-title: "Migrate to IDKit 4.x"
+title: "IDKit 4.x"
 description: "Migration guide for upgrading to IDKit 4.x from 2.x or 3.x versions"
 "og:image": "/images/docs/docs-meta.png"
 "twitter:image": "/images/docs/docs-meta.png"
@@ -9,9 +9,13 @@ import IDKitResponse from "/snippets/idkit-response.mdx";
 
 
 <Note>
-Disclaimer: IDKit v4 does't mean you're upgrading to World ID 4.0 the SDK version is independent of the World ID protocol version. 
+IDKit 4.x migration is **Step 1** and can be completed now. It upgrades your
+integration plumbing (`rp_context`, signatures, and `/v4/verify`) while
+keeping compatibility with World ID 3.0 through legacy presets.
 
-In IDKit v4, we introduced breaking changes to support World ID 4.0 like RP context and signatures. However, IDKit v4 is backward compatible with World ID 3.0, in this page we document the path of migrating smoothly.
+**Step 2** is adopting World ID 4.0 concepts (sessions, one-time-use
+nullifiers, constraints) once World ID 4.0 is live. See the
+[World ID 4.0 migration guide](/world-id/4-0-migration).
 </Note>
 
 ## What changed
@@ -90,7 +94,8 @@ Verification level used to return the maximum available verification level, wher
 | `VerificationLevel.Orb` | `orbLegacy` | Orb-only behavior |
 | `VerificationLevel.SecureDocument` | `secureDocumentLegacy` | Secure Document or Orb |
 | `VerificationLevel.Document` | `documentLegacy` | Document, Secure Document, or Orb |
-| `VerificationLevel.Device` | `deviceLegacy` | Device or Orb  |
+| `VerificationLevel.Device` | `deviceLegacy` | Device, Document, Secure Document, or Orb |
+
 
 ## Step 4: Generate RP signature in your backend
 
@@ -139,8 +144,10 @@ rpContext := map[string]any{
 ## Step 5: Handle new IDKit response
 
 IDKit returns 3.0 or 4.0 proofs, depending on the initiated flow. 
+
 - Legacy presets will **only** return World ID 3.0 proofs.
-- The `signal_hash` is included in the response for convenience, where before you had to hash the signal yourself, that's still an option using `hashSignal` utility.
+- The `signal_hash` is included in the response for convenience. You can still
+  compute it manually with `hashSignal`.
 
 <IDKitResponse />
 
