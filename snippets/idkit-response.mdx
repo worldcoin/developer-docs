@@ -1,0 +1,57 @@
+<CodeGroup title="IDKit response">
+```json title="World ID 3.0 (Legacy)"
+{
+  "protocol_version": "3.0",
+  "nonce": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "action": "my-action",
+  "environment": "production",
+  "responses": [
+    {
+      "identifier": "orb",
+      "signal_hash": "0x00c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a4",
+      "proof": "0x1a2b3c...encoded_proof",
+      "merkle_root": "0x0abc123...root_hash",
+      "nullifier": "0x04e5f6...nullifier_hash"
+    }
+  ]
+}
+```
+
+```json title="World ID 4.0 Uniqueness"
+{
+  "protocol_version": "4.0",
+  "nonce": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "action": "my-action",
+  "environment": "production",
+  "responses": [
+    {
+      "identifier": "orb",
+      "signal_hash": "0x0",
+      "proof": ["0x1a2b...", "0x3c4d...", "0x5e6f...", "0x7a8b...", "0x9c0d..."],
+      "nullifier": "0x04e5f6...rp_scoped_nullifier",
+      "issuer_schema_id": 1,
+      "expires_at_min": 1756166400
+    }
+  ]
+}
+```
+
+```json title="World ID 4.0 Session"
+{
+  "protocol_version": "4.0",
+  "nonce": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "session_id": "ses_abc123",
+  "environment": "production",
+  "responses": [
+    {
+      "identifier": "orb",
+      "signal_hash": "0x0",
+      "proof": ["0x1a2b...", "0x3c4d...", "0x5e6f...", "0x7a8b...", "0x9c0d..."],
+      "session_nullifier": ["0x04e5f6...session_nullifier", "0x07a8b9...generated_action"],
+      "issuer_schema_id": 1,
+      "expires_at_min": 1756166400
+    }
+  ]
+}
+```
+</CodeGroup>

@@ -146,6 +146,7 @@
             "group": "IDKit",
             "pages": [
               "world-id/idkit/integrate",
+              "world-id/idkit/migrate-to-v4",
               "world-id/idkit/build-with-llms",
               "world-id/idkit/onchain-verification",
               "world-id/idkit/design-guidelines",
@@ -156,6 +157,7 @@
                   "world-id/idkit/react",
                   "world-id/idkit/swift",
                   "world-id/idkit/kotlin",
+                  "world-id/idkit/go",
                   "world-id/idkit/error-codes"
                 ]
               }

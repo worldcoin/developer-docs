@@ -4,14 +4,20 @@ title: "Integrate"
 "twitter:image": "/images/docs/docs-meta.png"
 ---
 
+import IDKitResponse from "/snippets/idkit-response.mdx";
+
 IDKit is our solution for integrating World ID. You can use the React SDK for a pre-built widget or the JS and mobile SDKs for a custom integration.
 
 To familiarize yourself with the core concepts of World ID, check out this [page](/world-id/concepts).
+
 <Note>
-  Ensure you are using IDKit v4.0.0 or later.
+  Migrating from IDKit `2.x` or another pre-v4 release? See
+  [Migrate from IDKit &lt;4 to IDKit v4](/world-id/idkit/migrate-to-v4).
 </Note>
 
 # Step 1: Install IDKit
+
+Make sure you're using the latest `4.x` version.
 
 <CodeGroup title="Install">
 ```bash title="JavaScript"
@@ -42,7 +48,9 @@ Create your app in the [Developer Portal](https://developer.world.org). If you'r
 
 # Step 3: Generate an RP signature in your backend
 Signatures verify that proof requests genuinely come from your app, preventing attackers from performing impersonation attacks.
-```typescript title="app/api/rp-signature/route.ts"
+
+<CodeGroup title="Generate RP signature">
+```typescript title="JavaScript"
 import { NextResponse } from "next/server";
 import { signRequest } from "@worldcoin/idkit/signing";
 
@@ -60,8 +68,45 @@ export async function POST(request: Request): Promise<Response> {
   });
 }
 ```
+
+```go title="Go"
+package main
+
+import (
+	"encoding/json"
+	"net/http"
+	"os"
+
+	"github.com/worldcoin/idkit/go/idkit"
+)
+
+func handleRPSignature(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	sig, err := idkit.SignRequest(os.Getenv("RP_SIGNING_KEY"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("content-type", "application/json")
+	_ = json.NewEncoder(w).Encode(map[string]any{
+		"sig":        sig.Sig,
+		"nonce":      sig.Nonce,
+		"created_at": sig.CreatedAt,
+		"expires_at": sig.ExpiresAt,
+	})
+}
+```
+</CodeGroup>
+
 <Note>
-  For RP signature generation, use `@worldcoin/idkit-server` in JavaScript/TypeScript backends. This is currently only available in JS. If you need support in another language, please reach out on [Telegram](https://t.me/worlddevelopersupport).
+  For RP signature generation, use `@worldcoin/idkit-server` (JavaScript/TypeScript)
+  or `github.com/worldcoin/idkit/go/idkit` (Go). See [Go SDK reference](/world-id/idkit/go)
+  for Go backend usage.
 </Note>
 <Warning>
   Never generate RP signatures on the client and never expose your RP signing
@@ -70,7 +115,8 @@ export async function POST(request: Request): Promise<Response> {
 
 
 # Step 4: Generate the connect URL and collect proof
-You can test during development using the [simulator.](https://simulator.worldcoin.org/)
+You can test during development using the [simulator](https://simulator.worldcoin.org/) and setting `environment` to `"staging"`. 
+
 <CodeGroup title="Create request and collect proof">
 ```typescript title="JavaScript"
 import { IDKit, orbLegacy } from "@worldcoin/idkit-core";
@@ -234,64 +280,7 @@ val completion = request.pollUntilCompletion()
 
 After the user completes the verification flow, IDKit returns one of the following response shapes depending on the protocol version and proof type.
 
-
-<CodeGroup title="IDKit response">
-```json title="World ID 3.0 (Legacy)"
-{
-  "protocol_version": "3.0",
-  "nonce": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "action": "my-action",
-  "environment": "production",
-  "responses": [
-    {
-      "identifier": "orb",
-      "signal_hash": "0x00c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a4",
-      "proof": "0x1a2b3c...encoded_proof",
-      "merkle_root": "0x0abc123...root_hash",
-      "nullifier": "0x04e5f6...nullifier_hash"
-    }
-  ]
-}
-```
-
-```json title="World ID 4.0 Uniqueness"
-{
-  "protocol_version": "4.0",
-  "nonce": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "action": "my-action",
-  "environment": "production",
-  "responses": [
-    {
-      "identifier": "orb",
-      "signal_hash": "0x0",
-      "proof": ["0x1a2b...", "0x3c4d...", "0x5e6f...", "0x7a8b...", "0x9c0d..."],
-      "nullifier": "0x04e5f6...rp_scoped_nullifier",
-      "issuer_schema_id": 1,
-      "expires_at_min": 1756166400
-    }
-  ]
-}
-```
-
-```json title="World ID 4.0 Session"
-{
-  "protocol_version": "4.0",
-  "nonce": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "session_id": "ses_abc123",
-  "environment": "production",
-  "responses": [
-    {
-      "identifier": "orb",
-      "signal_hash": "0x0",
-      "proof": ["0x1a2b...", "0x3c4d...", "0x5e6f...", "0x7a8b...", "0x9c0d..."],
-      "session_nullifier": ["0x04e5f6...session_nullifier", "0x07a8b9...generated_action"],
-      "issuer_schema_id": 1,
-      "expires_at_min": 1756166400
-    }
-  ]
-}
-```
-</CodeGroup>
+<IDKitResponse />
 
 # Step 5: Verify the proof in your backend
 

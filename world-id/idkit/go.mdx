@@ -1,0 +1,46 @@
+---
+title: "Go"
+description: "Leightweight Go module for generating RP signatures."
+"og:image": "/images/docs/docs-meta.png"
+"twitter:image": "/images/docs/docs-meta.png"
+---
+
+The Go module is a **backend signing utility only**. It is used to generate `rp_context` signatures for IDKit requests, and does not
+run client-side IDKit request flows.
+
+## Install
+
+```bash
+go get github.com/worldcoin/idkit/go/idkit@latest
+```
+
+## Generate RP signature
+
+Use `idkit.SignRequestWithTTL` instead to configure the signature's expiration time (default is 5 minutes).
+
+```go
+import "github.com/worldcoin/idkit/go/idkit"
+
+sig, err := idkit.SignRequest(os.Getenv("RP_SIGNING_KEY"))
+if err != nil {
+	// handle error
+}
+
+rpContext := map[string]any{
+	"rp_id":      "rp_xxxxx",
+	"nonce":      sig.Nonce,
+	"created_at": sig.CreatedAt,
+	"expires_at": sig.ExpiresAt,
+	"signature":  sig.Sig,
+}
+```
+
+## API
+
+- `SignRequest(signingKeyHex)`
+- `SignRequestWithTTL(signingKeyHex, ttl)`
+
+## Related pages
+
+- [Integrate IDKit](/world-id/idkit/integrate)
+- [Migrate to IDKit 4.x](/world-id/idkit/migrate-to-v4)
