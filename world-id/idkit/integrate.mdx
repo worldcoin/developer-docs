@@ -12,7 +12,7 @@ To familiarize yourself with the core concepts of World ID, check out this [page
 
 <Note>
   Migrating from IDKit `2.x` or another pre-v4 release? See
-  [Migrate from IDKit &lt;4 to IDKit v4](/world-id/idkit/migrate-to-v4).
+  [IDKit 4.0 migration guide](/world-id/idkit/migrate-to-v4).
 </Note>
 
 # Step 1: Install IDKit
@@ -103,11 +103,6 @@ func handleRPSignature(w http.ResponseWriter, r *http.Request) {
 ```
 </CodeGroup>
 
-<Note>
-  For RP signature generation, use `@worldcoin/idkit-server` (JavaScript/TypeScript)
-  or `github.com/worldcoin/idkit/go/idkit` (Go). See [Go SDK reference](/world-id/idkit/go)
-  for Go backend usage.
-</Note>
 <Warning>
   Never generate RP signatures on the client and never expose your RP signing
   key. If the key leaks, attackers can forge requests from your app.
