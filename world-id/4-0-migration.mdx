@@ -10,9 +10,8 @@ tag: "Coming Soon"
 ## Start Here
 
 - Register or upgrade your app in the [Developer Portal](https://developer.worldcoin.org).
-- Complete [IDKit 4.x migration](/world-id/idkit/migrate-to-v4), if you have an existing integration.
+- Upgrade to IDKit 4.x as we describe below.
 - Choose the migration path below based on your app behavior.
-- Follow the migration path described below to move to World ID 4.0.
 
 ### Uniqueness vs Session Proofs (3.0 to 4.0)
 
@@ -31,6 +30,16 @@ link across requests.
 
 Rule of thumb: use `nullifier` for one-time uniqueness and `session_id` for continuity.
 
+## Upgrading to IDKit 4.x 
+
+A prerequisite to adopting World ID 4.0 is upgrading to IDKit 4.x, which makes major breaking changes to support new protocol. Here's what changed:
+
+1. **RP context is required**: Requests now require `rp_context` (`rp_id`, `nonce`, `created_at`, `expires_at`, `signature`).
+2. **IDKit response changed**: You no longer need to reshape the payload or compute `signal_hash` for the verify endpoint. 
+3. **[Backend verification endpoint](/api-reference/developer-portal/verify) changed**: Use `POST /api/v4/verify/{rp_id}`.
+4. `@worldcoin/idkit-standalone` is discontinued. Use `@worldcoin/idkit-core` for vanilla JS/browser.
+
+For more details and example code, see the [IDKit 4.0 migration guide](/world-id/idkit/migrate-to-v4).
 
 ## Migration Timeline (Phase Dates)
 

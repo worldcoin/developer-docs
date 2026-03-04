@@ -162,7 +162,7 @@
           },
           {
             "group": "Migration",
-            "pages": ["world-id/idkit/migrate-to-v4", "world-id/4-0-migration"]
+            "pages": ["world-id/4-0-migration"]
           },
           {
             "group": "Selfie Check (Beta)",
