@@ -37,7 +37,15 @@ Usage counters are tracked per **human** per **endpoint** — so two agents back
 4. Server validates the signature, recovers the wallet address, and looks up the human identifier in the AgentBook
 5. If the agent is registered and the access mode allows it, access is granted or a discount is applied. Otherwise, the standard payment flow continues.
 
-## Server Usage
+## Server Verification Usage
+
+### Install
+
+Install the library from npm:
+
+```bash
+npm install @worldcoin/agentkit
+```
 
 ### Hooks (Recommended)
 
@@ -278,11 +286,13 @@ const routes = {
 ## Register your agent
 ### Install the CLI
 
+Install from npm:
+
 ```bash
-bun add -g @worldcoin/agentkit-cli
+npm install -g @worldcoin/agentkit-cli
 ```
 
-You can also run it without installing globally:
+You can also run it directly without a global install:
 
 ```bash
 npx @worldcoin/agentkit-cli register <agent-address>
