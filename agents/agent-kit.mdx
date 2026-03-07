@@ -326,7 +326,7 @@ agentkit register 0x1234567890abcdef1234567890abcdef12345678 --network base --au
 You can also point to a custom backend by setting `API_URL`:
 
 ```bash
-API_URL=https://your-api.example.com agentkit register 0x1234567890abcdef1234567890abcdef12345678 --network base --auto
+API_URL=https://your-api.example.com agentkit register 0x1234567890abcdef1234567890abcdef12345678
 ```
 
 The CLI will `POST` the registration payload to:
@@ -363,13 +363,7 @@ On success, the API returns a transaction hash:
 Use this when you want the CLI to produce the registration payload and contract call inputs, but you will send the transaction yourself.
 
 ```bash
-agentkit register 0x1234567890abcdef1234567890abcdef12345678 --network base
-```
-
-For Base Sepolia:
-
-```bash
-agentkit register 0x1234567890abcdef1234567890abcdef12345678 --network base-sepolia
+agentkit register 0x1234567890abcdef1234567890abcdef12345678 --network base --manual
 ```
 
 After the World ID check succeeds, the CLI returns:
