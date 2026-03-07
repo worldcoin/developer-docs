@@ -315,12 +315,55 @@ When you run the CLI:
 4. After verification completes, it returns the proof payload needed for `register(...)`.
 5. You either submit the transaction yourself or let your backend submit it with `--auto`.
 
-### Option 1: Manual Registration
+### Option 1: Automatic Registration (Recommended)
+
+The simplest way to register. The `--auto` flag uses a default API to submit the registration transaction on your behalf:
+
+```bash
+agentkit register 0x1234567890abcdef1234567890abcdef12345678 --network base --auto
+```
+
+You can also point to a custom backend by setting `API_URL`:
+
+```bash
+API_URL=https://your-api.example.com agentkit register 0x1234567890abcdef1234567890abcdef12345678 --network base --auto
+```
+
+The CLI will `POST` the registration payload to:
+
+```text
+POST {API_URL}/register
+Content-Type: application/json
+```
+
+Example request body:
+
+```json
+{
+  "agent": "0x1234567890abcdef1234567890abcdef12345678",
+  "root": "123456789",
+  "nonce": "0",
+  "nullifierHash": "987654321",
+  "proof": ["0x...", "0x...", "0x...", "0x...", "0x...", "0x...", "0x...", "0x..."],
+  "contract": "0xE1D1D3526A6FAa37eb36bD10B933C1b77f4561a4",
+  "network": "base"
+}
+```
+
+On success, the API returns a transaction hash:
+
+```json
+{
+  "txHash": "0x..."
+}
+```
+
+### Option 2: Manual Registration
 
 Use this when you want the CLI to produce the registration payload and contract call inputs, but you will send the transaction yourself.
 
 ```bash
-agentkit register 0x1234567890abcdef1234567890abcdef12345678
+agentkit register 0x1234567890abcdef1234567890abcdef12345678 --network base
 ```
 
 For Base Sepolia:
@@ -345,64 +388,12 @@ Submit those values to:
 register(address agent, uint256 root, uint256 nonce, uint256 nullifierHash, uint256[8] proof)
 ```
 
-### Option 2: Automatic Registration via API
-
-Use this when you have a backend that accepts the registration payload and submits the transaction.
-
-Set `API_URL` and run:
-
-```bash
-API_URL=https://your-api.example.com agentkit register 0x1234567890abcdef1234567890abcdef12345678 --auto
-```
-
-The CLI will `POST` the registration payload to:
-
-```text
-POST {API_URL}/register
-Content-Type: application/json
-```
-
-Example request body:
-
-```json
-{
-  "agent": "0x1234567890abcdef1234567890abcdef12345678",
-  "root": "123456789",
-  "nonce": "0",
-  "nullifierHash": "987654321",
-  "proof": ["0x...", "0x...", "0x...", "0x...", "0x...", "0x...", "0x...", "0x..."],
-  "contract": "0xE1D1D3526A6FAa37eb36bD10B933C1b77f4561a4",
-  "network": "base"
-}
-```
-
-On success, the API can return a transaction hash:
-
-```json
-{
-  "txHash": "0x..."
-}
-```
-
-### Example User Experience
-
-```bash
-agentkit register 0x1234567890abcdef1234567890abcdef12345678
-```
-
-The CLI will:
-
-- look up the next nonce
-- print a World App QR code
-- wait for verification
-- output the registration payload
-
 ### Notes
 
 - The agent address must be a valid EVM address.
 - Registration is nonce-based. Re-registering the same agent requires the next nonce from the contract.
 - The World ID proof is bound to both the agent address and the current nonce, so you cannot reuse an old proof for a later registration.
-- `--auto` requires `API_URL`.
+- `--auto` uses a default API when `API_URL` is not set. Set `API_URL` to point to a custom backend.
 
 ### Troubleshooting
 
@@ -414,9 +405,9 @@ Make sure the agent address is a 20-byte hex EVM address such as `0x1234...`.
 
 Retry the command and complete the World App step within the session window.
 
-### `API_URL environment variable is required with --auto`
+### `--auto` ran out of funds
 
-Set the environment variable before running the command:
+Set your own override environment variable before running the command:
 
 ```bash
 API_URL=https://your-api.example.com agentkit register 0x1234567890abcdef1234567890abcdef12345678 --auto
