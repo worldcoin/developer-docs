@@ -37,7 +37,7 @@ Usage counters are tracked per **human** per **endpoint** — so two agents back
 4. Server validates the signature, recovers the wallet address, and looks up the human identifier in the AgentBook
 5. If the agent is registered and the access mode allows it, access is granted or a discount is applied. Otherwise, the standard payment flow continues.
 
-## Server Verification Usage
+## Server Implementation
 
 ### Install
 
@@ -65,7 +65,7 @@ import {
 	InMemoryAgentKitStorage,
 } from '@worldcoin/agentkit'
 
-const NETWORK = 'eip155:84532' // Base Sepolia
+const NETWORK = 'eip155:480' // World Chain
 const payTo = '0xYourAddress'
 
 const agentBook = createAgentBookVerifier()
@@ -77,8 +77,9 @@ const hooks = createAgentkitHooks({
 	mode: { type: 'free-trial', uses: 3 },
 })
 
+// World Chain facilitator for testing only — do not use in production as it may run out of funds
 const facilitatorClient = new HTTPFacilitatorClient({
-	url: 'https://x402.org/facilitator',
+	url: 'https://x402-worldchain.vercel.app/facilitator',
 })
 
 const resourceServer = new x402ResourceServer(facilitatorClient)
@@ -164,11 +165,11 @@ The client pays the discounted price. Payment verification fails (amount too low
 To support contract wallets (Safe, Coinbase Smart Wallet, etc.), pass a viem public client's `verifyMessage` function:
 
 ```typescript
-import { baseSepolia } from 'viem/chains'
+import { worldchain } from 'viem/chains'
 import { createPublicClient, http } from 'viem'
 
 const publicClient = createPublicClient({
-	chain: baseSepolia,
+	chain: worldchain,
 	transport: http(),
 })
 
@@ -181,7 +182,7 @@ const hooks = createAgentkitHooks({
 
 ### Custom AgentBook Configuration
 
-`createAgentBookVerifier()` has a built-in mapping of known AgentBook deployments (currently Base Sepolia). The contract address and RPC endpoint are resolved automatically from the agent's `chainId`. You can override the contract address and/or RPC for custom deployments:
+`createAgentBookVerifier()` has a built-in mapping of known AgentBook deployments. The contract address and RPC endpoint are resolved automatically from the agent's `chainId`. You can override the contract address and/or RPC for custom deployments:
 
 ```typescript
 // Uses known deployments — no config needed for supported chains
@@ -194,11 +195,11 @@ const customAgentBook = createAgentBookVerifier({
 })
 
 // Or provide a fully custom viem client
-import { base } from 'viem/chains'
+import { worldchain } from 'viem/chains'
 import { createPublicClient, http } from 'viem'
 
 const customClientAgentBook = createAgentBookVerifier({
-	client: createPublicClient({ chain: base, transport: http() }),
+	client: createPublicClient({ chain: worldchain, transport: http() }),
 })
 ```
 
@@ -220,7 +221,7 @@ import {
 const extensions = declareAgentkitExtension({
 	domain: 'api.example.com',
 	resourceUri: 'https://api.example.com/data',
-	network: 'eip155:8453',
+	network: 'eip155:480',
 	statement: 'Verify your agent is backed by a real human',
 })
 
@@ -265,6 +266,12 @@ const routes = {
 			{
 				scheme: 'exact',
 				price: '$0.01',
+				network: 'eip155:480', // World Chain
+				payTo: '0xYourEVMAddress',
+			},
+			{
+				scheme: 'exact',
+				price: '$0.01',
 				network: 'eip155:8453', // Base
 				payTo: '0xYourEVMAddress',
 			},
@@ -276,7 +283,7 @@ const routes = {
 			},
 		],
 		extensions: declareAgentkitExtension({
-			network: ['eip155:8453', 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp'],
+			network: ['eip155:480', 'eip155:8453', 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp'],
 			statement: 'Verify your agent is backed by a real human',
 		}),
 	},
@@ -418,9 +425,9 @@ API_URL=https://your-api.example.com agentkit register 0x1234567890abcdef1234567
 
 ## Supported Chains
 
-### EVM (Ethereum, Base, Polygon, etc.)
+### EVM (World Chain, Ethereum, Base, Polygon, etc.)
 
-- **Chain ID format:** `eip155:*` (e.g., `eip155:8453` for Base)
+- **Chain ID format:** `eip155:*` (e.g., `eip155:480` for World Chain, `eip155:8453` for Base)
 - **Signature type:** `eip191`
 - **Signature schemes:** `eip191` (EOA, default), `eip1271` (smart contract), `eip6492` (counterfactual)
 - **Message format:** EIP-4361 (SIWE)
