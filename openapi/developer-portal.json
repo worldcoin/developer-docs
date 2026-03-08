@@ -267,7 +267,7 @@
         },
         "servers": [
           {
-            "url": "https://app-backend.toolsforhumanity.com/public/v1/miniapps/prices?fiatCurrencies=USD&cryptoCurrencies=WLD"
+            "url": "https://app-backend.toolsforhumanity.com"
           }
         ],
         "parameters": [
