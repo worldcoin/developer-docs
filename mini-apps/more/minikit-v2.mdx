@@ -168,7 +168,7 @@ const nonce = crypto.randomUUID().replace(/-/g, '');
 await MiniKit.walletAuth({ nonce });
 ```
 
-#### 6) `sendTransaction` 2.0
+### Transactions 2.0
 
 Send Transaction will switch to [Permit2 Approves](https://github.com/Uniswap/permit2/blob/cc56ad0f3439c502c246fc5cfcc3db92bb8b7219/src/AllowanceTransfer.sol#L26-L30) with expiration time 0. 
 Apps that need longer standing approvals will be granted on a case by case basis. This will require a hard migration, but provides much more robust security and flexibility for standing approvals to developers.
@@ -215,6 +215,15 @@ interface MiniKitSendTransactionOptions<TCustomFallback = SendTransactionResult>
   transaction: Transaction[];
   chainId?: number; // defaults to 480 on World App
 }
+```
+#### Polling for transaction completion now uses userOpHash
+```tsx
+const result: UseTransactionReceiptResult = useWaitForUserOperationReceipt({
+  client: client,
+  userOpHash:
+    '0x...',
+  pollingInterval,
+});
 ```
 
 ## Running your Mini App as a Standalone App
