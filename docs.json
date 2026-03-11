@@ -124,7 +124,10 @@
                   },
                   {
                     "group": "Issuers",
-                    "pages": ["world-id/reference/poh-issuer"]
+                    "pages": [
+                      "world-id/reference/poh-issuer",
+                      "world-id/reference/nfc-issuer"
+                    ]
                   }
                 ]
               },
