@@ -1,0 +1,311 @@
+---
+title: "Agent Kit SDK Reference"
+description: "Reference for Agent Kit modes, APIs, supported chains, and low-level helpers."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"og:description": "Reference for the Agent Kit SDK surface and advanced integration behavior."
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+{/* cspell:ignore DEVNET */}
+
+Use this page when you need the full Agent Kit surface area. For the shortest path to a working setup, start with [Integrate Agent Kit](/world-id/agents/agent-kit/integrate).
+
+## Exported surface
+
+`@worldcoin/agentkit` exports:
+
+- Constants: `AGENTKIT`, `AgentkitPayloadSchema`, `SOLANA_MAINNET`, `SOLANA_DEVNET`, `SOLANA_TESTNET`
+- Core server APIs: `declareAgentkitExtension`, `agentkitResourceServerExtension`, `createAgentkitHooks`, `createAgentBookVerifier`
+- Validation and verification helpers: `parseAgentkitHeader`, `validateAgentkitMessage`, `verifyAgentkitSignature`, `buildAgentkitSchema`
+- Chain helpers:
+  - EVM: `formatSIWEMessage`, `verifyEVMSignature`, `extractEVMChainId`
+  - Solana: `formatSIWSMessage`, `verifySolanaSignature`, `decodeBase58`, `encodeBase58`, `extractSolanaChainReference`
+- Storage: `InMemoryAgentKitStorage`
+- Types: `AgentkitExtension`, `AgentkitExtensionInfo`, `AgentkitExtensionSchema`, `AgentkitMode`, `AgentkitPayload`, `CompleteAgentkitInfo`, `DeclareAgentkitOptions`, `SignatureScheme`, `SignatureType`, `AgentkitValidationResult`, `AgentkitValidationOptions`, `AgentkitVerifyResult`, `SupportedChain`, `AgentBookVerifier`, `AgentBookOptions`, `AgentBookNetwork`, `AgentKitStorage`, `CreateAgentkitHooksOptions`, `AgentkitHookEvent`
+
+## Access modes
+
+Usage counters are tracked per human per endpoint. Two agents backed by the same human share the same counter.
+
+| Mode         | Fields                                                 | Behavior |
+| ------------ | ------------------------------------------------------ | -------- |
+| `free`       | `{ type: "free" }`                                     | Registered human-backed agents always bypass payment. |
+| `free-trial` | `{ type: "free-trial"; uses?: number }`                | Registered human-backed agents bypass payment the first `N` times. Default `uses` is `1`. |
+| `discount`   | `{ type: "discount"; percent: number; uses?: number }` | Registered human-backed agents can underpay by the configured percentage for the first `N` times. |
+
+`discount` mode requires `verifyFailureHook` to be registered on the facilitator. Without it, discounted underpayments fail settlement verification.
+
+## Core server APIs
+
+### `declareAgentkitExtension(options?)`
+
+Use this helper in your x402 route config to declare the `agentkit` extension that should be returned in a `402 Payment Required` response.
+
+| Parameter           | Type                 | Description |
+| ------------------- | -------------------- | ----------- |
+| `domain`            | `string`             | Server hostname. Usually auto-derived from the request URL. |
+| `resourceUri`       | `string`             | Full protected resource URI. Usually auto-derived from the request URL. |
+| `network`           | `string \| string[]` | CAIP-2 network or list of networks. If omitted, the extension derives them from `accepts[].network`. |
+| `statement`         | `string`             | Human-readable signing purpose. |
+| `version`           | `string`             | CAIP-122 version. Defaults to `"1"`. |
+| `expirationSeconds` | `number`             | Challenge lifetime in seconds. |
+| `mode`              | `AgentkitMode`       | Access mode clients should expect after verification. |
+
+Returns a record keyed by `agentkit` that can be attached directly to an x402 route declaration.
+
+### `agentkitResourceServerExtension`
+
+Register this extension once on your x402 resource server. It turns the declaration returned by `declareAgentkitExtension(...)` into a full 402 challenge by:
+
+- generating the nonce and timestamps
+- inferring `domain` and `resourceUri` from the incoming request when you omit them
+- expanding each supported network into the correct signature types for that chain family
+
+### `createAgentkitHooks(options)`
+
+Creates the request-time verification hooks used by the golden path integration.
+
+| Option      | Type                                 | Description |
+| ----------- | ------------------------------------ | ----------- |
+| `agentBook` | `AgentBookVerifier`                  | Verifier used to resolve the agent wallet to a human identifier. Required. |
+| `mode`      | `AgentkitMode`                       | Access mode. Defaults to `{ type: "free" }`. |
+| `storage`   | `AgentKitStorage`                    | Required for `free-trial` and `discount`. Optional for `free`. |
+| `rpcUrl`    | `string`                             | Custom EVM RPC used during signature verification. |
+| `onEvent`   | `(event: AgentkitHookEvent) => void` | Optional logging/debug callback. |
+
+Returns:
+
+| Field               | Type                  | Description |
+| ------------------- | --------------------- | ----------- |
+| `requestHook`       | `function`            | Runs before payment settlement and can grant access for `free` or `free-trial`. |
+| `verifyFailureHook` | `function \| undefined` | Present only for `discount` mode. Register it on the facilitator so discounted underpayments can be recovered. |
+
+`requestHook` expects a context shaped like:
+
+```ts
+{
+  adapter: {
+    getHeader(name: string): string | undefined
+    getUrl(): string
+  }
+  path: string
+}
+```
+
+That is why Express and Next.js are compatible even though the docs use Hono for the concrete example: you can adapt any server framework to this minimal contract.
+
+### `AgentkitHookEvent`
+
+`onEvent` receives one of these event shapes:
+
+| Event type            | Fields |
+| --------------------- | ------ |
+| `agent_verified`      | `resource`, `address`, `humanId` |
+| `agent_not_verified`  | `resource`, `address` |
+| `validation_failed`   | `resource`, `error?` |
+| `discount_applied`    | `resource`, `address`, `humanId` |
+| `discount_exhausted`  | `resource`, `address`, `humanId` |
+
+## AgentBook lookup
+
+### `createAgentBookVerifier(options?)`
+
+Creates the verifier used to resolve a wallet address to an anonymous human identifier.
+
+Built-in AgentBook deployments currently include:
+
+- World Chain mainnet: `0xA23aB2712eA7BBa896930544C7d6636a96b944dA`
+- Base mainnet: `0xE1D1D3526A6FAa37eb36bD10B933C1b77f4561a4`
+- Base Sepolia: `0xA23aB2712eA7BBa896930544C7d6636a96b944dA`
+
+| Option            | Type                | Description |
+| ----------------- | ------------------- | ----------- |
+| `client`          | `PublicClient`      | Fully custom viem client. Overrides automatic client creation. |
+| `contractAddress` | `` `0x${string}` `` | Custom AgentBook contract address. |
+| `rpcUrl`          | `string`            | Custom RPC URL for automatic client creation. |
+| `network`         | `AgentBookNetwork`  | Pin lookup to `"world"`, `"base"`, or `"base-sepolia"`. |
+
+Selection behavior:
+
+- If `network` is provided, lookup is pinned to that built-in deployment.
+- If `network` is omitted and the incoming `chainId` is one of `eip155:480`, `eip155:8453`, or `eip155:84532`, lookup stays on that chain.
+- Otherwise, built-in lookup falls back to World Chain unless you override the deployment manually.
+
+This makes cross-chain setups explicit. For example, if your CLI registration flow uses Base mainnet but your paid route settles on World Chain, pin lookup with:
+
+```typescript
+const agentBook = createAgentBookVerifier({ network: 'base' })
+```
+
+The returned object exposes:
+
+```ts
+lookupHuman(address: string, chainId: string): Promise<string | null>
+```
+
+## Storage and replay protection
+
+### `AgentKitStorage`
+
+`AgentKitStorage` is the persistence interface used for free-trial counters, discount counters, and optional nonce replay protection.
+
+| Method                              | Description |
+| ----------------------------------- | ----------- |
+| `getUsageCount(endpoint, humanId)`  | Return the current usage count for a human on a route. |
+| `incrementUsage(endpoint, humanId)` | Increment the usage count after a successful free-trial or discount use. |
+| `hasUsedNonce?(nonce)`              | Optional replay check. Return `true` if the nonce has already been seen. |
+| `recordNonce?(nonce)`               | Optional replay recorder. Persist the nonce after validation succeeds. |
+
+### `InMemoryAgentKitStorage`
+
+`InMemoryAgentKitStorage` is the reference implementation exported by the package.
+
+- Good for local development, demos, and tests
+- Not appropriate for production because usage counters and nonce history disappear on restart
+
+## Validation and verification helpers
+
+### `parseAgentkitHeader(header)`
+
+Parses the base64-encoded `agentkit` header into a structured payload. It throws if the header is not valid base64, is not valid JSON, or does not match the expected schema.
+
+### `validateAgentkitMessage(payload, resourceUri, options?)`
+
+Validates message binding, freshness, and optional replay checks.
+
+| Option       | Type                         | Description |
+| ------------ | ---------------------------- | ----------- |
+| `maxAge`     | `number`                     | Maximum age for `issuedAt` in milliseconds. Defaults to 5 minutes. |
+| `checkNonce` | `(nonce: string) => boolean \| Promise<boolean>` | Optional replay validation hook. |
+
+Validation rules include:
+
+- `domain` must match the hostname of the protected resource URL
+- `uri` must resolve to the same host as the protected resource URL
+- `issuedAt` must be valid, not in the future, and not older than `maxAge`
+- `expirationTime`, when provided, must still be in the future
+- `notBefore`, when provided, must already have passed
+- `checkNonce`, when provided, must accept the nonce
+
+Returns:
+
+```ts
+{ valid: boolean; error?: string }
+```
+
+### `verifyAgentkitSignature(payload, rpcUrl?)`
+
+Verifies the cryptographic signature and returns the recovered address on success.
+
+| Option   | Type     | Description |
+| -------- | -------- | ----------- |
+| `rpcUrl` | `string` | Optional custom RPC endpoint for EVM verification. |
+
+Behavior:
+
+- `eip155:*` payloads are reconstructed into a SIWE message and verified with viem
+- `solana:*` payloads are reconstructed into a SIWS message and verified with `tweetnacl`
+- unsupported chain namespaces return `{ valid: false, error: ... }`
+
+Returns:
+
+```ts
+{ valid: boolean; address?: string; error?: string }
+```
+
+### `buildAgentkitSchema()`
+
+Returns the JSON schema used in 402 challenge payloads.
+
+## Chain utilities
+
+### EVM
+
+| Export                 | Description |
+| ---------------------- | ----------- |
+| `formatSIWEMessage`    | Reconstruct the SIWE message used for EVM signing and verification. |
+| `verifyEVMSignature`   | Verify an EVM signature for the reconstructed SIWE message. |
+| `extractEVMChainId`    | Convert a CAIP-2 `eip155:*` chain ID to its numeric chain ID. |
+
+EVM verification uses viem's `verifyMessage`, which covers EOAs and ERC-1271 smart wallets. Counterfactual wallets can still represent their signature scheme with `signatureScheme: "eip6492"` in the payload schema.
+
+### Solana
+
+| Export                        | Description |
+| ----------------------------- | ----------- |
+| `formatSIWSMessage`           | Reconstruct the Sign-In With Solana message used for verification. |
+| `verifySolanaSignature`       | Verify the detached signature against the reconstructed SIWS message. |
+| `decodeBase58` / `encodeBase58` | Decode or encode Base58 values used in Solana payloads. |
+| `extractSolanaChainReference` | Extract the chain reference from a CAIP-2 `solana:*` chain ID. |
+
+## Supported chains and signature behavior
+
+### EVM
+
+- Chain namespace: `eip155:*`
+- Payload `type`: `eip191` or `eip1271`
+- Optional `signatureScheme`: `eip191`, `eip1271`, or `eip6492`
+- Message format: SIWE
+
+### Solana
+
+- Chain namespace: `solana:*`
+- Payload `type`: `ed25519`
+- Optional `signatureScheme`: `siws`
+- Message format: Sign-In With Solana
+- Exported constants: `SOLANA_MAINNET`, `SOLANA_DEVNET`, `SOLANA_TESTNET`
+
+## Manual usage example
+
+Use the low-level helpers directly when you are not using the x402 Hono wrapper or when you want full control over request handling:
+
+```typescript
+import {
+	AGENTKIT,
+	createAgentBookVerifier,
+	declareAgentkitExtension,
+	parseAgentkitHeader,
+	validateAgentkitMessage,
+	verifyAgentkitSignature,
+} from '@worldcoin/agentkit'
+
+const extensions = declareAgentkitExtension({
+	domain: 'api.example.com',
+	resourceUri: 'https://api.example.com/data',
+	network: 'eip155:480',
+	statement: 'Verify your agent is backed by a real human',
+})
+
+const agentBook = createAgentBookVerifier({ network: 'base' })
+
+async function handleRequest(request: Request) {
+	const header = request.headers.get(AGENTKIT)
+	if (!header) return
+
+	const payload = parseAgentkitHeader(header)
+
+	const validation = await validateAgentkitMessage(payload, 'https://api.example.com/data')
+	if (!validation.valid) {
+		return { error: validation.error }
+	}
+
+	const verification = await verifyAgentkitSignature(payload)
+	if (!verification.valid || !verification.address) {
+		return { error: verification.error }
+	}
+
+	const humanId = await agentBook.lookupHuman(verification.address, payload.chainId)
+	if (!humanId) {
+		return { error: 'Agent is not registered in the AgentBook' }
+	}
+
+	return { humanId }
+}
+```
+
+## Production notes
+
+- Treat `InMemoryAgentKitStorage` as a demo-only implementation.
+- If you need limited free uses, persistent storage is part of the integration, not an optional enhancement.
+- If you need `discount` mode, wire `verifyFailureHook` into the facilitator before you ship.
+- Use Hono as a reference example, not as a framework restriction. The package surface is generic enough to be adapted to Express or Next.js handlers.

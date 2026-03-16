@@ -1,0 +1,171 @@
+---
+title: "Integrate Agent Kit"
+description: "Add Agent Kit to an x402 server so human-backed agents can access your protected routes."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"og:description": "Use Agent Kit to recognize agents backed by real, World ID-verified humans."
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+Agent Kit lets an x402 server recognize when a request comes from an agent backed by a World ID-verified human. Use this page for the shortest path to a working integration. For `discount` mode, custom AgentBook deployments, Solana support, or low-level APIs, jump to the [SDK Reference](/world-id/agents/agent-kit/sdk-reference).
+
+This guide uses one default path throughout:
+
+- World Chain payments on `eip155:480`
+- Agent registration on Worldchain
+- AgentBook lookup pinned to Worldchain with `createAgentBookVerifier({ network: "world" })`
+- `free-trial` mode with 3 uses
+- Hono plus `@x402/hono` as the reference server example
+
+# Step 1: Install Agent Kit
+
+```bash
+npm install @worldcoin/agentkit
+```
+
+
+# Step 2: Register the agent in AgentBook
+
+Register the wallet address your agent will sign with:
+
+```bash
+npx @worldcoin/agentkit-cli register <agent-address> 
+```
+
+By default, the CLI registers on Worldchain and submits through the hosted relay. That matches the lookup configuration used in the example below.
+
+During registration, the CLI:
+
+1. Looks up the next nonce for the agent address
+2. Prompts the World App verification flow
+3. Submits the registration transaction
+
+Once the wallet is registered, Agent Kit can resolve it to an anonymous human identifier at request time.
+
+# Step 3: Wire the hooks-based server flow
+
+The example below shows the maintained Hono wrapper path. Agent Kit itself is not Hono-only: Express and Next.js route handlers can use the same hooks and low-level helpers from the [SDK Reference](/world-id/agents/agent-kit/sdk-reference).
+
+```typescript
+import { Hono } from 'hono'
+import { serve } from '@hono/node-server'
+import { HTTPFacilitatorClient } from '@x402/core/http'
+import { ExactEvmScheme } from '@x402/evm/exact/server'
+import {
+	paymentMiddlewareFromHTTPServer,
+	x402HTTPResourceServer,
+	x402ResourceServer,
+} from '@x402/hono'
+import {
+	agentkitResourceServerExtension,
+	createAgentBookVerifier,
+	createAgentkitHooks,
+	declareAgentkitExtension,
+	InMemoryAgentKitStorage,
+} from '@worldcoin/agentkit'
+
+const WORLD_CHAIN = 'eip155:480'
+const BASE = "eip155:8453";
+const WORLD_USDC = '0x79A02482A880bCE3F13e09Da970dC34db4CD24d1'
+const payTo = '0xYourAddress'
+
+const facilitatorClient = new HTTPFacilitatorClient({
+	url: 'https://x402-worldchain.vercel.app/facilitator',
+})
+
+const evmScheme = new ExactEvmScheme()
+	// Register a money parser to accept USDC payments on WorldChain.
+	.registerMoneyParser(async (amount, network) => {
+		if (network !== WORLD_CHAIN) return null
+
+		return {
+			amount: String(Math.round(amount * 1e6)),
+			asset: WORLD_USDC,
+			extra: { name: 'USD Coin', version: '2' },
+		}
+	})
+
+const agentBook = createAgentBookVerifier({ network: 'world' })
+const storage = new InMemoryAgentKitStorage()
+
+const hooks = createAgentkitHooks({
+	agentBook,
+	storage,
+	mode: { type: 'free-trial', uses: 3 },
+})
+
+const resourceServer = new x402ResourceServer(facilitatorClient)
+	.register(WORLD_CHAIN, evmScheme)
+	.registerExtension(agentkitResourceServerExtension)
+
+const routes = {
+	'GET /data': {
+		// Accept payments on both World Chain and Base
+		accepts: [
+			{
+				scheme: 'exact',
+				price: '$0.01',
+				network: WORLD_CHAIN,
+				payTo,
+			},
+			{
+				scheme: 'exact',
+				price: '$0.01',
+				network: BASE,
+				payTo,
+			},
+		],
+		extensions: declareAgentkitExtension({
+			statement: 'Verify your agent is backed by a real human',
+			mode: { type: 'free-trial', uses: 3 },
+		}),
+	},
+}
+
+const httpServer = new x402HTTPResourceServer(resourceServer, routes)
+	.onProtectedRequest(hooks.requestHook)
+
+const app = new Hono()
+app.use(paymentMiddlewareFromHTTPServer(httpServer))
+
+app.get('/data', c => {
+	return c.json({ message: 'Protected content' })
+})
+
+serve({ fetch: app.fetch, port: 4021 })
+```
+
+This example payments on both WorldChain and Base while explicitly checking registrations against the World chainAgentBook deployment.
+
+# Step 4: Configure the default mode and storage
+
+This guide uses `free-trial` mode so registered human-backed agents get 3 free requests before the normal x402 payment flow resumes. `InMemoryAgentKitStorage` is fine for local testing, but production should persist both usage counters and nonces.
+
+```typescript
+import type { AgentKitStorage } from '@worldcoin/agentkit'
+
+class DatabaseAgentKitStorage implements AgentKitStorage {
+	async getUsageCount(endpoint: string, humanId: string) {
+		return db.getUsageCount(endpoint, humanId)
+	}
+
+	async incrementUsage(endpoint: string, humanId: string) {
+		await db.incrementUsage(endpoint, humanId)
+	}
+
+	async hasUsedNonce(nonce: string) {
+		return db.hasUsedNonce(nonce)
+	}
+
+	async recordNonce(nonce: string) {
+		await db.recordNonce(nonce)
+	}
+}
+
+const hooks = createAgentkitHooks({
+	agentBook,
+	storage: new DatabaseAgentKitStorage(),
+	mode: { type: 'free-trial', uses: 3 },
+})
+```
+
+Need `discount` mode, Solana, custom AgentBook deployments, or the low-level validation helpers? Continue to the [SDK Reference](/world-id/agents/agent-kit/sdk-reference).

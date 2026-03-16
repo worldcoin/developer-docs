@@ -158,6 +158,13 @@
             ]
           },
           {
+            "group": "Agents",
+            "pages": [
+              "world-id/agents/agent-kit/integrate",
+              "world-id/agents/agent-kit/sdk-reference"
+            ]
+          },
+          {
             "group": "Credentials",
             "pages": ["world-id/credentials/legacy-presets"]
           },
@@ -356,6 +363,10 @@
     ]
   },
   "redirects": [
+    {
+      "source": "/agents/agent-kit",
+      "destination": "/world-id/agents/agent-kit/integrate"
+    },
     {
       "source": "/world-id",
       "destination": "/world-id/overview"
