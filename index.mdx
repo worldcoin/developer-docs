@@ -11,57 +11,24 @@ Choose your integration path:
 
 - **Mini Apps** – Build mini applications that run inside World App. Leverage World ID and the wallet distribution.
 - **World ID** – Add anonymous proof of human to your product on any platform.
+- **Agents** – Recognize agents backed by World ID verified humans.
 - **World Chain** – Build directly on our blockchain infrastructure.
 
-<div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mt-10">
-  <div className="group relative flex flex-col rounded-xl border overflow-hidden hover:shadow-md transition">
-    <a href="/mini-apps" className="absolute inset-0 z-10 no-underline hover:no-underline border-0" aria-label="Mini Apps" />
-    <img
-      src="/images/docs/mini-apps-cover.png"
-      alt="Mini Apps"
-      className="w-full h-40 object-cover pointer-events-none select-none"
-      draggable={false}
-    />
-    <div className="flex-1 p-3 flex flex-col">
-      <h3 className="font-semibold m-0">Create a Mini App</h3>
-      <p className="text-sm text-gray-600 mt-auto">Mini applications integrated in World App</p>
-    </div>
-  </div>
+<Columns cols={2}>
+  <Card title="Create a Mini App" img="/images/docs/mini-apps-cover.png">
+    Mini applications integrated in World App
+  </Card>
+  <Card title="Integrate World ID" img="/images/docs/world-id-cover.png">
+    Anonymous proof of human for your website or app
+  </Card>
+  <Card title="Integrate Agents" img="/images/docs/agents-cover.png">
+    Recognize agents backed by World ID verified humans
+  </Card>
+  <Card title="World Chain" img="/images/docs/worldchain-cover.png">
+    Build directly on our blockchain infrastructure
+  </Card>
+</Columns>
 
-<div className="group relative flex flex-col rounded-xl border overflow-hidden hover:shadow-md transition">
-  <a
-    href="/world-id/overview"
-    className="absolute inset-0 z-10 no-underline hover:no-underline border-0"
-    aria-label="World ID"
-  />
-  <img
-    src="/images/docs/world-id-cover.png"
-    alt="World ID"
-    className="w-full h-40 object-cover pointer-events-none select-none"
-    draggable={false}
-  />
-  <div className="flex-1 p-3 flex flex-col">
-    <h3 className="font-semibold m-0">Integrate World ID</h3>
-    <p className="text-sm text-gray-600 mt-auto">
-      Anonymous proof of human for your website or app
-    </p>
-  </div>
-</div>
-
-  <div className="group relative flex flex-col rounded-xl border overflow-hidden hover:shadow-md transition">
-    <a href="/world-chain/index" className="absolute inset-0 z-10 no-underline hover:no-underline border-0" aria-label="World Chain" />
-    <img
-      src="/images/docs/worldchain-cover.png"
-      alt="World Chain"
-      className="w-full h-40 object-cover pointer-events-none select-none"
-      draggable={false}
-    />
-    <div className="flex-1 p-3 flex flex-col">
-      <h3 className="font-semibold m-0">Integrate World Chain</h3>
-      <p className="text-sm text-gray-600 mt-auto">A chain designed for real humans.</p>
-    </div>
-  </div>
-</div>
 
 <Warning>
   **Deprecation Notice**: Sign in with World ID v1 has been deprecated and will
