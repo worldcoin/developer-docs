@@ -219,7 +219,8 @@
             "group": "Agent Kit",
             "pages": [
               "agents/agent-kit/integrate",
-              "agents/agent-kit/sdk-reference"
+              "agents/agent-kit/sdk-reference",
+              "agents/agent-kit/ecosystem"
             ]
           }
         ]

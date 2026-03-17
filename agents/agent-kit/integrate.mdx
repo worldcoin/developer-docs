@@ -1,14 +1,15 @@
 ---
 title: "Integrate Agent Kit"
-description: "Add Agent Kit to an x402 server so human-backed agents can access your protected routes."
+description: "Agent Kit Beta extends x402 allowing websites to enable agent traffic without falling victim to spam."
 "og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
-"og:description": "Use Agent Kit to recognize agents backed by real, World ID-verified humans."
+"og:description": "Agent Kit Beta extends x402 allowing websites to enable agent traffic without falling victim to spam."
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-Agent Kit lets an x402 server recognize when a request comes from an agent backed by a World ID-verified human. Check out the full [SDK Reference](/agents/agent-kit/sdk-reference) for more details.
+Agent Kit Beta extends x402 allowing websites to distinguish human-backed agents from bots and scripts. 
+Enable agentic traffic to access api endpoints while blocking malicious actors, scalpers and spam.
 
-This guide uses one default path throughout:
+This quickstart follows a default implementation path:
 
 - Accepts payments on both World Chain and Base
 - Agent registration on Worldchain
@@ -40,6 +41,12 @@ During registration, the CLI:
 3. Submits the registration transaction
 
 Once the wallet is registered, Agent Kit can resolve it to an anonymous human identifier at request time.
+
+<video className="m-auto" width="700" autoPlay controls playsInline>
+  <source src="/images/docs/agentkit/registration.mp4" type="video/mp4" />
+</video>
+
+<p className="text-center text-sm">*Example of the registration flow*</p>
 
 # Step 3: Wire the hooks-based server flow
 

@@ -10,19 +10,6 @@ description: "Reference for Agent Kit modes, APIs, supported chains, and low-lev
 
 Use this page when you need the full Agent Kit surface area. For the shortest path to a working setup, start with [Integrate Agent Kit](/agents/agent-kit/integrate).
 
-## Exported surface
-
-`@worldcoin/agentkit` exports:
-
-- Constants: `AGENTKIT`, `AgentkitPayloadSchema`, `SOLANA_MAINNET`, `SOLANA_DEVNET`, `SOLANA_TESTNET`
-- Core server APIs: `declareAgentkitExtension`, `agentkitResourceServerExtension`, `createAgentkitHooks`, `createAgentBookVerifier`
-- Validation and verification helpers: `parseAgentkitHeader`, `validateAgentkitMessage`, `verifyAgentkitSignature`, `buildAgentkitSchema`
-- Chain helpers:
-  - EVM: `formatSIWEMessage`, `verifyEVMSignature`, `extractEVMChainId`
-  - Solana: `formatSIWSMessage`, `verifySolanaSignature`, `decodeBase58`, `encodeBase58`, `extractSolanaChainReference`
-- Storage: `InMemoryAgentKitStorage`
-- Types: `AgentkitExtension`, `AgentkitExtensionInfo`, `AgentkitExtensionSchema`, `AgentkitMode`, `AgentkitPayload`, `CompleteAgentkitInfo`, `DeclareAgentkitOptions`, `SignatureScheme`, `SignatureType`, `AgentkitValidationResult`, `AgentkitValidationOptions`, `AgentkitVerifyResult`, `SupportedChain`, `AgentBookVerifier`, `AgentBookOptions`, `AgentBookNetwork`, `AgentKitStorage`, `CreateAgentkitHooksOptions`, `AgentkitHookEvent`
-
 ## Access modes
 
 Usage counters are tracked per human per endpoint. Two agents backed by the same human share the same counter.
