@@ -13,7 +13,7 @@
   "license": "MIT",
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
-    "mint": "^4.2.429"
+    "mint": "^4.2.435"
   },
   "devDependencies": {
     "cspell": "^9"
@@ -22,8 +22,18 @@
     "overrides": {
       "axios": ">=1.13.5",
       "body-parser": ">=1.20.3",
+      "cookie": ">=0.7.0 <1.0.0",
+      "express": ">=4.20.0 <5.0.0",
+      "flatted": ">=3.4.0",
+      "js-yaml": ">=4.1.1",
+      "lodash": ">=4.17.23",
       "minimatch": ">=3.1.4",
-      "path-to-regexp": ">=0.1.12"
+      "path-to-regexp": ">=0.1.12",
+      "qs": ">=6.14.2",
+      "send": ">=0.19.0 <1.0.0",
+      "serve-static": ">=1.16.0 <2.0.0",
+      "tar": ">=6.2.1 <7.0.0",
+      "zod": ">=3.22.3"
     }
   }
 }
