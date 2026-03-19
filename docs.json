@@ -70,7 +70,8 @@
               "mini-apps/commands/get-permissions",
               "mini-apps/commands/how-to-send-notifications",
               "mini-apps/commands/send-haptic-feedback",
-              "mini-apps/commands/share"
+              "mini-apps/commands/share",
+              "mini-apps/commands/close-miniapp"
             ]
           },
           {

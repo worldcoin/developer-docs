@@ -1,0 +1,40 @@
+---
+title: "Close Mini App"
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+The `closeMiniapp` command programmatically closes the mini app from within your application.
+
+**Use Case:** This command is useful when your mini app needs to close itself after completing an action, such as opening a deeplink to another app or finishing a specific flow.
+
+## Using the command
+
+The command takes no arguments and has no response — the mini app closes immediately.
+
+```tsx app/page.tsx
+import { MiniKit } from '@worldcoin/minikit-js'
+
+const handleClose = () => {
+	if (!MiniKit.isInstalled()) {
+		return
+	}
+
+	MiniKit.commands.closeMiniapp()
+}
+```
+
+### Example: Close after opening a deeplink
+
+```tsx app/page.tsx
+import { MiniKit } from '@worldcoin/minikit-js'
+
+const openDeeplinkAndClose = () => {
+	if (!MiniKit.isInstalled()) {
+		return
+	}
+
+	window.open('https://example.com/deeplink', '_blank')
+	MiniKit.commands.closeMiniapp()
+}
+```

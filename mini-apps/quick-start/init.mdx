@@ -32,8 +32,20 @@ export type MiniKit = {
     worldAppVersion?: number; // The version of the World App.
   } | null;
   launchLocation: 'chat' | 'home' | 'app-store' | 'deep-link' | 'wallet-tab' | null; // Where the mini app was launched from.
+  preferredCurrency?: string | null; // User's preferred currency code (e.g. "USD", "EUR"). Nullable.
 };
 ```
+
+### Accessing Preferred Currency
+
+The user's preferred currency is available at initialization. This value comes from the user's World App settings and can be used to display prices or amounts in their preferred currency.
+
+```typescript
+import { MiniKit } from "@worldcoin/minikit-js";
+console.log(MiniKit.preferredCurrency); // e.g. "USD", "EUR", or null
+```
+
+The value can be `null` if the user has not set a preferred currency.
 
 ### Accessing Mini App Open location
 Open location tells you where your mini app was opened from. It can be very helpful for analytics and understanding user behavior. You can access it via:
@@ -156,8 +168,15 @@ Here's an example of what the raw object looks like:
       "supported_versions": [
         1
       ]
+    },
+    {
+      "name": "close-miniapp",
+      "supported_versions": [
+        1
+      ]
     }
   ],
+  "preferred_currency": "USD",
   "location": {
     "open_origin": "deeplink"
   }
