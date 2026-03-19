@@ -29,11 +29,9 @@ ensuring that only verified humans can perform actions. You can set up the incog
     export type VerifyCommandInput = {
     	action: string
     	signal?: string
-    	verification_level?: VerificationLevel | VerificationLevel[] // Default: Orb
+    	verification_level?: VerificationLevel // Default: Orb
     }
     ```
-
-    When passing a **single** verification level, the response uses the original flat format:
 
     ```ts
     type MiniAppVerifyActionSuccessPayload = {
@@ -46,33 +44,13 @@ ensuring that only verified humans can perform actions. You can set up the incog
     }
     ```
 
-    When passing an **array** of verification levels, the response includes a `verifications` array:
-
-    ```ts
-    type MiniAppVerifyActionSuccessPayload = {
-    	status: 'success'
-    	verifications: Array<{
-    		verification_level: VerificationLevel
-    		proof: string
-    		merkle_root: string
-    		nullifier_hash: string
-    	}>
-    }
-    ```
-
-    <Note>
-    The `verifications` array only includes proofs for credentials the user actually has. For example, if you request `["orb", "document"]` but the user only has an Orb credential, the response will only contain the Orb proof.
-    </Note>
-
-    #### Single verification level
-
     ```tsx app/page.tsx
     import { MiniKit, VerifyCommandInput, VerificationLevel, ISuccessResult } from '@worldcoin/minikit-js'
 
     const verifyPayload: VerifyCommandInput = {
     	action: 'voting-action', // This is your action ID from the Developer Portal
     	signal: '0x12312', // Optional additional data
-    	verification_level: VerificationLevel.Orb, // Orb | Device | Document
+    	verification_level: VerificationLevel.Orb, // Orb | Device
     }
 
     const handleVerify = async () => {
@@ -105,47 +83,6 @@ ensuring that only verified humans can perform actions. You can set up the incog
     	}
     }
     ```
-
-    #### Multiple verification levels
-
-    ```tsx app/page.tsx
-    import { MiniKit, VerifyCommandInput, VerificationLevel } from '@worldcoin/minikit-js'
-
-    const verifyPayload: VerifyCommandInput = {
-    	action: 'claim-grant-55',
-    	signal: '0x12312',
-    	verification_level: [VerificationLevel.Orb, VerificationLevel.Document], // Request multiple levels
-    }
-
-    const handleVerify = async () => {
-    	if (!MiniKit.isInstalled()) {
-    		return
-    	}
-
-    	const {finalPayload} = await MiniKit.commandsAsync.verify(verifyPayload)
-    	if (finalPayload.status === 'error') {
-    		return console.log('Error payload', finalPayload)
-    	}
-
-    	// finalPayload.verifications is an array of proofs
-    	for (const verification of finalPayload.verifications) {
-    		console.log(`Level: ${verification.verification_level}, Proof: ${verification.proof}`)
-    	}
-
-    	// Verify all proofs in the backend
-    	const verifyResponse = await fetch('/api/verify', {
-    		method: 'POST',
-    		headers: {
-    			'Content-Type': 'application/json',
-    		},
-    		body: JSON.stringify({
-    			verifications: finalPayload.verifications,
-    			action: 'claim-grant-55',
-    			signal: '0x12312',
-    		}),
-    	})
-    }
-    ```
   </Tab>
 
   <Tab title="Event listeners">
@@ -157,11 +94,11 @@ ensuring that only verified humans can perform actions. You can set up the incog
     export type VerifyCommandInput = {
     	action: string
     	signal?: string
-    	verification_level?: VerificationLevel | VerificationLevel[] // Default: Orb
+    	verification_level?: VerificationLevel // Default: Orb
     }
     ```
 
-    Using the `verify` command with a single level:
+    Using the `verify` command:
 
     ```tsx app/page.tsx
     import { MiniKit, VerifyCommandInput, VerificationLevel } from '@worldcoin/minikit-js'
@@ -169,21 +106,7 @@ ensuring that only verified humans can perform actions. You can set up the incog
     const verifyPayload: VerifyCommandInput = {
     	action: 'voting-action', // This is your action ID from the Developer Portal
     	signal: '0x12312', // Optional additional data
-    	verification_level: VerificationLevel.Orb, // Orb | Device | Document
-    }
-
-    const payload = MiniKit.commands.verify(verifyPayload)
-    ```
-
-    Using the `verify` command with multiple levels:
-
-    ```tsx app/page.tsx
-    import { MiniKit, VerifyCommandInput, VerificationLevel } from '@worldcoin/minikit-js'
-
-    const verifyPayload: VerifyCommandInput = {
-    	action: 'claim-grant-55',
-    	signal: '0x12312',
-    	verification_level: [VerificationLevel.Orb, VerificationLevel.Document],
+    	verification_level: VerificationLevel.Orb, // Orb | Device
     }
 
     const payload = MiniKit.commands.verify(verifyPayload)
@@ -242,9 +165,7 @@ ensuring that only verified humans can perform actions. You can set up the incog
 	frontend, so the proof must be verified in a trusted environment.
 </Warning>
 
-Successful responses will return a `MiniAppVerifyActionSuccessPayload`. The response format depends on whether you passed a single verification level or an array.
-
-**Single verification level response:**
+Successful responses will return a `MiniAppVerifyActionSuccessPayload`.
 
 ```ts
 type MiniAppVerifyActionSuccessPayload = {
@@ -256,24 +177,6 @@ type MiniAppVerifyActionSuccessPayload = {
 	version: number
 }
 ```
-
-**Multiple verification levels response:**
-
-```ts
-type MiniAppVerifyActionSuccessPayload = {
-	status: 'success'
-	verifications: Array<{
-		verification_level: VerificationLevel
-		proof: string
-		merkle_root: string
-		nullifier_hash: string
-	}>
-}
-```
-
-<Note>
-When requesting multiple verification levels, the `verifications` array only includes proofs for credentials the user actually has.
-</Note>
 
 To verify the proof, you will need to make a backend route.
 
