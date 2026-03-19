@@ -159,7 +159,7 @@
           },
           {
             "group": "Credentials",
-            "pages": ["world-id/credentials/legacy-presets"]
+            "pages": ["world-id/credentials/index", "world-id/credentials/9303"]
           },
           {
             "group": "Migration",
@@ -199,13 +199,6 @@
                       "POST /recover-account",
                       "GET /is-valid-root",
                       "GET /status/{id}"
-                    ]
-                  },
-                  {
-                    "group": "Issuers",
-                    "pages": [
-                      "world-id/reference/poh-issuer",
-                      "world-id/reference/nfc-issuer"
                     ]
                   }
                 ]
