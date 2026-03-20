@@ -46,32 +46,32 @@
             "pages": ["mini-apps/index"]
           },
           {
-            "group": "Quick Start",
+            "group": "Integrate",
             "pages": [
               "mini-apps/quick-start/installing",
               "mini-apps/quick-start/init",
               "mini-apps/quick-start/commands",
               "mini-apps/quick-start/responses",
               "mini-apps/quick-start/testing",
-              "mini-apps/quick-start/app-store"
-            ]
-          },
-          {
-            "group": "Commands",
-            "pages": [
-              "mini-apps/commands/verify",
-              "mini-apps/commands/pay",
-              "mini-apps/commands/wallet-auth",
-              "mini-apps/commands/send-transaction",
-              "mini-apps/commands/chat",
-              "mini-apps/commands/sign-message",
-              "mini-apps/commands/share-contacts",
-              "mini-apps/commands/request-permission",
-              "mini-apps/commands/get-permissions",
-              "mini-apps/commands/how-to-send-notifications",
-              "mini-apps/commands/send-haptic-feedback",
-              "mini-apps/commands/share",
-              "mini-apps/commands/close-miniapp"
+              "mini-apps/quick-start/app-store",
+              {
+                "group": "Commands (Legacy)",
+                "pages": [
+                  "mini-apps/commands/verify",
+                  "mini-apps/commands/pay",
+                  "mini-apps/commands/wallet-auth",
+                  "mini-apps/commands/send-transaction",
+                  "mini-apps/commands/chat",
+                  "mini-apps/commands/sign-message",
+                  "mini-apps/commands/share-contacts",
+                  "mini-apps/commands/request-permission",
+                  "mini-apps/commands/get-permissions",
+                  "mini-apps/commands/how-to-send-notifications",
+                  "mini-apps/commands/send-haptic-feedback",
+                  "mini-apps/commands/share",
+                  "mini-apps/commands/close-miniapp"
+                ]
+              }
             ]
           },
           {
