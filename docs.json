@@ -702,7 +702,7 @@
     },
     {
       "source": "/world-id/credentials/presets",
-      "destination": "/world-id/credentials/legacy-presets"
+      "destination": "/world-id/credentials#legacy-presets"
     },
     {
       "source": "/world-id/face-check/overview",
@@ -710,11 +710,11 @@
     },
     {
       "source": "/world-id/face-check/web-integration",
-      "destination": "/world-id/credentials/legacy-presets"
+      "destination": "/world-id/credentials#legacy-presets"
     },
     {
       "source": "/world-id/face-check/testing",
-      "destination": "/world-id/credentials/legacy-presets"
+      "destination": "/world-id/credentials#legacy-presets"
     }
   ],
   "api": {
