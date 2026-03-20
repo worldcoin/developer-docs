@@ -83,7 +83,8 @@
           {
             "group": "Credentials",
             "pages": [
-              "world-id/credentials/legacy-presets",
+              "world-id/credentials/index",
+              "world-id/credentials/9303",
               "world-id/selfie-check/overview"
             ]
           },
@@ -120,13 +121,6 @@
                       "POST /recover-account",
                       "GET /is-valid-root",
                       "GET /status/{id}"
-                    ]
-                  },
-                  {
-                    "group": "Issuers",
-                    "pages": [
-                      "world-id/reference/poh-issuer",
-                      "world-id/reference/nfc-issuer"
                     ]
                   }
                 ]
@@ -774,7 +768,7 @@
     },
     {
       "source": "/world-id/credentials/presets",
-      "destination": "/world-id/credentials/legacy-presets"
+      "destination": "/world-id/credentials#legacy-presets"
     },
     {
       "source": "/world-id/face-check/overview",
@@ -782,11 +776,11 @@
     },
     {
       "source": "/world-id/face-check/web-integration",
-      "destination": "/world-id/credentials/legacy-presets"
+      "destination": "/world-id/credentials#legacy-presets"
     },
     {
       "source": "/world-id/face-check/testing",
-      "destination": "/world-id/credentials/legacy-presets"
+      "destination": "/world-id/credentials#legacy-presets"
     },
     {
       "source": "/mini-apps/reference/errors",
