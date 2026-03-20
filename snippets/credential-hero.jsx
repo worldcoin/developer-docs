@@ -14,13 +14,14 @@ import React from "react";
  *  - image: string              — path to thumbnail image
  *  - bgColor: string            — hex color for the banner background
  *  - issuerName: string         — who issues this credential
+ *  - issuerHref: string         — link to issuer (optional)
+ *  - issuerVerified: boolean    — show verified badge (optional)
  *  - status: "active" | "beta" | "deprecated"
  *  - id: number                 — credential schema ID
  *  - sybilResistance: boolean   — whether uniqueness is enforced
  *  - sybilResistanceDescription: string — tooltip on the Yes tag
  *  - validityPeriod: string     — e.g. "10 years or document expiry"
- *  - sourceCodeHref: string     — GitHub URL (optional)
- *  - sourceCodeLabel: string    — row label, defaults to "Source"
+ *  - sourceCodeHref: string     — GitHub URL, or "coming-soon"
  */
 export const CredentialHero = ({
   title,
@@ -28,13 +29,14 @@ export const CredentialHero = ({
   image,
   bgColor = "#1a1a2e",
   issuerName,
+  issuerHref,
+  issuerVerified,
   status,
   id,
   sybilResistance,
   sybilResistanceDescription,
   validityPeriod,
   sourceCodeHref,
-  sourceCodeLabel = "Source",
 }) => {
   return (
     <div className="not-prose rounded-3xl bg-zinc-100 dark:bg-zinc-900">
@@ -74,8 +76,28 @@ export const CredentialHero = ({
             <span className="w-36 shrink-0 font-medium text-zinc-500 dark:text-zinc-400">
               Issued by
             </span>
-            <span className="font-medium text-zinc-900 dark:text-zinc-100">
-              {issuerName}
+            <span className="inline-flex items-center gap-1">
+              {issuerVerified && (
+                <Tooltip tip="Verified issuer">
+                  <span className="inline-flex items-center cursor-help" style={{ height: "20px" }}>
+                    <Icon icon="circle-check" iconType="solid" size={14} color="#3b82f6" />
+                  </span>
+                </Tooltip>
+              )}
+              {issuerHref ? (
+                <a
+                  href={issuerHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium text-zinc-900 underline decoration-zinc-300 underline-offset-2 hover:decoration-zinc-500 dark:text-zinc-100 dark:decoration-zinc-600 dark:hover:decoration-zinc-400"
+                >
+                  {issuerName}
+                </a>
+              ) : (
+                <span className="font-medium text-zinc-900 dark:text-zinc-100">
+                  {issuerName}
+                </span>
+              )}
             </span>
           </div>
         )}
@@ -168,19 +190,26 @@ export const CredentialHero = ({
         {sourceCodeHref && (
           <div className="flex items-center gap-3 px-6 py-3.5 text-[14px] md:px-8">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-200/70 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
-              <Icon icon="github" iconType="brands" size={16} />
+              <Icon icon="code" size={16} />
             </span>
             <span className="w-36 shrink-0 font-medium text-zinc-500 dark:text-zinc-400">
-              {sourceCodeLabel}
+              SDK Reference
             </span>
-            <a
-              href={sourceCodeHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium text-zinc-900 underline decoration-zinc-300 underline-offset-2 hover:decoration-zinc-500 dark:text-zinc-100 dark:decoration-zinc-600 dark:hover:decoration-zinc-400"
-            >
-              {sourceCodeHref.split("/").pop()}
-            </a>
+            {sourceCodeHref === "coming-soon" ? (
+              <span className="inline-flex items-center gap-1.5 rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700 ring-1 ring-blue-600/20 ring-inset dark:bg-blue-500/10 dark:text-blue-400 dark:ring-blue-500/20">
+                <Icon icon="lock" size={11} />
+                Coming soon
+              </span>
+            ) : (
+              <a
+                href={sourceCodeHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-zinc-900 underline decoration-zinc-300 underline-offset-2 hover:decoration-zinc-500 dark:text-zinc-100 dark:decoration-zinc-600 dark:hover:decoration-zinc-400"
+              >
+                {sourceCodeHref.split("/").pop()}
+              </a>
+            )}
           </div>
         )}
       </div>
