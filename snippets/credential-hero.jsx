@@ -14,11 +14,13 @@ import React from "react";
  *  - image: string              — path to thumbnail image
  *  - bgColor: string            — hex color for the banner background
  *  - issuerName: string         — who issues this credential
- *  - status: "Active" | "Beta" | "Deprecated"
- *  - credentialType: string     — e.g. "TFH Credential"
- *  - protocolVersion: string    — e.g. "World ID 4.0"
+ *  - status: "active" | "beta" | "deprecated"
+ *  - id: number                 — credential schema ID
+ *  - sybilResistance: boolean   — whether uniqueness is enforced
+ *  - sybilResistanceDescription: string — tooltip on the Yes tag
+ *  - validityPeriod: string     — e.g. "10 years or document expiry"
  *  - sourceCodeHref: string     — GitHub URL (optional)
- *  - sourceCodeLabel: string    — link text, defaults to "Source"
+ *  - sourceCodeLabel: string    — row label, defaults to "Source"
  */
 export const CredentialHero = ({
   title,
@@ -27,8 +29,10 @@ export const CredentialHero = ({
   bgColor = "#1a1a2e",
   issuerName,
   status,
-  credentialType,
-  protocolVersion,
+  id,
+  sybilResistance,
+  sybilResistanceDescription,
+  validityPeriod,
   sourceCodeHref,
   sourceCodeLabel = "Source",
 }) => {
@@ -67,35 +71,98 @@ export const CredentialHero = ({
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-200/70 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
               <Icon icon="building" size={16} />
             </span>
-            <span className="w-28 shrink-0 font-medium text-zinc-500 dark:text-zinc-400">Issued by</span>
-            <span className="font-medium text-zinc-900 dark:text-zinc-100">{issuerName}</span>
+            <span className="w-36 shrink-0 font-medium text-zinc-500 dark:text-zinc-400">
+              Issued by
+            </span>
+            <span className="font-medium text-zinc-900 dark:text-zinc-100">
+              {issuerName}
+            </span>
           </div>
         )}
         {status && (
           <div className="flex items-center gap-3 border-b border-zinc-200 px-6 py-3.5 text-[14px] md:px-8 dark:border-zinc-800">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-200/70 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
-              <Icon icon="circle-check" size={16} />
+              <Icon icon="signal" size={16} />
             </span>
-            <span className="w-28 shrink-0 font-medium text-zinc-500 dark:text-zinc-400">Status</span>
-            <span className="font-medium text-zinc-900 dark:text-zinc-100">{status}</span>
+            <span className="w-36 shrink-0 font-medium text-zinc-500 dark:text-zinc-400">
+              Status
+            </span>
+            {status === "active" && (
+              <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700 ring-1 ring-green-600/20 ring-inset dark:bg-green-500/10 dark:text-green-400 dark:ring-green-500/20">
+                Active
+              </span>
+            )}
+            {status === "beta" && (
+              <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700 ring-1 ring-blue-600/20 ring-inset dark:bg-blue-500/10 dark:text-blue-400 dark:ring-blue-500/20">
+                Beta
+              </span>
+            )}
+            {status === "deprecated" && (
+              <span className="inline-flex items-center rounded-md bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700 ring-1 ring-amber-600/20 ring-inset dark:bg-amber-500/10 dark:text-amber-400 dark:ring-amber-500/20">
+                Deprecated
+              </span>
+            )}
           </div>
         )}
-        {credentialType && (
+        {id != null && (
           <div className="flex items-center gap-3 border-b border-zinc-200 px-6 py-3.5 text-[14px] md:px-8 dark:border-zinc-800">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-200/70 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
-              <Icon icon="tag" size={16} />
+              <Icon icon="hashtag" size={16} />
             </span>
-            <span className="w-28 shrink-0 font-medium text-zinc-500 dark:text-zinc-400">Type</span>
-            <span className="font-medium text-zinc-900 dark:text-zinc-100">{credentialType}</span>
+            <span className="w-36 shrink-0 font-medium text-zinc-500 dark:text-zinc-400">
+              ID
+            </span>
+            <span className="font-mono font-medium text-zinc-900 dark:text-zinc-100">
+              {id}
+            </span>
           </div>
         )}
-        {protocolVersion && (
+        {sybilResistance != null && (
           <div className="flex items-center gap-3 border-b border-zinc-200 px-6 py-3.5 text-[14px] md:px-8 dark:border-zinc-800">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-200/70 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
-              <Icon icon="code" size={16} />
+              <Icon icon="shield-check" size={16} />
             </span>
-            <span className="w-28 shrink-0 font-medium text-zinc-500 dark:text-zinc-400">Protocol</span>
-            <span className="font-medium text-zinc-900 dark:text-zinc-100">{protocolVersion}</span>
+            <span className="w-36 shrink-0 font-medium text-zinc-500 dark:text-zinc-400">
+              Sybil resistance
+            </span>
+            {sybilResistance ? (
+              <span className="inline-flex items-center gap-1.5">
+                <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700 ring-1 ring-green-600/20 ring-inset dark:bg-green-500/10 dark:text-green-400 dark:ring-green-500/20">
+                  Yes
+                </span>
+                {sybilResistanceDescription && (
+                  <Tooltip tip={sybilResistanceDescription}>
+                    <span className="cursor-help text-zinc-400 dark:text-zinc-500">
+                      <Icon icon="circle-info" size={14} />
+                    </span>
+                  </Tooltip>
+                )}
+              </span>
+            ) : (
+              <span className="inline-flex items-center rounded-md bg-zinc-100 px-2 py-0.5 text-xs font-semibold text-zinc-500 ring-1 ring-zinc-500/20 ring-inset dark:bg-zinc-800 dark:text-zinc-400 dark:ring-zinc-500/20">
+                No
+              </span>
+            )}
+          </div>
+        )}
+        {validityPeriod && (
+          <div className="flex items-center gap-3 border-b border-zinc-200 px-6 py-3.5 text-[14px] md:px-8 dark:border-zinc-800">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-200/70 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+              <Icon icon="clock" size={16} />
+            </span>
+            <span className="w-36 shrink-0 font-medium text-zinc-500 dark:text-zinc-400">
+              <span className="inline-flex items-center gap-1">
+                Validity period
+                <Tooltip tip="The default duration period of the credential. Generally the maximum recommended sybil resistance window.">
+                  <span className="cursor-help text-zinc-400 dark:text-zinc-500">
+                    <Icon icon="circle-info" size={12} />
+                  </span>
+                </Tooltip>
+              </span>
+            </span>
+            <span className="font-medium text-zinc-900 dark:text-zinc-100">
+              {validityPeriod}
+            </span>
           </div>
         )}
         {sourceCodeHref && (
@@ -103,7 +170,9 @@ export const CredentialHero = ({
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-200/70 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
               <Icon icon="github" iconType="brands" size={16} />
             </span>
-            <span className="w-28 shrink-0 font-medium text-zinc-500 dark:text-zinc-400">{sourceCodeLabel}</span>
+            <span className="w-36 shrink-0 font-medium text-zinc-500 dark:text-zinc-400">
+              {sourceCodeLabel}
+            </span>
             <a
               href={sourceCodeHref}
               target="_blank"
