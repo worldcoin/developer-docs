@@ -18,7 +18,7 @@ Yes. After development, submit your Mini App for review through the [Developer P
 ## How does Send transaction command work?
 
 The [Send Transaction command](/mini-apps/commands/send-transaction) is designed to execute on-chain transactions from the Mini App. When developers invoke this command,
-they supply the target contract address, the encoded function call (calldata), and transaction parameters such as value.
+they supply a `chainId` and one or more `transactions` containing the target contract address, optional encoded function call (`data`), and optional value.
 For security, World App requires that any smart contract or token interactions are pre-approved (whitelisted) in the Developer Portal to prevent unauthorized transfers.
 In cases where ERC-20 tokens are involved, instead of directly calling the approve function (which could expose the contract to front-running or manipulation), permits like Permit2 are used.
 Permit2 enables users to sign a transaction off-chain that allows a specific allowance without sending an approval transaction, reducing friction and gas costs while providing a secure, non-custodial mechanism for token transfers.
@@ -26,7 +26,7 @@ Permit2 enables users to sign a transaction off-chain that allows a specific all
 ## How does Sign Message command work?
 
 The [Sign Message command](/mini-apps/commands/sign-message) prompts the user to cryptographically sign an arbitrary message using
-their wallet's private key. When you call the command (e.g., MiniKit.commands.signMessage()), World App generates a standardized payload that may include a nonce, timestamp, and other context to prevent replay attacks.
+their wallet's private key. When you call the command (for example, `await MiniKit.signMessage({ message: "Hello" })`), World App generates a standardized payload that may include a nonce, timestamp, and other context to prevent replay attacks.
 The user's wallet then signs this message using ECDSA, producing a signature that proves the user controls the wallet, all without exposing the private key.
 This signed message can be sent back to your backend for verification, ensuring the integrity of user actions and serving as secure off-chain authorization for various operations.
 
@@ -68,12 +68,12 @@ import { MiniKit } from "@worldcoin/minikit-js";
 
 export const MiniKitProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
-    MiniKit.install();
+    const { success } = MiniKit.install();
+
+    if (!success) return;
 
     // Add any commands you wish to trigger on start here to prevent race conditions
-    MiniKit.commands.walletAuth({
-      // ...
-    });
+    void MiniKit.getPermissions();
   }, []);
 
   return <>{children}</>;
@@ -84,5 +84,5 @@ export const MiniKitProvider = ({ children }: { children: ReactNode }) => {
 
 MiniKit is purely a communication channel between the client and the app. Your application should never trust any payloads it receives on the client side by default.
 
-All Verify, Pay, and Wallet Auth operations should be verified on your backend. Never rely solely on client-side validation for sensitive operations, as client-side data can be manipulated.
+World ID verification via IDKit, Pay, and Wallet Auth operations should be verified on your backend. Never rely solely on client-side validation for sensitive operations, as client-side data can be manipulated.
 Always implement server-side verification to ensure the integrity and authenticity of user actions.

@@ -62,7 +62,7 @@ async function shareInvite() {
   const inviteLink = generateInviteLink(currentUser.id);
 
   try {
-    await MiniKit.commandsAsync.share({
+    await MiniKit.share({
       title: "Join me on [Your App Name]!",
       text: `I'm using this amazing mini app. Join me and we both get rewards! 🎁`,
       url: inviteLink,

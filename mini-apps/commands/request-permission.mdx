@@ -1,125 +1,81 @@
 ---
 title: "Request Permission"
+description: "Request a mini app permission using the unified MiniKit API."
 "og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-This command lets you request permissions to the user's device. This currently includes notifications and microphone. 
+Use `MiniKit.requestPermission()` to ask the user for a permission such as notifications or microphone access.
 
-## Using the command
+## Availability
 
-This command only supports requesting one permission at a time. Additionally, it will only show the user the modal once. If a user rejects it, you will need to direct them to settings in order to re-enable the permission.
+- Works natively in World App
+- Supports a custom fallback outside World App
 
-<Info>
-	If a user removes your mini app from their World App home screen, you will need to request the permission again by universal linking to <b>worldcoin.org/settings/miniapps</b> 
-</Info>
+## Basic Usage
 
-Permission Types:
 ```tsx
-// Types of permissions you can request. You can only request one at a time.
-export enum Permission {
-  Notifications = 'notifications',
-  Microphone = 'microphone',
+import { MiniKit } from "@worldcoin/minikit-js";
+import {
+  Permission,
+  type CommandResultByVia,
+  type MiniAppRequestPermissionSuccessPayload,
+  type MiniKitRequestPermissionOptions,
+} from "@worldcoin/minikit-js/commands";
+
+export async function requestNotifications() {
+  const input = {
+    permission: Permission.Notifications,
+  } satisfies MiniKitRequestPermissionOptions;
+
+  const result: CommandResultByVia<
+    MiniAppRequestPermissionSuccessPayload,
+    MiniAppRequestPermissionSuccessPayload,
+    "minikit"
+  > = await MiniKit.requestPermission(input);
+
+  console.log(result.data.permission);
 }
 ```
 
-<Tabs>
-  <Tab title="Async handlers">
-    ### Sending the command and handling the response
-    ```tsx
-    import { MiniKit, RequestPermissionPayload, Permission } from '@worldcoin/minikit-js'
+## Response
 
-    // Example function of how to use the command
-    const requestPermission = useCallback(
-        async () => {
-            const requestPermissionPayload: RequestPermissionPayload = {
-                permission: Permission.Notifications,
-            };
-            const payload = await MiniKit.commandsAsync.requestPermission(requestPermissionPayload);
-            // Handle the response
-        }, []);
-    ```
-  </Tab>
-
-  <Tab title="Event listeners">
-    ### Sending the command 
-    ```tsx
-    // Example function of how to use the command
-    const requestPermission = useCallback(
-        () => {
-            const requestPermissionPayload: RequestPermissionPayload = {
-                permission: Permission.Notifications,
-            };
-            const payload = MiniKit.commands.requestPermission(requestPermissionPayload);
-            },
-        []
-    );
-    ```
-
-    ### Handling the response
-    ```tsx app/page.tsx
-    import { MiniKit, tokenToDecimals, Tokens, PayCommandInput, ResponseEvent } from '@worldcoin/minikit-js'
-        // ...
-        useEffect(() => {
-            if (!MiniKit.isInstalled()) {
-                console.error("MiniKit is not installed");
-                return;
-            }
-
-            MiniKit.subscribe(
-                ResponseEvent.MiniAppRequestPermission,
-                async (response: MiniAppRequestPermissionPayload) => {
-                    if (response.status == "success") {
-                        const response = await res.json();
-                        // Handle the response
-                    }
-                }
-            );
-
-            return () => {
-                MiniKit.unsubscribe(ResponseEvent.MiniAppRequestPermission);
-            };
-        }, []);
-    ```
-  </Tab>
-</Tabs>
-
-## Response type 
-### Success response payload
 ```ts
-type MiniAppRequestPermissionSuccessPayload = {
-    status: 'success';
-    permission: 'notifications';
-    timestamp: string;  // ISO-8601
-    version: number;    // same version that was received from MiniKit
-};
-```
-### Error response payload
-```ts
-type MiniAppRequestPermissionErrorPayload = {
-    status: 'error';
-    error_code: RequestPermissionErrorCodes;
-    version: number;
-}
+result.executedWith;
+// "minikit" | "fallback"
+
+result.data;
+// {
+//   status: "success";
+//   version: number;
+//   permission: "notifications" | "contacts" | "microphone";
+//   timestamp: string;
+// }
 ```
 
-The possible error codes are:
+## Fallback Behavior
 
--   `user_rejected` - User declined permission request
--   `generic_error` - Request failed for unknown reason
--   `already_requested` - User has already declined turning on notifications once
--   `permission_disabled` - User has notification disabled for World App
--   `already_granted` - User has already granted this mini app permission
--   `unsupported_permission` - Permission is not supported yet
--   `world_app_permission_not_enabled` - User has not granted permission to World App. This means you need to prompt the user to enable microphone for World App first.
+Use a custom `fallback` if you want equivalent permission behavior outside World App.
 
-## Success Result on World App
+## Error Codes
 
-If implemented correctly, the user will see the following drawer on World App.
+| Code | Meaning |
+| --- | --- |
+| `user_rejected` | The user rejected the request |
+| `generic_error` | Unexpected failure |
+| `already_requested` | The permission prompt was already shown and rejected |
+| `permission_disabled` | The permission is disabled |
+| `already_granted` | The permission is already granted |
+| `unsupported_permission` | The permission is not supported |
 
-<div className='grid justify-items-center text-center'>
-    <video className="m-auto" width="300" autoPlay muted loop playsInline>
-        <source src="/images/docs/mini-apps/commands/notifications-command.mp4" type="video/mp4" />
-		Your browser does not support the video tag.
-	</video>
+## Preview
+
+<div className="grid justify-items-center text-center">
+  <video className="m-auto" width="300" autoPlay muted loop playsInline>
+    <source
+      src="/images/docs/mini-apps/commands/notifications-command.mp4"
+      type="video/mp4"
+    />
+    Your browser does not support the video tag.
+  </video>
 </div>

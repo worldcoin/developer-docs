@@ -1,70 +1,79 @@
 ---
 title: "Share"
+description: "Open the native share sheet using the unified MiniKit API."
 "og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-Share will be the primary way to access the browsers native share drawer. 
-This command will let you prompt users to share content, files, and links with other users through
-any of the communication apps installed on their device. This command will also support downloading media to their device from your mini app. 
+Use `MiniKit.share()` to open the native share sheet with text, links, or files.
 
-This command will be available from MiniKit 2.0.0 and World App 2.8.84 onwards.
+## Availability
 
-## Creating the payload
+- Works natively in World App
+- Supports a custom fallback outside World App
 
-```tsx app/page.tsx
+## Basic Usage
 
-export type SharePayload = {
-  files: File[];
-  title?: string;
-  text?: string;
-  url?: string;
-};
-```
+```tsx
+import { MiniKit } from "@worldcoin/minikit-js";
+import type {
+  CommandResultByVia,
+  MiniAppShareSuccessPayload,
+  MiniKitShareOptions,
+} from "@worldcoin/minikit-js/commands";
 
-## Using the command
+export async function shareLink() {
+  const input = {
+    title: "Invite Link",
+    text: "Use this invite code to join my mini app",
+    url: "https://world.org",
+  } satisfies MiniKitShareOptions;
 
-There's no response from this command.
+  const result: CommandResultByVia<
+    MiniAppShareSuccessPayload,
+    MiniAppShareSuccessPayload,
+    "minikit"
+  > = await MiniKit.share(input);
 
-```tsx app/page.tsx
-import { MiniKit } from '@worldcoin/minikit-js'
-
-const shareCommand = async () => {
-	await MiniKit.commandsAsync.share({
-		title: 'Invite Link', // Preview used in share drawer
-		text: 'Use this invite code to join my mini app', // Text sent in shared message
-		url: 'https://worldcoin.org', // URL to share
-	})
+  console.log(result.data.shared_files_count);
 }
-
-
-const ImportantPage = () => {
-	const handleClick = () => {
-		// ...
-		await shareCommand()
-	}
-	return <button onClick={handleClick}>Invite Friends</button>
-}
-
-```
-On Android, we use the native share sheet which does alert the user to the success or failure of the share, however on iOS, we use the native web share sheet which has no response.
-
-If you want to know if the share was successful, you can use the `share` event.
-
-```tsx app/page.tsx
-MiniKit.subscribe(ResponseEvent.MiniAppShare, (payload) => {
-	// Do nothing here to simply handle the error response
-	console.log('Share Response', payload);
-});
 ```
 
+## Response
 
-### Example in World App
-Here's what the share drawer looks like in World App.
+```ts
+result.executedWith;
+// "minikit" | "fallback"
 
-<div className='grid justify-items-center text-center'>
-    <video className="m-auto" width="300" autoPlay muted loop playsInline>
-        <source src="/images/docs/mini-apps/commands/share.mp4" type="video/mp4" />
-		Your browser does not support the video tag.
-	</video>
+result.data;
+// {
+//   status: "success";
+//   version: number;
+//   shared_files_count: number;
+//   timestamp: string;
+// }
+```
+
+## Fallback Behavior
+
+Use a custom `fallback` if you want equivalent share behavior outside World App.
+
+## Error Codes
+
+| Code | Meaning |
+| --- | --- |
+| `user_rejected` | The user rejected the share flow |
+| `generic_error` | Unexpected failure |
+| `invalid_file_name` | One or more file names are invalid |
+
+## Preview
+
+<div className="grid justify-items-center text-center">
+  <video className="m-auto" width="300" autoPlay muted loop playsInline>
+    <source
+      src="/images/docs/mini-apps/commands/share.mp4"
+      type="video/mp4"
+    />
+    Your browser does not support the video tag.
+  </video>
 </div>

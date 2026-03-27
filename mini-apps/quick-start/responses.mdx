@@ -1,75 +1,56 @@
 ---
 title: "Responses"
-description: "Handle Mini App responses: await async command results or subscribe to events, then verify proofs on your backend."
+description: "Handle MiniKit command results with `{ executedWith, data }` and standard error handling."
 "og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-World App will return responses to your mini app based on the command sent. You can define custom logic to handle these responses with MiniKit.
+Modern MiniKit commands are async methods on `MiniKit`. They resolve to a result object shaped like `{ executedWith, data }` and throw if the command fails.
 
-There are two ways to handle responses:
+## Async Command Results
 
-1. **Async Handling**: The most common use case is to use async handlers. These let you simply await the commands. The response is returned in the `finalPayload` object.
+Use `executedWith` to understand whether the command ran through World App, Wagmi, or a custom fallback.
 
-```tsx Async handlers
+```tsx
 import { MiniKit } from "@worldcoin/minikit-js";
-// ...
+import type {
+  CommandResultByVia,
+  MiniKitWalletAuthOptions,
+  WalletAuthResult,
+} from "@worldcoin/minikit-js/commands";
 
-const handleVerify = async () => {
-  // ...
+async function signInWithWallet() {
+  const input = {
+    nonce: "randomnonce123",
+  } satisfies MiniKitWalletAuthOptions;
 
-  // The async versions of commands, return an object that contains the final payload, which is the response from World App,
-  // as well as commandPayload, which is the object that is returned after calling the command.
-  const { finalPayload } = await MiniKit.verifyAsync({
-    //...
-  });
+  try {
+    const result: CommandResultByVia<WalletAuthResult> =
+      await MiniKit.walletAuth(input);
 
-  if (finalPayload.status === "error") {
-    return console.log("Error payload", finalPayload);
+    console.log(result.executedWith);
+    // "minikit" | "wagmi" | "fallback"
+
+    console.log(result.data.address);
+    console.log(result.data.signature);
+  } catch (error) {
+    console.error("Command failed", error);
   }
-
-  // Verify the proof in the backend
-  const verifyResponse = await fetch("/api/verify", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: {
-      // ...
-    },
-  });
-};
-```
-
-2. **Synchronous Handling**: Synchronous require you to subscribe to the event.
-
-```tsx Event listeners
-import { MiniKit, ResponseEvent } from "@worldcoin/minikit-js";
-
-export function ReactComponent() {
-  // ...
-  useEffect(() => {
-    MiniKit.subscribe(ResponseEvent.MiniAppVerifyAction, async (payload) => {
-      if (payload.status === "error") {
-        return console.log("Error payload", payload);
-      }
-
-      // Verify the proof in the backend
-      const verifyResponse = await fetch("/api/verify", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: {
-          //...
-        },
-      });
-    });
-
-    return () => {
-      // Clean up on unmount
-      MiniKit.unsubscribe(ResponseEvent.MiniAppVerifyAction);
-    };
-  }, []);
 }
 ```
+
+## What To Expect
+
+- `executedWith` tells you which runtime handled the command
+- `data` contains the success payload for that command
+- command-specific failures are thrown, so use `try/catch`
+- some commands still require backend verification even after a successful response, such as `walletAuth` and `pay`
+
+## Event Subscriptions
+
+`MiniKit.subscribe()` and `MiniKit.unsubscribe()` still exist for lower-level integrations and legacy v1 flows. For new 2.x command integrations, prefer `await MiniKit.<command>()`.
+
+<Note>
+  If you are migrating from MiniKit 1.x, do not use `finalPayload`,
+  `commandPayload`, `MiniKit.commands`, or `MiniKit.commandsAsync` in new code.
+</Note>

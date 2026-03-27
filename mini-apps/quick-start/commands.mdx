@@ -1,16 +1,21 @@
 ---
 title: "Commands"
-description: "Overview of Mini App commands: verify with World ID, pay, wallet auth, send transactions, share contacts, notifications, and more."
+description: "Overview of current MiniKit commands for mini apps."
 ---
 
 import { QRCodeGenerator } from "/snippets/qr-code-generator.jsx";
 
-Commands are actions your mini app can perform in World App. Every command is available as either:
+Commands are async methods on `MiniKit`. Use `await MiniKit.<command>()` and handle the returned `{ executedWith, data }` result.
 
-- an async function, that can be awaited, resolves with the result.
-- a synchronous function that dispatches an event to an event listener.
+<Note>
+  World ID verification is no longer a MiniKit command. Use
+  [`@worldcoin/idkit`](/world-id/idkit/integrate) for new verification flows.
+  Legacy v1 docs are still available for
+  [Wallet Authentication v1](/mini-apps/commands/wallet-auth-v1) and
+  [Send Transaction v1](/mini-apps/commands/send-transaction-v1).
+</Note>
 
-Try our preview mini app to get a sense of how commands work. Scan the QR code below with your phone (You must have World App installed).
+Try our preview mini app to get a sense of how commands work. Scan the QR code below with your phone (you must have World App installed).
 
 <div className="flex justify-center my-4">
   <QRCodeGenerator
@@ -30,66 +35,58 @@ Try our preview mini app to get a sense of how commands work. Scan the QR code b
   </thead>
   <tbody>
     <tr>
-      <td className="flex items-center p-2">Verify</td>
-      <td className="p-2 align-middle">Request a World ID proof.</td>
-    </tr>
-    <tr>
       <td className="p-2 align-middle">Pay</td>
-      <td className="p-2 align-middle">Request a payment</td>
+      <td className="p-2 align-middle">Request a payment inside World App</td>
     </tr>
     <tr>
-      <td className="flex items-center p-2">Wallet Auth</td>
-      <td className="p-2 align-middle">
-        Authenticate via Sign in with Ethereum
-      </td>
+      <td className="p-2 align-middle">Wallet Auth</td>
+      <td className="p-2 align-middle">Authenticate with Sign-In with Ethereum</td>
     </tr>
     <tr>
-      <td className="flex items-center p-2">Send Transaction</td>
-      <td className="p-2 align-middle">Interact with smart contracts</td>
+      <td className="p-2 align-middle">Send Transaction</td>
+      <td className="p-2 align-middle">Submit one or more World Chain transactions</td>
     </tr>
     <tr>
-      <td className="flex items-center p-2">Sign Message</td>
-      <td className="p-2 align-middle">
-        Sign personal messages with your wallet
-      </td>
+      <td className="p-2 align-middle">Sign Message</td>
+      <td className="p-2 align-middle">Sign an EIP-191 personal message</td>
     </tr>
     <tr>
-      <td className="flex items-center p-2">Share Contacts</td>
-      <td className="p-2 align-middle">
-        Share individual user contacts (username only)
-      </td>
+      <td className="p-2 align-middle">Sign Typed Data</td>
+      <td className="p-2 align-middle">Sign an EIP-712 typed payload</td>
     </tr>
     <tr>
-      <td className="flex items-center p-2">Request Permissions</td>
-      <td className="p-2 align-middle">Notifications and Microphone Access</td>
+      <td className="p-2 align-middle">Share Contacts</td>
+      <td className="p-2 align-middle">Open the World App contact picker</td>
     </tr>
     <tr>
-      <td className="flex items-center p-2">Get Permissions</td>
-      <td className="p-2 align-middle">Get user permissions</td>
+      <td className="p-2 align-middle">Request Permission</td>
+      <td className="p-2 align-middle">Request notifications or microphone access</td>
     </tr>
     <tr>
-      <td className="flex items-center p-2">Send Haptic Feedback</td>
-      <td className="p-2 align-middle">
-        Send haptic feedback to user's device
-      </td>
+      <td className="p-2 align-middle">Get Permissions</td>
+      <td className="p-2 align-middle">Read current mini app permission state</td>
     </tr>
     <tr>
-      <td className="flex items-center p-2">Share</td>
-      <td className="p-2 align-middle">Native OS share modal</td>
+      <td className="p-2 align-middle">Send Haptic Feedback</td>
+      <td className="p-2 align-middle">Trigger native haptic feedback</td>
     </tr>
     <tr>
-      <td className="flex items-center p-2">Chat</td>
-      <td className="p-2 align-middle">
-        Send Messages and Create Groups in World Chat
-      </td>
+      <td className="p-2 align-middle">Share</td>
+      <td className="p-2 align-middle">Open the native share sheet</td>
     </tr>
     <tr>
-      <td className="flex items-center p-2">Quick Actions</td>
-      <td className="p-2 align-middle">Link to other mini apps</td>
+      <td className="p-2 align-middle">World Chat</td>
+      <td className="p-2 align-middle">Open World Chat with a prefilled message</td>
     </tr>
     <tr>
-      <td className="flex items-center p-2">Close Mini App</td>
+      <td className="p-2 align-middle">Attestation</td>
+      <td className="p-2 align-middle">Request an app attestation token</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle">Close Mini App</td>
       <td className="p-2 align-middle">Programmatically close the mini app</td>
     </tr>
   </tbody>
 </table>
+
+Push notifications are documented separately in [Send Notifications](/mini-apps/commands/how-to-send-notifications), since they combine permission handling with Developer Portal setup.

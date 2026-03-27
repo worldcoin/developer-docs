@@ -1,40 +1,53 @@
 ---
 title: "Close Mini App"
+description: "Programmatically close the mini app using the unified MiniKit API."
 "og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-The `closeMiniapp` command programmatically closes the mini app from within your application.
+Use `MiniKit.closeMiniApp()` to programmatically close the mini app.
 
-**Use Case:** This command is useful when your mini app needs to close itself after completing an action, such as opening a deeplink to another app or finishing a specific flow.
+## Availability
 
-## Using the command
+- Works natively in World App
+- Supports a custom fallback outside World App
 
-The command takes no arguments and has no response — the mini app closes immediately.
+## Basic Usage
 
-```tsx app/page.tsx
-import { MiniKit } from '@worldcoin/minikit-js'
+```tsx
+import { MiniKit } from "@worldcoin/minikit-js";
+import type {
+  CommandResultByVia,
+  CloseMiniAppResult,
+  MiniKitCloseMiniAppOptions,
+} from "@worldcoin/minikit-js/commands";
 
-const handleClose = () => {
-	if (!MiniKit.isInstalled()) {
-		return
-	}
+export async function closeMiniApp() {
+  const input = {} satisfies MiniKitCloseMiniAppOptions;
 
-	MiniKit.commands.closeMiniapp()
+  const result: CommandResultByVia<
+    CloseMiniAppResult,
+    CloseMiniAppResult,
+    "minikit"
+  > = await MiniKit.closeMiniApp(input);
+
+  return result.data.status;
 }
 ```
 
-### Example: Close after opening a deeplink
+## Response
 
-```tsx app/page.tsx
-import { MiniKit } from '@worldcoin/minikit-js'
+```ts
+result.executedWith;
+// "minikit" | "fallback"
 
-const openDeeplinkAndClose = () => {
-	if (!MiniKit.isInstalled()) {
-		return
-	}
-
-	window.open('https://example.com/deeplink', '_blank')
-	MiniKit.commands.closeMiniapp()
-}
+result.data;
+// {
+//   status: "success";
+//   version: number;
+// }
 ```
+
+## Fallback Behavior
+
+Use a custom `fallback` if you want equivalent behavior outside World App.

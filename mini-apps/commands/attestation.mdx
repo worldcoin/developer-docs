@@ -1,0 +1,66 @@
+---
+title: "Attestation"
+description: "Request an attestation token using the unified MiniKit API."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+Use `MiniKit.attestation()` to request an app attestation token for a request hash.
+
+## Availability
+
+- Works natively in World App
+- Supports a custom fallback outside World App
+
+## Basic Usage
+
+```tsx
+import { MiniKit } from "@worldcoin/minikit-js";
+import type {
+  CommandResultByVia,
+  MiniAppAttestationSuccessPayload,
+  MiniKitAttestationOptions,
+} from "@worldcoin/minikit-js/commands";
+
+export async function requestAttestation() {
+  const input = {
+    requestHash: "0x1234",
+  } satisfies MiniKitAttestationOptions;
+
+  const result: CommandResultByVia<
+    MiniAppAttestationSuccessPayload,
+    MiniAppAttestationSuccessPayload,
+    "minikit"
+  > = await MiniKit.attestation(input);
+
+  console.log(result.data.token);
+}
+```
+
+## Response
+
+```ts
+result.executedWith;
+// "minikit" | "fallback"
+
+result.data;
+// {
+//   status: "success";
+//   version: number;
+//   token: string;
+// }
+```
+
+## Fallback Behavior
+
+Use a custom `fallback` if you want equivalent behavior outside World App.
+
+## Error Codes
+
+| Code | Meaning |
+| --- | --- |
+| `unauthorized` | The request is not authorized |
+| `attestation_failed` | Attestation generation failed |
+| `integrity_failed` | Integrity checks failed |
+| `invalid_input` | The request hash is invalid |
+| `unsupported_version` | The command version is not supported |

@@ -1,0 +1,86 @@
+---
+title: "Sign Typed Data"
+description: "Sign EIP-712 typed data using the unified MiniKit API."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+Use `MiniKit.signTypedData()` to request an EIP-712 signature from the user's wallet.
+
+## Availability
+
+- Works natively in World App
+- Can execute outside World App through Wagmi or a custom fallback when configured
+
+## Basic Usage
+
+```tsx
+import { MiniKit } from "@worldcoin/minikit-js";
+import type {
+  CommandResultByVia,
+  MiniAppSignTypedDataSuccessPayload,
+  MiniKitSignTypedDataOptions,
+} from "@worldcoin/minikit-js/commands";
+
+export async function signTypedData() {
+  const input = {
+    primaryType: "Mail",
+    domain: {
+      name: "Example",
+      version: "1",
+      chainId: 480,
+    },
+    types: {
+      EIP712Domain: [
+        { name: "name", type: "string" },
+        { name: "version", type: "string" },
+        { name: "chainId", type: "uint256" },
+      ],
+      Mail: [
+        { name: "contents", type: "string" },
+      ],
+    },
+    message: {
+      contents: "Hello world",
+    },
+  } satisfies MiniKitSignTypedDataOptions;
+
+  const result: CommandResultByVia<MiniAppSignTypedDataSuccessPayload> =
+    await MiniKit.signTypedData(input);
+
+  console.log(result.data.signature);
+}
+```
+
+## Response
+
+```ts
+result.executedWith;
+// "minikit" | "wagmi" | "fallback"
+
+result.data;
+// {
+//   status: "success";
+//   version: number;
+//   signature: string;
+//   address: string;
+// }
+```
+
+## Fallback Behavior
+
+- `executedWith: "wagmi"` means the web signer handled the request
+- `executedWith: "fallback"` means your custom fallback handled the request
+
+## Error Codes
+
+| Code | Meaning |
+| --- | --- |
+| `invalid_operation` | The request contains an invalid operation |
+| `user_rejected` | The user rejected the request |
+| `input_error` | The payload is invalid |
+| `simulation_failed` | Simulation failed before signing |
+| `generic_error` | Unexpected failure |
+| `disallowed_operation` | The operation is not allowed |
+| `invalid_contract` | The contract or domain is invalid |
+| `malicious_operation` | The request was flagged as malicious |

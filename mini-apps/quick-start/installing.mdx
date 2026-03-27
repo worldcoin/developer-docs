@@ -34,38 +34,51 @@ npx @worldcoin/create-mini-app@latest my-first-mini-app
 
 ## Manual Installation
 
-[MiniKit-JS](https://www.npmjs.com/package/@worldcoin/minikit-js) is the core lib, framework agnostic,
-
-<CodeGroup>```pnpm install @worldcoin/minikit-js ```</CodeGroup>
-
-Or use a CDN like [jsdelivr](https://www.jsdelivr.com/package/npm/@worldcoin/minikit-js), for inline HTML, make sure to fill in the version.
+[MiniKit-JS](https://www.npmjs.com/package/@worldcoin/minikit-js) is the core library and is framework agnostic. Install it with `pnpm`, or use a CDN like [jsdelivr](https://www.jsdelivr.com/package/npm/@worldcoin/minikit-js) for inline HTML. Replace `[version]` with the release you want to load.
 
 <CodeGroup>
+```bash title="pnpm"
+pnpm install @worldcoin/minikit-js
+```
 
-```html minikit-js
+```html title="jsDelivr CDN"
 <script type="module">
   import { MiniKit } from "https://cdn.jsdelivr.net/npm/@worldcoin/minikit-js@[version]/+esm";
 </script>
 ```
-
 </CodeGroup>
 
 ## Usage
 
-1. Wrap your root with the MiniKitProvider component. This will initialize MiniKit and make it available throughout your app.
+1. Wrap your app with `MiniKitProvider` in a client component. This initializes MiniKit and makes it available throughout your app.
 
-```tsx src/index.tsx
+```tsx src/app/providers.tsx
+"use client";
+
 import { MiniKitProvider } from "@worldcoin/minikit-js/minikit-provider";
-export default async function Root({
+
+export default function Providers({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
+  return <MiniKitProvider>{children}</MiniKitProvider>;
+}
+```
+
+```tsx src/app/layout.tsx
+import Providers from "./providers";
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <MiniKitProvider>
-        <body className={inter.className}>{children}</body>
-      </MiniKitProvider>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
@@ -75,6 +88,8 @@ export default async function Root({
 `MiniKit.isInstalled()` will only return true if the mini app is opened and initialized inside the World App. This is useful to distinguish between a user opening your app in the browser or in the World App.
 
 ```tsx
+import { MiniKit } from "@worldcoin/minikit-js";
+
 console.log(MiniKit.isInstalled());
 ```
 
