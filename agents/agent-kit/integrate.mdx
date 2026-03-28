@@ -1,12 +1,12 @@
 ---
-title: "Integrate Agent Kit"
-description: "Agent Kit Beta extends x402 allowing websites to enable agent traffic without falling victim to spam."
+title: "Integrate AgentKit"
+description: "AgentKit Beta extends x402 allowing websites to enable agent traffic without falling victim to spam."
 "og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
-"og:description": "Agent Kit Beta extends x402 allowing websites to enable agent traffic without falling victim to spam."
+"og:description": "AgentKit Beta extends x402 allowing websites to enable agent traffic without falling victim to spam."
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-Agent Kit Beta extends x402 allowing websites to distinguish human-backed agents from bots and scripts. 
+AgentKit Beta extends x402 allowing websites to distinguish human-backed agents from bots and scripts. 
 Enable agentic traffic to access api endpoints while blocking malicious actors, scalpers and spam.
 
 This quickstart follows a default implementation path:
@@ -17,7 +17,7 @@ This quickstart follows a default implementation path:
 - `free-trial` mode with 3 uses
 - Hono plus `@x402/hono` as the reference server example
 
-# Step 1: Install Agent Kit
+# Step 1: Install AgentKit
 
 ```bash
 npm install @worldcoin/agentkit
@@ -40,7 +40,7 @@ During registration, the CLI:
 2. Prompts the World App verification flow
 3. Submits the registration transaction
 
-Once the wallet is registered, Agent Kit can resolve it to an anonymous human identifier at request time.
+Once the wallet is registered, AgentKit can resolve it to an anonymous human identifier at request time.
 
 <video className="m-auto" width="700" autoPlay controls playsInline>
   <source src="/images/docs/agentkit/registration.mp4" type="video/mp4" />
@@ -50,7 +50,7 @@ Once the wallet is registered, Agent Kit can resolve it to an anonymous human id
 
 # Step 3: Wire the hooks-based server flow
 
-The example below shows the maintained Hono wrapper path. Agent Kit itself is not Hono-only: Express and Next.js route handlers can use the same hooks and low-level helpers from the [SDK Reference](/agents/agent-kit/sdk-reference).
+The example below shows the maintained Hono wrapper path. AgentKit itself is not Hono-only: Express and Next.js route handlers can use the same hooks and low-level helpers from the [SDK Reference](/agents/agent-kit/sdk-reference).
 
 ```typescript
 import { Hono } from 'hono'

@@ -217,7 +217,7 @@
         "tab": "Agents",
         "groups": [
           {
-            "group": "Agent Kit",
+            "group": "AgentKit",
             "pages": [
               "agents/agent-kit/integrate",
               "agents/agent-kit/sdk-reference",
