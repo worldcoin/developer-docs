@@ -20,6 +20,8 @@ Use `MiniKit.sendTransaction()` to submit one or more World Chain transactions.
 
 ## Basic Usage
 
+If you used permit2 in MiniKit v1, MiniKit v2 removes that top-level field; Permit2 approvals now need to be sent as explicit transactions 
+
 ```tsx
 import { MiniKit } from "@worldcoin/minikit-js";
 import type {
@@ -30,6 +32,7 @@ import type {
 
 export async function sendTransaction() {
   const input = {
+    // Set to 480 for World Chain
     chainId: 480,
     transactions: [
       {
@@ -92,11 +95,13 @@ type SendTransactionResponse =
 
 ## Confirming the User Operation
 
-Use `userOpHash` to wait for completion. For React apps, `@worldcoin/minikit-react`
-exports `useWaitForUserOperationReceipt`, which polls the Developer Portal
-user-operation endpoint until the transaction hash is available.
+The command resolves as soon as the user operation is
+submitted, so the first identifier you receive is `userOpHash`. 
+You can either use `@worldcoin/minikit-react` hook  or poll the Developer Portal 
+to check when the user operation is mined and get the final `transaction_hash`.
 
-```tsx
+<CodeGroup>
+```tsx title="React"
 import { useWaitForUserOperationReceipt } from "@worldcoin/minikit-react";
 import { createPublicClient, http } from "viem";
 import { worldchain } from "viem/chains";
@@ -106,43 +111,50 @@ const client = createPublicClient({
   transport: http("https://worldchain-mainnet.g.alchemy.com/public"),
 });
 
-const { isLoading, isSuccess } = useWaitForUserOperationReceipt({
+const {
+  isLoading,
+  isSuccess,
+  isError,
+  transactionHash,
+  receipt,
+} = useWaitForUserOperationReceipt({
   client,
   userOpHash,
 });
 ```
 
-If you are not using React, poll the Developer Portal endpoint directly:
+```ts title="API"
+type UserOperationStatusSuccess = {
+  status: "success";
+  userOpHash: string;
+  sender: string;
+  transaction_hash: string;
+  nonce: string;
+};
 
-- [GET /api/v2/minikit/userop/{user_op_hash}](/api-reference/developer-portal/get-user-operation)
-
-```ts
 const response = await fetch(
   `https://developer.world.org/api/v2/minikit/userop/${userOpHash}`,
 );
 const status = await response.json();
 
 if (status.status === "success") {
-  console.log(status.transaction_hash);
+  const success = status as UserOperationStatusSuccess;
+  console.log(success.transaction_hash);
 }
 ```
+</CodeGroup>
 
-This endpoint returns the final `transaction_hash` when it is available and
-does not require an `app_id`.
+See [GET /api/v2/minikit/userop/{user_op_hash}](/api-reference/developer-portal/get-user-operation)
+for the full endpoint response shape.
 
 ## Fallback Behavior
 
-- `executedWith: "wagmi"` is the standard web execution path
-- multi-transaction batching does not work in Wagmi mode
-- custom `fallback` is available if you need non-Wagmi behavior
-- use `userOpHash` as the polling key in both MiniKit-native and Wagmi paths
+If `result.executedWith === "wagmi"`, MiniKit used the standard web signer path
+outside World App. This path supports only a single transaction, so batched
+`transactions` arrays remain World App-only.
 
-## Notes
-
-- `chainId` must be `480`
-- the public v2 API uses `transactions`, not the old `transaction` field
-- the public v2 result exposes `userOpHash`, not `transaction_id`
-- `eth_sendTransaction` on the World App provider also resolves to `userOpHash`
+If you need a different non-World-App flow, provide a custom `fallback` and
+handle submission yourself.
 
 ## Error Codes
 
