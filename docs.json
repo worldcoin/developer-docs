@@ -55,79 +55,78 @@
               "mini-apps/quick-start/testing",
               "mini-apps/quick-start/app-store",
               {
-                "group": "Commands",
+                "group": "Guidelines",
                 "pages": [
-                  "mini-apps/commands/pay",
-                  "mini-apps/commands/wallet-auth",
-                  "mini-apps/commands/send-transaction",
-                  "mini-apps/commands/chat",
-                  "mini-apps/commands/sign-message",
-                  "mini-apps/commands/sign-typed-data",
-                  "mini-apps/commands/share-contacts",
-                  "mini-apps/commands/request-permission",
-                  "mini-apps/commands/get-permissions",
-                  "mini-apps/commands/how-to-send-notifications",
-                  "mini-apps/commands/send-haptic-feedback",
-                  "mini-apps/commands/share",
-                  "mini-apps/commands/attestation",
-                  "mini-apps/commands/close-miniapp"
+                  "mini-apps/guidelines/app-guidelines",
+                  "mini-apps/guidelines/design-guidelines",
+                  "mini-apps/guidelines/policy",
+                  "mini-apps/guidelines/features-and-guidelines"
                 ]
               }
             ]
           },
           {
-            "group": "Guidelines",
+            "group": "Commands",
             "pages": [
-              "mini-apps/guidelines/app-guidelines",
-              "mini-apps/guidelines/design-guidelines",
-              "mini-apps/guidelines/policy",
-              "mini-apps/guidelines/features-and-guidelines"
+              "mini-apps/commands/pay",
+              "mini-apps/commands/wallet-auth",
+              "mini-apps/commands/send-transaction",
+              "mini-apps/commands/chat",
+              "mini-apps/commands/sign-message",
+              "mini-apps/commands/sign-typed-data",
+              "mini-apps/commands/share-contacts",
+              "mini-apps/commands/request-permission",
+              "mini-apps/commands/get-permissions",
+              "mini-apps/commands/how-to-send-notifications",
+              "mini-apps/commands/send-haptic-feedback",
+              "mini-apps/commands/share",
+              "mini-apps/commands/attestation",
+              "mini-apps/commands/close-miniapp"
             ]
           },
           {
             "group": "Technical Reference",
             "pages": [
-              "mini-apps/reference/errors",
               "mini-apps/reference/address-book",
               "mini-apps/reference/usernames",
               "mini-apps/reference/status-page",
               "mini-apps/reference/payment-methods",
-              "mini-apps/reference/microphone"
-            ]
-          },
-          {
-            "group": "Growth Playbook",
-            "pages": [
-              "mini-apps/growth/index",
-              "mini-apps/growth/invites-viral",
-              "mini-apps/growth/gamification",
-              "mini-apps/growth/notifications",
-              "mini-apps/growth/analytics"
-            ]
-          },
-          {
-            "group": "Quick Actions",
-            "pages": [
-              "mini-apps/sharing/quick-actions",
-              "mini-apps/sharing/add-money-qa",
-              "mini-apps/sharing/uno-qa",
-              "mini-apps/sharing/swap-qa",
-              "mini-apps/sharing/holdstation-buy-qa",
-              "mini-apps/sharing/earn-wld-qa",
-              "mini-apps/sharing/dna-qa",
-              "mini-apps/sharing/sage-qa",
-              "mini-apps/sharing/puf-qa"
+              "mini-apps/reference/microphone",
+              {
+                "group": "Quick Actions",
+                "pages": [
+                  "mini-apps/sharing/quick-actions",
+                  "mini-apps/sharing/add-money-qa",
+                  "mini-apps/sharing/uno-qa",
+                  "mini-apps/sharing/swap-qa",
+                  "mini-apps/sharing/holdstation-buy-qa",
+                  "mini-apps/sharing/earn-wld-qa",
+                  "mini-apps/sharing/dna-qa",
+                  "mini-apps/sharing/sage-qa",
+                  "mini-apps/sharing/puf-qa"
+                ]
+              }
             ]
           },
           {
             "group": "Further Reading",
             "pages": [
+              {
+                "group": "Growth Playbook",
+                "pages": [
+                  "mini-apps/growth/index",
+                  "mini-apps/growth/invites-viral",
+                  "mini-apps/growth/gamification",
+                  "mini-apps/growth/notifications",
+                  "mini-apps/growth/analytics"
+                ]
+              },
               "mini-apps/more/releases",
               "mini-apps/more/webview-spec",
               "mini-apps/ecosystem/ecosystem",
               "mini-apps/more/community-tools-perks",
-              "mini-apps/more/faq",
-              "mini-apps/more/minikit-v2"
+              "mini-apps/more/minikit-v2",
+              "mini-apps/more/faq"
             ]
           }
         ]
@@ -743,6 +742,10 @@
     {
       "source": "/world-id/face-check/testing",
       "destination": "/world-id/credentials/legacy-presets"
+    },
+    {
+      "source": "/mini-apps/reference/errors",
+      "destination": "/mini-apps/quick-start/installing"
     }
   ],
   "api": {
