@@ -70,14 +70,7 @@
                   "mini-apps/commands/send-haptic-feedback",
                   "mini-apps/commands/share",
                   "mini-apps/commands/attestation",
-                  "mini-apps/commands/close-miniapp",
-                  {
-                    "group": "Legacy",
-                    "pages": [
-                      "mini-apps/commands/wallet-auth-v1",
-                      "mini-apps/commands/send-transaction-v1"
-                    ]
-                  }
+                  "mini-apps/commands/close-miniapp"
                 ]
               }
             ]
@@ -313,6 +306,7 @@
               "POST /api/v2/verify/{app_id}",
               "POST /api/v2/minikit/send-notification",
               "GET /api/v2/minikit/transaction/{transaction_id}",
+              "GET /api/v2/minikit/userop/{user_op_hash}",
               "GET /api/v2/minikit/transaction/debug",
               "GET /api/v2/minikit/user-grant-cycle",
               "GET /public/v1/miniapps/prices"
@@ -553,6 +547,14 @@
     {
       "source": "/api-reference/developer-portal/verify-proof",
       "destination": "/api-reference/developer-portal/verify-legacy"
+    },
+    {
+      "source": "/mini-apps/commands/wallet-auth-v1",
+      "destination": "/mini-apps/commands/wallet-auth"
+    },
+    {
+      "source": "/mini-apps/commands/send-transaction-v1",
+      "destination": "/mini-apps/commands/send-transaction"
     },
     {
       "source": "/reference/contracts",

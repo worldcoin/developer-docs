@@ -66,14 +66,18 @@ result.data;
 
 <Warning>
   If you are integrating through Wagmi, viem, or ethers with the World App
-  EIP-1193 provider, `eth_sendTransaction` currently resolves to the MiniKit
-  `userOpHash`, not a canonical transaction hash. If you need the final on-chain transaction hash, resolve the
-  user operation status first.
+  EIP-1193 provider, the standard `eth_sendTransaction` call resolves to the
+  MiniKit `userOpHash`, not a canonical transaction hash. Do not treat the
+  returned value as a final transaction hash or pass it directly to
+  `waitForTransactionReceipt`. If you need the final on-chain transaction hash,
+  resolve the user operation status first.
 </Warning>
 
 ## Confirming the User Operation
 
-Use `userOpHash` to wait for completion.
+Use `userOpHash` to wait for completion. For React apps, `@worldcoin/minikit-react`
+exports `useWaitForUserOperationReceipt`, which polls the Developer Portal
+user-operation endpoint until the transaction hash is available.
 
 ```tsx
 import { useWaitForUserOperationReceipt } from "@worldcoin/minikit-react";
@@ -91,17 +95,37 @@ const { isLoading, isSuccess } = useWaitForUserOperationReceipt({
 });
 ```
 
+If you are not using React, poll the Developer Portal endpoint directly:
+
+- [GET /api/v2/minikit/userop/{user_op_hash}](/api-reference/developer-portal/get-user-operation)
+
+```ts
+const response = await fetch(
+  `https://developer.world.org/api/v2/minikit/userop/${userOpHash}`,
+);
+const status = await response.json();
+
+if (status.status === "success") {
+  console.log(status.transaction_hash);
+}
+```
+
+This endpoint returns the final `transaction_hash` when it is available and
+does not require an `app_id`.
+
 ## Fallback Behavior
 
 - `executedWith: "wagmi"` is the standard web execution path
 - multi-transaction batching does not work in Wagmi mode
 - custom `fallback` is available if you need non-Wagmi behavior
+- use `userOpHash` as the polling key in both MiniKit-native and Wagmi paths
 
 ## Notes
 
 - `chainId` must be `480`
 - the public v2 API uses `transactions`, not the old `transaction` field
 - the public v2 result exposes `userOpHash`, not `transaction_id`
+- `eth_sendTransaction` on the World App provider also resolves to `userOpHash`
 
 ## Error Codes
 

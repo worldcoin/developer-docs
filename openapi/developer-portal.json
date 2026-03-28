@@ -214,6 +214,98 @@
         }
       }
     },
+    "/api/v2/minikit/userop/{user_op_hash}": {
+      "get": {
+        "summary": "Get User Operation",
+        "description": "Query a MiniKit user operation by `userOpHash` and resolve the final on-chain transaction hash when it becomes available.",
+        "x-mint": {
+          "href": "/api-reference/developer-portal/get-user-operation"
+        },
+        "parameters": [
+          {
+            "name": "user_op_hash",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^0x[a-fA-F0-9]{64}$"
+            },
+            "description": "The MiniKit `userOpHash` returned by `MiniKit.sendTransaction()` or `eth_sendTransaction` through the World App provider."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User operation status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserOperationResponse"
+                },
+                "examples": {
+                  "pending": {
+                    "value": {
+                      "status": "pending",
+                      "userOpHash": "0x8004b63530b968a2a2c9ff414e01fc06a3ec5e4068d36d923df6aa4334744369",
+                      "sender": null,
+                      "transaction_hash": null,
+                      "nonce": null
+                    }
+                  },
+                  "success": {
+                    "value": {
+                      "status": "success",
+                      "userOpHash": "0x8004b63530b968a2a2c9ff414e01fc06a3ec5e4068d36d923df6aa4334744369",
+                      "sender": "0x1234567890123456789012345678901234567890",
+                      "transaction_hash": "0x1111111111111111111111111111111111111111111111111111111111111111",
+                      "nonce": "0x2a"
+                    }
+                  },
+                  "failed": {
+                    "value": {
+                      "status": "failed",
+                      "userOpHash": "0x8004b63530b968a2a2c9ff414e01fc06a3ec5e4068d36d923df6aa4334744369",
+                      "sender": "0x1234567890123456789012345678901234567890",
+                      "transaction_hash": "0x2222222222222222222222222222222222222222222222222222222222222222",
+                      "nonce": "0x2a"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid user operation hash",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "invalid_parameter",
+                  "detail": "Invalid user operation hash",
+                  "attribute": "user_op_hash"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to fetch user operation status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "internal_api_error",
+                  "detail": "Failed to fetch user operation status",
+                  "attribute": "user_op_hash"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v2/minikit/transaction/debug": {
       "get": {
         "summary": "Get Transaction Debug URL",
@@ -926,6 +1018,35 @@
           "app_id": {
             "type": "string",
             "description": "Your app ID"
+          }
+        }
+      },
+      "GetUserOperationResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["pending", "success", "failed"],
+            "description": "Current user operation status."
+          },
+          "userOpHash": {
+            "type": "string",
+            "description": "The MiniKit user operation hash."
+          },
+          "sender": {
+            "type": "string",
+            "nullable": true,
+            "description": "The sender address when known."
+          },
+          "transaction_hash": {
+            "type": "string",
+            "nullable": true,
+            "description": "Final on-chain transaction hash, if available."
+          },
+          "nonce": {
+            "type": "string",
+            "nullable": true,
+            "description": "User operation nonce, if available."
           }
         }
       },
