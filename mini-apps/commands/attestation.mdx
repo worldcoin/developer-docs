@@ -37,19 +37,36 @@ export async function requestAttestation() {
 }
 ```
 
-## Response
+## Result
 
-```ts
-result.executedWith;
-// "minikit" | "fallback"
-
-result.data;
-// {
-//   status: "success";
-//   version: number;
-//   token: string;
-// }
+<CodeGroup>
+```ts title="Type"
+type AttestationResponse =
+  | {
+      executedWith: "minikit";
+      data: {
+        status: "success";
+        version: number;
+        token: string;
+      };
+    }
+  | {
+      executedWith: "fallback";
+      data: unknown;
+    };
 ```
+
+```json title="Example"
+{
+  "executedWith": "minikit",
+  "data": {
+    "status": "success",
+    "version": 1,
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.mock.payload"
+  }
+}
+```
+</CodeGroup>
 
 ## Fallback Behavior
 

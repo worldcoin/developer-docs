@@ -46,23 +46,40 @@ export async function sendTransaction() {
 }
 ```
 
-## Response
+## Result
 
-```ts
-const result = await MiniKit.sendTransaction({ ... });
-
-result.executedWith;
-// "minikit" | "wagmi" | "fallback"
-
-result.data;
-// {
-//   userOpHash: string;
-//   status: "success";
-//   version: number;
-//   from: string;
-//   timestamp: string;
-// }
+<CodeGroup>
+```ts title="Type"
+type SendTransactionResponse =
+  | {
+      executedWith: "minikit" | "wagmi";
+      data: {
+        userOpHash: string;
+        status: "success";
+        version: number;
+        from: string;
+        timestamp: string;
+      };
+    }
+  | {
+      executedWith: "fallback";
+      data: unknown;
+    };
 ```
+
+```json title="Example"
+{
+  "executedWith": "minikit",
+  "data": {
+    "userOpHash": "0x8004b63530b968a2a2c9ff414e01fc06a3ec5e4068d36d923df6aa4334744369",
+    "status": "success",
+    "version": 2,
+    "from": "0x1234567890123456789012345678901234567890",
+    "timestamp": "2026-03-28T18:24:00.000Z"
+  }
+}
+```
+</CodeGroup>
 
 <Warning>
   If you are integrating through Wagmi, viem, or ethers with the World App

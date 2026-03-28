@@ -35,18 +35,34 @@ export async function closeMiniApp() {
 }
 ```
 
-## Response
+## Result
 
-```ts
-result.executedWith;
-// "minikit" | "fallback"
-
-result.data;
-// {
-//   status: "success";
-//   version: number;
-// }
+<CodeGroup>
+```ts title="Type"
+type CloseMiniAppResponse =
+  | {
+      executedWith: "minikit";
+      data: {
+        status: "success";
+        version: number;
+      };
+    }
+  | {
+      executedWith: "fallback";
+      data: unknown;
+    };
 ```
+
+```json title="Example"
+{
+  "executedWith": "minikit",
+  "data": {
+    "status": "success",
+    "version": 1
+  }
+}
+```
+</CodeGroup>
 
 ## Fallback Behavior
 

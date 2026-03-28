@@ -58,23 +58,40 @@ export async function sendPayment() {
 }
 ```
 
-## Response
+## Result
 
-```ts
-const result = await MiniKit.pay({ ... });
-
-result.executedWith;
-// "minikit" | "fallback"
-
-result.data;
-// {
-//   transactionId: string;
-//   reference: string;
-//   from: string;
-//   chain: "worldchain";
-//   timestamp: string;
-// }
+<CodeGroup>
+```ts title="Type"
+type PayResponse =
+  | {
+      executedWith: "minikit";
+      data: {
+        transactionId: string;
+        reference: string;
+        from: string;
+        chain: "worldchain";
+        timestamp: string;
+      };
+    }
+  | {
+      executedWith: "fallback";
+      data: unknown;
+    };
 ```
+
+```json title="Example"
+{
+  "executedWith": "minikit",
+  "data": {
+    "transactionId": "tx_1234567890abcdef",
+    "reference": "order-123",
+    "from": "0x1234567890123456789012345678901234567890",
+    "chain": "worldchain",
+    "timestamp": "2026-03-28T18:24:00.000Z"
+  }
+}
+```
+</CodeGroup>
 
 ## Fallback Behavior
 

@@ -38,20 +38,38 @@ export async function shareToChat() {
 }
 ```
 
-## Response
+## Result
 
-```ts
-result.executedWith;
-// "minikit" | "fallback"
-
-result.data;
-// {
-//   status: "success";
-//   version: number;
-//   count: number;
-//   timestamp: string;
-// }
+<CodeGroup>
+```ts title="Type"
+type ChatResponse =
+  | {
+      executedWith: "minikit";
+      data: {
+        status: "success";
+        version: number;
+        count: number;
+        timestamp: string;
+      };
+    }
+  | {
+      executedWith: "fallback";
+      data: unknown;
+    };
 ```
+
+```json title="Example"
+{
+  "executedWith": "minikit",
+  "data": {
+    "status": "success",
+    "version": 1,
+    "count": 2,
+    "timestamp": "2026-03-28T18:24:00.000Z"
+  }
+}
+```
+</CodeGroup>
 
 ## Fallback Behavior
 

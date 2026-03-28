@@ -14,7 +14,7 @@ Use `MiniKit.requestPermission()` to ask the user for a permission such as notif
 
 ## Basic Usage
 
-```tsx
+```ts twoslash
 import { MiniKit } from "@worldcoin/minikit-js";
 import {
   Permission,
@@ -38,20 +38,38 @@ export async function requestNotifications() {
 }
 ```
 
-## Response
+## Result
 
-```ts
-result.executedWith;
-// "minikit" | "fallback"
-
-result.data;
-// {
-//   status: "success";
-//   version: number;
-//   permission: "notifications" | "contacts" | "microphone";
-//   timestamp: string;
-// }
+<CodeGroup>
+```ts title="Type"
+type RequestPermissionResponse =
+  | {
+      executedWith: "minikit";
+      data: {
+        status: "success";
+        version: number;
+        permission: "notifications" | "contacts" | "microphone";
+        timestamp: string;
+      };
+    }
+  | {
+      executedWith: "fallback";
+      data: unknown;
+    };
 ```
+
+```json title="Example"
+{
+  "executedWith": "minikit",
+  "data": {
+    "status": "success",
+    "version": 1,
+    "permission": "notifications",
+    "timestamp": "2026-03-28T18:24:00.000Z"
+  }
+}
+```
+</CodeGroup>
 
 ## Fallback Behavior
 

@@ -39,20 +39,38 @@ export async function shareLink() {
 }
 ```
 
-## Response
+## Result
 
-```ts
-result.executedWith;
-// "minikit" | "fallback"
-
-result.data;
-// {
-//   status: "success";
-//   version: number;
-//   shared_files_count: number;
-//   timestamp: string;
-// }
+<CodeGroup>
+```ts title="Type"
+type ShareResponse =
+  | {
+      executedWith: "minikit";
+      data: {
+        status: "success";
+        version: number;
+        shared_files_count: number;
+        timestamp: string;
+      };
+    }
+  | {
+      executedWith: "fallback";
+      data: unknown;
+    };
 ```
+
+```json title="Example"
+{
+  "executedWith": "minikit",
+  "data": {
+    "status": "success",
+    "version": 1,
+    "shared_files_count": 2,
+    "timestamp": "2026-03-28T18:24:00.000Z"
+  }
+}
+```
+</CodeGroup>
 
 ## Fallback Behavior
 

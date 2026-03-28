@@ -38,22 +38,44 @@ export async function pickContacts() {
 }
 ```
 
-## Response
+## Result
 
-```ts
-result.executedWith;
-// "minikit" | "fallback"
-
-result.data;
-// {
-//   contacts: Array<{
-//     username: string;
-//     walletAddress: string;
-//     profilePictureUrl: string | null;
-//   }>;
-//   timestamp: string;
-// }
+<CodeGroup>
+```ts title="Type"
+type ShareContactsResponse =
+  | {
+      executedWith: "minikit";
+      data: {
+        contacts: Array<{
+          username: string;
+          walletAddress: string;
+          profilePictureUrl: string | null;
+        }>;
+        timestamp: string;
+      };
+    }
+  | {
+      executedWith: "fallback";
+      data: unknown;
+    };
 ```
+
+```json title="Example"
+{
+  "executedWith": "minikit",
+  "data": {
+    "contacts": [
+      {
+        "username": "alex",
+        "walletAddress": "0x1234567890123456789012345678901234567890",
+        "profilePictureUrl": "https://cdn.example.com/profile/alex.png"
+      }
+    ],
+    "timestamp": "2026-03-28T18:24:00.000Z"
+  }
+}
+```
+</CodeGroup>
 
 ## Fallback Behavior
 

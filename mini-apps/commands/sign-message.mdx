@@ -34,20 +34,38 @@ export async function signMessage() {
 }
 ```
 
-## Response
+## Result
 
-```ts
-result.executedWith;
-// "minikit" | "wagmi" | "fallback"
-
-result.data;
-// {
-//   status: "success";
-//   version: number;
-//   signature: string;
-//   address: string;
-// }
+<CodeGroup>
+```ts title="Type"
+type SignMessageResponse =
+  | {
+      executedWith: "minikit" | "wagmi";
+      data: {
+        status: "success";
+        version: number;
+        signature: string;
+        address: string;
+      };
+    }
+  | {
+      executedWith: "fallback";
+      data: unknown;
+    };
 ```
+
+```json title="Example"
+{
+  "executedWith": "minikit",
+  "data": {
+    "status": "success",
+    "version": 1,
+    "signature": "0xabcdef1234567890",
+    "address": "0x1234567890123456789012345678901234567890"
+  }
+}
+```
+</CodeGroup>
 
 ## Fallback Behavior
 

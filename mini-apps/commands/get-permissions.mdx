@@ -35,24 +35,46 @@ export async function getPermissions() {
 }
 ```
 
-## Response
+## Result
 
-```ts
-result.executedWith;
-// "minikit" | "fallback"
-
-result.data;
-// {
-//   status: "success";
-//   version: number;
-//   permissions: {
-//     notifications?: boolean;
-//     contacts?: boolean;
-//     microphone?: boolean;
-//   };
-//   timestamp: string;
-// }
+<CodeGroup>
+```ts title="Type"
+type GetPermissionsResponse =
+  | {
+      executedWith: "minikit";
+      data: {
+        status: "success";
+        version: number;
+        permissions: {
+          notifications?: any;
+          contacts?: any;
+          microphone?: any;
+        };
+        timestamp: string;
+      };
+    }
+  | {
+      executedWith: "fallback";
+      data: unknown;
+    };
 ```
+
+```json title="Example"
+{
+  "executedWith": "minikit",
+  "data": {
+    "status": "success",
+    "version": 1,
+    "permissions": {
+      "notifications": true,
+      "contacts": false,
+      "microphone": true
+    },
+    "timestamp": "2026-03-28T18:24:00.000Z"
+  }
+}
+```
+</CodeGroup>
 
 ## Fallback Behavior
 

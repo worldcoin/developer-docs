@@ -63,21 +63,36 @@ export async function signInWithWallet() {
 }
 ```
 
-## Response
+## Result
 
-```ts
-const result = await MiniKit.walletAuth({ nonce });
-
-result.executedWith;
-// "minikit" | "wagmi" | "fallback"
-
-result.data;
-// {
-//   address: string;
-//   message: string;
-//   signature: string;
-// }
+<CodeGroup>
+```ts title="Type"
+type WalletAuthResponse =
+  | {
+      executedWith: "minikit" | "wagmi";
+      data: {
+        address: string;
+        message: string;
+        signature: string;
+      };
+    }
+  | {
+      executedWith: "fallback";
+      data: unknown;
+    };
 ```
+
+```json title="Example"
+{
+  "executedWith": "minikit",
+  "data": {
+    "address": "0x1234567890123456789012345678901234567890",
+    "message": "example.com wants you to sign in with your Ethereum account",
+    "signature": "0xabcdef1234567890"
+  }
+}
+```
+</CodeGroup>
 
 ## Fallback Behavior
 
