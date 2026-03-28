@@ -48,6 +48,11 @@ Once the wallet is registered, AgentKit can resolve it to an anonymous human ide
 
 <p className="text-center text-sm">*Example of the registration flow*</p>
 
+Add this skill so your agent knows to use it's AgentKit registration when accessing x402 endpoints:
+```bash
+npx skills add worldcoin/agentkit agentkit-x402 
+```
+
 # Step 3: Wire the hooks-based server flow
 
 The example below shows the maintained Hono wrapper path. AgentKit itself is not Hono-only: Express and Next.js route handlers can use the same hooks and low-level helpers from the [SDK Reference](/agents/agent-kit/sdk-reference).
