@@ -41,6 +41,8 @@ export async function signInWithWallet() {
     nonce,
     statement: "Sign in to Example Mini App",
     expirationTime: new Date(Date.now() + 1000 * 60 * 60),
+    // requestId: "optional-tracking-id",
+    // notBefore: new Date(),
   } satisfies MiniKitWalletAuthOptions;
 
   const result: CommandResultByVia<WalletAuthResult> =
@@ -127,7 +129,14 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const verification = await verifySiweMessage(payload, nonce);
+    // Optional: pass statement and requestId for additional server-side validation
+    const verification = await verifySiweMessage(
+      payload,
+      nonce,
+      // statement,  — validates the statement matches what you sent
+      // requestId,  — validates the request ID matches what you sent
+      // viemClient, — custom viem Client; defaults to a public Worldchain client
+    );
 
     return NextResponse.json({
       isValid: verification.isValid,
@@ -144,6 +153,17 @@ export async function POST(req: NextRequest) {
   }
 }
 ```
+
+## Options
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `nonce` | `string` | Yes | Alphanumeric, at least 8 characters |
+| `statement` | `string` | No | Human-readable statement included in the SIWE message |
+| `expirationTime` | `Date` | No | When the SIWE message expires |
+| `notBefore` | `Date` | No | SIWE message is not valid before this time |
+| `requestId` | `string` | No | Arbitrary ID for correlating the request on your backend |
+| `fallback` | `() => Promise<T>` | No | Custom fallback for non-World-App environments |
 
 ## Notes
 

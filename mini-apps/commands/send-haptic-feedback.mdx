@@ -12,9 +12,16 @@ Use `MiniKit.sendHapticFeedback()` to trigger native haptic feedback.
 - Works natively in World App
 - Supports a custom fallback outside World App
 
+## Haptic Types
+
+- **`"notification"`** — style: `"success"`, `"warning"`, or `"error"`
+- **`"impact"`** — style: `"light"`, `"medium"`, or `"heavy"`
+- **`"selection-changed"`** — no style needed
+
 ## Basic Usage
 
-```tsx
+<CodeGroup>
+```tsx title="Notification"
 import { MiniKit } from "@worldcoin/minikit-js";
 import type {
   CommandResultByVia,
@@ -37,6 +44,30 @@ export async function sendSuccessHaptic() {
   console.log(result.data.timestamp);
 }
 ```
+
+```tsx title="Impact"
+import { MiniKit } from "@worldcoin/minikit-js";
+import type { MiniKitSendHapticFeedbackOptions } from "@worldcoin/minikit-js/commands";
+
+export async function sendImpactHaptic() {
+  await MiniKit.sendHapticFeedback({
+    hapticsType: "impact",
+    style: "medium",
+  } satisfies MiniKitSendHapticFeedbackOptions);
+}
+```
+
+```tsx title="Selection Changed"
+import { MiniKit } from "@worldcoin/minikit-js";
+import type { MiniKitSendHapticFeedbackOptions } from "@worldcoin/minikit-js/commands";
+
+export async function sendSelectionHaptic() {
+  await MiniKit.sendHapticFeedback({
+    hapticsType: "selection-changed",
+  } satisfies MiniKitSendHapticFeedbackOptions);
+}
+```
+</CodeGroup>
 
 ## Result
 
