@@ -20,7 +20,7 @@
   },
   "pnpm": {
     "overrides": {
-      "axios": ">=1.13.5",
+      "axios": "1.13.5",
       "body-parser": ">=1.20.3",
       "minimatch": ">=3.1.4",
       "path-to-regexp": ">=0.1.12"

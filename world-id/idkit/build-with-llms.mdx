@@ -38,3 +38,47 @@ My app credentials are stored in environment variables:
 ## Reference
 - Full docs: https://docs.world.org/llms.txt
 ```
+
+## World Docs MCP
+
+Gives your LLM direct access to World documentation and APIs through the [Model Context Protocol](https://modelcontextprotocol.io/).
+
+The server exposes the `search_world_documentation` tool, which lets your AI assistant search and retrieve relevant World documentation on demand.
+
+<Tabs>
+  <Tab title="Claude Code">
+    ```bash
+    claude mcp add --transport http world https://docs.world.org/mcp
+    ```
+  </Tab>
+  <Tab title="Codex">
+    ```bash
+    codex mcp add --transport http world https://docs.world.org/mcp
+    ```
+  </Tab>
+  <Tab title="Cursor">
+    Add to `.cursor/mcp.json`:
+    ```json
+    {
+      "mcpServers": {
+        "world": {
+          "url": "https://docs.world.org/mcp"
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="VS Code">
+    Add to `.vscode/mcp.json`:
+    ```json
+    {
+      "servers": {
+        "world": {
+          "type": "http",
+          "url": "https://docs.world.org/mcp"
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>

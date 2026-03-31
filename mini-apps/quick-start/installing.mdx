@@ -95,7 +95,45 @@ console.log(MiniKit.isInstalled());
 
 ## Build with AI
 
-We have generated a [llms-full.txt](https://docs.world.org/llms-full.txt) file that converts all our documentation into a single markdown document following the https://llmstxt.org/ standard.
+The [World Docs MCP](https://docs.world.org/mcp) lets any coding assistant search the World documentation to help you build your mini app.
+
+<Tabs>
+  <Tab title="Claude Code">
+    ```bash
+    claude mcp add --transport http world https://docs.world.org/mcp
+    ```
+  </Tab>
+  <Tab title="Codex">
+    ```bash
+    codex mcp add --transport http world https://docs.world.org/mcp
+    ```
+  </Tab>
+  <Tab title="Cursor">
+    Add to `.cursor/mcp.json`:
+    ```json
+    {
+      "mcpServers": {
+        "world": {
+          "url": "https://docs.world.org/mcp"
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="VS Code">
+    Add to `.vscode/mcp.json`:
+    ```json
+    {
+      "servers": {
+        "world": {
+          "type": "http",
+          "url": "https://docs.world.org/mcp"
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
 
 ## Template Repositories
 
