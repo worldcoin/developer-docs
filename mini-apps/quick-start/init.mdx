@@ -6,66 +6,62 @@ title: Initialization
 
 When your mini app initializes inside World App, MiniKit stores device context, launch context, and basic user metadata on the client.
 
-Initialize MiniKit before calling any command:
+If you are using React, `MiniKitProvider` will perform the initialization for you.
 
+Otherwise, manually initialize MiniKit at the start of your app:
 ```tsx
 import { MiniKit } from "@worldcoin/minikit-js";
 
 const { success } = MiniKit.install();
-
-if (!success) {
-  console.error("MiniKit is unavailable in this environment");
-}
 ```
 
-If you are using React, `MiniKitProvider` calls `MiniKit.install()` for you.
 
 ## MiniKit State
 
 After install, these are the public MiniKit state accessors you can rely on:
 
-```tsx
-type MiniKitState = {
-  user: {
-    walletAddress?: string;
-    username?: string;
-    profilePictureUrl?: string;
-    permissions?: {
-      notifications: boolean;
-      contacts: boolean;
-    };
-    optedIntoOptionalAnalytics?: boolean;
-  };
-  deviceProperties: {
-    safeAreaInsets?: {
-      top: number;
-      right: number;
-      bottom: number;
-      left: number;
-    };
-    deviceOS?: string;
-    worldAppVersion?: number;
-  };
-  location: "chat" | "home" | "app-store" | "deep-link" | "wallet-tab" | null;
-};
-```
-
-Example:
-
-```tsx
-import { MiniKit } from "@worldcoin/minikit-js";
-
-console.log(MiniKit.user.optedIntoOptionalAnalytics);
-console.log(MiniKit.deviceProperties.safeAreaInsets);
-console.log(MiniKit.deviceProperties.deviceOS);
-console.log(MiniKit.deviceProperties.worldAppVersion);
-console.log(MiniKit.location);
-```
+<Tabs>
+  <Tab title="Type">
+    ```tsx
+    // MiniKit state
+    {
+      user: {
+        walletAddress?: string;
+        username?: string;
+        profilePictureUrl?: string;
+        permissions?: {
+          notifications: boolean;
+          contacts: boolean;
+        };
+        optedIntoOptionalAnalytics?: boolean;
+        verificationStatus?: {
+          isOrbVerified: boolean;
+          isDocumentVerified: boolean;
+          isSecureDocumentVerified: boolean;
+        };
+        preferredCurrency?: string;
+        pendingNotifications?: number;
+      };
+      deviceProperties: {
+        safeAreaInsets?: {
+          top: number;
+          right: number;
+          bottom: number;
+          left: number;
+        };
+        deviceOS?: string;
+        worldAppVersion?: number;
+      };
+      location: "chat" | "home" | "app-store" | "deep-link" | "wallet-tab" | null;
+    }
+    ```
+  </Tab>
+</Tabs>
 
 Notes:
 
-- `MiniKit.user.optedIntoOptionalAnalytics` is available during initialization.
-- `walletAddress`, `username`, and `profilePictureUrl` are usually populated later, for example after `walletAuth()`.
+- `walletAddress`, `verificationStatus`, `preferredCurrency`, `pendingNotifications`, and `optedIntoOptionalAnalytics` are all available at initialization.
+- `username` and `profilePictureUrl` are populated after `walletAuth()`.
 - `MiniKit.location` is the mapped launch location. Use this instead of reading older launch-origin fields directly.
 
 ## Permissions
@@ -81,10 +77,6 @@ import type { MiniAppGetPermissionsSuccessPayload } from "@worldcoin/minikit-js/
 const result = await MiniKit.getPermissions();
 const permissions: MiniAppGetPermissionsSuccessPayload["permissions"] =
   result.data.permissions;
-
-console.log(permissions.notifications);
-console.log(permissions.contacts);
-console.log(permissions.microphone);
 ```
 
 Notes:
@@ -97,92 +89,127 @@ Notes:
 
 MiniKit normalizes the raw World App launch origin into:
 
-```tsx
-type MiniAppLaunchLocation =
-  | "chat"
-  | "home"
-  | "app-store"
-  | "deep-link"
-  | "wallet-tab"
-  | null;
-```
+<Tabs>
+  <Tab title="Type">
+    ```tsx
+    type MiniAppLaunchLocation =
+      | "chat"
+      | "home"
+      | "app-store"
+      | "deep-link"
+      | "wallet-tab"
+      | null;
+    ```
+  </Tab>
 
-Example:
+  <Tab title="Example">
+    ```tsx
+    import { MiniKit } from "@worldcoin/minikit-js";
 
-```tsx
-import { MiniKit } from "@worldcoin/minikit-js";
-
-if (MiniKit.location === "chat") {
-  console.log("Opened from chat");
-}
-```
+    if (MiniKit.location === "chat") {
+      console.log("Opened from chat");
+    }
+    ```
+  </Tab>
+</Tabs>
 
 ## Raw World App Object
 
 If you need the untransformed World App payload, read `window.WorldApp` directly.
 
-```tsx
-type WorldAppContext = {
-  world_app_version: number;
-  device_os: "ios" | "android";
-  is_optional_analytics: boolean;
-  supported_commands: Array<{
-    name:
-      | "attestation"
-      | "pay"
-      | "wallet-auth"
-      | "send-transaction"
-      | "sign-message"
-      | "sign-typed-data"
-      | "share-contacts"
-      | "request-permission"
-      | "get-permissions"
-      | "send-haptic-feedback"
-      | "share"
-      | "chat"
-      | "close-miniapp";
-    supported_versions: number[];
-  }>;
-  safe_area_insets: {
-    top: number;
-    right: number;
-    bottom: number;
-    left: number;
-  };
-  location: string | null | undefined;
-};
-```
+<Tabs>
+  <Tab title="Type">
+    ```tsx
+    // window.WorldApp
+    {
+      world_app_version: number;
+      device_os: "ios" | "android";
+      is_optional_analytics: boolean;
+      wallet_address: string;
+      verification_status: {
+        is_orb_verified: boolean;
+        is_document_verified: boolean;
+        is_secure_document_verified: boolean;
+      };
+      preferred_currency: string;
+      pending_notifications: number;
+      supported_commands: Array<{
+        name:
+          | "verify"
+          | "attestation"
+          | "pay"
+          | "wallet-auth"
+          | "send-transaction"
+          | "sign-message"
+          | "sign-typed-data"
+          | "share-contacts"
+          | "request-permission"
+          | "get-permissions"
+          | "send-haptic-feedback"
+          | "share"
+          | "chat"
+          | "close-miniapp"
+          | "microphone-stream-started"
+          | "microphone-stream-ended";
+        supported_versions: number[];
+      }>;
+      safe_area_insets: {
+        top: number;
+        right: number;
+        bottom: number;
+        left: number;
+      };
+      location: {
+        open_origin: string;
+      } | null | undefined;
+    }
+    ```
+  </Tab>
 
-Example:
-
-```json
-{
-  "world_app_version": 4000301,
-  "device_os": "ios",
-  "is_optional_analytics": true,
-  "supported_commands": [
-    { "name": "attestation", "supported_versions": [1] },
-    { "name": "pay", "supported_versions": [1] },
-    { "name": "wallet-auth", "supported_versions": [2] },
-    { "name": "send-transaction", "supported_versions": [2] },
-    { "name": "sign-message", "supported_versions": [1] },
-    { "name": "sign-typed-data", "supported_versions": [1] },
-    { "name": "share-contacts", "supported_versions": [1] },
-    { "name": "request-permission", "supported_versions": [1] },
-    { "name": "get-permissions", "supported_versions": [1] },
-    { "name": "send-haptic-feedback", "supported_versions": [1] },
-    { "name": "share", "supported_versions": [1] },
-    { "name": "chat", "supported_versions": [1] },
-    { "name": "close-miniapp", "supported_versions": [1] }
-  ],
-  "safe_area_insets": {
-    "top": 0,
-    "right": 0,
-    "bottom": 0,
-    "left": 0
-  },
-  "location": "deep-link"
-}
-```
+  <Tab title="Example">
+    ```json
+    {
+      "world_app_version": 4001000,
+      "device_os": "ios",
+      "is_optional_analytics": true,
+      "wallet_address": "0x377da9cab87c04a1d6f19d8b4be9aef8df26fcdd",
+      "verification_status": {
+        "is_orb_verified": true,
+        "is_document_verified": true,
+        "is_secure_document_verified": false
+      },
+      "preferred_currency": "USD",
+      "pending_notifications": 0,
+      "supported_commands": [
+        { "name": "verify", "supported_versions": [1] },
+        { "name": "attestation", "supported_versions": [1] },
+        { "name": "pay", "supported_versions": [1] },
+        { "name": "wallet-auth", "supported_versions": [1, 2] },
+        { "name": "send-transaction", "supported_versions": [1, 2] },
+        { "name": "sign-message", "supported_versions": [1] },
+        { "name": "sign-typed-data", "supported_versions": [1] },
+        { "name": "share-contacts", "supported_versions": [1] },
+        { "name": "request-permission", "supported_versions": [1] },
+        { "name": "get-permissions", "supported_versions": [1] },
+        { "name": "send-haptic-feedback", "supported_versions": [1] },
+        { "name": "share", "supported_versions": [1] },
+        { "name": "chat", "supported_versions": [1] },
+        { "name": "close-miniapp", "supported_versions": [1] },
+        { "name": "microphone-stream-started", "supported_versions": [1] },
+        { "name": "microphone-stream-ended", "supported_versions": [1] }
+      ],
+      "safe_area_insets": {
+        "top": 0,
+        "right": 0,
+        "bottom": 0,
+        "left": 0
+      },
+      "location": {
+        "open_origin": "deeplink"
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
 
 Use `window.WorldApp` only when you need the raw payload. In application code, prefer `MiniKit.user`, `MiniKit.deviceProperties`, and `MiniKit.location`.
