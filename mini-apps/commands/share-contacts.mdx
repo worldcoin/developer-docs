@@ -7,14 +7,10 @@ description: "Open the native contact picker using the unified MiniKit API."
 
 Use `MiniKit.shareContacts()` to open the World App contact picker.
 
-## Availability
-
-- Works natively in World App
-- Supports a custom fallback outside World App
-
 ## Basic Usage
 
-```tsx
+<CodeGroup>
+```tsx title="Example"
 import { MiniKit } from "@worldcoin/minikit-js";
 import type {
   CommandResultByVia,
@@ -37,6 +33,15 @@ export async function pickContacts() {
   console.log(result.data.contacts);
 }
 ```
+
+```ts title="Type"
+type MiniKitShareContactsOptions = {
+  isMultiSelectEnabled?: boolean;
+  inviteMessage?: string;
+  fallback?: () => unknown;
+};
+```
+</CodeGroup>
 
 ## Result
 
@@ -77,16 +82,16 @@ type ShareContactsResponse =
 ```
 </CodeGroup>
 
-## Fallback Behavior
-
-Use a custom `fallback` if you want equivalent behavior outside World App.
-
 ## Error Codes
 
 | Code | Meaning |
 | --- | --- |
 | `user_rejected` | The user rejected the request |
 | `generic_error` | Unexpected failure |
+
+## Fallback Behavior
+
+Define a custom fallback in the command payload for support outside mini apps.
 
 ## Preview
 

@@ -7,22 +7,11 @@ description: "Send one or more World Chain transactions using the unified MiniKi
 
 Use `MiniKit.sendTransaction()` to submit one or more World Chain transactions.
 
-<Note>
-  These examples assume MiniKit has already been initialized through
-  `MiniKitProvider` or `MiniKit.install()`.
-</Note>
-
-## Availability
-
-- Works natively in World App
-- Supports Wagmi execution outside World App
-- Batch transactions are only available in World App
-
 ## Basic Usage
 
-If you used permit2 in MiniKit v1, MiniKit v2 removes that top-level field; Permit2 approvals now need to be sent as explicit transactions 
-
-```tsx
+MiniKit uses Permit2 under the hood. 
+<CodeGroup>
+```tsx title="Example"
 import { MiniKit } from "@worldcoin/minikit-js";
 import type {
   CommandResultByVia,
@@ -48,6 +37,19 @@ export async function sendTransaction() {
   console.log(result.data.userOpHash);
 }
 ```
+
+```ts title="Type"
+type MiniKitSendTransactionOptions = {
+  chainId: number;
+  transactions: {
+    to: string;
+    data?: string;
+    value?: string;
+  }[];
+  fallback?: () => unknown;
+};
+```
+</CodeGroup>
 
 ## Result
 
@@ -147,15 +149,6 @@ if (status.status === "success") {
 See [GET /api/v2/minikit/userop/{user_op_hash}](/api-reference/developer-portal/get-user-operation)
 for the full endpoint response shape.
 
-## Fallback Behavior
-
-If `result.executedWith === "wagmi"`, MiniKit used the standard web signer path
-outside World App. This path supports only a single transaction, so batched
-`transactions` arrays remain World App-only.
-
-If you need a different non-World-App flow, provide a custom `fallback` and
-handle submission yourself.
-
 ## Error Codes
 
 | Code | Meaning |
@@ -173,6 +166,10 @@ handle submission yourself.
 | `daily_tx_limit_reached` | Daily transaction limit reached |
 | `permitted_amount_exceeds_slippage` | Permit2 amount exceeds allowed slippage |
 | `permitted_amount_not_found` | Permit2 amount could not be resolved |
+
+## Fallback Behavior
+
+By default we intend for mini apps to be useable outside of World App. Fallbacks generally will not be needed and you should instead follow the [migration path outlined](/mini-apps/more/minikit-v2).
 
 ## Preview
 

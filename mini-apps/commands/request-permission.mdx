@@ -7,14 +7,10 @@ description: "Request a mini app permission using the unified MiniKit API."
 
 Use `MiniKit.requestPermission()` to ask the user for a permission such as notifications or microphone access.
 
-## Availability
-
-- Works natively in World App
-- Supports a custom fallback outside World App
-
 ## Basic Usage
 
-```tsx
+<CodeGroup>
+```tsx title="Example"
 import { MiniKit } from "@worldcoin/minikit-js";
 import {
   Permission,
@@ -37,6 +33,14 @@ export async function requestNotifications() {
   console.log(result.data.permission);
 }
 ```
+
+```ts title="Type"
+type MiniKitRequestPermissionOptions = {
+  permission: Permission;
+  fallback?: () => unknown;
+};
+```
+</CodeGroup>
 
 ## Result
 
@@ -73,7 +77,7 @@ type RequestPermissionResponse =
 
 ## Fallback Behavior
 
-Use a custom `fallback` if you want equivalent permission behavior outside World App.
+Define a custom fallback in the command payload for support outside mini apps.
 
 ## Error Codes
 

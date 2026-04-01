@@ -7,14 +7,10 @@ description: "Open the native share sheet using the unified MiniKit API."
 
 Use `MiniKit.share()` to open the native share sheet with text, links, or files.
 
-## Availability
-
-- Works natively in World App
-- Supports a custom fallback outside World App
-
 ## Basic Usage
 
-```tsx
+<CodeGroup>
+```tsx title="Example"
 import { MiniKit } from "@worldcoin/minikit-js";
 import type {
   CommandResultByVia,
@@ -38,6 +34,17 @@ export async function shareLink() {
   console.log(result.data.shared_files_count);
 }
 ```
+
+```ts title="Type"
+type MiniKitShareOptions = {
+  files?: File[];
+  title?: string;
+  text?: string;
+  url?: string;
+  fallback?: () => unknown;
+};
+```
+</CodeGroup>
 
 ## Result
 
@@ -74,7 +81,7 @@ type ShareResponse =
 
 ## Fallback Behavior
 
-Use a custom `fallback` if you want equivalent share behavior outside World App.
+Define a custom fallback in the command payload for support outside mini apps.
 
 ## Error Codes
 

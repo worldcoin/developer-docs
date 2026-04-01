@@ -13,28 +13,6 @@ To send notifications to users you need to:
 - Request permission to send notifications from the user, via MiniKit (see [Request Permission](/mini-apps/commands/request-permission)),
 - Actually send the notification using our API or the Developer Portal.
 
-Notifications are queued on our servers, users may not receive them immediately.
-
-## Manually sending notifications from Developer Portal
-
-<Note type="info">
-  This form doesn't support localized notifications yet. To take advantage of
-  localizations, use the API.
-</Note>
-
-You can send notifications to multiple wallet addresses (up to 1000) directly from the Developer Portal.
-
-<div className="flex justify-center">
-  <img
-    src="/images/docs/mini-apps/commands/notifications-dev-portal.png"
-    alt="Notification Interface in the Developer Portal"
-    className="m-auto block"
-    width="300"
-  />
-</div>
-
-Use the form to input addresses, and content details. Once you click the `Send` button and get a success response, your notifications will be queued for delivery.
-
 ## Calling the send-notification endpoint
 
 The API endpoint provides capabilities for sending notifications programmatically. These notifications can be localized,
@@ -82,6 +60,26 @@ Each user automatically receives the notification in their preferred language.
 If their language isn't included in your localizations, you'll receive a specific `reason` in the response.
 
 For complete API documentation including all supported languages and response formats, see the [API Reference](/api-reference/developer-portal/send-notification).
+
+## Manually sending notifications from Developer Portal
+
+<Note type="info">
+  This form doesn't support localized notifications yet. To take advantage of
+  localizations, use the API.
+</Note>
+
+You can send notifications to multiple wallet addresses (up to 1000) directly from the Developer Portal.
+
+<div className="flex justify-center">
+  <img
+    src="/images/docs/mini-apps/commands/notifications-dev-portal.png"
+    alt="Notification Interface in the Developer Portal"
+    className="m-auto block"
+    width="300"
+  />
+</div>
+
+Use the form to input addresses, and content details. Once you click the `Send` button and get a success response, your notifications will be queued for delivery.
 
 ## Testing
 

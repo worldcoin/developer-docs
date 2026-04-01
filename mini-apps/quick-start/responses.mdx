@@ -48,9 +48,5 @@ async function signInWithWallet() {
 
 ## Event Subscriptions
 
-`MiniKit.subscribe()` and `MiniKit.unsubscribe()` still exist for lower-level integrations and legacy v1 flows. For new 2.x command integrations, prefer `await MiniKit.<command>()`.
+For new 2.x command integrations, prefer `await MiniKit.<command>()`.
 
-<Note>
-  If you are migrating from MiniKit 1.x, do not use `finalPayload`,
-  `commandPayload`, `MiniKit.commands`, or `MiniKit.commandsAsync` in new code.
-</Note>

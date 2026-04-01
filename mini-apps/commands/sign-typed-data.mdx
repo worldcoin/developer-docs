@@ -7,14 +7,10 @@ description: "Sign EIP-712 typed data using the unified MiniKit API."
 
 Use `MiniKit.signTypedData()` to request an EIP-712 signature from the user's wallet.
 
-## Availability
-
-- Works natively in World App
-- Can execute outside World App through Wagmi or a custom fallback when configured
-
 ## Basic Usage
 
-```tsx
+<CodeGroup>
+```tsx title="Example"
 import { MiniKit } from "@worldcoin/minikit-js";
 import type {
   CommandResultByVia,
@@ -52,6 +48,18 @@ export async function signTypedData() {
 }
 ```
 
+```ts title="Type"
+type MiniKitSignTypedDataOptions = {
+  types: TypedData;
+  primaryType: string;
+  message: Record<string, unknown>;
+  domain?: TypedDataDomain;
+  chainId?: number;
+  fallback?: () => unknown;
+};
+```
+</CodeGroup>
+
 ## Result
 
 <CodeGroup>
@@ -87,8 +95,7 @@ type SignTypedDataResponse =
 
 ## Fallback Behavior
 
-- `executedWith: "wagmi"` means the web signer handled the request
-- `executedWith: "fallback"` means your custom fallback handled the request
+Define a custom fallback in the command payload for support outside mini apps.
 
 ## Error Codes
 

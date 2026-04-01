@@ -7,14 +7,10 @@ description: "Read current mini app permission settings using the unified MiniKi
 
 Use `MiniKit.getPermissions()` to read the current permission state for the mini app.
 
-## Availability
-
-- Works natively in World App
-- Supports a custom fallback outside World App
-
 ## Basic Usage
 
-```tsx
+<CodeGroup>
+```tsx title="Example"
 import { MiniKit } from "@worldcoin/minikit-js";
 import type {
   CommandResultByVia,
@@ -34,6 +30,13 @@ export async function getPermissions() {
   console.log(result.data.permissions);
 }
 ```
+
+```ts title="Type"
+type MiniKitGetPermissionsOptions = {
+  fallback?: () => unknown;
+};
+```
+</CodeGroup>
 
 ## Result
 
@@ -78,7 +81,7 @@ type GetPermissionsResponse =
 
 ## Fallback Behavior
 
-Use a custom `fallback` if you want equivalent permission behavior outside World App.
+Define a custom fallback in the command payload for support outside mini apps.
 
 ## Error Codes
 

@@ -1,25 +1,16 @@
 ---
 title: "Pay"
-description: "Request a payment using the unified MiniKit API."
+description: "Request a payment from the user"
 "og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-Use `MiniKit.pay()` to request a payment inside World App.
-
-<Note>
-  These examples assume MiniKit has already been initialized through
-  `MiniKitProvider` or `MiniKit.install()`.
-</Note>
-
-## Availability
-
-- Works natively in World App
-- Supports a custom fallback outside World App
+This command is an abstraction for a simple transfer. This shouldn't be used outside of World App. Pay supports WLD and all local stablecoins.
 
 ## Basic Usage
 
-```tsx
+<CodeGroup>
+```tsx title="Example"
 import { MiniKit } from "@worldcoin/minikit-js";
 import {
   Tokens,
@@ -30,7 +21,8 @@ import {
 } from "@worldcoin/minikit-js/commands";
 
 export async function sendPayment() {
-  const response = await fetch("/api/initiate-payment", { method: "POST" });
+  // Create a nonce in the backend to use as a reference for this payment.
+  const response = await fetch("/api/generate-nonce", { method: "POST" });
   const { id } = await response.json();
 
   const input = {
@@ -43,7 +35,10 @@ export async function sendPayment() {
       },
     ],
     description: "Example payment",
-  } satisfies MiniKitPayOptions;
+    fallback: () => {
+      alert("Please complete the payment in World App to proceed.");
+    },
+  };
 
   const result: CommandResultByVia<PayResult, PayResult, "minikit"> =
     await MiniKit.pay(input);
@@ -57,6 +52,20 @@ export async function sendPayment() {
   });
 }
 ```
+
+```ts title="Type"
+type MiniKitPayOptions = {
+  reference: string;
+  to: string;
+  tokens: {
+    symbol: Tokens;
+    token_amount: string;
+  }[];
+  description: string;
+  fallback?: () => unknown;
+};
+```
+</CodeGroup>
 
 ## Result
 
@@ -92,10 +101,6 @@ type PayResponse =
 }
 ```
 </CodeGroup>
-
-## Fallback Behavior
-
-Use a custom `fallback` if you want equivalent payment behavior outside World App.
 
 ## Backend Verification
 
@@ -140,14 +145,12 @@ export async function POST(req: NextRequest) {
 | `generic_error` | Unexpected failure |
 | `user_blocked` | Payments are not available in the user's region |
 
+## Fallback Behavior
+
+Define a custom fallback in the command payload for support outside mini apps.
+
 ## Preview
 
 <div className="grid justify-items-center text-center">
-  <video className="m-auto" width="300" autoPlay muted loop playsInline>
-    <source
-      src="/images/docs/mini-apps/commands/pay-command.mp4"
-      type="video/mp4"
-    />
-    Your browser does not support the video tag.
-  </video>
+  <img className="m-auto" width="300" src="/images/docs/mini-apps/commands/pay-updated.gif" alt="Pay command demo" />
 </div>

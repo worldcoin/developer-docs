@@ -7,14 +7,10 @@ description: "Sign an EIP-191 message using the unified MiniKit API."
 
 Use `MiniKit.signMessage()` to request a personal signature from the user's wallet.
 
-## Availability
-
-- Works natively in World App
-- Can execute outside World App through Wagmi or a custom fallback when configured
-
 ## Basic Usage
 
-```tsx
+<CodeGroup>
+```tsx title="Example"
 import { MiniKit } from "@worldcoin/minikit-js";
 import type {
   CommandResultByVia,
@@ -33,6 +29,14 @@ export async function signMessage() {
   console.log(result.data.signature);
 }
 ```
+
+```ts title="Type"
+type MiniKitSignMessageOptions = {
+  message: string;
+  fallback?: () => unknown;
+};
+```
+</CodeGroup>
 
 ## Result
 
@@ -69,8 +73,7 @@ type SignMessageResponse =
 
 ## Fallback Behavior
 
-- `executedWith: "wagmi"` means the web signer handled the request
-- `executedWith: "fallback"` means your custom fallback handled the request
+Define a custom fallback in the command payload for support outside mini apps.
 
 ## Notes
 

@@ -7,11 +7,6 @@ description: "Trigger haptic feedback using the unified MiniKit API."
 
 Use `MiniKit.sendHapticFeedback()` to trigger native haptic feedback.
 
-## Availability
-
-- Works natively in World App
-- Supports a custom fallback outside World App
-
 ## Haptic Types
 
 - **`"notification"`** — style: `"success"`, `"warning"`, or `"error"`
@@ -21,30 +16,6 @@ Use `MiniKit.sendHapticFeedback()` to trigger native haptic feedback.
 ## Basic Usage
 
 <CodeGroup>
-```tsx title="Notification"
-import { MiniKit } from "@worldcoin/minikit-js";
-import type {
-  CommandResultByVia,
-  MiniAppSendHapticFeedbackSuccessPayload,
-  MiniKitSendHapticFeedbackOptions,
-} from "@worldcoin/minikit-js/commands";
-
-export async function sendSuccessHaptic() {
-  const input = {
-    hapticsType: "notification",
-    style: "success",
-  } satisfies MiniKitSendHapticFeedbackOptions;
-
-  const result: CommandResultByVia<
-    MiniAppSendHapticFeedbackSuccessPayload,
-    MiniAppSendHapticFeedbackSuccessPayload,
-    "minikit"
-  > = await MiniKit.sendHapticFeedback(input);
-
-  console.log(result.data.timestamp);
-}
-```
-
 ```tsx title="Impact"
 import { MiniKit } from "@worldcoin/minikit-js";
 import type { MiniKitSendHapticFeedbackOptions } from "@worldcoin/minikit-js/commands";
@@ -66,6 +37,24 @@ export async function sendSelectionHaptic() {
     hapticsType: "selection-changed",
   } satisfies MiniKitSendHapticFeedbackOptions);
 }
+```
+
+```ts title="Type"
+type MiniKitSendHapticFeedbackOptions =
+  | {
+      hapticsType: "notification";
+      style: "error" | "success" | "warning";
+      fallback?: () => unknown;
+    }
+  | {
+      hapticsType: "impact";
+      style: "light" | "medium" | "heavy";
+      fallback?: () => unknown;
+    }
+  | {
+      hapticsType: "selection-changed";
+      fallback?: () => unknown;
+    };
 ```
 </CodeGroup>
 
@@ -102,7 +91,7 @@ type SendHapticFeedbackResponse =
 
 ## Fallback Behavior
 
-Use a custom `fallback` if you want equivalent haptic behavior outside World App.
+Define a custom fallback in the command payload for support outside mini apps.
 
 ## Error Codes
 

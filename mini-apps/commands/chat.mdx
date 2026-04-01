@@ -7,14 +7,10 @@ description: "Share a message through World Chat using the unified MiniKit API."
 
 Use `MiniKit.chat()` to open World Chat with a prefilled message.
 
-## Availability
-
-- Works natively in World App
-- Supports a custom fallback outside World App
-
 ## Basic Usage
 
-```tsx
+<CodeGroup>
+```tsx title="Example"
 import { MiniKit } from "@worldcoin/minikit-js";
 import type {
   CommandResultByVia,
@@ -37,6 +33,15 @@ export async function shareToChat() {
   console.log(result.data.count);
 }
 ```
+
+```ts title="Type"
+type MiniKitChatOptions = {
+  message: string;
+  to?: string[];
+  fallback?: () => unknown;
+};
+```
+</CodeGroup>
 
 ## Result
 
@@ -73,7 +78,7 @@ type ChatResponse =
 
 ## Fallback Behavior
 
-Use a custom `fallback` if you want equivalent sharing behavior outside World App.
+Define a custom fallback in the command payload for support outside mini apps.
 
 ## Error Codes
 

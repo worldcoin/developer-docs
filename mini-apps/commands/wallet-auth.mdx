@@ -9,23 +9,12 @@ Use `MiniKit.walletAuth()` to authenticate a user with Sign-In with Ethereum ins
 
 This is the recommended authentication flow for mini apps.
 
-<Note>
-  These examples assume MiniKit has already been initialized through
-  `MiniKitProvider` or `MiniKit.install()`.
-</Note>
-
-## Availability
-
-- Works natively in World App
-- Can execute outside World App through Wagmi or a custom fallback when configured
-
 ## Basic Usage
 
 Generate the nonce on your backend. The nonce must be alphanumeric and at least 8 characters.
 
-```tsx
-"use client";
-
+<CodeGroup>
+```tsx title="Example"
 import { MiniKit } from "@worldcoin/minikit-js";
 import type {
   CommandResultByVia,
@@ -65,6 +54,18 @@ export async function signInWithWallet() {
 }
 ```
 
+```ts title="Type"
+type MiniKitWalletAuthOptions = {
+  nonce: string;
+  statement?: string;
+  expirationTime?: Date;
+  notBefore?: Date;
+  requestId?: string;
+  fallback?: () => unknown;
+};
+```
+</CodeGroup>
+
 ## Result
 
 <CodeGroup>
@@ -95,13 +96,6 @@ type WalletAuthResponse =
 }
 ```
 </CodeGroup>
-
-## Fallback Behavior
-
-- `executedWith: "wagmi"` means the Wagmi integration handled the request
-- `executedWith: "fallback"` means your custom `fallback` function handled the request
-
-Use `executedWith` to branch on the runtime path when needed.
 
 ## Backend Verification
 
@@ -178,6 +172,10 @@ export async function POST(req: NextRequest) {
 | `malformed_request` | The SIWE request payload is invalid |
 | `user_rejected` | The user rejected the signature request |
 | `generic_error` | Unexpected failure |
+
+## Fallback Behavior
+
+Define a custom fallback in the command payload for support outside mini apps.
 
 ## Preview
 

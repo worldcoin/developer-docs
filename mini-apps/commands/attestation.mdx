@@ -7,14 +7,10 @@ description: "Request an attestation token using the unified MiniKit API."
 
 Use `MiniKit.attestation()` to request an app attestation token for a request hash.
 
-## Availability
-
-- Works natively in World App
-- Supports a custom fallback outside World App
-
 ## Basic Usage
 
-```tsx
+<CodeGroup>
+```tsx title="Example"
 import { MiniKit } from "@worldcoin/minikit-js";
 import type {
   CommandResultByVia,
@@ -36,6 +32,14 @@ export async function requestAttestation() {
   console.log(result.data.token);
 }
 ```
+
+```ts title="Type"
+type MiniKitAttestationOptions = {
+  requestHash: string;
+  fallback?: () => unknown;
+};
+```
+</CodeGroup>
 
 ## Result
 
@@ -70,7 +74,7 @@ type AttestationResponse =
 
 ## Fallback Behavior
 
-Use a custom `fallback` if you want equivalent behavior outside World App.
+Define a custom fallback in the command payload for support outside mini apps.
 
 ## Error Codes
 

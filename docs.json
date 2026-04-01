@@ -68,6 +68,7 @@
           {
             "group": "Commands",
             "pages": [
+              "mini-apps/commands/verify",
               "mini-apps/commands/pay",
               "mini-apps/commands/wallet-auth",
               "mini-apps/commands/send-transaction",
@@ -111,6 +112,11 @@
           {
             "group": "Further Reading",
             "pages": [
+              "mini-apps/more/minikit-v2",
+              "mini-apps/more/webview-spec",
+              "mini-apps/ecosystem/ecosystem",
+              "mini-apps/more/community-tools-perks",
+              "mini-apps/more/faq",
               {
                 "group": "Growth Playbook",
                 "pages": [
@@ -120,13 +126,7 @@
                   "mini-apps/growth/notifications",
                   "mini-apps/growth/analytics"
                 ]
-              },
-              "mini-apps/more/releases",
-              "mini-apps/more/webview-spec",
-              "mini-apps/ecosystem/ecosystem",
-              "mini-apps/more/community-tools-perks",
-              "mini-apps/more/minikit-v2",
-              "mini-apps/more/faq"
+              }
             ]
           }
         ]

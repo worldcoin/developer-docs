@@ -7,14 +7,10 @@ description: "Programmatically close the mini app using the unified MiniKit API.
 
 Use `MiniKit.closeMiniApp()` to programmatically close the mini app.
 
-## Availability
-
-- Works natively in World App
-- Supports a custom fallback outside World App
-
 ## Basic Usage
 
-```tsx
+<CodeGroup>
+```tsx title="Example"
 import { MiniKit } from "@worldcoin/minikit-js";
 import type {
   CommandResultByVia,
@@ -34,6 +30,13 @@ export async function closeMiniApp() {
   return result.data.status;
 }
 ```
+
+```ts title="Type"
+type MiniKitCloseMiniAppOptions = {
+  fallback?: () => unknown;
+};
+```
+</CodeGroup>
 
 ## Result
 
@@ -66,4 +69,4 @@ type CloseMiniAppResponse =
 
 ## Fallback Behavior
 
-Use a custom `fallback` if you want equivalent behavior outside World App.
+Define a custom fallback in the command payload for support outside mini apps.
