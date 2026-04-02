@@ -236,7 +236,29 @@ for the full endpoint response shape.
 
 ## Fallback Behavior
 
-By default we intend for mini apps to be useable outside of World App. Fallbacks generally will not be needed and you should instead follow the [migration path outlined](/mini-apps/more/minikit-v2).
+By default we intend for mini apps to be useable outside of World App. Fallbacks generally will not be needed for this command and you should instead follow the [migration path outlined](/mini-apps/more/minikit-v2).
+
+## Allowlisting Contracts and Tokens
+
+Before your mini app can send transactions, you must allowlist the contracts and tokens it interacts with. Navigate to **Developer Portal > Mini App > Permissions** and add:
+
+- **Permit2 Tokens** — every ERC-20 token your app transfers via Permit2
+- **Contract Entrypoints** — every contract your app calls directly
+
+<div className="grid justify-items-center text-center">
+  <img
+    className="m-auto"
+    src="/images/docs/mini-apps/commands/permit2-whitelist.png"
+    alt="Developer Portal showing Permit2 token and contract entrypoint whitelisting"
+    width="400"
+  />
+  <p className="text-sm text-gray-500 mt-2">Developer Portal Whitelist</p>
+</div>
+
+<Warning>
+  Transactions that touch non-whitelisted contracts or tokens will be blocked by
+  the backend with an `invalid_contract` error.
+</Warning>
 
 ## Preview
 
