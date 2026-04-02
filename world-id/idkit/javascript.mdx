@@ -48,7 +48,7 @@ const builder = IDKit.request({
   },
   allow_legacy_proofs: true,
   environment: "production", // Only set this to staging for testing with the simulator
-  return_to: "https://example.com/done", // Optional: deep-link callback URL
+  return_to: "myapp://verify-done", // Optional: mobile deep-link callback URL
   bridge_url: undefined, // Optional: custom bridge URL
 });
 ```
