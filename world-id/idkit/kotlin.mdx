@@ -54,10 +54,8 @@ val config = IDKitRequestConfig(
   appId = "app_xxxxx",
   action = "my-action",
   rpContext = rpContext,
-  actionDescription = "Verify user",
-  bridgeUrl = null,
   allowLegacyProofs = true,
-  overrideConnectBaseUrl = null,
+  returnTo = "https://example.com/done", // Optional: deep-link callback URL
   environment = Environment.PRODUCTION,
 )
 

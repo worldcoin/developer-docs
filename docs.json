@@ -49,6 +49,7 @@
             "group": "IDKit",
             "pages": [
               "world-id/idkit/integrate",
+              "world-id/idkit/signatures",
               "world-id/idkit/build-with-llms",
               "world-id/idkit/onchain-verification",
               "world-id/idkit/design-guidelines",
