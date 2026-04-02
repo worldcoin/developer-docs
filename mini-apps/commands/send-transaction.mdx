@@ -5,51 +5,121 @@ description: "Send one or more World Chain transactions using the unified MiniKi
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-Use `MiniKit.sendTransaction()` to submit one or more World Chain transactions.
+Use `MiniKit.sendTransaction()` to submit one or more World Chain transactions. 
 
-## Basic Usage
+**Breaking Changes in MiniKit v2**: This command now uses Permit2 AllowanceTransfers under the hood. 
+You will no longer need to specify a permit2 array, but will need to bundle an approval to the permit2 contract in the same transaction as your main action.
 
-MiniKit uses Permit2 under the hood. 
+## Permit2 Allowance Transfers
+
+[Allowance transfers](https://docs.uniswap.org/contracts/permit2/reference/allowance-transfer#approve) are the default method for moving tokens in mini apps.
+You should only rely on the `approve` method for Allowance Transfers, and can bundle them in one sendTransaction call with your main contract action for a seamless user experience.
+
 <CodeGroup>
-```tsx title="Example"
+```tsx title="Frontend"
 import { MiniKit } from "@worldcoin/minikit-js";
-import type {
-  CommandResultByVia,
-  MiniKitSendTransactionOptions,
-  SendTransactionResult,
-} from "@worldcoin/minikit-js/commands";
+import { encodeFunctionData, parseEther } from "viem";
 
-export async function sendTransaction() {
-  const input = {
-    // Set to 480 for World Chain
+const PERMIT2 = "0x000000000022D473030F116dDEE9F6B43aC78BA3";
+
+async function approveAndSwap(
+  token: `0x${string}`,
+  spender: `0x${string}`,
+  amount: bigint,
+) {
+  const result = await MiniKit.sendTransaction({
     chainId: 480,
     transactions: [
+      // 1. Approve spender via Permit2
       {
-        to: "0x9Cf4F011F55Add3ECC1B1B497A3e9bd32183D6e8",
-        data: "0x1234",
+        to: PERMIT2,
+        data: encodeFunctionData({
+          abi: [
+            {
+              name: "approve",
+              type: "function",
+              inputs: [
+                { name: "token", type: "address" },
+                { name: "spender", type: "address" },
+                { name: "amount", type: "uint160" },
+                { name: "expiration", type: "uint48" },
+              ],
+              outputs: [],
+              stateMutability: "nonpayable",
+            },
+          ],
+          functionName: "approve",
+          args: [
+            token,
+            spender,
+            amount,
+            // 30-day expiration
+            Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60,
+          ],
+        }),
+      },
+      // 2. Call your contract (which pulls tokens via permit2.transferFrom)
+      {
+        to: spender,
+        data: encodeFunctionData({
+          abi: [
+            {
+              name: "swap",
+              type: "function",
+              inputs: [{ name: "amount", type: "uint256" }],
+              outputs: [],
+              stateMutability: "nonpayable",
+            },
+          ],
+          functionName: "swap",
+          args: [amount],
+        }),
       },
     ],
-  } satisfies MiniKitSendTransactionOptions;
-
-  const result: CommandResultByVia<SendTransactionResult> =
-    await MiniKit.sendTransaction(input);
+  });
 
   console.log(result.data.userOpHash);
 }
 ```
 
-```ts title="Type"
-type MiniKitSendTransactionOptions = {
-  chainId: number;
-  transactions: {
-    to: string;
-    data?: string;
-    value?: string;
-  }[];
-  fallback?: () => unknown;
-};
+```solidity title="Contract"
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IAllowanceTransfer} from "permit2/src/interfaces/IAllowanceTransfer.sol";
+
+contract Swap {
+    IERC20 public tokenA;
+    IERC20 public tokenB;
+    IAllowanceTransfer public immutable permit2;
+
+    constructor(address _tokenA, address _tokenB, address _permit2) {
+        tokenA = IERC20(_tokenA);
+        tokenB = IERC20(_tokenB);
+        permit2 = IAllowanceTransfer(_permit2);
+    }
+
+    function swap(uint256 amount) external {
+        // Pull tokenA from caller via Permit2 AllowanceTransfer
+        permit2.transferFrom(
+            msg.sender,
+            address(this),
+            uint160(amount),
+            address(tokenA)
+        );
+        // Send tokenB to caller
+        tokenB.transfer(msg.sender, amount);
+    }
+}
 ```
 </CodeGroup>
+
+<Note>
+  World App automatically approves new ERC-20 tokens to the Permit2 contract.
+  Your contract only needs to call `permit2.transferFrom` — the token-level
+  approval is already in place.
+</Note>
 
 ## Result
 
@@ -99,12 +169,12 @@ type SendTransactionResponse =
 
 The command resolves as soon as the user operation is
 submitted, so the first identifier you receive is `userOpHash`. 
-You can either use `@worldcoin/minikit-react` hook  or poll the Developer Portal 
+You can either use the `@worldcoin/minikit-react` hook or poll the Developer Portal 
 to check when the user operation is mined and get the final `transaction_hash`.
 
 <CodeGroup>
 ```tsx title="React"
-import { useWaitForUserOperationReceipt } from "@worldcoin/minikit-react";
+import { useUserOperationReceipt } from "@worldcoin/minikit-react";
 import { createPublicClient, http } from "viem";
 import { worldchain } from "viem/chains";
 
@@ -113,16 +183,13 @@ const client = createPublicClient({
   transport: http("https://worldchain-mainnet.g.alchemy.com/public"),
 });
 
-const {
-  isLoading,
-  isSuccess,
-  isError,
-  transactionHash,
-  receipt,
-} = useWaitForUserOperationReceipt({
-  client,
-  userOpHash,
-});
+const { poll, isLoading, reset } = useUserOperationReceipt({ client });
+
+const onClick = async () => {
+  const result = await MiniKit.sendTransaction({...});
+  const { receipt } = await poll(result.data.userOpHash);
+  // receipt contains the final transaction receipt
+};
 ```
 
 ```ts title="API"
