@@ -14,7 +14,7 @@ You will no longer need to specify a permit2 array, but will need to bundle an a
 
 [Allowance transfers](https://docs.uniswap.org/contracts/permit2/reference/allowance-transfer#approve) are the default method for moving tokens in mini apps.
 You should only rely on the `approve` method for Allowance Transfers, and can bundle them in one sendTransaction call with your main contract action for a seamless user experience.
-
+Expiration should always be set to 0 as the approval will be consumed in the same transaction.
 <CodeGroup>
 ```tsx title="Frontend"
 import { MiniKit } from "@worldcoin/minikit-js";
@@ -53,8 +53,8 @@ async function approveAndSwap(
             token,
             spender,
             amount,
-            // 30-day expiration
-            Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60,
+            // Always set deadline to 0 as it will be consumed in the same transaction
+           0,
           ],
         }),
       },
