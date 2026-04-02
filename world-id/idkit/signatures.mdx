@@ -187,23 +187,6 @@ sig: 0x05594adb6c1495768a38d523d7d6ee6356b2c31231919198794ed022ade7d08f73753f83b
 ```
 </CodeGroup>
 
-### Validation checks
-
-<CodeGroup>
-```text title="format"
-signature: ^0x[0-9a-f]{130}$  (65 bytes)
-nonce:     ^0x[0-9a-f]{64}$   (32 bytes)
-nonce[0]:  always 0x00
-v byte:    27 (0x1b) or 28 (0x1c)
-```
-
-```text title="behavior"
-default TTL:     300 seconds
-keys accepted:   with or without 0x prefix
-rejected:        invalid hex, wrong-length keys
-```
-</CodeGroup>
-
 ## Related pages
 
 - [Integration guide](/world-id/idkit/integrate)
