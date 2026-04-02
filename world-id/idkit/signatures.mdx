@@ -26,7 +26,8 @@ function hash_to_field(input_bytes) -> bytes32:
     return uint256_to_32bytes_be(n)      // always starts with 0x00
 
 function compute_rp_signature_message(nonce_bytes32, created_at_u64, expires_at_u64, action?) -> bytes:
-    msg = new bytes(49)                  // 49 bytes without action, 81 with
+    size = 81 if action else 49
+    msg = new bytes(size)
     msg[0]     = 0x01                    // version byte
     msg[1..32] = nonce_bytes32           // 32-byte field element
     msg[33..40] = u64_to_be(created_at)  // big-endian uint64

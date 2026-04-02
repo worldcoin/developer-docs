@@ -330,12 +330,11 @@ Nullifiers are returned as 0x-prefixed hex strings representing 256-bit integers
 
 <CodeGroup>
 ```sql title="PostgreSQL schema"
-CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  -- Store the nullifier as a new column to the users table or in a separate table
+CREATE TABLE nullifiers (
   nullifier   NUMERIC(78, 0) NOT NULL,
   action      TEXT NOT NULL,
   verified_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (nullifier, action)
 );
 ```
 </CodeGroup>
