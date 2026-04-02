@@ -39,6 +39,88 @@
         ]
       },
       {
+        "tab": "World ID",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["world-id/overview"]
+          },
+          {
+            "group": "IDKit",
+            "pages": [
+              "world-id/idkit/integrate",
+              "world-id/idkit/build-with-llms",
+              "world-id/idkit/onchain-verification",
+              "world-id/idkit/design-guidelines",
+              {
+                "group": "SDK Reference",
+                "pages": [
+                  "world-id/idkit/javascript",
+                  "world-id/idkit/react",
+                  "world-id/idkit/swift",
+                  "world-id/idkit/kotlin",
+                  "world-id/idkit/go",
+                  "world-id/idkit/error-codes"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Credentials",
+            "pages": ["world-id/credentials/legacy-presets"]
+          },
+          {
+            "group": "Migration",
+            "pages": ["world-id/4-0-migration"]
+          },
+          {
+            "group": "Selfie Check (Beta)",
+            "hidden": true,
+            "pages": ["world-id/selfie-check/overview"]
+          },
+          {
+            "group": "Technical Reference",
+            "pages": [
+              "world-id/concepts",
+              "world-id/reference/authenticator",
+              {
+                "group": "API References",
+                "pages": [
+                  {
+                    "group": "Indexer",
+                    "openapi": "https://indexer.us.id-infra.worldcoin.dev/openapi.json",
+                    "pages": [
+                      "POST /inclusion-proof",
+                      "POST /packed-account",
+                      "POST /signature-nonce",
+                      "POST /authenticator-pubkeys"
+                    ]
+                  },
+                  {
+                    "group": "Gateway",
+                    "openapi": "https://gateway.id-infra.worldcoin.dev/openapi.json",
+                    "pages": [
+                      "POST /create-account",
+                      "POST /insert-authenticator",
+                      "POST /update-authenticator",
+                      "POST /remove-authenticator",
+                      "POST /recover-account",
+                      "GET /is-valid-root",
+                      "GET /status/{id}"
+                    ]
+                  },
+                  {
+                    "group": "Issuers",
+                    "pages": ["world-id/reference/poh-issuer"]
+                  }
+                ]
+              },
+              "world-id/reference/contracts"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "Mini Apps",
         "groups": [
           {
@@ -127,88 +209,6 @@
                   "mini-apps/growth/analytics"
                 ]
               }
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "World ID",
-        "groups": [
-          {
-            "group": "Overview",
-            "pages": ["world-id/overview"]
-          },
-          {
-            "group": "IDKit",
-            "pages": [
-              "world-id/idkit/integrate",
-              "world-id/idkit/build-with-llms",
-              "world-id/idkit/onchain-verification",
-              "world-id/idkit/design-guidelines",
-              {
-                "group": "SDK Reference",
-                "pages": [
-                  "world-id/idkit/javascript",
-                  "world-id/idkit/react",
-                  "world-id/idkit/swift",
-                  "world-id/idkit/kotlin",
-                  "world-id/idkit/go",
-                  "world-id/idkit/error-codes"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Credentials",
-            "pages": ["world-id/credentials/legacy-presets"]
-          },
-          {
-            "group": "Migration",
-            "pages": ["world-id/4-0-migration"]
-          },
-          {
-            "group": "Selfie Check (Beta)",
-            "hidden": true,
-            "pages": ["world-id/selfie-check/overview"]
-          },
-          {
-            "group": "Technical Reference",
-            "pages": [
-              "world-id/concepts",
-              "world-id/reference/authenticator",
-              {
-                "group": "API References",
-                "pages": [
-                  {
-                    "group": "Indexer",
-                    "openapi": "https://indexer.us.id-infra.worldcoin.dev/openapi.json",
-                    "pages": [
-                      "POST /inclusion-proof",
-                      "POST /packed-account",
-                      "POST /signature-nonce",
-                      "POST /authenticator-pubkeys"
-                    ]
-                  },
-                  {
-                    "group": "Gateway",
-                    "openapi": "https://gateway.id-infra.worldcoin.dev/openapi.json",
-                    "pages": [
-                      "POST /create-account",
-                      "POST /insert-authenticator",
-                      "POST /update-authenticator",
-                      "POST /remove-authenticator",
-                      "POST /recover-account",
-                      "GET /is-valid-root",
-                      "GET /status/{id}"
-                    ]
-                  },
-                  {
-                    "group": "Issuers",
-                    "pages": ["world-id/reference/poh-issuer"]
-                  }
-                ]
-              },
-              "world-id/reference/contracts"
             ]
           }
         ]
