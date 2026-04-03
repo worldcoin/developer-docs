@@ -140,7 +140,7 @@ Commands without Wagmi fallbacks (`pay`, `shareContacts`, etc.) need a `fallback
 ```tsx
 const result = await MiniKit.pay({
   amount: "1.00",
-  token: "USDCE",
+  token: "USDC",
   reference: "order-123",
   description: "Coffee",
   fallback: async () => myCustomPaymentFlow(),
