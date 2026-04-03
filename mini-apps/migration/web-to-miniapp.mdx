@@ -1,0 +1,155 @@
+---
+title: "Migrate a Web App to Mini App"
+description: "Convert an existing Next.js web app to work as a World App mini app."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+Convert an existing Next.js web app that uses viem to work as a World App mini app.
+
+## Ask an agent
+Add this skill and ask your agent to convert your web app to a mini app using the steps outlined in this guide. 
+```
+npx skills add worldcoin/minikit-js web-to-miniapp
+```
+
+## 1. Install MiniKit
+
+```bash
+pnpm add @worldcoin/minikit-js @worldcoin/minikit-react
+```
+
+## 2. Disable SSR
+
+MiniKit depends on `window.WorldApp`. SSR causes hydration mismatches that silently break event handlers.
+
+```tsx title="src/app/page.tsx"
+"use client";
+import dynamic from "next/dynamic";
+const App = dynamic(() => import("../components/App"), { ssr: false });
+export default function Page() {
+  return <App />;
+}
+```
+
+## 3. Add MiniKitProvider
+
+```tsx title="src/app/providers.tsx"
+"use client";
+import { MiniKitProvider } from "@worldcoin/minikit-js/minikit-provider";
+
+export default function Providers({ children }: { children: React.ReactNode }) {
+  return <MiniKitProvider>{children}</MiniKitProvider>;
+}
+```
+
+Wrap children in your layout:
+
+```tsx title="src/app/layout.tsx"
+import Providers from "./providers";
+
+<body>
+  <Providers>{children}</Providers>
+</body>
+```
+
+## 4. Wallet Connection
+
+Use `getWorldAppProvider()` inside World App, fall back to `window.ethereum` for browsers.
+
+```tsx
+import { MiniKit, getWorldAppProvider } from "@worldcoin/minikit-js";
+import { createWalletClient, custom } from "viem";
+import { worldchain } from "viem/chains";
+
+const provider = MiniKit.isInWorldApp()
+  ? getWorldAppProvider()
+  : window.ethereum;
+
+const walletClient = createWalletClient({
+  chain: worldchain,
+  transport: custom(provider),
+});
+```
+
+Under the hood, `getWorldAppProvider()` maps:
+- `eth_requestAccounts` &rarr; `MiniKit.walletAuth()`
+- `eth_sendTransaction` &rarr; `MiniKit.sendTransaction()`
+- `eth_chainId` &rarr; `0x1e0` (World Chain 480)
+
+Existing `writeContract` / `readContract` calls work unchanged.
+
+## 5. Bundle Approve + Contract Calls
+
+World App resets approvals to 0 after each transaction. A separate `approve()` tx followed by `transferFrom()` in the next tx will fail.
+
+Bundle them in one call:
+
+```tsx
+import { MiniKit } from "@worldcoin/minikit-js";
+import { encodeFunctionData } from "viem";
+
+await MiniKit.sendTransaction({
+  chainId: 480,
+  transactions: [
+    {
+      to: TOKEN,
+      data: encodeFunctionData({
+        abi: erc20Abi,
+        functionName: "approve",
+        args: [CONTRACT, amount],
+      }),
+    },
+    {
+      to: CONTRACT,
+      data: encodeFunctionData({
+        abi: contractAbi,
+        functionName: "swap",
+        args: [amount],
+      }),
+    },
+  ],
+});
+```
+
+World App executes these atomically. On web, they are bundled via [Multicall3](https://www.multicall3.com/) automatically.
+
+## 6. Handle userOpHash Receipts
+
+MiniKit returns a `userOpHash`, not a standard tx hash. Use `useUserOperationReceipt` from `@worldcoin/minikit-react` to poll for the receipt:
+
+```tsx
+import { useUserOperationReceipt } from "@worldcoin/minikit-react";
+import { createPublicClient, http } from "viem";
+import { worldchain } from "viem/chains";
+
+const client = createPublicClient({
+  chain: worldchain,
+  transport: http(),
+});
+
+const { poll, isLoading } = useUserOperationReceipt({ client });
+
+// After sendTransaction:
+const result = await MiniKit.sendTransaction({ ... });
+await poll(result.data.userOpHash);
+```
+
+## 7. Whitelist Contracts and Tokens
+
+In **Developer Portal > Mini App > Permissions**, add:
+
+- **Permit2 Tokens** — every ERC-20 your app transfers
+- **Contract Entrypoints** — every contract your app calls
+
+Non-whitelisted contracts are blocked with `invalid_contract`.
+
+## Common Gotchas
+
+| Issue | Symptom | Fix |
+|---|---|---|
+| SSR hydration mismatch | Clicks do nothing | `dynamic(..., { ssr: false })` |
+| Approval reset after tx | `transferFrom` reverts | Bundle approve + call in one `sendTransaction` |
+| `userOpHash` not a tx hash | `waitForTransactionReceipt` times out | Use `useUserOperationReceipt` from `@worldcoin/minikit-react` |
+| Missing contract whitelist | `invalid_contract` error | Add to Developer Portal |
+

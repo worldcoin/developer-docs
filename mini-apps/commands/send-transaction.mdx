@@ -5,16 +5,17 @@ description: "Send one or more World Chain transactions using the unified MiniKi
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-Use `MiniKit.sendTransaction()` to submit one or more World Chain transactions. 
+**Breaking Changes in MiniKit v2**: 
+- SignatureTransfer is no longer supported. Please use Allowance Transfers documented below.
+- Standard ERC-20 `approve()` calls now work in mini apps. Approval will be automatically revoked after the transaction.
 
-**Breaking Changes in MiniKit v2**: This command now uses Permit2 AllowanceTransfers under the hood. 
-You will no longer need to specify a permit2 array, but will need to bundle an approval to the permit2 contract in the same transaction as your main action.
+## Permit2 Allowance Transfers (Recommended)
 
-## Permit2 Allowance Transfers
-
-[Allowance transfers](https://docs.uniswap.org/contracts/permit2/reference/allowance-transfer#approve) are the default method for moving tokens in mini apps.
-You should only rely on the `approve` method for Allowance Transfers, and can bundle them in one sendTransaction call with your main contract action for a seamless user experience.
+[Allowance transfers](https://docs.uniswap.org/contracts/permit2/reference/allowance-transfer#approve) are the recommended method for moving tokens in mini apps. World App automatically approves tokens to Permit2, so you can bundle the Permit2 approval and your contract call in a single `sendTransaction` for a better UX. 
 Expiration should always be set to 0 as the approval will be consumed in the same transaction.
+
+
+Standard ERC-20 `approve()` also works if you prefer.
 <CodeGroup>
 ```tsx title="Frontend"
 import { MiniKit } from "@worldcoin/minikit-js";
@@ -36,7 +37,7 @@ async function approveAndSwap(
         data: encodeFunctionData({
           abi: [
             {
-              name: "approve",
+              name: "approve", // You must use this method of Allowance Transfers
               type: "function",
               inputs: [
                 { name: "token", type: "address" },
@@ -236,7 +237,7 @@ for the full endpoint response shape.
 
 ## Fallback Behavior
 
-By default we intend for mini apps to be useable outside of World App. Fallbacks generally will not be needed for this command and you should instead follow the [migration path outlined](/mini-apps/more/minikit-v2).
+By default we intend for mini apps to be useable outside of World App. Fallbacks generally will not be needed for this command and you should instead follow the [migration path outlined](/mini-apps/migration/minikit-v2).
 
 ## Allowlisting Contracts and Tokens
 

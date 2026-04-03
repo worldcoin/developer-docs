@@ -20,8 +20,7 @@ Yes. After development, submit your Mini App for review through the [Developer P
 The [Send Transaction command](/mini-apps/commands/send-transaction) is designed to execute on-chain transactions from the Mini App. When developers invoke this command,
 they supply a `chainId` and one or more `transactions` containing the target contract address, optional encoded function call (`data`), and optional value.
 For security, World App requires that any smart contract or token interactions are pre-approved (whitelisted) in the Developer Portal to prevent unauthorized transfers.
-In cases where ERC-20 tokens are involved, instead of directly calling the approve function (which could expose the contract to front-running or manipulation), permits like Permit2 are used.
-Permit2 enables users to sign a transaction off-chain that allows a specific allowance without sending an approval transaction, reducing friction and gas costs while providing a secure, non-custodial mechanism for token transfers.
+For ERC-20 token transfers, standard `approve()` calls work, but Permit2 is recommended. World App automatically approves tokens to the Permit2 contract, so you can bundle the Permit2 approval and your contract call in a single transaction for a better UX.
 
 ## How does Sign Message command work?
 

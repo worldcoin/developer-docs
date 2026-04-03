@@ -1,0 +1,150 @@
+---
+title: "Upgrade to a Standalone Web App"
+description: "Convert your mini app into a standalone web app that works both inside World App and in any browser."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+MiniKit commands auto-detect the environment. Outside World App, they fall back to Wagmi.
+
+| Feature | Effort | Details |
+|---|---|---|
+| World ID | None | IDKit works out of the box |
+| Auth | Add Wagmi + providers | Wagmi handles SIWE on web |
+| Transactions | Add Wagmi + branch receipts | Hash type differs per environment |
+| Other commands | Add `fallback` function | Custom logic per command |
+
+
+## Ask an agent
+Add this skill and ask your agent to convert your web app to a mini app using the steps outlined in this guide. 
+```
+npx skills add worldcoin/minikit-js miniapp-to-web
+```
+
+## 1. Install Dependencies
+
+```bash
+pnpm add wagmi @tanstack/react-query siwe
+```
+
+## 2. Wagmi Config
+
+```ts title="config.ts"
+import { worldApp } from "@worldcoin/minikit-js/wagmi";
+import { createConfig, http } from "wagmi";
+import { worldchain } from "wagmi/chains";
+import { injected } from "wagmi/connectors";
+
+export const config = createConfig({
+  chains: [worldchain],
+  connectors: [worldApp(), injected()],
+  transports: {
+    [worldchain.id]: http(),
+  },
+});
+```
+
+## 3. Providers
+
+```tsx title="providers.tsx"
+"use client";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { MiniKitProvider } from "@worldcoin/minikit-js/minikit-provider";
+import { WagmiProvider } from "wagmi";
+import { config } from "./config";
+
+const queryClient = new QueryClient();
+
+export default function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <MiniKitProvider
+          props={{
+            appId: process.env.NEXT_PUBLIC_APP_ID!,
+            wagmiConfig: config,
+          }}
+        >
+          {children}
+        </MiniKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
+  );
+}
+```
+
+## World ID
+
+No changes. [IDKit](https://docs.worldcoin.org/world-id/quick-start) is independent of the wallet layer.
+
+## Auth
+
+`MiniKit.walletAuth()` works automatically. No code changes needed.
+
+```tsx
+const result = await MiniKit.walletAuth({ nonce, statement: "Sign in" });
+// result.executedWith === "minikit" (World App) or "wagmi" (web)
+```
+
+### Backend Verification
+
+`verifySiweMessage` handles both Smart Accounts (EIP-1271) and EOAs (ECDSA) automatically:
+
+```ts title="api/verify.ts"
+import { verifySiweMessage } from "@worldcoin/minikit-js/siwe";
+
+const { isValid, siweMessageData } = await verifySiweMessage(payload, nonce);
+```
+
+## Transactions
+
+`MiniKit.sendTransaction()` works automatically. World Chain only (chainId 480).
+
+- **World App**: native bridge, returns `userOpHash`
+- **Web (single tx)**: sent directly via Wagmi
+- **Web (multiple txs)**: bundled via [Multicall3](https://www.multicall3.com/) automatically
+
+```tsx
+const result = await MiniKit.sendTransaction({
+  chainId: 480,
+  transactions: [
+    { to: "0x...", data: encodeFunctionData({ abi, functionName: "mint", args: [] }) },
+  ],
+});
+```
+
+### Receipts
+
+Branch on `result.executedWith` — World App returns a UserOperation hash, web returns a standard tx hash:
+
+```tsx
+import { useUserOperationReceipt } from "@worldcoin/minikit-react";
+
+// For World App: poll for the UserOperation receipt
+const { poll } = useUserOperationReceipt({ client });
+
+if (result.executedWith === "minikit") {
+  await poll(result.data.userOpHash);
+} else {
+  // Web: standard tx hash, use wagmi or viem directly
+  await publicClient.waitForTransactionReceipt({
+    hash: result.data.userOpHash as `0x${string}`,
+  });
+}
+```
+
+## Other Commands
+
+Commands without Wagmi fallbacks (`pay`, `shareContacts`, etc.) need a `fallback`:
+
+```tsx
+const result = await MiniKit.pay({
+  amount: "1.00",
+  token: "USDCE",
+  reference: "order-123",
+  description: "Coffee",
+  fallback: async () => myCustomPaymentFlow(),
+});
+```
+
+Without a fallback, these throw `CommandUnavailableError` on web.

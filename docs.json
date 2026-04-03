@@ -192,9 +192,16 @@
             ]
           },
           {
+            "group": "Migration",
+            "pages": [
+              "mini-apps/migration/web-to-miniapp",
+              "mini-apps/migration/standalone-dapp",
+              "mini-apps/migration/minikit-v2"
+            ]
+          },
+          {
             "group": "Further Reading",
             "pages": [
-              "mini-apps/more/minikit-v2",
               "mini-apps/more/webview-spec",
               "mini-apps/ecosystem/ecosystem",
               "mini-apps/more/community-tools-perks",
