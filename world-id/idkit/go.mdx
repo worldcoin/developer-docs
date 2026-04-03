@@ -16,12 +16,18 @@ go get github.com/worldcoin/idkit/go/idkit@latest
 
 ## Generate RP signature
 
-Use `idkit.SignRequestWithTTL` instead to configure the signature's expiration time (default is 5 minutes).
+### One-shot signing
+
+Use `SignRequest` with functional options for the simplest integration:
 
 ```go
 import "github.com/worldcoin/idkit/go/idkit"
 
-sig, err := idkit.SignRequest(os.Getenv("RP_SIGNING_KEY"))
+// For uniqueness proofs: include the action
+sig, err := idkit.SignRequest(
+	os.Getenv("RP_SIGNING_KEY"),
+	idkit.WithAction("my-action"),
+)
 if err != nil {
 	// handle error
 }
@@ -35,11 +41,52 @@ rpContext := map[string]any{
 }
 ```
 
+### Reusable signer
+
+For high-throughput backends, create a `Signer` once and reuse it. This parses the key upfront and avoids repeated allocations.
+
+```go
+signer, err := idkit.NewSigner(os.Getenv("RP_SIGNING_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+
+// Use in your request handler
+sig, err := signer.SignRequest(
+	idkit.WithAction("my-action"),
+	idkit.WithTTL(600), // optional, default 300s
+)
+```
+
 ## API
 
-- `SignRequest(signingKeyHex)`
-- `SignRequestWithTTL(signingKeyHex, ttl)`
+### Functions
+
+| Function | Description |
+|----------|-------------|
+| `SignRequest(signingKeyHex, opts...)` | One-shot signing with options |
+| `SignRequestWithTTL(signingKeyHex, ttl)` | Convenience wrapper with custom TTL |
+| `NewSigner(signingKeyHex)` | Creates a reusable `Signer` from a hex key |
+
+### Options
+
+| Option | Description |
+|--------|-------------|
+| `WithAction(action)` | Hashes and appends the action to the signed payload (required for uniqueness proofs) |
+| `WithTTL(ttl)` | Overrides the default 300-second TTL |
+
+### `RpSignature`
+
+```go
+type RpSignature struct {
+	Sig       string `json:"sig"`        // 0x-prefixed, 65-byte hex
+	Nonce     string `json:"nonce"`      // 0x-prefixed, 32-byte field element
+	CreatedAt uint64 `json:"created_at"` // Unix seconds
+	ExpiresAt uint64 `json:"expires_at"` // Unix seconds
+}
+```
 
 ## Related pages
 
+- [RP Signatures](/world-id/idkit/signatures) — algorithm details, pseudocode, and test vectors
 - [Integrate IDKit](/world-id/idkit/integrate)

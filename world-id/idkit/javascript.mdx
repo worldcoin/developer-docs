@@ -46,11 +46,10 @@ const builder = IDKit.request({
     expires_at: 1735689900,
     signature: "0x...",
   },
-  action_description: "Verify user",
-  bridge_url: undefined,
   allow_legacy_proofs: true,
-  override_connect_base_url: undefined,
   environment: "production", // Only set this to staging for testing with the simulator
+  return_to: "myapp://verify-done", // Optional: mobile deep-link callback URL
+  bridge_url: undefined, // Optional: custom bridge URL
 });
 ```
 
@@ -111,19 +110,21 @@ Use subpath exports on your backend:
 import { signRequest } from "@worldcoin/idkit-core/signing";
 import { hashSignal } from "@worldcoin/idkit-core/hashing";
 
-const { sig, nonce, createdAt, expiresAt } = signRequest(
-  "my-action",
-  process.env.RP_SIGNING_KEY!,
-);
+const { sig, nonce, createdAt, expiresAt } = signRequest({
+  signingKeyHex: process.env.RP_SIGNING_KEY!,
+  action: "my-action",
+  ttl: 300, // optional, default 300s
+});
 
 const signalHash = hashSignal("user-123");
 ```
 
-`signRequest` should only run in trusted server environments.
+`signRequest` should only run in trusted server environments. See [RP Signatures](/world-id/idkit/signatures) for the full algorithm and test vectors.
 
 ## Related pages
 
 - [Getting started](/world-id/idkit/integrate)
+- [RP Signatures](/world-id/idkit/signatures)
 - [React](/world-id/idkit/react)
 - [Error Codes](/world-id/idkit/error-codes)
 - [POST /v4/verify reference](/api-reference/developer-portal/verify)
