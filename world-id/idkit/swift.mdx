@@ -37,10 +37,8 @@ let config = IDKitRequestConfig(
   appId: "app_xxxxx",
   action: "my-action",
   rpContext: rpContext,
-  actionDescription: "Verify user",
-  bridgeUrl: nil,
   allowLegacyProofs: true,
-  overrideConnectBaseUrl: nil,
+  returnTo: "myapp://verify-done", // Optional: mobile deep-link callback URL
   environment: .production
 )
 

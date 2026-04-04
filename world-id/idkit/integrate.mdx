@@ -47,13 +47,15 @@ Signatures verify that proof requests genuinely come from your app, preventing a
 <CodeGroup title="Generate RP signature">
 ```typescript title="JavaScript"
 import { NextResponse } from "next/server";
-import { signRequest } from "@worldcoin/idkit/signing";
+import { signRequest } from "@worldcoin/idkit-core/signing";
 
 export async function POST(request: Request): Promise<Response> {
   const { action } = await request.json();
-  const signingKey = process.env.RP_SIGNING_KEY!;
 
-  const { sig, nonce, createdAt, expiresAt } = signRequest(action, signingKey);
+  const { sig, nonce, createdAt, expiresAt } = signRequest({
+    signingKeyHex: process.env.RP_SIGNING_KEY!,
+    action,
+  });
 
   return NextResponse.json({
     sig,
@@ -81,7 +83,15 @@ func handleRPSignature(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sig, err := idkit.SignRequest(os.Getenv("RP_SIGNING_KEY"))
+	var body struct {
+		Action string `json:"action"`
+	}
+	_ = json.NewDecoder(r.Body).Decode(&body)
+
+	sig, err := idkit.SignRequest(
+		os.Getenv("RP_SIGNING_KEY"),
+		idkit.WithAction(body.Action),
+	)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -105,7 +115,7 @@ func handleRPSignature(w http.ResponseWriter, r *http.Request) {
 
 
 # Step 4: Generate the connect URL and collect proof
-You can test during development using the [simulator](https://simulator.worldcoin.org/) and setting `environment` to `"staging"`. 
+You can test during development using the [simulator](https://simulator.worldcoin.org/) and setting `environment` to `"staging"`.
 
 <CodeGroup title="Create request and collect proof">
 ```typescript title="JavaScript"
@@ -122,7 +132,7 @@ const request = await IDKit.request({
   app_id: "app_xxxxx",
   // Action: Context that scopes what the user is proving uniqueness for
   // e.g., "verify-account-2026" or "claim-airdrop-2026".
-  action: "my-action", 
+  action: "my-action",
   rp_context: {
     rp_id: "rp_xxxxx", // Your app's `rp_id` from the Developer Portal
     nonce: rpSig.nonce,
@@ -132,7 +142,8 @@ const request = await IDKit.request({
   },
   allow_legacy_proofs: true,
   environment: "production", // Only set this to staging for testing with the simulator
-  // Signal (optional): Bind specific context into the requested proof. 
+  return_to: "myapp://verify-done", // Optional: mobile deep-link callback URL
+  // Signal (optional): Bind specific context into the requested proof.
   // Examples: user ID, wallet address. Your backend should enforce the same value.
 }).preset(orbLegacy({ signal: "local-election-1" }));
 
@@ -300,11 +311,33 @@ export async function POST(request: Request): Promise<Response> {
     },
   );
 
-  const payload = await response.json();
-  return NextResponse.json(payload, { status: response.status });
+  if (!response.ok) {
+    return NextResponse.json({ error: "Verification failed" }, { status: 400 });
+  }
+
+  // Proof is valid — now store the nullifier (see Step 6)
+  return NextResponse.json({ success: true });
 }
 ```
 
+# Step 6: Store the nullifier
+
+Every World ID proof contains a nullifier — a value derived from the user's World ID, your app, and the action. The same person verifying the same action always produces the same nullifier, but different apps or actions produce different ones — making nullifiers unlinkable across apps.
+
+The Developer Portal confirms the proof is **cryptographically valid**, but your backend must check that the nullifier hasn't been used before. Without this, the same person could verify multiple times for the same action.
+
+Nullifiers are returned as 0x-prefixed hex strings representing 256-bit integers. We recommend converting and storing them as numbers to avoid parsing and casing issues that can lead to security vulnerabilities. For example, PostgreSQL doesn't natively support 256-bit integers, instead you can convert to the nullifier to a decimal and store it as `NUMERIC(78, 0)`.
+
+<CodeGroup>
+```sql title="PostgreSQL schema"
+CREATE TABLE nullifiers (
+  nullifier   NUMERIC(78, 0) NOT NULL,
+  action      TEXT NOT NULL,
+  verified_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (nullifier, action)
+);
+```
+</CodeGroup>
 
 ## Architecture overview
 
@@ -328,9 +361,11 @@ sequenceDiagram
     Client->>Backend: 6. Forward proof payload
     Backend->>Portal: POST /v4/verify/{rp_id}
     Portal-->>Backend: Verification result
+    Backend->>Backend: 7. Check & store nullifier
     Backend-->>Client: Success / failure
 ```
 
 ## Next pages
 
+- [RP Signatures](/world-id/idkit/signatures) — algorithm details, pseudocode, and test vectors
 - [POST /v4/verify reference](/api-reference/developer-portal/verify)

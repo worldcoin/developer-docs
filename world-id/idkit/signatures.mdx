@@ -1,0 +1,194 @@
+---
+title: "RP Signatures"
+description: "Spec for generating RP signatures, with pseudocode, SDK examples, and test vectors."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+Relying Party (RP) signatures prove that a proof request genuinely comes from your app, preventing impersonation attacks.
+Your backend signs every request with the `signing_key` from the [Developer Portal](https://developer.world.org),
+and World App verifies the signature before generating a proof. RP signatures are enforced for [World ID 4.0 requests](/world-id/4-0-migration).
+
+<Warning>
+  Never expose your signing key to client-side code. If the key leaks, rotate it immediately in the Developer Portal.
+</Warning>
+
+## Algorithm
+
+<CodeGroup>
+```text title="Implement it yourself"
+// IMPORTANT: Use Keccak-256, NOT SHA3-256. They have different padding.
+// Most Ethereum libraries (ethers, viem, web3) use Keccak-256.
+
+function hash_to_field(input_bytes) -> bytes32:
+    h = keccak256(input_bytes)           // 32 bytes
+    n = big_endian_uint256(h) >> 8       // shift right 8 bits
+    return uint256_to_32bytes_be(n)      // always starts with 0x00
+
+function compute_rp_signature_message(nonce_bytes32, created_at_u64, expires_at_u64, action?) -> bytes:
+    size = 81 if action else 49
+    msg = new bytes(size)
+    msg[0]     = 0x01                    // version byte
+    msg[1..32] = nonce_bytes32           // 32-byte field element
+    msg[33..40] = u64_to_be(created_at)  // big-endian uint64
+    msg[41..48] = u64_to_be(expires_at)  // big-endian uint64
+
+    if action is not null:
+        msg[49..80] = hash_to_field(utf8_encode(action))
+
+    return msg
+
+function sign_request(signing_key_hex, action?, ttl_seconds = 300):
+    // Accept signing keys with or without 0x prefix
+    key = parse_hex_32_bytes(signing_key_hex)
+
+    // 1. Generate nonce
+    random      = crypto_random_bytes(32)
+    nonce_bytes = hash_to_field(random)
+
+    // 2. Timestamps
+    created_at = unix_time_seconds()
+    expires_at = created_at + ttl_seconds
+
+    // 3. Build message
+    msg = compute_rp_signature_message(nonce_bytes, created_at, expires_at, action)
+
+    // 4. EIP-191 prefix and hash
+    // The prefix uses the DECIMAL byte length of the message (e.g. "49" or "81")
+    prefix = "\x19Ethereum Signed Message:\n" + decimal_string(length(msg))
+    digest = keccak256(prefix + msg)
+
+    // 5. Sign with recoverable ECDSA (secp256k1)
+    (r, s, recovery_id) = ecdsa_secp256k1_sign(digest, key)
+
+    // 6. Encode: r(32) || s(32) || v(1), where v = recovery_id + 27
+    sig65 = r + s + byte(recovery_id + 27)
+
+    return {
+        sig:        "0x" + hex(sig65),
+        nonce:      "0x" + hex(nonce_bytes),
+        created_at: created_at,
+        expires_at: expires_at,
+    }
+```
+
+```typescript title="JavaScript / TypeScript"
+// Also available from @worldcoin/idkit/signing and @worldcoin/idkit-core/signing
+import { signRequest } from "@worldcoin/idkit-server";
+
+const sig = signRequest({
+  signingKeyHex: process.env.RP_SIGNING_KEY!,
+  action: "my-action",
+  ttl: 300, // optional, default 300s
+});
+
+// sig = { sig, nonce, createdAt, expiresAt }
+```
+
+```go title="Go"
+import "github.com/worldcoin/idkit/go/idkit"
+
+// One-shot signing with options
+sig, err := idkit.SignRequest(
+  os.Getenv("RP_SIGNING_KEY"),
+  idkit.WithAction("my-action"),
+  idkit.WithTTL(300), // optional, default 300s
+)
+
+// Or create a reusable signer for high-throughput backends
+signer, err := idkit.NewSigner(os.Getenv("RP_SIGNING_KEY"))
+sig, err = signer.SignRequest(idkit.WithAction("my-action"))
+```
+</CodeGroup>
+
+## Test vectors
+
+Use these to verify your implementation. All vectors use deterministic inputs.
+
+### `hash_to_field`
+
+<CodeGroup>
+```text title="empty string"
+input:  "" (empty)
+output: 0x00c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a4
+```
+
+```text title='"test_signal"'
+input:  "test_signal"
+output: 0x00c1636e0a961a3045054c4d61374422c31a95846b8442f0927ad2ff1d6112ed
+```
+
+```text title="raw bytes"
+input:  [0x01, 0x02, 0x03]
+output: 0x00f1885eda54b7a053318cd41e2093220dab15d65381b1157a3633a83bfd5c92
+```
+
+```text title='"hello"'
+input:  "hello" (0x68656c6c6f)
+output: 0x001c8aff950685c2ed4bc3174f3472287b56d9517b9c948127319a09a7a36dea
+```
+</CodeGroup>
+
+### `compute_rp_signature_message`
+
+<CodeGroup>
+```text title="without action (49 bytes)"
+compute_rp_signature_message(
+  nonce      = 0x008ae1aa597fa146ebd3aa2ceddf360668dea5e526567e92b0321816a4e895bd,
+  created_at = 1700000000,
+  expires_at = 1700000300,
+)
+
+output:
+01008ae1aa597fa146ebd3aa2ceddf360668dea5e526567e92b0321816a4e895bd000000006553f100000000006553f22c
+```
+
+```text title='with action "test-action" (81 bytes)'
+compute_rp_signature_message(
+  nonce      = 0x008ae1aa597fa146ebd3aa2ceddf360668dea5e526567e92b0321816a4e895bd,
+  created_at = 1700000000,
+  expires_at = 1700000300,
+  action     = "test-action",
+)
+
+output:
+01008ae1aa597fa146ebd3aa2ceddf360668dea5e526567e92b0321816a4e895bd000000006553f100000000006553f22c00aa0ce59768ae5b1c52f07a9387f14f09f277422c0d2f8a268c7bad0c60a46a
+```
+</CodeGroup>
+
+### `sign_request`
+
+<CodeGroup>
+```text title="without action (session proof)"
+sign_request(
+  signing_key = 0xabababababababababababababababababababababababababababababababab,
+  random      = [0x00, 0x01, ..., 0x1f],  // deterministic for testing
+  created_at  = 1700000000,               // fixed clock for testing
+  ttl         = 300,
+)
+
+nonce: 0x008ae1aa597fa146ebd3aa2ceddf360668dea5e526567e92b0321816a4e895bd
+msg length: 49 bytes
+sig: 0x14f693175773aed912852a601e9c0fd30f2afe2738d31388316232ce6f64ae9e4edbfb19d81c4229ba9c9fca78ede4b28956b7ba4415f08d957cbc1b3bdaa4021b
+```
+
+```text title='with action "test-action" (uniqueness proof)'
+sign_request(
+  signing_key = 0xabababababababababababababababababababababababababababababababab,
+  action      = "test-action",
+  random      = [0x00, 0x01, ..., 0x1f],  // deterministic for testing
+  created_at  = 1700000000,               // fixed clock for testing
+  ttl         = 300,
+)
+
+nonce: 0x008ae1aa597fa146ebd3aa2ceddf360668dea5e526567e92b0321816a4e895bd
+msg length: 81 bytes
+sig: 0x05594adb6c1495768a38d523d7d6ee6356b2c31231919198794ed022ade7d08f73753f83bd167067d99c9b969d28e9222315837c66af25867b041273a6d5056f1b
+```
+</CodeGroup>
+
+## Related pages
+
+- [Integration guide](/world-id/idkit/integrate)
+- [JavaScript SDK reference](/world-id/idkit/javascript)
+- [Go SDK reference](/world-id/idkit/go)
