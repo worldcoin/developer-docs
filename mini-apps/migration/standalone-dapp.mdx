@@ -100,9 +100,9 @@ const { isValid, siweMessageData } = await verifySiweMessage(payload, nonce);
 
 `MiniKit.sendTransaction()` works automatically. World Chain only (chainId 480).
 
-- **World App**: native bridge, returns `userOpHash`
+- **World App**: native bridge, atomic batching, returns `userOpHash`
 - **Web (single tx)**: sent directly via Wagmi
-- **Web (multiple txs)**: bundled via [Multicall3](https://www.multicall3.com/) automatically
+- **Web (multiple txs)**: executed sequentially — each requires wallet confirmation and is not atomic
 
 ```tsx
 const result = await MiniKit.sendTransaction({
