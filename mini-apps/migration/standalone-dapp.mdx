@@ -73,6 +73,16 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 }
 ```
 
+<Note>
+  The `worldApp()` connector automatically registers the wagmi fallback. If your app uses wagmi **without** the `worldApp()` connector (e.g. a pure-web setup that still wants MiniKit's fallback), you need to explicitly register it:
+
+  ```ts
+  import "@worldcoin/minikit-js/wagmi-fallback";
+  ```
+
+  Or call `registerWagmiFallback(config)` from the same subpath.
+</Note>
+
 ## World ID
 
 No changes. [IDKit](https://docs.worldcoin.org/world-id/quick-start) is independent of the wallet layer.
