@@ -42,11 +42,15 @@ module.exports = {
       gridTemplateRows: gridTemplates,
 
       colors: {
-        primary: "#1989FB",
+        primary: "#007CFB",
         gray: {
           A1: "#2D2C2C",
+          A2: "#373635",
+          A3: "#424140",
           A5: "#575654",
+          A6: "#E1DFDA",
           A7: "#E7E5E2",
+          A8: "#EDECE9",
           A9: "#F3F2F0",
           A10: "#F9F9F8",
           AG1: "#75726F",
@@ -61,6 +65,10 @@ module.exports = {
           700: "#3C424B",
           900: "#191C20",
         },
+        "world-blue": "#007CFB",
+        "warm-red": "#FC5E1B",
+        "warm-yellow": "#F5A623",
+        orange: "#FD7035",
         accents: {
           info: {
             700: "#506DFF",
@@ -82,8 +90,7 @@ module.exports = {
       },
 
       fontFamily: {
-        sans: ['"TWK Lausanne"', ...defaultTheme.fontFamily.sans],
-        sora: ["var(--font-sora)", ...defaultTheme.fontFamily.sans],
+        sans: ['"World Pro MVP"', ...defaultTheme.fontFamily.sans],
       },
 
       fontWeight: {

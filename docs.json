@@ -3,9 +3,23 @@
   "theme": "mint",
   "name": "World Documentation",
   "colors": {
-    "primary": "#1989FB",
+    "primary": "#007CFB",
     "light": "#4B5563",
     "dark": "#000000"
+  },
+  "fonts": {
+    "heading": {
+      "family": "World Pro MVP",
+      "source": "/fonts/WorldProMVPVF-v2.woff2",
+      "format": "woff2",
+      "weight": 300
+    },
+    "body": {
+      "family": "World Pro MVP",
+      "source": "/fonts/WorldProMVPVF-v2.woff2",
+      "format": "woff2",
+      "weight": 300
+    }
   },
   "favicon": "/favicon.ico",
   "seo": {
@@ -343,8 +357,8 @@
     }
   },
   "logo": {
-    "light": "/logo/world-logo.svg",
-    "dark": "/logo/world-logo-white.svg"
+    "light": "/logo/world-developers.svg",
+    "dark": "/logo/world-developers-white.svg"
   },
   "navbar": {
     "links": [
