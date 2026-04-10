@@ -68,7 +68,7 @@ description: "Build Mini Apps, integrate World ID, and deploy on World Chain wit
 
 </div>
 
-<div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+<div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "80px" }}>
   <a href="https://t.me/worlddevelopersupport" className="landing-link" style={{ display: "inline-flex", alignItems: "center", gap: "10px", fontSize: "16px", textDecoration: "underline", textUnderlineOffset: "4px", width: "fit-content" }}>
     <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.828.94z"/></svg>
     Telegram Support Channel
@@ -83,4 +83,43 @@ description: "Build Mini Apps, integrate World ID, and deploy on World Chain wit
   </a>
 </div>
 
+</div>
+
+{/* Footer — full-width, outside landing-container */}
+<div className="landing-footer">
+  <div className="landing-footer-inner">
+
+    {/* Newsletter */}
+    <div className="landing-newsletter">
+      <div style={{ maxWidth: "756px", margin: "0 auto", textAlign: "center" }}>
+        <div className="landing-newsletter-title" style={{ fontSize: "32px", lineHeight: 1.3, letterSpacing: "-0.64px", fontWeight: 300, marginBottom: "32px" }}>
+          Subscribe to World Developers Newsletter
+        </div>
+        <form className="landing-email-field" style={{ display: "flex", alignItems: "center", maxWidth: "520px", margin: "0 auto", borderRadius: "30px", padding: "10px 10px 10px 24px", gap: "12px" }}>
+          <input type="email" placeholder="Your email" className="landing-email-input" style={{ flex: 1, border: "none", outline: "none", fontSize: "20px", fontWeight: 300, background: "transparent", fontFamily: "inherit" }} />
+          <button type="submit" style={{ width: "40px", height: "40px", borderRadius: "20px", backgroundColor: "#2D2C2C", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8.5 2.8L13.2 7.5H2V8.5H13.2L8.5 13.2L9.2 13.9L15.1 8L9.2 2.1L8.5 2.8Z" fill="white"/></svg>
+          </button>
+        </form>
+        <div style={{ fontSize: "12px", lineHeight: 1.4, color: "#9D9B96", marginTop: "32px", maxWidth: "605px", margin: "32px auto 0" }}>
+          By entering your email address and clicking "Subscribe," you consent to receive newsletters, marketing communications and ecosystem updates. For details on how we process your personal data, including your rights and how to exercise them, please review our <a href="https://world.org/legal/privacy-notice" target="_blank" style={{ color: "#2D2C2C", textDecoration: "underline" }} className="landing-privacy-link">Privacy Notice</a>.
+        </div>
+      </div>
+    </div>
+
+    {/* Footer links */}
+    <div className="landing-footer-links" style={{ display: "flex", gap: "160px", fontSize: "16px", lineHeight: 1.4, fontWeight: 300 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+        <a href="https://world.org" className="landing-footer-link">About World</a>
+        <a href="https://world.org/developers" className="landing-footer-link">Developers</a>
+        <a href="https://whitepaper.world.org" className="landing-footer-link">Whitepaper</a>
+        <a href="https://github.com/worldcoin" className="landing-footer-link">Open Source</a>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+        <a href="https://world.org/ecosystem" className="landing-footer-link">Ecosystem</a>
+        <a href="https://world.org/careers" className="landing-footer-link">Careers</a>
+      </div>
+    </div>
+
+  </div>
 </div>

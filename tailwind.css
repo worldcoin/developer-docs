@@ -126,6 +126,106 @@
     fill: #F3F2F0;
   }
 
+  /* Landing page — footer */
+  .landing-footer {
+    padding: 0;
+  }
+  .landing-footer-inner {
+    max-width: 1536px;
+    margin: 0 auto;
+    padding: 0 96px 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+  .landing-newsletter {
+    background-color: #EDECE9;
+    border-radius: 12px;
+    padding: 128px 40px;
+  }
+  .dark .landing-newsletter {
+    background-color: #1a1a1a;
+  }
+  .landing-newsletter-title {
+    color: #2D2C2C;
+  }
+  .dark .landing-newsletter-title {
+    color: #F3F2F0;
+  }
+  .landing-email-field {
+    background-color: #FFFFFF;
+  }
+  .dark .landing-email-field {
+    background-color: #2D2C2C;
+  }
+  .landing-email-input {
+    color: #2D2C2C;
+  }
+  .landing-email-input::placeholder {
+    color: #9D9B96;
+  }
+  .dark .landing-email-input {
+    color: #F3F2F0;
+  }
+  .dark .landing-email-input::placeholder {
+    color: #75726F;
+  }
+  .landing-privacy-link {
+    color: #2D2C2C !important;
+  }
+  .dark .landing-privacy-link {
+    color: #F3F2F0 !important;
+  }
+  .landing-footer-link {
+    color: #2D2C2C;
+    text-decoration: none;
+  }
+  .landing-footer-link:hover {
+    text-decoration: underline;
+  }
+  .dark .landing-footer-link {
+    color: #F3F2F0;
+  }
+  .landing-footer-links {
+    color: #2D2C2C;
+  }
+  .dark .landing-footer-links {
+    color: #F3F2F0;
+  }
+  @media (max-width: 900px) {
+    .landing-footer-inner {
+      padding: 0 24px 48px;
+      gap: 48px;
+    }
+    .landing-newsletter {
+      padding: 64px 24px;
+    }
+    .landing-footer-links {
+      gap: 80px !important;
+    }
+  }
+  @media (max-width: 600px) {
+    .landing-footer-inner {
+      padding: 0 16px 40px;
+    }
+    .landing-newsletter {
+      padding: 40px 20px;
+    }
+    .landing-newsletter-title {
+      font-size: 24px !important;
+      letter-spacing: -0.48px !important;
+    }
+    .landing-email-field {
+      padding: 6px 6px 6px 20px !important;
+    }
+    .landing-email-input {
+      font-size: 18px !important;
+    }
+    .landing-footer-links {
+      gap: 60px !important;
+    }
+  }
+
   /* Landing page — responsive card grid */
   .landing-card-grid {
     display: grid;
@@ -163,24 +263,24 @@
       grid-template-columns: 1fr !important;
     }
     a.product-card {
-      min-height: 200px;
+      aspect-ratio: 3 / 2 !important;
     }
   }
   .landing-container {
     max-width: 1536px;
     margin: 0 auto;
-    padding: 60px 96px 80px;
+    padding: 60px 96px 0;
     width: 100%;
     box-sizing: border-box;
   }
   @media (max-width: 900px) {
     .landing-container {
-      padding: 40px 24px 60px;
+      padding: 40px 24px 0;
     }
   }
   @media (max-width: 600px) {
     .landing-container {
-      padding: 32px 16px 48px;
+      padding: 32px 16px 0;
     }
   }
 
