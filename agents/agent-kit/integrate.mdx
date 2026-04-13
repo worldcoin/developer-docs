@@ -12,8 +12,8 @@ Enable agentic traffic to access api endpoints while blocking malicious actors, 
 This quickstart follows a default implementation path:
 
 - Accepts payments on both World Chain and Base
-- Agent registration on Worldchain
-- AgentBook lookup pinned to Worldchain 
+- Agent registration on World Chain
+- AgentBook lookup always resolves on World Chain (caller side is chain-agnostic)
 - `free-trial` mode with 3 uses
 - Hono plus `@x402/hono` as the reference server example
 
@@ -32,7 +32,7 @@ Register the wallet address your agent will sign with:
 npx @worldcoin/agentkit-cli register <agent-address> 
 ```
 
-By default, the CLI registers on Worldchain and submits through the hosted relay. That matches the lookup configuration used in the example below.
+By default, the CLI registers on World Chain and submits through the hosted relay. AgentBook lookup always resolves against the canonical World Chain deployment regardless of which chain your paid route runs on, so there is no chain wiring to do on the lookup side.
 
 During registration, the CLI:
 
@@ -96,7 +96,7 @@ const evmScheme = new ExactEvmScheme()
 		}
 	})
 
-const agentBook = createAgentBookVerifier({ network: 'world' })
+const agentBook = createAgentBookVerifier()
 const storage = new InMemoryAgentKitStorage()
 
 const hooks = createAgentkitHooks({
@@ -146,7 +146,7 @@ app.get('/data', c => {
 serve({ fetch: app.fetch, port: 4021 })
 ```
 
-This example payments on both WorldChain and Base while explicitly checking registrations against the World chainAgentBook deployment.
+This example accepts payments on both World Chain and Base. AgentBook lookup automatically resolves against the canonical World Chain deployment — you do not need to pass a chain ID or pin a network.
 
 # Step 4: Configure the default mode and storage
 
