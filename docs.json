@@ -243,6 +243,13 @@
               "agents/agent-kit/sdk-reference",
               "agents/agent-kit/ecosystem"
             ]
+          },
+          {
+            "group": "Human in the Loop",
+            "pages": [
+              "agents/human-in-the-loop/integrate",
+              "agents/human-in-the-loop/sdk-reference"
+            ]
           }
         ]
       },

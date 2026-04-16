@@ -1,0 +1,59 @@
+---
+title: "SDK Reference"
+description: "API reference for @worldcoin/human-in-the-loop and @worldcoin/human-in-the-loop-react."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"og:description": "API reference for @worldcoin/human-in-the-loop and @worldcoin/human-in-the-loop-react."
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+## Server — `@worldcoin/human-in-the-loop`
+
+### `requestHumanAuthorization(options?)`
+
+Import from `@worldcoin/human-in-the-loop/workflows`. Returns a tool `execute` function that pauses the workflow until a World ID proof is received. Returns `Promise<IDKitResult>`.
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `action` | `string \| ((ctx) => string)` | `toolCallId` | Unique action string bound to this verification. When a function, receives `{ toolCallId, input }`. |
+| `signingKey` | `string` | `WORLD_SIGNING_KEY` env | Hex-encoded RP signing key. |
+| `rpId` | `string` | `WORLD_RP_ID` env | Relying-party ID for verification. |
+
+---
+
+## Client — `@worldcoin/human-in-the-loop-react`
+
+### `<HumanApproval>`
+
+Drop-in component that renders the World ID widget and posts the proof back automatically. Ships unstyled.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `message` | `UIMessage` | required | The message containing the tool part. |
+| `part` | `UIMessagePart` | required | The tool-call part (must include `toolCallId`). |
+| `appId` | `` `app_${string}` `` | `NEXT_PUBLIC_WORLD_APP_ID` env | World app ID. |
+| `preset` | `Preset` | `orbLegacy()` | IDKit verification preset. |
+| `allowLegacyProofs` | `boolean` | `false` | Accept v3 World ID proofs. |
+| `triggerLabel` | `ReactNode` | `'Verify with World ID'` | Button label. |
+| `successContent` | `ReactNode` | `'Approved with World ID.'` | Shown after verification. |
+| `className` | `string` | — | CSS class for the outer wrapper. |
+
+### `useHumanApproval(message, part)`
+
+Headless hook for custom approval UI.
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `ready` | `boolean` | `true` once the approval context has streamed from the server. |
+| `action` | `string \| undefined` | Action string. Pass to `IDKitRequestWidget`. |
+| `rpContext` | `RpContext \| undefined` | Pass to `IDKitRequestWidget`'s `rp_context`. |
+| `webhookUrl` | `string \| undefined` | Webhook URL. Handled by `verify` automatically. |
+| `state` | `HumanApprovalState` | `'idle' \| 'verifying' \| 'verified' \| 'error'` |
+| `verify` | `(proof: IDKitResult) => Promise<void>` | Wire to `IDKitRequestWidget.handleVerify`. |
+
+```ts
+type HumanApprovalState =
+  | { status: 'idle' }
+  | { status: 'verifying' }
+  | { status: 'verified' }
+  | { status: 'error'; error: Error }
+```
