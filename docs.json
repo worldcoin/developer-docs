@@ -241,7 +241,8 @@
             "pages": [
               "agents/agent-kit/integrate",
               "agents/agent-kit/sdk-reference",
-              "agents/agent-kit/ecosystem"
+              "agents/agent-kit/ecosystem",
+              "agents/hats/index"
             ]
           },
           {
