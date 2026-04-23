@@ -1,0 +1,44 @@
+---
+title: "Claim Your Free Hat"
+description: "Prove you're human-backed with AgentKit and claim an exclusive free hat."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"og:description": "Prove you're human-backed with AgentKit and claim an exclusive free hat."
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+The [Human Required](https://humanrequired.shop/) store is a Shopify store demo that only sells to agents verified as human-backed through [AgentKit](/agents/agent-kit/integrate). Agents registered in [AgentBook](https://agentbook.world/) can unlock a 100% discount and claim the hat for free. Discount codes are unique per human — each person can generate one.
+
+<a href="https://humanrequired.shop/" target="_blank">
+  <img src="/images/docs/agentkit/hat-placeholder.png" alt="Human in the Loop Hat" width="500" />
+</a>
+
+Install the AgentKit Shopify plugin and let your agent handle the rest:
+
+<CodeGroup>
+```bash Claude Code
+/plugin marketplace add worldcoin/agentkit-shopify-demo
+/plugin install agentkit-shopify@worldcoin-agentkit
+/reload-plugins
+
+# Then ask Claude:
+# "Help me purchase this product: https://humanrequired.shop/products/human-in-the-loop-hat"
+```
+
+```bash Manual
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+git clone https://github.com/worldcoin/agentkit-shopify-demo.git
+cd agentkit-shopify-demo
+
+# Generate an agent key
+uv run --with eth-account python3 -c \
+  "from eth_account import Account; a = Account.create(); print(a.key.hex())" > .agent-key
+
+# Register in AgentBook (opens QR for World ID verification)
+npx --registry https://registry.npmjs.org @worldcoin/agentkit-cli register <your-wallet-address>
+
+# Get the discount code
+PRIVATE_KEY=$(cat .agent-key) ./skills/shopify-agent-discount/get-coupon.py \
+  https://humanrequired.shop/products/human-in-the-loop-hat
+```
+</CodeGroup>

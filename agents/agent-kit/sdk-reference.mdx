@@ -97,37 +97,28 @@ That is why Express and Next.js are compatible even though the docs use Hono for
 
 ### `createAgentBookVerifier(options?)`
 
-Creates the verifier used to resolve a wallet address to an anonymous human identifier.
+Creates the verifier used to resolve a wallet address to an anonymous human identifier. Lookup **always** resolves against the canonical AgentBook deployment on World Chain (`eip155:480`), regardless of which chain the agent's signature was produced on or which chain your paid route runs on. The caller side is chain-agnostic by design — you never pass a chain ID or pin a network.
 
-Built-in AgentBook deployments currently include:
+Canonical deployment:
 
 - World Chain mainnet: `0xA23aB2712eA7BBa896930544C7d6636a96b944dA`
-- Base mainnet: `0xE1D1D3526A6FAa37eb36bD10B933C1b77f4561a4`
-- Base Sepolia: `0xA23aB2712eA7BBa896930544C7d6636a96b944dA`
 
 | Option            | Type                | Description |
 | ----------------- | ------------------- | ----------- |
-| `client`          | `PublicClient`      | Fully custom viem client. Overrides automatic client creation. |
-| `contractAddress` | `` `0x${string}` `` | Custom AgentBook contract address. |
-| `rpcUrl`          | `string`            | Custom RPC URL for automatic client creation. |
-| `network`         | `AgentBookNetwork`  | Pin lookup to `"world"`, `"base"`, or `"base-sepolia"`. |
+| `rpcUrl`          | `string`            | Custom World Chain RPC URL. Defaults to the chain's default public RPC. Ignored if `client` is provided. |
+| `contractAddress` | `` `0x${string}` `` | Custom AgentBook contract address on World Chain. Defaults to the canonical deployment. |
+| `client`          | `PublicClient`      | Advanced override. Inject a fully custom viem public client (useful for tests or non-standard deployments). |
 
-Selection behavior:
-
-- If `network` is provided, lookup is pinned to that built-in deployment.
-- If `network` is omitted and the incoming `chainId` is one of `eip155:480`, `eip155:8453`, or `eip155:84532`, lookup stays on that chain.
-- Otherwise, built-in lookup falls back to World Chain unless you override the deployment manually.
-
-This makes cross-chain setups explicit. For example, if your CLI registration flow uses Base mainnet but your paid route settles on World Chain, pin lookup with:
+In the common case call it with no arguments:
 
 ```typescript
-const agentBook = createAgentBookVerifier({ network: 'base' })
+const agentBook = createAgentBookVerifier()
 ```
 
 The returned object exposes:
 
 ```ts
-lookupHuman(address: string, chainId: string): Promise<string | null>
+lookupHuman(address: string): Promise<string | null>
 ```
 
 ## Storage and replay protection
@@ -263,7 +254,7 @@ const extensions = declareAgentkitExtension({
 	statement: 'Verify your agent is backed by a real human',
 })
 
-const agentBook = createAgentBookVerifier({ network: 'base' })
+const agentBook = createAgentBookVerifier()
 
 async function handleRequest(request: Request) {
 	const header = request.headers.get(AGENTKIT)
@@ -281,7 +272,8 @@ async function handleRequest(request: Request) {
 		return { error: verification.error }
 	}
 
-	const humanId = await agentBook.lookupHuman(verification.address, payload.chainId)
+	// Always resolves against the canonical World Chain AgentBook
+	const humanId = await agentBook.lookupHuman(verification.address)
 	if (!humanId) {
 		return { error: 'Agent is not registered in the AgentBook' }
 	}

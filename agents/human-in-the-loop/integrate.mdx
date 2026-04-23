@@ -1,0 +1,154 @@
+---
+title: "Integrate"
+description: "Add human approval workflows to AI agents using World ID."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"og:description": "Add human approval workflows to AI agents using World ID."
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+<video className="m-auto" width="700" autoPlay muted loop playsInline controls>
+	<source src="/images/docs/human-in-the-loop/hitl.mp4" type="video/mp4" />
+</video>
+
+<p className="text-center text-sm">*AI agent pauses for World ID approval before booking a flight*</p>
+
+Human-in-the-loop lets an AI agent **pause mid-execution** and wait for a real, verified human to approve an action before continuing. Every approval is cryptographically bound to the action via [World ID](/world-id/overview) — no bots, no spoofing, no replay.
+
+Built on the [Workflow SDK](https://useworkflow.dev) and the [Vercel AI SDK](https://ai-sdk.dev).
+
+## Install
+
+```bash
+# Server — human-in-the-loop + peer dependencies
+npm install @worldcoin/human-in-the-loop ai workflow
+
+# Client — React bindings + peer dependencies
+npm install @worldcoin/human-in-the-loop-react @worldcoin/idkit ai react
+```
+
+## Environment variables
+
+```bash
+# Server — used by @worldcoin/human-in-the-loop
+WORLD_RP_ID=your_rp_id
+WORLD_SIGNING_KEY=your_signing_key
+
+# Client — used by the <HumanApproval> component (optional if passing appId prop)
+NEXT_PUBLIC_WORLD_APP_ID=app_...
+```
+
+Get these from the [World developer portal](https://developer.world.org) by creating an app.
+
+## Step 1: Define the workflow
+
+```ts
+// src/workflows/chat/index.ts
+import { DurableAgent } from 'workflow/ai'
+import { getWritable } from 'workflow'
+import { openai } from '@workflow/ai/openai'
+import { tools } from './steps/tools'
+
+export async function chatWorkflow(messages: ModelMessage[]) {
+  // Durable workflow — can pause for hours/days and resume where it left off
+  'use workflow'
+
+  const writable = getWritable<UIMessageChunk>()
+  const agent = new DurableAgent({
+    model: openai('gpt-5.4'),
+    tools,
+    system:
+      'You are a helpful assistant. Before performing any sensitive action, use the approveAction tool.',
+  })
+
+  await agent.stream({ messages, writable })
+}
+```
+
+## Step 2: Register the approval tool
+
+```ts
+// src/workflows/chat/steps/tools.ts
+import { requestHumanAuthorization } from '@worldcoin/human-in-the-loop/workflows'
+import { z } from 'zod'
+
+export const tools = {
+  approveAction: {
+    description: 'Request human approval via World ID before a sensitive action.',
+    inputSchema: z.object({ summary: z.string() }),
+
+    // Pauses the workflow, streams approval context to the client,
+    // waits for World ID proof, verifies it, then resumes.
+    // Action defaults to toolCallId; pass a function to bind to input fields:
+    //   action: ({ input }) => `booking:${input.flightNumber}`
+    execute: requestHumanAuthorization(),
+  },
+  // ...your other tools
+}
+```
+
+## Step 3: Render the approval on the client
+
+This example uses the `<HumanApproval>` component, if you want to customize the UI you can use the `useHumanApproval` hook instead.
+
+<CodeGroup>
+```tsx HumanApproval component
+import { HumanApproval } from '@worldcoin/human-in-the-loop-react'
+
+// Match on the tool name from Step 2. <HumanApproval> renders the World ID
+// widget and POSTs the proof back to the server automatically.
+{message.parts.map(part => {
+  if (part.type === 'tool-approveAction' && 'toolCallId' in part) {
+    return (
+      <HumanApproval
+        key={part.toolCallId}
+        message={message}
+        part={part}
+      />
+    )
+  }
+  // ...your other part renderers
+})}
+```
+
+```tsx useHumanApproval hook
+import { useHumanApproval } from '@worldcoin/human-in-the-loop-react'
+import { IDKitRequestWidget, orbLegacy } from '@worldcoin/idkit'
+import { useState } from 'react'
+
+function MyApproval({ message, part }) {
+  const [open, setOpen] = useState(false)
+  // ready: true once the server streams the approval context
+  // verify: POSTs the World ID proof to the server webhook
+  const { ready, action, rpContext, state, verify } = useHumanApproval(message, part)
+
+  if (state.status === 'verified') return <p>Approved.</p>
+
+  return (
+    <>
+      <button disabled={!ready} onClick={() => setOpen(true)}>
+        {state.status === 'verifying' ? 'Verifying...' : 'Approve'}
+      </button>
+      {state.status === 'error' && <p>{state.error.message}</p>}
+
+      {ready && (
+        <IDKitRequestWidget
+          open={open}
+          onOpenChange={setOpen}
+          onSuccess={() => {}}
+          handleVerify={verify}
+          app_id={process.env.NEXT_PUBLIC_WORLD_APP_ID as `app_${string}`}
+          action={action!}
+          rp_context={rpContext!}
+          preset={orbLegacy()}
+          allow_legacy_proofs={false}
+        />
+      )}
+    </>
+  )
+}
+```
+</CodeGroup>
+
+### Flight booking example
+
+Check out [Flight booking example](https://github.com/worldcoin/human-in-the-loop/tree/main/examples/flight-booking) for a complete implementation of a human-in-the-loop workflow with World ID approval.

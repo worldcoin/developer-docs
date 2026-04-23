@@ -5,7 +5,7 @@
 @layer base {
   html {
     font-family:
-      "TWK Lausanne",
+      "World Pro MVP",
       ui-sans-serif,
       system-ui,
       -apple-system,
@@ -69,6 +69,219 @@
   /* Quickstart: hide code fade overlay to avoid white brush near copy button */
   .quickstart-code .code-block [data-fade-overlay="true"] {
     display: none !important;
+  }
+
+  /* Landing page — product cards */
+  a.product-card {
+    background-color: #FFFFFF;
+    border: 1px solid #E7E5E2 !important;
+    border-radius: 16px !important;
+    overflow: hidden;
+  }
+  .product-card:hover {
+    border-color: #D6D9DD;
+  }
+  .dark .product-card {
+    background-color: rgb(10, 11, 13);
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  .dark .product-card:hover {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+  .product-card-title {
+    color: #2D2C2C;
+  }
+  .dark .product-card-title {
+    color: #FFFFFF;
+  }
+  .product-card-desc {
+    color: #9D9B96;
+  }
+  .dark .product-card-desc {
+    color: rgb(158, 162, 166);
+  }
+  .dark .product-card-icon {
+    filter: invert(1);
+  }
+
+  /* Landing page — hero text */
+  .landing-hero {
+    color: #2D2C2C;
+  }
+  .dark .landing-hero {
+    color: #F3F2F0;
+  }
+
+  /* Landing page — support links */
+  .landing-link {
+    color: #2D2C2C;
+  }
+  .landing-link svg {
+    fill: #2D2C2C;
+  }
+  .dark .landing-link {
+    color: #F3F2F0;
+  }
+  .dark .landing-link svg {
+    fill: #F3F2F0;
+  }
+
+  /* Landing page — footer */
+  .landing-footer {
+    padding: 0;
+  }
+  .landing-footer-inner {
+    max-width: 1536px;
+    margin: 0 auto;
+    padding: 0 96px 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 64px;
+  }
+  .landing-newsletter {
+    background-color: #EDECE9;
+    border-radius: 12px;
+    padding: 128px 40px;
+  }
+  .dark .landing-newsletter {
+    background-color: #161618;
+  }
+  .landing-newsletter-title {
+    color: #2D2C2C;
+  }
+  .dark .landing-newsletter-title {
+    color: #F3F2F0;
+  }
+  .landing-email-field {
+    background-color: #FFFFFF;
+  }
+  .dark .landing-email-field {
+    background-color: #2D2C2C;
+  }
+  .landing-email-input {
+    color: #2D2C2C;
+  }
+  .landing-email-input::placeholder {
+    color: #9D9B96;
+  }
+  .dark .landing-email-input {
+    color: #F3F2F0;
+  }
+  .dark .landing-email-input::placeholder {
+    color: #75726F;
+  }
+  .landing-privacy-link {
+    color: #2D2C2C !important;
+  }
+  .dark .landing-privacy-link {
+    color: #F3F2F0 !important;
+  }
+  .landing-footer-link {
+    color: #2D2C2C;
+    text-decoration: none;
+  }
+  .landing-footer-link:hover {
+    text-decoration: underline;
+  }
+  .dark .landing-footer-link {
+    color: #F3F2F0;
+  }
+  .landing-footer-links {
+    color: #2D2C2C;
+  }
+  .dark .landing-footer-links {
+    color: #F3F2F0;
+  }
+  @media (max-width: 900px) {
+    .landing-footer-inner {
+      padding: 0 24px 48px;
+      gap: 48px;
+    }
+    .landing-newsletter {
+      padding: 64px 24px;
+    }
+    .landing-footer-links {
+      gap: 80px !important;
+    }
+  }
+  @media (max-width: 600px) {
+    .landing-footer-inner {
+      padding: 0 16px 40px;
+    }
+    .landing-newsletter {
+      padding: 40px 20px;
+    }
+    .landing-newsletter-title {
+      font-size: 24px !important;
+      letter-spacing: -0.48px !important;
+    }
+    .landing-email-field {
+      padding: 6px 6px 6px 20px !important;
+    }
+    .landing-email-input {
+      font-size: 18px !important;
+    }
+    .landing-footer-links {
+      gap: 60px !important;
+    }
+  }
+
+  /* Landing page — responsive card grid */
+  .landing-card-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  @media (max-width: 1200px) {
+    .landing-card-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (max-width: 900px) {
+    .landing-card-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 768px) {
+    .landing-card-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+    a.product-card {
+      aspect-ratio: auto !important;
+      min-height: 250px;
+      width: 100% !important;
+    }
+    .product-card .product-card-title {
+      font-size: 20px !important;
+    }
+    .product-card .product-card-desc {
+      font-size: 14px !important;
+    }
+  }
+  @media (max-width: 480px) {
+    .landing-card-grid {
+      grid-template-columns: 1fr !important;
+    }
+    a.product-card {
+      aspect-ratio: 3 / 2 !important;
+    }
+  }
+  .landing-container {
+    max-width: 1536px;
+    margin: 0 auto;
+    padding: 60px 96px 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  @media (max-width: 900px) {
+    .landing-container {
+      padding: 40px 24px 0;
+    }
+  }
+  @media (max-width: 600px) {
+    .landing-container {
+      padding: 32px 16px 0;
+    }
   }
 
 }
