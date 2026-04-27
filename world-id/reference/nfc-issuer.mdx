@@ -29,18 +29,82 @@ The NFC issuer exposes endpoints for issuing and migrating NFC credentials. For 
 
 #### Headers
 
-| Header                      | Type     | Required | Description                                                           |
-| --------------------------- | -------- | -------- | --------------------------------------------------------------------- |
-| `x-zkp-proof`               | `string` | yes      | Base64-encoded JSON containing the ZKP proof and identity commitment. |
-| `attestation-gateway-token` | `string` | yes      | Attestation gateway token for device integrity verification.          |
+<table>
+  <thead>
+    <tr>
+      <th className="whitespace-nowrap">Header</th>
+      <th>Type</th>
+      <th>Required</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td className="whitespace-nowrap">
+        <code>x-zkp-proof</code>
+      </td>
+      <td><code>string</code></td>
+      <td>yes</td>
+      <td>Base64-encoded JSON containing the ZKP proof and identity commitment.</td>
+    </tr>
+    <tr>
+      <td className="whitespace-nowrap">
+        <code>attestation-gateway-token</code>
+      </td>
+      <td><code>string</code></td>
+      <td>yes</td>
+      <td>Attestation gateway token for device integrity verification.</td>
+    </tr>
+  </tbody>
+</table>
 
 #### Body fields
 
-| Field                | Type     | Required | Description                                                                                                                |
-| -------------------- | -------- | -------- | -------------------------------------------------------------------------------------------------------------------------- |
-| `identityCommitment` | `string` | yes      | The holder's identity commitment (decimal or hex with `0x` prefix). Must match the ZKP header.                             |
-| `sub`                | `string` | yes      | World ID 4.0 blinded subject identifier (hex with `0x` prefix, 256-bit). Must match previous migrations for this identity. |
-| `credential`         | `object` | yes      | Flow-specific credential data (see below). The client decrypts PCP data locally before submission.                         |
+<table>
+  <thead>
+    <tr>
+      <th className="whitespace-nowrap">Field</th>
+      <th>Type</th>
+      <th>Required</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td className="whitespace-nowrap">
+        <code>identityCommitment</code>
+      </td>
+      <td><code>string</code></td>
+      <td>yes</td>
+      <td>
+        The holder's identity commitment (decimal or hex with <code>0x</code>{" "}
+        prefix). Must match the ZKP header.
+      </td>
+    </tr>
+    <tr>
+      <td className="whitespace-nowrap">
+        <code>sub</code>
+      </td>
+      <td><code>string</code></td>
+      <td>yes</td>
+      <td>
+        World ID 4.0 blinded subject identifier (hex with <code>0x</code>{" "}
+        prefix, 256-bit). Must match previous migrations for this identity.
+      </td>
+    </tr>
+    <tr>
+      <td className="whitespace-nowrap">
+        <code>credential</code>
+      </td>
+      <td><code>object</code></td>
+      <td>yes</td>
+      <td>
+        Flow-specific credential data (see below). The client decrypts PCP data
+        locally before submission.
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 #### Credential fields
 
@@ -48,10 +112,37 @@ The NFC issuer exposes endpoints for issuing and migrating NFC credentials. For 
   <Tab title="Passport / eID">
     The `credential` object contains data extracted and decrypted from the user's Personal Custody Package (PCP) by the client.
 
-    | Field                              | Type     | Description                                                                             |
-    | ---------------------------------- | -------- | --------------------------------------------------------------------------------------- |
-    | `credential.sod`                   | `string` | Base64-encoded SOD (Security Object Document) in DER format from the identity document. |
-    | `credential.verification_metadata` | `string` | Base64-encoded verification metadata from the original document check.                  |
+    <table>
+      <thead>
+        <tr>
+          <th className="whitespace-nowrap">Field</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td className="whitespace-nowrap">
+            <code>credential.sod</code>
+          </td>
+          <td><code>string</code></td>
+          <td>
+            Base64-encoded SOD (Security Object Document) in DER format from
+            the identity document.
+          </td>
+        </tr>
+        <tr>
+          <td className="whitespace-nowrap">
+            <code>credential.verification_metadata</code>
+          </td>
+          <td><code>string</code></td>
+          <td>
+            Base64-encoded verification metadata from the original document
+            check.
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
     ```json
     {
@@ -66,9 +157,24 @@ The NFC issuer exposes endpoints for issuing and migrating NFC credentials. For 
 
   </Tab>
   <Tab title="MNC (My Number Card)">
-    | Field               | Type     | Description                                                       |
-    | ------------------- | -------- | ----------------------------------------------------------------- |
-    | `credential.sd_jwt` | `string` | SD-JWT (Selective Disclosure JWT) from the MNC verification flow. |
+    <table>
+      <thead>
+        <tr>
+          <th className="whitespace-nowrap">Field</th>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td className="whitespace-nowrap">
+            <code>credential.sd_jwt</code>
+          </td>
+          <td><code>string</code></td>
+          <td>SD-JWT (Selective Disclosure JWT) from the MNC verification flow.</td>
+        </tr>
+      </tbody>
+    </table>
 
     ```json
     {
