@@ -122,6 +122,13 @@
                       "GET /is-valid-root",
                       "GET /status/{id}"
                     ]
+                  },
+                  {
+                    "group": "Issuers",
+                    "pages": [
+                      "world-id/reference/poh-issuer",
+                      "world-id/reference/nfc-issuer"
+                    ]
                   }
                 ]
               },

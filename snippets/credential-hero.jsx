@@ -1,5 +1,3 @@
-import React from "react";
-
 /**
  * Hero card for credential issuer documentation pages.
  * Mintlify-safe: no hooks, no client-side state.
