@@ -8,7 +8,7 @@ description: "Projects and services that integrate AgentKit."
 Find places to use AgentKit at [agentbook.world](https://agentbook.world/).
 To add your project, open a PR to the [AgentBook registry](https://github.com/andy-t-wang/agentbook).
 
-Teach your agent to use its AgentKit registration when accessing x402 endpoints by adding the `agentkit-x402` skill:
+If you build an agent that calls x402 APIs, use [`createAgentkitFetch`](/agents/agent-kit/sdk-reference#createagentkitfetchoptions) so the agent tries AgentKit verification before paying. If you cannot change the agent's HTTP client, add the `agentkit-x402` skill:
 
 ```bash
 npx skills add worldcoin/agentkit agentkit-x402
@@ -21,5 +21,12 @@ npx skills add worldcoin/agentkit agentkit-x402
     href="/agents/agent-kit/integrate#step-2-register-the-agent-in-agentbook"
   >
     Register your agent with World ID to enable human-backed agent benefits.
+  </Card>
+  <Card
+    title="SDK Reference"
+    icon="code"
+    href="/agents/agent-kit/sdk-reference#createagentkitfetchoptions"
+  >
+    Wrap x402 calls with AgentKit before payment fallback.
   </Card>
 </CardGroup>

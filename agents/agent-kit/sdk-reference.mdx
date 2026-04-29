@@ -1,12 +1,10 @@
 ---
 title: "SDK Reference"
-description: "Reference for AgentKit modes, APIs, supported chains, and low-level helpers."
+description: "Reference for AgentKit modes, APIs, EVM signatures, and low-level helpers."
 "og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 "og:description": "Reference for the AgentKit SDK surface and advanced integration behavior."
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
-
-{/* cspell:ignore DEVNET */}
 
 Use this page when you need the full AgentKit surface area. For the shortest path to a working setup, start with [Integrate AgentKit](/agents/agent-kit/integrate).
 
@@ -21,6 +19,50 @@ Usage counters are tracked per human per endpoint. Two agents backed by the same
 | `discount`   | `{ type: "discount"; percent: number; uses?: number }` | Registered human-backed agents can underpay by the configured percentage for the first `N` times. |
 
 `discount` mode requires `verifyFailureHook` to be registered on the facilitator. Without it, discounted underpayments fail settlement verification.
+
+## Agent client APIs
+
+### `createAgentkitFetch(options)`
+
+Use this helper in agents that call paid x402 APIs. It wraps a base `fetch`, inspects `402 Payment Required` responses, and retries once with a signed `agentkit` header when the response advertises `extensions.agentkit`.
+
+```typescript
+import { createAgentkitFetch } from '@worldcoin/agentkit'
+
+const fetchWithAgentkit = createAgentkitFetch({
+	signer: {
+		address: agentWallet.address,
+		chainId: 'eip155:8453',
+		type: 'eip191',
+		signMessage: message => agentWallet.signMessage(message),
+	},
+})
+```
+
+| Option    | Type                                  | Description |
+| --------- | ------------------------------------- | ----------- |
+| `signer`  | `AgentkitSigner`                      | Agent wallet identity and SIWE signing function. Required. |
+| `fetch`   | `typeof fetch`                        | Optional base fetch implementation. Defaults to `globalThis.fetch`. |
+| `onEvent` | `(event: AgentkitFetchEvent) => void` | Optional callback for logging and debugging. |
+
+The helper does not create x402 payments. It returns the original response unchanged when AgentKit is unavailable or cannot be used, so your existing x402 payment client can handle fallback.
+
+### `AgentkitSigner`
+
+```ts
+type AgentkitSigner = {
+	address: string
+	chainId: string
+	type: 'eip191' | 'eip1271'
+	signMessage(message: string): Promise<string>
+}
+```
+
+Use `eip191` for EOAs and `eip1271` for smart contract wallets.
+
+### `createAgentkitHeader(options)`
+
+Creates the base64 `agentkit` HTTP header from an AgentKit extension and signer. Use this lower-level helper when your HTTP client cannot use `createAgentkitFetch`.
 
 ## Core server APIs
 
@@ -46,7 +88,7 @@ Register this extension once on your x402 resource server. It turns the declarat
 
 - generating the nonce and timestamps
 - inferring `domain` and `resourceUri` from the incoming request when you omit them
-- expanding each supported network into the correct signature types for that chain family
+- expanding each supported EVM network into `eip191` and `eip1271` signature types
 
 ### `createAgentkitHooks(options)`
 
@@ -97,7 +139,7 @@ That is why Express and Next.js are compatible even though the docs use Hono for
 
 ### `createAgentBookVerifier(options?)`
 
-Creates the verifier used to resolve a wallet address to an anonymous human identifier. Lookup **always** resolves against the canonical AgentBook deployment on World Chain (`eip155:480`), regardless of which chain the agent's signature was produced on or which chain your paid route runs on. The caller side is chain-agnostic by design — you never pass a chain ID or pin a network.
+Creates the verifier used to resolve a wallet address to an anonymous human identifier. Lookup **always** resolves against the canonical AgentBook deployment on World Chain (`eip155:480`).
 
 Canonical deployment:
 
@@ -129,8 +171,7 @@ lookupHuman(address: string): Promise<string | null>
 
 | Method                              | Description |
 | ----------------------------------- | ----------- |
-| `getUsageCount(endpoint, humanId)`  | Return the current usage count for a human on a route. |
-| `incrementUsage(endpoint, humanId)` | Increment the usage count after a successful free-trial or discount use. |
+| `tryIncrementUsage(endpoint, humanId, limit)` | Atomically increment usage if below the limit. Returns `true` when the use is recorded. |
 | `hasUsedNonce?(nonce)`              | Optional replay check. Return `true` if the nonce has already been seen. |
 | `recordNonce?(nonce)`               | Optional replay recorder. Persist the nonce after validation succeeds. |
 
@@ -156,15 +197,6 @@ Validates message binding, freshness, and optional replay checks.
 | `maxAge`     | `number`                     | Maximum age for `issuedAt` in milliseconds. Defaults to 5 minutes. |
 | `checkNonce` | `(nonce: string) => boolean \| Promise<boolean>` | Optional replay validation hook. |
 
-Validation rules include:
-
-- `domain` must match the hostname of the protected resource URL
-- `uri` must resolve to the same host as the protected resource URL
-- `issuedAt` must be valid, not in the future, and not older than `maxAge`
-- `expirationTime`, when provided, must still be in the future
-- `notBefore`, when provided, must already have passed
-- `checkNonce`, when provided, must accept the nonce
-
 Returns:
 
 ```ts
@@ -182,7 +214,6 @@ Verifies the cryptographic signature and returns the recovered address on succes
 Behavior:
 
 - `eip155:*` payloads are reconstructed into a SIWE message and verified with viem
-- `solana:*` payloads are reconstructed into a SIWS message and verified with `tweetnacl`
 - unsupported chain namespaces return `{ valid: false, error: ... }`
 
 Returns:
@@ -207,31 +238,12 @@ Returns the JSON schema used in 402 challenge payloads.
 
 EVM verification uses viem's `verifyMessage`, which covers EOAs and ERC-1271 smart wallets. Counterfactual wallets can still represent their signature scheme with `signatureScheme: "eip6492"` in the payload schema.
 
-### Solana
-
-| Export                        | Description |
-| ----------------------------- | ----------- |
-| `formatSIWSMessage`           | Reconstruct the Sign-In With Solana message used for verification. |
-| `verifySolanaSignature`       | Verify the detached signature against the reconstructed SIWS message. |
-| `decodeBase58` / `encodeBase58` | Decode or encode Base58 values used in Solana payloads. |
-| `extractSolanaChainReference` | Extract the chain reference from a CAIP-2 `solana:*` chain ID. |
-
 ## Supported chains and signature behavior
-
-### EVM
 
 - Chain namespace: `eip155:*`
 - Payload `type`: `eip191` or `eip1271`
 - Optional `signatureScheme`: `eip191`, `eip1271`, or `eip6492`
 - Message format: SIWE
-
-### Solana
-
-- Chain namespace: `solana:*`
-- Payload `type`: `ed25519`
-- Optional `signatureScheme`: `siws`
-- Message format: Sign-In With Solana
-- Exported constants: `SOLANA_MAINNET`, `SOLANA_DEVNET`, `SOLANA_TESTNET`
 
 ## Manual usage example
 
@@ -272,7 +284,6 @@ async function handleRequest(request: Request) {
 		return { error: verification.error }
 	}
 
-	// Always resolves against the canonical World Chain AgentBook
 	const humanId = await agentBook.lookupHuman(verification.address)
 	if (!humanId) {
 		return { error: 'Agent is not registered in the AgentBook' }
