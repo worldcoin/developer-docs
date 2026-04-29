@@ -90,7 +90,6 @@
           },
           {
             "group": "Selfie Check (Beta)",
-            "hidden": true,
             "pages": ["world-id/selfie-check/overview"]
           },
           {
