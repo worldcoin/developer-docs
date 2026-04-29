@@ -11,6 +11,7 @@ Enable agentic traffic to access api endpoints while blocking malicious actors, 
 
 This quickstart follows a default implementation path:
 
+- Agent-side x402 calls use `agentkit.fetch` from `createAgentkitClient`
 - Accepts payments on both World Chain and Base
 - Agent registration on World Chain
 - AgentBook lookup always resolves on World Chain (caller side is chain-agnostic)
@@ -32,7 +33,13 @@ Register the wallet address your agent will sign with:
 npx @worldcoin/agentkit-cli register <agent-address> 
 ```
 
-By default, the CLI registers on World Chain and submits through the hosted relay. AgentBook lookup always resolves against the canonical World Chain deployment regardless of which chain your paid route runs on, so there is no chain wiring to do on the lookup side.
+Check whether a wallet is already registered:
+
+```bash
+npx @worldcoin/agentkit-cli status <agent-address>
+```
+
+By default, the CLI registers on World Chain and submits through the hosted relay. AgentBook lookup always resolves against the canonical World Chain deployment.
 
 During registration, the CLI:
 
@@ -48,12 +55,34 @@ Once the wallet is registered, AgentKit can resolve it to an anonymous human ide
 
 <p className="text-center text-sm">*Example of the registration flow*</p>
 
-Add this skill so your agent knows to use it's AgentKit registration when accessing x402 endpoints:
+# Step 3: Wrap x402 calls in the agent
+
+Use this in agents that call paid x402 APIs. Without this client, agents may go straight to payment instead of using their AgentKit registration.
+
+```typescript
+import { createAgentkitClient } from '@worldcoin/agentkit'
+
+const agentkit = createAgentkitClient({
+	signer: {
+		address: agentWallet.address,
+		chainId: 'eip155:8453',
+		type: 'eip191',
+		signMessage: message => agentWallet.signMessage(message),
+	},
+})
+
+const response = await agentkit.fetch('https://api.example.com/data')
+```
+
+Use `agentkit.fetch` anywhere the agent would otherwise call `fetch` for x402-protected APIs. It tries AgentKit first, then leaves the normal x402 payment fallback in place.
+
+If you cannot change the agent's HTTP client, add the fallback skill:
+
 ```bash
 npx skills add worldcoin/agentkit agentkit-x402 
 ```
 
-# Step 3: Wire the hooks-based server flow
+# Step 4: Wire the hooks-based server flow
 
 The example below shows the maintained Hono wrapper path. AgentKit itself is not Hono-only: Express and Next.js route handlers can use the same hooks and low-level helpers from the [SDK Reference](/agents/agent-kit/sdk-reference).
 
@@ -107,6 +136,7 @@ const hooks = createAgentkitHooks({
 
 const resourceServer = new x402ResourceServer(facilitatorClient)
 	.register(WORLD_CHAIN, evmScheme)
+	.register(BASE, new ExactEvmScheme())
 	.registerExtension(agentkitResourceServerExtension)
 
 const routes = {
@@ -146,9 +176,9 @@ app.get('/data', c => {
 serve({ fetch: app.fetch, port: 4021 })
 ```
 
-This example accepts payments on both World Chain and Base. AgentBook lookup automatically resolves against the canonical World Chain deployment — you do not need to pass a chain ID or pin a network.
+This example accepts payments on both World Chain and Base. AgentBook lookup automatically resolves against the canonical World Chain deployment.
 
-# Step 4: Configure the default mode and storage
+# Step 5: Configure the default mode and storage
 
 This guide uses `free-trial` mode so registered human-backed agents get 3 free requests before the normal x402 payment flow resumes. `InMemoryAgentKitStorage` is fine for local testing, but production should persist both usage counters and nonces.
 
@@ -156,12 +186,8 @@ This guide uses `free-trial` mode so registered human-backed agents get 3 free r
 import type { AgentKitStorage } from '@worldcoin/agentkit'
 
 class DatabaseAgentKitStorage implements AgentKitStorage {
-	async getUsageCount(endpoint: string, humanId: string) {
-		return db.getUsageCount(endpoint, humanId)
-	}
-
-	async incrementUsage(endpoint: string, humanId: string) {
-		await db.incrementUsage(endpoint, humanId)
+	async tryIncrementUsage(endpoint: string, humanId: string, limit: number) {
+		return db.tryIncrementUsage(endpoint, humanId, limit)
 	}
 
 	async hasUsedNonce(nonce: string) {
@@ -180,4 +206,4 @@ const hooks = createAgentkitHooks({
 })
 ```
 
-Need `discount` mode, Solana, custom AgentBook deployments, or the low-level validation helpers? Continue to the [SDK Reference](/agents/agent-kit/sdk-reference).
+Need `discount` mode, custom AgentBook deployments, or the low-level validation helpers? Continue to the [SDK Reference](/agents/agent-kit/sdk-reference).
