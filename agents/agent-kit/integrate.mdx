@@ -11,7 +11,7 @@ Enable agentic traffic to access api endpoints while blocking malicious actors, 
 
 This quickstart follows a default implementation path:
 
-- Agent-side x402 calls are wrapped with `createAgentkitFetch`
+- Agent-side x402 calls use `agentkit.fetch` from `createAgentkitClient`
 - Accepts payments on both World Chain and Base
 - Agent registration on World Chain
 - AgentBook lookup always resolves on World Chain (caller side is chain-agnostic)
@@ -57,12 +57,12 @@ Once the wallet is registered, AgentKit can resolve it to an anonymous human ide
 
 # Step 3: Wrap x402 calls in the agent
 
-Use this in agents that call paid x402 APIs. Without the wrapper, agents may go straight to payment instead of using their AgentKit registration.
+Use this in agents that call paid x402 APIs. Without this client, agents may go straight to payment instead of using their AgentKit registration.
 
 ```typescript
-import { createAgentkitFetch } from '@worldcoin/agentkit'
+import { createAgentkitClient } from '@worldcoin/agentkit'
 
-const fetchWithAgentkit = createAgentkitFetch({
+const agentkit = createAgentkitClient({
 	signer: {
 		address: agentWallet.address,
 		chainId: 'eip155:8453',
@@ -71,10 +71,10 @@ const fetchWithAgentkit = createAgentkitFetch({
 	},
 })
 
-const response = await fetchWithAgentkit('https://api.example.com/data')
+const response = await agentkit.fetch('https://api.example.com/data')
 ```
 
-Use `fetchWithAgentkit` anywhere the agent would otherwise call `fetch` for x402-protected APIs. It tries AgentKit first, then leaves the normal x402 payment fallback in place.
+Use `agentkit.fetch` anywhere the agent would otherwise call `fetch` for x402-protected APIs. It tries AgentKit first, then leaves the normal x402 payment fallback in place.
 
 If you cannot change the agent's HTTP client, add the fallback skill:
 

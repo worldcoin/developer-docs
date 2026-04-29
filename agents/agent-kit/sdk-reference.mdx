@@ -22,14 +22,14 @@ Usage counters are tracked per human per endpoint. Two agents backed by the same
 
 ## Agent client APIs
 
-### `createAgentkitFetch(options)`
+### `createAgentkitClient(options)`
 
-Use this helper in agents that call paid x402 APIs. It wraps a base `fetch`, inspects `402 Payment Required` responses, and retries once with a signed `agentkit` header when the response advertises `extensions.agentkit`.
+Use this client in agents that call paid x402 APIs. `agentkit.fetch` inspects `402 Payment Required` responses and retries once with a signed `agentkit` header when the response advertises `extensions.agentkit`.
 
 ```typescript
-import { createAgentkitFetch } from '@worldcoin/agentkit'
+import { createAgentkitClient } from '@worldcoin/agentkit'
 
-const fetchWithAgentkit = createAgentkitFetch({
+const agentkit = createAgentkitClient({
 	signer: {
 		address: agentWallet.address,
 		chainId: 'eip155:8453',
@@ -45,7 +45,7 @@ const fetchWithAgentkit = createAgentkitFetch({
 | `fetch`   | `typeof fetch`                        | Optional base fetch implementation. Defaults to `globalThis.fetch`. |
 | `onEvent` | `(event: AgentkitFetchEvent) => void` | Optional callback for logging and debugging. |
 
-The helper does not create x402 payments. It returns the original response unchanged when AgentKit is unavailable or cannot be used, so your existing x402 payment client can handle fallback.
+The client does not create x402 payments. It returns the original response unchanged when AgentKit is unavailable or cannot be used, so your existing x402 payment client can handle fallback.
 
 ### `AgentkitSigner`
 
@@ -60,9 +60,12 @@ type AgentkitSigner = {
 
 Use `eip191` for EOAs and `eip1271` for smart contract wallets.
 
-### `createAgentkitHeader(options)`
+The returned client exposes:
 
-Creates the base64 `agentkit` HTTP header from an AgentKit extension and signer. Use this lower-level helper when your HTTP client cannot use `createAgentkitFetch`.
+| Field | Type | Description |
+| ----- | ---- | ----------- |
+| `fetch` | `typeof fetch` | Fetch-compatible function that retries AgentKit-enabled 402 responses once. |
+| `createHeader` | `(extension: AgentkitExtension) => Promise<string>` | Creates the base64 `agentkit` HTTP header for custom HTTP clients. |
 
 ## Core server APIs
 
