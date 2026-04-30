@@ -82,15 +82,14 @@
           },
           {
             "group": "Credentials",
-            "pages": ["world-id/credentials/legacy-presets"]
+            "pages": [
+              "world-id/credentials/legacy-presets",
+              "world-id/selfie-check/overview"
+            ]
           },
           {
             "group": "Migration",
             "pages": ["world-id/4-0-migration"]
-          },
-          {
-            "group": "Selfie Check (Beta)",
-            "pages": ["world-id/selfie-check/overview"]
           },
           {
             "group": "Technical Reference",
