@@ -5,6 +5,7 @@ description: "Anonymous proof of human credential for the age of AI"
 ---
 
 import { Quickstart } from "/snippets/quickstart.jsx";
+import { AgentQuickstart } from "/snippets/agent-quickstart.jsx";
 
 World ID is an anonymous proof of human credential that lets people prove they are a real and unique human online without sharing personal information.
 
@@ -13,6 +14,15 @@ In the age of AI, it gives relying parties a high-assurance signal to stop bots,
 World ID credentials extend that trust layer with additional proofs, like proof of age and document-backed signals, without exposing underlying user data.
 
 {/* cspell:ignore worldcoin idkit orblegacy rp_context app_id rp_id selfie-check sybil PoH CAPTCHAs NFC unlinkable nullifier */}
+
+<AgentQuickstart
+  productName="World ID"
+  skillUrl="docs.world.org/world-id/skill.md"
+  steps={[
+    { number: "01", label: "Point your agent at the SKILL.md file" },
+    { number: "02", label: "Connect the Developer Portal MCP" },
+  ]}
+/>
 
 <Quickstart
   title="Developer Quickstart"
