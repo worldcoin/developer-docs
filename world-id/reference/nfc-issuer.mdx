@@ -33,7 +33,6 @@ The NFC issuer exposes endpoints for issuing and migrating NFC credentials. For 
   <thead>
     <tr>
       <th className="whitespace-nowrap">Header</th>
-      <th>Type</th>
       <th>Required</th>
       <th>Description</th>
     </tr>
@@ -42,16 +41,18 @@ The NFC issuer exposes endpoints for issuing and migrating NFC credentials. For 
     <tr>
       <td className="whitespace-nowrap">
         <code>x-zkp-proof</code>
+        <br />
+        <code>string</code>
       </td>
-      <td><code>string</code></td>
       <td>yes</td>
       <td>Base64-encoded JSON containing the ZKP proof and identity commitment.</td>
     </tr>
     <tr>
       <td className="whitespace-nowrap">
         <code>attestation-gateway-token</code>
+        <br />
+        <code>string</code>
       </td>
-      <td><code>string</code></td>
       <td>yes</td>
       <td>Attestation gateway token for device integrity verification.</td>
     </tr>
@@ -64,7 +65,6 @@ The NFC issuer exposes endpoints for issuing and migrating NFC credentials. For 
   <thead>
     <tr>
       <th className="whitespace-nowrap">Field</th>
-      <th>Type</th>
       <th>Required</th>
       <th>Description</th>
     </tr>
@@ -73,8 +73,9 @@ The NFC issuer exposes endpoints for issuing and migrating NFC credentials. For 
     <tr>
       <td className="whitespace-nowrap">
         <code>identityCommitment</code>
+        <br />
+        <code>string</code>
       </td>
-      <td><code>string</code></td>
       <td>yes</td>
       <td>
         The holder's identity commitment (decimal or hex with <code>0x</code>{" "}
@@ -84,8 +85,9 @@ The NFC issuer exposes endpoints for issuing and migrating NFC credentials. For 
     <tr>
       <td className="whitespace-nowrap">
         <code>sub</code>
+        <br />
+        <code>string</code>
       </td>
-      <td><code>string</code></td>
       <td>yes</td>
       <td>
         World ID 4.0 blinded subject identifier (hex with <code>0x</code>{" "}
@@ -95,8 +97,9 @@ The NFC issuer exposes endpoints for issuing and migrating NFC credentials. For 
     <tr>
       <td className="whitespace-nowrap">
         <code>credential</code>
+        <br />
+        <code>object</code>
       </td>
-      <td><code>object</code></td>
       <td>yes</td>
       <td>
         Flow-specific credential data (see below). The client decrypts PCP data
@@ -116,7 +119,6 @@ The NFC issuer exposes endpoints for issuing and migrating NFC credentials. For 
       <thead>
         <tr>
           <th className="whitespace-nowrap">Field</th>
-          <th>Type</th>
           <th>Description</th>
         </tr>
       </thead>
@@ -124,8 +126,9 @@ The NFC issuer exposes endpoints for issuing and migrating NFC credentials. For 
         <tr>
           <td className="whitespace-nowrap">
             <code>credential.sod</code>
+            <br />
+            <code>string</code>
           </td>
-          <td><code>string</code></td>
           <td>
             Base64-encoded SOD (Security Object Document) in DER format from
             the identity document.
@@ -134,8 +137,9 @@ The NFC issuer exposes endpoints for issuing and migrating NFC credentials. For 
         <tr>
           <td className="whitespace-nowrap">
             <code>credential.verification_metadata</code>
+            <br />
+            <code>string</code>
           </td>
-          <td><code>string</code></td>
           <td>
             Base64-encoded verification metadata from the original document
             check.
@@ -161,7 +165,6 @@ The NFC issuer exposes endpoints for issuing and migrating NFC credentials. For 
       <thead>
         <tr>
           <th className="whitespace-nowrap">Field</th>
-          <th>Type</th>
           <th>Description</th>
         </tr>
       </thead>
@@ -169,8 +172,9 @@ The NFC issuer exposes endpoints for issuing and migrating NFC credentials. For 
         <tr>
           <td className="whitespace-nowrap">
             <code>credential.sd_jwt</code>
+            <br />
+            <code>string</code>
           </td>
-          <td><code>string</code></td>
           <td>SD-JWT (Selective Disclosure JWT) from the MNC verification flow.</td>
         </tr>
       </tbody>
