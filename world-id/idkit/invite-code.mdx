@@ -37,6 +37,7 @@ Use the standard [QR / connect-URL flow](/world-id/idkit/integrate) when the use
 The setup steps that precede the request — creating an app in the Developer Portal and generating an RP signature on your backend — are identical to the [standard integration](/world-id/idkit/integrate). Only the request call and the rendered UI change.
 
 <CodeGroup title="Create an invite-code request">
+
 ```typescript title="JavaScript"
 import { IDKit, selfieCheckLegacy } from "@worldcoin/idkit-core";
 
@@ -126,6 +127,7 @@ let expiresAt = request.expiresAt    // Date
 
 let completion = await request.pollUntilCompletion()
 ```
+
 </CodeGroup>
 
 <Warning>
