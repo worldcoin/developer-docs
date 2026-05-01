@@ -338,6 +338,19 @@
             ]
           }
         ]
+      },
+      {
+        "tab": "MCP",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["mcp/index"]
+          },
+          {
+            "group": "World MCP",
+            "pages": ["mcp/world-docs", "mcp/developer-portal"]
+          }
+        ]
       }
     ],
     "global": {

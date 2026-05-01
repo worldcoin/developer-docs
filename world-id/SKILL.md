@@ -10,7 +10,7 @@ metadata:
 user-invocable: true
 ---
 
-<!-- cspell:ignore streamable biometrically -->
+{/* cspell:ignore streamable biometrically */}
 
 # Add World ID to your app
 
@@ -18,7 +18,7 @@ user-invocable: true
 
 **What is World ID?** A privacy-preserving way to prove a user is a unique real human. Use it to gate signups, kill bots, prevent multi-accounting, run one-person-one-vote, or distribute scarce rewards fairly. Zero PII shared, zero-knowledge proofs on the wire.
 
-The full integration guide with code for every language lives at <https://docs.world.org/world-id/idkit/integrate>. **This file is the meta-guide that gets you to the right code without missteps.**
+The full integration guide with code for every language lives at [https://docs.world.org/world-id/idkit/integrate](https://docs.world.org/world-id/idkit/integrate). **This file is the meta-guide that gets you to the right code without missteps.**
 
 ---
 
@@ -30,7 +30,7 @@ Your job: take the user from "I want World ID" to a working flow. Don't skip ste
 
 The **World ID Developer Portal MCP** turns the entire app-creation lifecycle into MCP tools. It replaces ~15 minutes of dashboard clicking with ~3 tool calls — and, more importantly, **guarantees you capture the one-time `signing_key` correctly** at the moment it's returned.
 
-- Source & full tool reference: <https://github.com/worldcoin/developer-portal/tree/main/web/api/mcp>
+- Source & full tool reference: [https://github.com/worldcoin/developer-portal/tree/main/web/api/mcp](https://github.com/worldcoin/developer-portal/tree/main/web/api/mcp)
 - Endpoint: `https://developer.world.org/api/mcp` (transport: streamable-http)
 - Auth: `Authorization: Bearer api_<base64(id:secret)>` (Developer Portal team API key)
 
@@ -52,7 +52,7 @@ The **World ID Developer Portal MCP** turns the entire app-creation lifecycle in
 
 **Before doing anything else, check whether the MCP is connected.** If not, ask the user to add it:
 
-1. Get a team API key at <https://developer.world.org> → team settings → API Keys. Tell them: *"copy the `api_…` token now, it's only shown once."*
+1. Get a team API key at [https://developer.world.org](https://developer.world.org) → team settings → API Keys. Tell them: *"copy the `api_…` token now, it's only shown once."*
 2. In their project directory, run:
    ```bash
    claude mcp add --transport http --scope project worldcoin-developer-portal \
@@ -103,7 +103,7 @@ Other legacy presets exist (`documentLegacy`, `deviceLegacy`); reach for them on
 
 ## Step D — Walk through the 6 integration steps and explain the WHY
 
-The full code for each step is at <https://docs.world.org/world-id/idkit/integrate>. Don't reproduce it; link to it and adapt to the user's framework. What the agent owns is making sure each step is done **and understood**.
+The full code for each step is at [https://docs.world.org/world-id/idkit/integrate](https://docs.world.org/world-id/idkit/integrate). Don't reproduce it; link to it and adapt to the user's framework. What the agent owns is making sure each step is done **and understood**.
 
 **Copy this checklist into your TODO and update it as you go.** Don't move on with an unchecked step.
 
@@ -124,7 +124,7 @@ The full code for each step is at <https://docs.world.org/world-id/idkit/integra
 ## Step E — Match environments end-to-end (the #1 debugging trap)
 
 - The **production** World App only signs **production** proofs.
-- A **staging** action only verifies against the World App **simulator** (<https://simulator.worldcoin.org>).
+- A **staging** action only verifies against the World App **simulator** ([https://simulator.worldcoin.org](https://simulator.worldcoin.org)).
 - The IDKit `environment` prop, the action's `environment`, and the simulator-vs-real-app choice **must all match.**
 
 **CRITICAL: if real users will scan with their phones, the action environment must be `production`.** A staging action with the production World App will silently produce zero proofs and look like a frontend bug. For dev, **create both staging and production actions** so the simulator works alongside real-device QA.
@@ -158,14 +158,14 @@ Before declaring done, confirm with the user:
 
 ## Reference
 
-- Full integration guide (code for every language): <https://docs.world.org/world-id/idkit/integrate>
-- Core concepts: <https://docs.world.org/world-id/concepts>
-- Credentials reference: <https://docs.world.org/world-id/credentials>
-- RP signature spec (for non-Node backends): <https://docs.world.org/world-id/idkit/signatures>
-- Error codes: <https://docs.world.org/world-id/idkit/error-codes>
-- Developer Portal MCP: <https://github.com/worldcoin/developer-portal/tree/main/web/api/mcp>
-- Developer Portal: <https://developer.world.org>
-- World App simulator (staging only): <https://simulator.worldcoin.org>
+- Full integration guide (code for every language): [https://docs.world.org/world-id/idkit/integrate](https://docs.world.org/world-id/idkit/integrate)
+- Core concepts: [https://docs.world.org/world-id/concepts](https://docs.world.org/world-id/concepts)
+- Credentials reference: [https://docs.world.org/world-id/credentials](https://docs.world.org/world-id/credentials)
+- RP signature spec (for non-Node backends): [https://docs.world.org/world-id/idkit/signatures](https://docs.world.org/world-id/idkit/signatures)
+- Error codes: [https://docs.world.org/world-id/idkit/error-codes](https://docs.world.org/world-id/idkit/error-codes)
+- Developer Portal MCP: [https://github.com/worldcoin/developer-portal/tree/main/web/api/mcp](https://github.com/worldcoin/developer-portal/tree/main/web/api/mcp)
+- Developer Portal: [https://developer.world.org](https://developer.world.org)
+- World App simulator (staging only): [https://simulator.worldcoin.org](https://simulator.worldcoin.org)
 
 ---
 

@@ -1,0 +1,81 @@
+---
+title: "World Docs MCP"
+description: "Search World documentation from your AI coding assistant."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"og:description": "Search World documentation from your AI coding assistant."
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+The World Docs MCP gives your AI assistant direct access to World documentation through the [Model Context Protocol](https://modelcontextprotocol.io/).
+
+Use it when you want Claude, Codex, Cursor, VS Code, or another MCP client to search current World docs while you build.
+
+## Endpoint
+
+```text
+https://docs.world.org/mcp
+```
+
+The docs MCP does not require authentication.
+
+## Connect your client
+
+<Tabs>
+  <Tab title="Claude Code">
+    ```bash
+    claude mcp add --transport http --scope project world-docs https://docs.world.org/mcp
+    ```
+  </Tab>
+  <Tab title="Codex">
+    ```bash
+    codex mcp add world-docs -- npx -y mcp-remote https://docs.world.org/mcp --transport http-only
+    ```
+  </Tab>
+  <Tab title="Cursor">
+    Add this to `.cursor/mcp.json`:
+
+    ```json
+    {
+      "mcpServers": {
+        "world-docs": {
+          "url": "https://docs.world.org/mcp"
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="VS Code">
+    Add this to `.vscode/mcp.json`:
+
+    ```json
+    {
+      "servers": {
+        "world-docs": {
+          "type": "http",
+          "url": "https://docs.world.org/mcp"
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Available tools
+
+| Tool | Purpose |
+| --- | --- |
+| `search_world_documentation` | Search and retrieve relevant World documentation for the current task. |
+
+## Suggested prompts
+
+```text
+Use the World Docs MCP to find the current MiniKit install steps and add them to this project.
+```
+
+```text
+Search the World docs for World ID verification and explain which endpoint this app should call.
+```
+
+## When to use it
+
+Use the docs MCP for read-only documentation lookup. To create or configure apps in the developer portal, use the [Developer Portal MCP](/mcp/developer-portal).
