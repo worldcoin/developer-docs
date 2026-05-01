@@ -63,6 +63,7 @@
             "group": "IDKit",
             "pages": [
               "world-id/idkit/integrate",
+              "world-id/idkit/invite-code",
               "world-id/idkit/signatures",
               "world-id/idkit/build-with-llms",
               "world-id/idkit/onchain-verification",

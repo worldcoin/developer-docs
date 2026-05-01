@@ -1,0 +1,198 @@
+---
+title: "Invite-code mode"
+description: "Verify users with World ID across devices using a 6-character invite code instead of a QR scan."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+Invite-code mode is a sibling to the default QR / connect-URL flow. Instead of showing a QR code that the user scans with World App, your app displays a short **6-character code** that the user types into World App on a different device.
+
+The proof, polling lifecycle, status enum, and verification step are identical to QR mode. Only the discovery channel changes.
+
+## When to use it
+
+Use invite-code mode when the relying party (your app) and World App are reliably **on different devices** — for example, a desktop browser experience where the user has World App on their phone. Typing a 6-character code is more robust than asking the user to point a phone camera at their own laptop screen.
+
+Use the standard [QR / connect-URL flow](/world-id/idkit/integrate) when the user can plausibly verify on the same device, when you want a deep-link App Clip handoff, or when you want native in-app verification inside World App.
+
+<Note>
+  Invite-code mode is bridge-only by design. There is no in-app native path —
+  the user is, by definition, on a different device than World App.
+</Note>
+
+## Code format
+
+- The canonical code is **6 characters of [Crockford Base32](https://www.crockford.com/base32.html)** with a built-in check character. It catches 100% of single-character substitutions.
+- The canonical form has no separator. Your UI may format the code for display as `ABC-DEF`, but never store or transmit the formatted version.
+- World App accepts the code in upper or lower case and ignores separators when the user types it in.
+
+## Lifecycle
+
+- The bridge issues the code with a short TTL (currently ten minutes). Surface the expiry to the user with a countdown.
+- The code is **one-shot**: once redeemed in World App, it cannot be reused.
+- After the user redeems the code, your app's existing poll loop receives the proof exactly as it does in QR mode.
+
+## Integrate
+
+The setup steps that precede the request — creating an app in the Developer Portal and generating an RP signature on your backend — are identical to the [standard integration](/world-id/idkit/integrate). Only the request call and the rendered UI change.
+
+### Create the request
+
+<CodeGroup title="Create an invite-code request">
+```typescript title="JavaScript"
+import { IDKit, orbLegacy } from "@worldcoin/idkit-core";
+
+const request = await IDKit.requestWithInviteCode({
+  app_id: "app_xxxxx",
+  action: "my-action",
+  rp_context: {
+    rp_id: "rp_xxxxx",
+    nonce: rpSig.nonce,
+    created_at: rpSig.created_at,
+    expires_at: rpSig.expires_at,
+    signature: rpSig.sig,
+  },
+  allow_legacy_proofs: true,
+  environment: "production",
+}).preset(orbLegacy({ signal: "user-123" }));
+
+// Display this to the user. Format as "ABC-DEF" for readability if you like —
+// the canonical form has no separator.
+const code = request.code;
+const expiresAt = request.expiresAt; // Unix seconds
+
+const completion = await request.pollUntilCompletion();
+```
+
+```tsx title="React"
+import {
+  IDKitInviteCodeRequestWidget,
+  orbLegacy,
+  type RpContext,
+} from "@worldcoin/idkit";
+
+const rpContext: RpContext = {
+  rp_id: "rp_xxxxx",
+  nonce: rpSig.nonce,
+  created_at: rpSig.created_at,
+  expires_at: rpSig.expires_at,
+  signature: rpSig.sig,
+};
+
+<IDKitInviteCodeRequestWidget
+  open={open}
+  onOpenChange={setOpen}
+  app_id="app_xxxxx"
+  action="my-action"
+  rp_context={rpContext}
+  allow_legacy_proofs={true}
+  preset={orbLegacy({ signal: "user-123" })}
+  handleVerify={async (result) => {
+    const response = await fetch("/api/verify-proof", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ rp_id: rpContext.rp_id, idkitResponse: result }),
+    });
+    if (!response.ok) throw new Error("Backend verification failed");
+  }}
+  onSuccess={() => {
+    // Update app state here.
+  }}
+/>;
+```
+
+```swift title="Swift"
+import IDKit
+
+let config = IDKitRequestConfig(
+  appId: "app_xxxxx",
+  action: "my-action",
+  rpContext: rpContext,
+  allowLegacyProofs: true,
+  environment: .production
+)
+
+let request = try IDKit.request(config: config)
+  .presetWithInviteCode(orbLegacy(signal: "user-123"))
+
+let code = request.code              // 6-character canonical form
+let expiresAt = request.expiresAt    // Date
+
+let completion = await request.pollUntilCompletion()
+```
+</CodeGroup>
+
+The config object is the same one you pass to `IDKit.request(...)` — invite-code mode introduces no new required fields.
+
+### Display the code
+
+Show `code` prominently. A formatted display (`ABC-DEF` in a large, monospaced font) is easier to read aloud and harder to mistype than the unseparated form. The Next.js example app and iOS sample app in the IDKit repo both ship a reference UI you can crib from.
+
+Pair the code with a live countdown driven by `expiresAt`. When the countdown hits zero, surface a clear "Generate a new code" affordance — re-running the request returns a fresh code with a fresh TTL.
+
+### Poll for completion
+
+Polling is identical to QR mode. The same `Status` values are emitted (`waiting_for_connection`, `awaiting_confirmation`, `confirmed`, `failed`) and the same `IDKitCompletionResult` is returned. Whatever loop you wrote for QR mode works unchanged.
+
+```typescript
+const completion = await request.pollUntilCompletion({
+  pollInterval: 2_000,
+  timeout: 600_000, // align with the code TTL
+});
+
+if (completion.success) {
+  await verifyProofOnBackend(completion.result);
+}
+```
+
+### Verify the proof
+
+Backend verification is unchanged from QR mode. Forward the IDKit result payload as-is to `POST https://developer.world.org/api/v4/verify/{rp_id}`. See [Verify the proof in your backend](/world-id/idkit/integrate#step-5-verify-the-proof-in-your-backend).
+
+## API reference
+
+### JavaScript — `@worldcoin/idkit-core`
+
+| Symbol | Description |
+| --- | --- |
+| `IDKit.requestWithInviteCode(config)` | Entry point. Returns an `IDKitInviteCodeBuilder`. Validates the same fields as `IDKit.request`. |
+| `.constraints(constraints)` / `.preset(preset)` | Finalize the builder. Returns a `Promise<IDKitInviteCodeRequest>`. |
+| `IDKitInviteCodeRequest.code` | Canonical 6-character code (no separator). |
+| `IDKitInviteCodeRequest.expiresAt` | Unix-seconds expiry. |
+| `IDKitInviteCodeRequest.requestId` | Unique request ID. |
+| `IDKitInviteCodeRequest.pollOnce()` | One-shot poll. Returns `Promise<Status>`. |
+| `IDKitInviteCodeRequest.pollUntilCompletion(options?)` | Poll-until-terminal helper. Returns `Promise<IDKitCompletionResult>`. |
+
+### React — `@worldcoin/idkit`
+
+| Symbol | Description |
+| --- | --- |
+| `<IDKitInviteCodeRequestWidget />` | Drop-in widget. Renders the code, expiry countdown, and instruction copy. Same `handleVerify` / `onSuccess` / `onError` callbacks as `IDKitRequestWidget`. |
+| `useIDKitInviteCodeRequest(config)` | Headless hook for custom UI. Returns a `UseIDKitInviteCodeRequestHookResult`. |
+| `IDKitInviteCodeHookResult` | Hook state. Exposes `code`, `codeExpiresAt`, plus `isAwaitingUserConnection`, `isAwaitingUserConfirmation`, `isSuccess`, `isError`, `result`, `errorCode`, `open()`, `reset()`. |
+| `IDKitInviteCodeRequestWidgetProps` | Widget prop type. Same shape as `IDKitRequestWidgetProps` — invite-code mode adds no new fields. |
+
+### Swift — `IDKit`
+
+| Symbol | Description |
+| --- | --- |
+| `IDKitBuilder.presetWithInviteCode(_:)` | Finalize the builder in invite-code mode. Returns `IDKitInviteCodeRequest`. |
+| `IDKitInviteCodeRequest.code` | Canonical 6-character code. |
+| `IDKitInviteCodeRequest.expiresAt` | `Date` of code expiry. |
+| `IDKitInviteCodeRequest.requestID` | `UUID` request ID. |
+| `pollStatusOnce()` / `pollUntilCompletion(options:)` | Identical signatures to `IDKitRequest`. |
+
+## Migrating from QR mode
+
+The adopter diff is two lines per integration:
+
+```diff
+- const request = await IDKit.request(config).preset(orbLegacy({ signal }));
+- showQR(request.connectorURI);
++ const request = await IDKit.requestWithInviteCode(config).preset(orbLegacy({ signal }));
++ showCode(request.code);
+
+const completion = await request.pollUntilCompletion();
+```
+
+The two modes can coexist in the same app — pick the one that fits the surface (e.g. desktop site uses invite-code mode, native iOS app uses QR / App Clip handoff).
