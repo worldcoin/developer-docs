@@ -344,11 +344,14 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["mcp/index"]
+            "pages": ["model-context-protocol/index"]
           },
           {
             "group": "World MCP",
-            "pages": ["mcp/world-docs", "mcp/developer-portal"]
+            "pages": [
+              "model-context-protocol/world-docs",
+              "model-context-protocol/developer-portal"
+            ]
           }
         ]
       }
