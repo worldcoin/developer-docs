@@ -75,3 +75,24 @@ case .failure(let error):
   print(error)
 }
 ```
+
+## Invite-code mode
+
+Use `presetWithInviteCode(_:)` on the builder to return an `IDKitInviteCodeRequest` instead of `IDKitRequest`. The polling surface is identical. See [Invite-code mode](/world-id/idkit/invite-code) for when to use it.
+
+```swift
+let request = try IDKit.request(config: config)
+  .presetWithInviteCode(selfieCheckLegacy(signal: "user-123"))
+
+let code = request.code              // 6-character canonical form
+let expiresAt = request.expiresAt    // Date
+let completion = await request.pollUntilCompletion()
+```
+
+`IDKitInviteCodeRequest` exposes:
+
+- `code: String`
+- `expiresAt: Date`
+- `requestID: UUID`
+- `pollStatusOnce() async -> IDKitStatus`
+- `pollUntilCompletion(options:) async -> IDKitCompletionResult`

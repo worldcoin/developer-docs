@@ -27,7 +27,8 @@ yarn add @worldcoin/idkit-core
 ## Entry points
 
 - `IDKit.request(config)` for uniqueness proofs
-- `orbLegacy`, `secureDocumentLegacy`, `documentLegacy` for presets
+- `IDKit.requestWithInviteCode(config)` for invite-code mode
+- `orbLegacy`, `secureDocumentLegacy`, `documentLegacy`, `selfieCheckLegacy` for presets
 
 Each entry point returns a builder. Finalize it with `.preset(...)`.
 
@@ -101,6 +102,33 @@ if (!completion.success) {
   When running inside World App, native transport is used and `connectorURI` may be empty.
   Outside World App, `connectorURI` is the URL you render as a QR code.
 </Note>
+
+## Invite-code mode
+
+Use `IDKit.requestWithInviteCode(config)` to display a short code instead of a QR. Validation, the returned `Status` shape, and the poll loop are identical to `IDKit.request`. See [Invite-code mode](/world-id/idkit/invite-code) for when to use it.
+
+```ts
+import { IDKit, selfieCheckLegacy } from "@worldcoin/idkit-core";
+
+const request = await IDKit.requestWithInviteCode({
+  app_id: "app_xxxxx",
+  action: "my-action",
+  rp_context,
+  allow_legacy_proofs: true,
+}).preset(selfieCheckLegacy({ signal: "user-123" }));
+
+const code = request.code;             // 6-character canonical form
+const expiresAt = request.expiresAt;   // Unix seconds
+const completion = await request.pollUntilCompletion();
+```
+
+`IDKitInviteCodeRequest` exposes:
+
+- `code`
+- `expiresAt`
+- `requestId`
+- `pollOnce()`
+- `pollUntilCompletion({ pollInterval, timeout })`
 
 ## Server-side helpers
 

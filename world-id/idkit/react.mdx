@@ -116,6 +116,39 @@ Hook result fields:
 - `result`
 - `errorCode`
 
+## Invite-code mode
+
+For invite-code flows, use `IDKitInviteCodeRequestWidget` (controlled) or `useIDKitInviteCodeRequest` (headless). Config matches `IDKitRequestWidget` / `useIDKitRequest` — invite-code mode adds no new required fields. See [Invite-code mode](/world-id/idkit/invite-code) for when to use it.
+
+```tsx
+import { IDKitInviteCodeRequestWidget, selfieCheckLegacy } from "@worldcoin/idkit";
+
+<IDKitInviteCodeRequestWidget
+  open={open}
+  onOpenChange={setOpen}
+  app_id="app_xxxxx"
+  action="my-action"
+  rp_context={rpContext}
+  allow_legacy_proofs={true}
+  preset={selfieCheckLegacy({ signal: "user-123" })}
+  handleVerify={async (result) => { /* ... */ }}
+  onSuccess={() => { /* ... */ }}
+/>;
+```
+
+`useIDKitInviteCodeRequest` result fields (sibling of `useIDKitRequest`'s):
+
+- `open()`
+- `reset()`
+- `isAwaitingUserConnection`
+- `isAwaitingUserConfirmation`
+- `isSuccess`
+- `isError`
+- `code`
+- `codeExpiresAt`
+- `result`
+- `errorCode`
+
 ## Presets
 
 React hooks/widgets take `preset` directly in config.
