@@ -1,0 +1,140 @@
+---
+title: "Developer Portal MCP"
+description: "Manage World developer portal apps from your AI coding assistant."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"og:description": "Manage World developer portal apps from your AI coding assistant."
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+The Developer Portal MCP lets AI assistants create apps, configure World ID, manage Mini App metadata, upload app store assets, and submit apps for review.
+
+It authenticates with a developer portal team API key. Treat that key like a secret: anyone with access to it can make changes to apps in that team.
+
+## Endpoint
+
+```text
+https://developer.world.org/api/mcp
+```
+
+## Create an API key
+
+1. Open the [Developer Portal](https://developer.world.org).
+2. Select your team.
+3. Go to **API keys**.
+4. Create or reset an API key.
+5. Copy the generated key immediately. It is shown once.
+
+Developer portal API keys start with `api_`.
+
+## Connect your client
+
+Replace `api_...` with the API key you copied from the Developer Portal.
+
+<Tabs>
+  <Tab title="Claude Code">
+    ```bash
+    claude mcp add \
+      --transport http \
+      --scope project \
+      --header "Authorization: Bearer api_..." \
+      world-developer-portal \
+      https://developer.world.org/api/mcp
+    ```
+  </Tab>
+  <Tab title="Codex">
+    ```bash
+    codex mcp add world-developer-portal \
+      --env WORLD_DEVELOPER_API_KEY=api_... \
+      -- npx -y mcp-remote https://developer.world.org/api/mcp \
+        --transport http-only \
+        --header 'Authorization:Bearer ${WORLD_DEVELOPER_API_KEY}'
+    ```
+  </Tab>
+  <Tab title="Cursor">
+    Add this to `.cursor/mcp.json`:
+
+    ```json
+    {
+      "mcpServers": {
+        "world-developer-portal": {
+          "url": "https://developer.world.org/api/mcp",
+          "headers": {
+            "Authorization": "Bearer api_..."
+          }
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="VS Code">
+    Add this to `.vscode/mcp.json`:
+
+    ```json
+    {
+      "servers": {
+        "world-developer-portal": {
+          "type": "http",
+          "url": "https://developer.world.org/api/mcp",
+          "headers": {
+            "Authorization": "Bearer api_..."
+          }
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+## Available tools
+
+| Tool | Purpose |
+| --- | --- |
+| `get_team_context` | List your team's apps and status. |
+| `get_app_config` | Fetch app, World ID, Mini App, and app store configuration. |
+| `create_app` | Create an external World ID app or Mini App. |
+| `configure_world_id` | Create a managed World ID 4.0 relying party for an app. |
+| `get_world_id_signing_key` | Fetch the current signer address. Private keys are not returned. |
+| `rotate_world_id_signing_key` | Generate or set a new World ID signing key. The private key is returned once. |
+| `get_world_id_registration_status` | Fetch and sync World ID registration status from the registry contracts. |
+| `create_world_id_action` | Create or update a World ID action for an app. |
+| `configure_mini_app` | Update Mini App portal settings, app store metadata, and permissions. |
+| `upload_app_image` | Upload logo, hero, content card, meta tag, or showcase images and patch app metadata. |
+| `submit_app_for_review` | Submit an app for review after explicit confirmation. |
+
+## Recommended flow
+
+Start every session by asking the assistant to inspect the team:
+
+```text
+Use the Developer Portal MCP to get my team context. If there is no app for this project, create one.
+```
+
+For an external World ID app:
+
+```text
+Create a production external World ID app named Example, configure World ID, create an action called verify-account, and tell me which environment variables to add.
+```
+
+For a Mini App:
+
+```text
+Create a Mini App named Example, upload the logo and content card images I provide, fill the app store metadata, and submit it for review after confirming the final values with me.
+```
+
+## Images
+
+Use `upload_app_image` for app store images. It uploads the image and stores the correct filename in the matching metadata field.
+
+The tool accepts either:
+
+- `source_url`: a public HTTPS URL to a PNG or JPEG.
+- `image_base64`: base64-encoded PNG or JPEG bytes for local files.
+
+Do not write image URLs directly with `configure_mini_app`; image metadata stores filenames, not public URLs.
+
+## Security notes
+
+- Store generated World ID private keys immediately. They are returned once and are not recoverable from the portal.
+- Use a separate API key per local agent or project when possible.
+- Delete or rotate API keys that are no longer needed.
+- Confirm destructive actions before asking the assistant to rotate a signer key or submit an app for review.

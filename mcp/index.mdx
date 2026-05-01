@@ -1,0 +1,35 @@
+---
+title: "MCP"
+description: "Connect AI assistants to World documentation and the World developer portal with Model Context Protocol servers."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"og:description": "Connect AI assistants to World documentation and the World developer portal with Model Context Protocol servers."
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+Model Context Protocol (MCP) servers let AI assistants use World tools directly from your local coding environment.
+
+World provides two MCP servers:
+
+<CardGroup cols={2}>
+  <Card title="World Docs MCP" icon="book-open" href="/mcp/world-docs">
+    Search World documentation from Claude, Codex, Cursor, VS Code, and other MCP clients. No API key required.
+  </Card>
+  <Card title="Developer Portal MCP" icon="key" href="/mcp/developer-portal">
+    Create apps, configure World ID, upload app store assets, and submit apps for review with a developer portal API key.
+  </Card>
+</CardGroup>
+
+## Choose the right MCP
+
+| MCP | Use it when | Authentication |
+| --- | --- | --- |
+| [World Docs MCP](/mcp/world-docs) | You want your AI assistant to search World docs while editing code. | None |
+| [Developer Portal MCP](/mcp/developer-portal) | You want your AI assistant to manage apps in the World developer portal. | Developer portal team API key |
+
+## Client support
+
+Both MCP servers use streamable HTTP. Most modern MCP clients can connect directly to an HTTP MCP server. Clients that only support stdio can connect through [`mcp-remote`](https://www.npmjs.com/package/mcp-remote).
+
+<Note>
+  Keep developer portal API keys scoped to trusted local MCP clients. The Developer Portal MCP can mutate apps in your team.
+</Note>
