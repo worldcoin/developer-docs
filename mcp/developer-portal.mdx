@@ -118,7 +118,7 @@ Create a production external World ID app named Example, configure World ID, cre
 For a Mini App:
 
 ```text
-Create a Mini App named Example, upload the logo and content card images I provide, fill the app store metadata, and submit it for review after confirming the final values with me.
+Create a Mini App named Example, fill the non-image app store metadata, upload the logo, content card, and showcase images I provide, and submit it for review after confirming the final values with me.
 ```
 
 ## Images
@@ -130,7 +130,15 @@ The tool accepts either:
 - `source_url`: a public HTTPS URL to a PNG or JPEG.
 - `image_base64`: base64-encoded PNG or JPEG bytes for local files.
 
-Do not write image URLs directly with `configure_mini_app`; image metadata stores filenames, not public URLs.
+Use `configure_mini_app` for Mini App text, links, categories, permissions, countries, and languages. Use `upload_app_image` for logo, content card, meta tag, hero, and showcase assets.
+
+Review submission still requires image metadata. Upload the required images before calling `submit_app_for_review`:
+
+```text
+upload_app_image { app_id, image_type: "logo", image_base64 | source_url }
+upload_app_image { app_id, image_type: "content_card", image_base64 | source_url }
+upload_app_image { app_id, image_type: "showcase_1", image_base64 | source_url }
+```
 
 ## Security notes
 
