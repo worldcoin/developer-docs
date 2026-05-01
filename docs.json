@@ -83,7 +83,12 @@
           {
             "group": "Credentials",
             "pages": [
-              "world-id/credentials/legacy-presets",
+              "world-id/credentials/legacy-presets"
+            ]
+          },
+          {
+            "group": "Selfie Check",
+            "pages": [
               "world-id/selfie-check/overview"
             ]
           },
