@@ -62,7 +62,7 @@ const expiresAt = request.expiresAt;   // Unix seconds
 const completion = await request.pollUntilCompletion();
 ```
 
-```tsx title="React"
+```tsx
 import {
   IDKitInviteCodeRequestWidget,
   selfieCheckLegacy,
@@ -99,7 +99,7 @@ const rpContext: RpContext = {
 />;
 ```
 
-```swift title="Swift"
+```swift
 import IDKit
 
 // `rpSig` is fetched from your backend — see the standard integration guide.
@@ -135,6 +135,8 @@ let completion = await request.pollUntilCompletion()
 </Warning>
 
 The config object is the same one you pass to `IDKit.request(...)` — invite-code mode introduces no new required fields.
+
+Set `allow_legacy_proofs: true` because `selfieCheckLegacy` is a v3 ("legacy") preset; the flag lets World App accept v3 proofs to satisfy the request. When invite-code mode adds support for v4 presets, set it to `false` for those flows.
 
 Polling and proof verification are unchanged from QR mode: the same `Status` values are emitted and the same `IDKitCompletionResult` is returned. Forward the result payload as-is to `POST https://developer.world.org/api/v4/verify/{rp_id}` — see [Verify the proof in your backend](/world-id/idkit/integrate#step-5-verify-the-proof-in-your-backend).
 
