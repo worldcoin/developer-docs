@@ -10,6 +10,8 @@ metadata:
 user-invocable: true
 ---
 
+<!-- cspell:ignore streamable biometrically -->
+
 # Add World ID to your app
 
 > **For developers:** paste this whole file into Claude (or any coding agent) with a one-line ask like "help me add World ID to my app." The agent will figure out the rest.
