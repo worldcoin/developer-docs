@@ -18,7 +18,6 @@ It's available as a React widget for drop-in integration, or as JS, Swift, and K
 
 Your app sends a **proof request** through IDKit, challenging the user to prove something about themselves — such as uniqueness, document possession, or liveness — based on their [credentials](/world-id/overview#credentials). The user's World App generates a zero-knowledge proof without revealing any personal data. Your backend then verifies that proof and stores a **nullifier** (a per-app, per-action identifier) to prevent the same person from verifying twice.
 
-{/* TODO: replace with designed diagram from Excalidraw */}
 <img src="/images/docs/idkit-flow.svg" alt="IDKit integration flow" />
 
 There are four components: your **client** (where IDKit runs), your **backend** (which signs requests and verifies proofs), the **World App** (on the user's device), and the **Developer Portal** (which validates proofs on-chain). The steps below walk through each piece.
