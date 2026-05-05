@@ -85,7 +85,7 @@
             "pages": [
               "world-id/credentials/index",
               "world-id/credentials/9303",
-              "world-id/selfie-check/overview"
+              "world-id/credentials/11"
             ]
           },
           {
@@ -778,8 +778,12 @@
       "destination": "/world-id/credentials#legacy-presets"
     },
     {
+      "source": "/world-id/selfie-check/overview",
+      "destination": "/world-id/credentials/11"
+    },
+    {
       "source": "/world-id/face-check/overview",
-      "destination": "/world-id/selfie-check/overview"
+      "destination": "/world-id/credentials/11"
     },
     {
       "source": "/world-id/face-check/web-integration",

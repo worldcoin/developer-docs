@@ -16,7 +16,7 @@
  *  - issuerVerified: boolean    — show verified badge (optional)
  *  - status: "active" | "beta" | "deprecated"
  *  - id: number                 — credential schema ID
- *  - sybilResistance: boolean   — whether uniqueness is enforced
+ *  - sybilResistance: boolean | "some" — whether uniqueness is enforced
  *  - sybilResistanceDescription: string — tooltip on the Yes tag
  *  - validityPeriod: string     — e.g. "10 years or document expiry"
  *  - sourceCodeHref: string     — GitHub URL, or "coming-soon"
@@ -145,7 +145,20 @@ export const CredentialHero = ({
             <span className="w-36 shrink-0 font-medium text-zinc-500 dark:text-zinc-400">
               Sybil resistance
             </span>
-            {sybilResistance ? (
+            {sybilResistance === "some" ? (
+              <span className="inline-flex items-center gap-1.5">
+                <span className="inline-flex items-center rounded-md bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700 ring-1 ring-amber-600/20 ring-inset dark:bg-amber-500/10 dark:text-amber-400 dark:ring-amber-500/20">
+                  Some
+                </span>
+                {sybilResistanceDescription && (
+                  <Tooltip tip={sybilResistanceDescription}>
+                    <span className="cursor-help text-zinc-400 dark:text-zinc-500">
+                      <Icon icon="circle-info" size={14} />
+                    </span>
+                  </Tooltip>
+                )}
+              </span>
+            ) : sybilResistance ? (
               <span className="inline-flex items-center gap-1.5">
                 <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700 ring-1 ring-green-600/20 ring-inset dark:bg-green-500/10 dark:text-green-400 dark:ring-green-500/20">
                   Yes
