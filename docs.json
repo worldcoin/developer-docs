@@ -63,6 +63,7 @@
             "group": "IDKit",
             "pages": [
               "world-id/idkit/integrate",
+              "world-id/idkit/credentials",
               "world-id/idkit/signatures",
               "world-id/idkit/build-with-llms",
               "world-id/idkit/onchain-verification",
@@ -83,7 +84,6 @@
           {
             "group": "Credentials",
             "pages": [
-              "world-id/credentials/index",
               "world-id/credentials/9303",
               "world-id/selfie-check/overview"
             ]
@@ -789,6 +789,10 @@
       "source": "/world-id/face-check/testing",
       "destination": "/world-id/credentials#legacy-presets"
     },
+    {
+      "source": "/world-id/credentials",
+      "destination": "/world-id/idkit/credentials"
+    }
     {
       "source": "/mini-apps/reference/errors",
       "destination": "/mini-apps/quick-start/installing"
