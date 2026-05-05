@@ -792,7 +792,7 @@
     {
       "source": "/world-id/credentials",
       "destination": "/world-id/idkit/credentials"
-    }
+    },
     {
       "source": "/mini-apps/reference/errors",
       "destination": "/mini-apps/quick-start/installing"
