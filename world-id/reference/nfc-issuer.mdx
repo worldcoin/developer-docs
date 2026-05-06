@@ -1,0 +1,246 @@
+---
+title: "NFC Issuer"
+description: "NFC issuer endpoints, including migration for World ID v3 NFC credentials."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+The NFC issuer exposes endpoints for issuing and migrating NFC credentials. For product-level credential semantics, Sybil-resistance guarantees, and validity details, see [NFC Credential](/world-id/credentials/9303).
+
+<Note>
+  The base URL is environment-specific. Contact your World ID point of contact for
+  environment endpoints and access.
+</Note>
+
+## Migration
+
+<Warning>
+  This endpoint is intended for World ID v3 holders to obtain v4 NFC
+  credentials. It is not a general re-issuance endpoint for v4 holders.
+</Warning>
+
+<ParamField path="method" type="POST">
+  /v2/migrate
+</ParamField>
+
+**Content-Type:** `application/json`
+
+### Request
+
+#### Headers
+
+<table>
+  <thead>
+    <tr>
+      <th className="whitespace-nowrap">Header</th>
+      <th>Required</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td className="whitespace-nowrap">
+        <code>x-zkp-proof</code>
+        <br />
+        <code>string</code>
+      </td>
+      <td>yes</td>
+      <td>Base64-encoded JSON containing the ZKP proof and identity commitment.</td>
+    </tr>
+    <tr>
+      <td className="whitespace-nowrap">
+        <code>attestation-gateway-token</code>
+        <br />
+        <code>string</code>
+      </td>
+      <td>yes</td>
+      <td>Attestation gateway token for device integrity verification.</td>
+    </tr>
+  </tbody>
+</table>
+
+#### Body fields
+
+<table>
+  <thead>
+    <tr>
+      <th className="whitespace-nowrap">Field</th>
+      <th>Required</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td className="whitespace-nowrap">
+        <code>identityCommitment</code>
+        <br />
+        <code>string</code>
+      </td>
+      <td>yes</td>
+      <td>
+        The holder's identity commitment (decimal or hex with <code>0x</code>{" "}
+        prefix). Must match the ZKP header.
+      </td>
+    </tr>
+    <tr>
+      <td className="whitespace-nowrap">
+        <code>sub</code>
+        <br />
+        <code>string</code>
+      </td>
+      <td>yes</td>
+      <td>
+        World ID 4.0 blinded subject identifier (hex with <code>0x</code>{" "}
+        prefix, 256-bit). Must match previous migrations for this identity.
+      </td>
+    </tr>
+    <tr>
+      <td className="whitespace-nowrap">
+        <code>credential</code>
+        <br />
+        <code>object</code>
+      </td>
+      <td>yes</td>
+      <td>
+        Flow-specific credential data (see below). The client decrypts PCP data
+        locally before submission.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+#### Credential fields
+
+<Tabs>
+  <Tab title="Passport / eID">
+    The `credential` object contains data extracted and decrypted from the user's Personal Custody Package (PCP) by the client.
+
+    <table>
+      <thead>
+        <tr>
+          <th className="whitespace-nowrap">Field</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td className="whitespace-nowrap">
+            <code>credential.sod</code>
+            <br />
+            <code>string</code>
+          </td>
+          <td>
+            Base64-encoded SOD (Security Object Document) in DER format from
+            the identity document.
+          </td>
+        </tr>
+        <tr>
+          <td className="whitespace-nowrap">
+            <code>credential.verification_metadata</code>
+            <br />
+            <code>string</code>
+          </td>
+          <td>
+            Base64-encoded verification metadata from the original document
+            check.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    ```json
+    {
+      "identityCommitment": "0x000000000000000000000000000000000000000000000000000000000000000c",
+      "sub": "0x000000000000000000000000000000000000000000000000000000000000002a",
+      "credential": {
+        "sod": "<base64-sod-der>",
+        "verification_metadata": "<base64-json>"
+      }
+    }
+    ```
+
+  </Tab>
+  <Tab title="MNC (My Number Card)">
+    <table>
+      <thead>
+        <tr>
+          <th className="whitespace-nowrap">Field</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td className="whitespace-nowrap">
+            <code>credential.sd_jwt</code>
+            <br />
+            <code>string</code>
+          </td>
+          <td>SD-JWT (Selective Disclosure JWT) from the MNC verification flow.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    ```json
+    {
+      "identityCommitment": "0x000000000000000000000000000000000000000000000000000000000000000c",
+      "sub": "0x000000000000000000000000000000000000000000000000000000000000002a",
+      "credential": {
+        "sd_jwt": "<sd-jwt-string>"
+      }
+    }
+    ```
+
+  </Tab>
+</Tabs>
+
+### Response
+
+#### Success response
+
+```json
+{
+  "result": {
+    "credential": "<base64-encoded World ID v4 credential>"
+  }
+}
+```
+
+#### Error responses
+
+| Status | Error              | Description                                                                 |
+| ------ | ------------------ | --------------------------------------------------------------------------- |
+| 400    | `invalid_data`     | Request payload is malformed or missing required fields.                    |
+| 400    | `sub_mismatch`     | `sub` does not match the one used in previous migrations for this identity. |
+| 400    | `document_expired` | The identity document has expired and cannot be used for migration.         |
+| 401    | `unauthorized`     | Authentication failed.                                                      |
+| 404    | `not_found`        | No matching enrollment record found for this credential.                    |
+
+## Planned Endpoints
+
+### Enrollment <Badge disabled icon="lock" color="blue">Coming soon</Badge>
+
+Details coming soon.
+
+### Re-issuance <Badge disabled icon="lock" color="blue">Coming soon</Badge>
+
+Details coming soon.
+
+## Implementation Notes
+
+<Note>
+  This is advanced documentation about the internal workings of the NFC
+  Credential and is not relevant for RP integration.
+</Note>
+
+### Associated Data
+
+The associated data of this credential contains different data groups found in the original document. More information coming soon.
+
+{/* TODO: Add details on the PCP */}
+
+#### Associated Data Commitment
+
+To ensure the associated data has guaranteed integrity and can be re-used in the future for credential re-issuance, the commitment is computed as follows:
+
+1. For ICAO-9303 documents, the message digest of the `EF.SOD` signature is used. The message digest is obtained from `SignedData.SignerInfos[0].SignedAttrs` where the signed attribute for the digest is identified by the Object Identifier `1.2.840.113549.1.9.4`. This digest is then hashed with the `blake3` hashing function from the raw bytes. Finally, the `blake3` hash is converted to a field element with modulo reduction.
+2. Information on MNC documents coming soon.

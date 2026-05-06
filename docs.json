@@ -64,6 +64,7 @@
             "pages": [
               "world-id/idkit/integrate",
               "world-id/idkit/verification-flows",
+              "world-id/idkit/credentials",
               "world-id/idkit/signatures",
               "world-id/idkit/build-with-llms",
               "world-id/idkit/onchain-verification",
@@ -84,8 +85,8 @@
           {
             "group": "Credentials",
             "pages": [
-              "world-id/credentials/legacy-presets",
-              "world-id/selfie-check/overview"
+              "world-id/credentials/9303",
+              "world-id/credentials/11"
             ]
           },
           {
@@ -125,7 +126,10 @@
                   },
                   {
                     "group": "Issuers",
-                    "pages": ["world-id/reference/poh-issuer"]
+                    "pages": [
+                      "world-id/reference/poh-issuer",
+                      "world-id/reference/nfc-issuer"
+                    ]
                   }
                 ]
               },
@@ -345,11 +349,14 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["mcp/index"]
+            "pages": ["model-context-protocol/index"]
           },
           {
             "group": "World MCP",
-            "pages": ["mcp/world-docs", "mcp/developer-portal"]
+            "pages": [
+              "model-context-protocol/world-docs",
+              "model-context-protocol/developer-portal"
+            ]
           }
         ]
       }
@@ -773,19 +780,27 @@
     },
     {
       "source": "/world-id/credentials/presets",
-      "destination": "/world-id/credentials/legacy-presets"
+      "destination": "/world-id/credentials#legacy-presets"
+    },
+    {
+      "source": "/world-id/selfie-check/overview",
+      "destination": "/world-id/credentials/11"
     },
     {
       "source": "/world-id/face-check/overview",
-      "destination": "/world-id/selfie-check/overview"
+      "destination": "/world-id/credentials/11"
     },
     {
       "source": "/world-id/face-check/web-integration",
-      "destination": "/world-id/credentials/legacy-presets"
+      "destination": "/world-id/credentials#legacy-presets"
     },
     {
       "source": "/world-id/face-check/testing",
-      "destination": "/world-id/credentials/legacy-presets"
+      "destination": "/world-id/credentials#legacy-presets"
+    },
+    {
+      "source": "/world-id/credentials",
+      "destination": "/world-id/idkit/credentials"
     },
     {
       "source": "/mini-apps/reference/errors",
