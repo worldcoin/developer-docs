@@ -7,19 +7,15 @@ description: "Understand the three verification paths a user can take when your 
 
 When your app requests a World ID proof, the user is taken through one of three flows based on two factors: whether they have World App installed, and whether they already hold the credential you're requesting.
 
-## Hot flow
-
-The user already holds the credential your app is requesting. World App opens, displays a proof consent, and the user approves. The proof is returned to your app immediately.
-
-This is the fastest path — typically under 10 seconds.
-
-## Warm flow
-
-The user has World App installed but does not hold the credential your app is requesting. World App opens and walks the user through the relevant credential enrollment flow (e.g., PoH credential, Face credential, or NFC credential). Once the credential is issued, the proof consent appears and the user approves. The proof is returned to your app.
+| Flow | World App installed | Has credential | What happens |
+| --- | --- | --- | --- |
+| Hot | Yes | Yes | World App opens, displays a proof consent, and the user approves. Typically under 10 seconds. |
+| Warm | Yes | No | World App opens and walks the user through credential enrollment (e.g., PoH, Face, or NFC). Once issued, a proof consent appears and the user approves. |
+| Cold | No | No | The user must install World App first. The experience differs by platform — see below. |
 
 ## Cold flow
 
-The user does not have World App installed at all. This is the highest-friction path and differs significantly between platforms.
+The cold flow is the highest-friction path and differs significantly between platforms.
 
 ### Android
 
