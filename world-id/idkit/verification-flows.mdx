@@ -9,13 +9,13 @@ When your app requests a World ID proof, the user is taken through one of three 
 
 ## Hot flow
 
-The user already holds the credential your app is requesting. World App opens, displays a proof consent modal, and the user approves. The proof is returned to your app immediately.
+The user already holds the credential your app is requesting. World App opens, displays a proof consent, and the user approves. The proof is returned to your app immediately.
 
 This is the fastest path — typically under 10 seconds.
 
 ## Warm flow
 
-The user has World App installed but does not hold the credential your app is requesting. World App opens and walks the user through the relevant credential enrollment flow (e.g., PoH credential, Face credential, or NFC credential). Once the credential is issued, the proof consent modal appears and the user approves. The proof is returned to your app.
+The user has World App installed but does not hold the credential your app is requesting. World App opens and walks the user through the relevant credential enrollment flow (e.g., PoH credential, Face credential, or NFC credential). Once the credential is issued, the proof consent appears and the user approves. The proof is returned to your app.
 
 ## Cold flow
 
@@ -37,7 +37,7 @@ iOS does not preserve context through the App Store install. This makes the cold
 4. The user returns to your app (manually or via a redirect).
 5. Your app re-triggers the IDKit request.
 6. World App opens and walks the user through credential enrollment.
-7. The proof consent modal appears, the user approves, and the proof is returned to your app.
+7. The proof consent appears, the user approves, and the proof is returned to your app.
 
 The re-trigger in step 5 is necessary because iOS does not carry the original request context through the App Store install. Once the app is installed and onboarding is complete, the user needs to re-enter the verification flow from your app.
 
@@ -52,6 +52,6 @@ If your app uses [invite-code mode](/world-id/idkit/invite-code), the re-trigger
 5. The user opens World App and completes account creation onboarding.
 6. The user enters the invite code.
 7. World App resolves the code, picks up the original verification context, and walks the user through credential enrollment.
-8. The proof consent modal appears, the user approves, and the proof is returned to your app.
+8. The proof consent appears, the user approves, and the proof is returned to your app.
 
 The 6-character code persists across the App Store install — in the user's memory, clipboard, or screenshot — so once World App is installed and onboarded the user can resume the verification flow without returning to your app first. This also covers cross-device scenarios (e.g., a desktop browser displaying the QR for the user's phone) where deep linking cannot carry context.
