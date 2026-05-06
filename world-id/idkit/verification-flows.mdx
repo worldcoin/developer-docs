@@ -5,7 +5,7 @@ description: "Understand the three verification paths a user can take when your 
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-When your app requests a World ID proof, the user lands in one of three flows depending on their current state. Understanding these flows helps you design the right UX — especially for cold users who have never interacted with World ID before.
+When your app requests a World ID proof, the user lands in one of three flows depending on their current state. Which flow runs is determined entirely by the user — whether they have World App installed and whether they already hold the credential you're requesting.
 
 ## Hot flow
 
@@ -27,9 +27,9 @@ On Android, deep linking preserves context through the install process. After th
 
 ### iOS
 
-iOS does not preserve context through the App Store install. This makes the cold flow higher friction and more prone to drop-off. There are two modes you can use.
+iOS does not preserve context through the App Store install. This makes the cold flow higher friction and more prone to drop-off.
 
-#### Default cold flow
+#### Default behavior
 
 1. Your app triggers an IDKit verification request.
 2. The user is redirected to the App Store to download World App.
@@ -41,7 +41,9 @@ iOS does not preserve context through the App Store install. This makes the cold
 
 The re-trigger in step 5 is necessary because iOS does not carry the original request context through the App Store install. Once the app is installed and onboarding is complete, the user needs to re-enter the verification flow from your app.
 
-#### Invite-code mode
+#### With invite-code mode
+
+If your app uses [invite-code mode](/world-id/idkit/invite-code), the re-trigger is avoided:
 
 1. Your app triggers an IDKit invite-code request.
 2. Your app displays a verify URL (typically as a QR) that embeds a 6-character invite code.
@@ -52,17 +54,4 @@ The re-trigger in step 5 is necessary because iOS does not carry the original re
 7. World App resolves the code, picks up the original verification context, and walks the user through credential enrollment.
 8. The proof consent modal appears, the user approves, and the proof is returned to your app.
 
-No re-trigger from your app is needed. The 6-character code persists across the App Store install — in the user's memory, clipboard, or screenshot — so once World App is installed and onboarded the user can resume the verification flow directly. This mode also covers cross-device scenarios (e.g., a desktop browser displaying the QR for the user's phone) where deep linking cannot carry context.
-
-<Note>
-  For integration details and code examples, see [Invite-code mode](/world-id/idkit/invite-code).
-</Note>
-
-## Choosing the right approach
-
-| Scenario | Recommended flow | Why |
-| --- | --- | --- |
-| User likely already has the credential | Default (hot/warm) | Fastest path, no extra UX needed |
-| Onboarding new users on Android | Default | Deep linking preserves context automatically |
-| Onboarding new users on iOS | Invite-code mode | Avoids the re-trigger step and reduces drop-off |
-| Cross-device (e.g., desktop to phone) | Invite-code mode | Deep linking cannot bridge devices; a short code can |
+The 6-character code persists across the App Store install — in the user's memory, clipboard, or screenshot — so once World App is installed and onboarded the user can resume the verification flow without returning to your app first. This also covers cross-device scenarios (e.g., a desktop browser displaying the QR for the user's phone) where deep linking cannot carry context.
