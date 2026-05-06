@@ -1,16 +1,26 @@
 ---
-title: "Integrate"
+title: "IDKit"
+sidebarTitle: "Integrate"
+description: "Integrate World ID into your app"
 "og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
 import IDKitResponse from "/snippets/idkit-response.mdx";
 
-IDKit is our solution for integrating World ID. You can use the React SDK for a pre-built widget or the JS and mobile SDKs for a custom integration.
+IDKit is the SDK for integrating World ID into your app. It handles proof requests, verification flows, and communication with the World App — so your backend receives a cryptographic proof of human, not personal data.
 
-To familiarize yourself with the core concepts of World ID, check out this [page](/world-id/concepts).
+It's available as a React widget for drop-in integration, or as JS, Swift, and Kotlin SDKs for custom flows. To familiarize yourself with the core concepts of World ID, check out this [page](/world-id/concepts).
 
 > Tip: To integrate faster, give your coding agent the [Build with LLMs prompt](/world-id/idkit/build-with-llms) — copy it once, paste into Claude, Cursor, or any AI coding assistant.
+
+## How it works
+
+Your app sends a **proof request** through IDKit, challenging the user to prove something about themselves — such as uniqueness, document possession, or liveness — based on their [credentials](/world-id/overview#credentials). The user's World App generates a zero-knowledge proof without revealing any personal data. Your backend then verifies that proof and stores a **nullifier** (a per-app, per-action identifier) to prevent the same person from verifying twice.
+
+<img src="/images/docs/idkit-flow.svg" alt="IDKit integration flow" />
+
+There are four components: your **client** (where IDKit runs), your **backend** (which signs requests and verifies proofs), the **World App** (on the user's device), and the **Developer Portal** (which validates proofs on-chain). The steps below walk through each piece.
 
 # Step 1: Install IDKit
 
@@ -348,7 +358,7 @@ CREATE TABLE nullifiers (
 ```
 </CodeGroup>
 
-## Architecture overview
+## Architecture detail
 
 ```mermaid
 sequenceDiagram
