@@ -140,6 +140,15 @@ Set `allow_legacy_proofs: true` because `selfieCheckLegacy` is a v3 ("legacy") p
 
 Polling and proof verification are unchanged from QR mode: the same `Status` values are emitted and the same `IDKitCompletionResult` is returned. Forward the result payload as-is to `POST https://developer.world.org/api/v4/verify/{rp_id}` — see [Verify the proof in your backend](/world-id/idkit/integrate#step-5-verify-the-proof-in-your-backend).
 
+## Migrating from the QR / connect-URL flow
+
+If your app already uses the standard `IDKit.request(...)` flow, switching to invite-code mode requires two changes:
+
+1. **Swap the request entry point.** Replace `IDKit.request(...)` with `IDKit.requestWithInviteCode(...)` (JavaScript) or chain `.presetWithInviteCode(...)` instead of `.preset(...)` (Swift). The config object stays the same.
+2. **Render the code instead of a QR.** The response includes a `code` and `expiresAt` instead of a `connectorURI`. Display the code to the user (optionally formatted as `ABC-DEF`) with a countdown driven by `expiresAt`.
+
+Everything else — RP signature generation, polling, proof verification, and nullifier storage — is unchanged.
+
 ## SDK references
 
 For the full surface — entry points, hook results, and type signatures — see the per-SDK reference:
