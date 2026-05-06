@@ -12,13 +12,6 @@ To familiarize yourself with the core concepts of World ID, check out this [page
 
 > Tip: To integrate faster, give your coding agent the [Build with LLMs prompt](/world-id/idkit/build-with-llms) — copy it once, paste into Claude, Cursor, or any AI coding assistant.
 
-<Note>
-  Need to onboard users who don't yet hold the credential you're requesting?
-  See [Invite-code mode](/world-id/idkit/verification-flows#with-invite-code-mode) — it gives the user a
-  short code to enter in World App, which then walks them through onboarding
-  before returning the proof. Supported by World App on iOS only.
-</Note>
-
 # Step 1: Install IDKit
 
 Make sure you're using the latest `4.x` version.
@@ -122,6 +115,13 @@ func handleRPSignature(w http.ResponseWriter, r *http.Request) {
   key. If the key leaks, attackers can forge requests from your app.
 </Warning>
 
+
+<Note>
+  The steps below cover the standard request flow. Depending on whether the user
+  already has World App and the credential you're requesting, they may be taken
+  through a different experience. See [Verification flows](/world-id/idkit/verification-flows)
+  for details.
+</Note>
 
 # Step 4: Generate the connect URL and collect proof
 You can test during development using the [simulator](https://simulator.worldcoin.org/) and setting `environment` to `"staging"`.

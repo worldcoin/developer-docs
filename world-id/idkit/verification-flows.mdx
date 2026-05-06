@@ -15,15 +15,32 @@ When your app requests a World ID proof, the user is taken through one of three 
 
 ## Cold flow
 
-The cold flow requires the most steps and works differently on each platform.
+The cold flow requires the most steps and works differently on each platform because of how each platform handles **deferred deep linking** — the ability to preserve a link's context through an app store install so the app can act on it at first launch.
 
 ### Android
 
-On Android, deep linking preserves context through the install process. After the user downloads World App from the Play Store and opens it, the original verification context is carried forward — World App picks up where the user left off and routes them directly into the credential enrollment flow. No re-trigger from your app is needed.
+Android supports deferred deep linking through the Play Store. After the user downloads World App, the original verification context is carried forward at first launch — World App picks up where the user left off and routes them directly into credential enrollment. No re-trigger from your app is needed.
+
+```mermaid
+sequenceDiagram
+    participant App as Your App
+    participant User
+    participant Play as Play Store
+    participant WA as World App
+
+    App->>User: IDKit request (connect URL / QR)
+    User->>Play: Download World App
+    Play-->>WA: Deferred deep link preserved
+    WA->>User: Account onboarding
+    WA->>User: Credential enrollment
+    WA->>User: Proof consent
+    User->>WA: Approve
+    WA-->>App: Proof returned
+```
 
 ### iOS
 
-iOS does not preserve context through the App Store install. This makes the cold flow higher friction and more prone to drop-off.
+iOS does not support deferred deep linking through the App Store. The original verification context is lost during install, so additional mechanisms are needed to resume the flow.
 
 #### Default behavior
 
@@ -34,6 +51,22 @@ iOS does not preserve context through the App Store install. This makes the cold
 
 Because iOS does not preserve context through the App Store install, your app should direct the user to install World App before issuing the IDKit request.
 
+```mermaid
+sequenceDiagram
+    participant App as Your App
+    participant User
+    participant Store as App Store
+    participant WA as World App
+
+    App->>User: Prompt to install World App
+    User->>Store: Download World App
+    WA->>User: Account onboarding
+    User->>App: Return to your app
+    App->>User: IDKit request (connect URL / QR)
+    WA->>User: Hot or warm flow
+    WA-->>App: Proof returned
+```
+
 #### With the App Clip (document enrollment)
 
 When your app requests a document credential (e.g., NFC passport or national ID), the World App [App Clip](https://developer.apple.com/app-clips/) lets the user begin enrollment before the full app is installed:
@@ -41,20 +74,41 @@ When your app requests a document credential (e.g., NFC passport or national ID)
 1. Your app triggers an IDKit verification request for a document credential.
 2. The user is presented with the World App App Clip.
 3. The App Clip walks the user through country and document selection (passport, national ID, or My Number Card).
-4. The user scans their document via NFC inside the App Clip.
-5. The App Clip persists the scan data and selected document to a shared container, then prompts the user to install World App.
-6. The user installs World App from the App Store.
-7. World App reads the shared container, completes account creation onboarding, and finishes credential enrollment using the data collected by the App Clip.
-8. The proof consent appears, the user approves, and the proof is returned to your app.
+4. The App Clip persists the selection to a shared container, then prompts the user to install World App.
+5. The user installs World App from the App Store.
+6. World App reads the shared container, completes account creation onboarding, and walks the user through credential enrollment (including NFC scanning).
+7. The proof consent appears, the user approves, and the proof is returned to your app.
 
-Because the App Clip and World App share a data container, the document scan and selection survive the install — the user does not need to re-scan or re-select their document after installing the full app.
+Because the App Clip and World App share a data container, the user's country and document selection survive the install.
+
+```mermaid
+sequenceDiagram
+    participant App as Your App
+    participant User
+    participant AC as App Clip
+    participant Store as App Store
+    participant WA as World App
+
+    App->>User: IDKit request (document credential)
+    User->>AC: Presented with App Clip
+    AC->>User: Country & document selection
+    AC->>AC: Persist selection to shared container
+    AC->>User: Prompt to install World App
+    User->>Store: Download World App
+    WA->>WA: Read shared container
+    WA->>User: Account onboarding
+    WA->>User: Credential enrollment (incl. NFC scan)
+    WA->>User: Proof consent
+    User->>WA: Approve
+    WA-->>App: Proof returned
+```
 
 #### With invite-code mode
 
 Invite-code mode displays a short 6-character code in your app that the user enters into World App. World App treats the code as an entry point to the in-app onboarding flows the user needs to complete in order to satisfy your IDKit request, then returns the proof.
 
 <Note>
-  Invite-code mode is only supported by World App on iOS.
+  Invite-code mode only applies to iOS as Android preserves deferred deep linking context via the Play Store.
 </Note>
 
 <Note>
@@ -62,7 +116,7 @@ Invite-code mode displays a short 6-character code in your app that the user ent
 </Note>
 
 1. Your app triggers an IDKit invite-code request.
-2. Your app opens the URL that IDKit provides. The `world.org/verify` landing page displays the invite code and a QR code for the request.
+2. Your app opens the URL that IDKit provides. A landing page displays the invite code and a QR code for the request.
 3. The user downloads World App from the App Store.
 4. The user opens World App and completes account creation onboarding.
 5. The user enters the invite code.
@@ -71,14 +125,29 @@ Invite-code mode displays a short 6-character code in your app that the user ent
 
 The 6-character code persists across the App Store install, so once World App is installed and onboarded the user can resume the verification flow without returning to your app first. This also covers cross-device scenarios (e.g., a desktop browser displaying the QR for the user's phone) where deep linking cannot carry context.
 
-##### Code format
+```mermaid
+sequenceDiagram
+    participant App as Your App
+    participant User
+    participant LP as Landing Page
+    participant Store as App Store
+    participant WA as World App
 
-- 6 characters, case-insensitive.
-- Separators are ignored on entry. Display as `ABC-DEF` if you like; the canonical form has no separator.
+    App->>LP: Open IDKit-provided URL
+    LP->>User: Display invite code + QR
+    User->>Store: Download World App
+    WA->>User: Account onboarding
+    User->>WA: Enter invite code
+    WA->>WA: Resolve code & restore context
+    WA->>User: Credential enrollment
+    WA->>User: Proof consent
+    User->>WA: Approve
+    WA-->>App: Proof returned
+```
 
 ##### Lifecycle
 
-- Codes expire after a short TTL (currently ten minutes). Pair the code with a countdown driven by `expiresAt`.
+- Codes expire after a short TTL (currently ten minutes).
 - Codes are one-shot — once redeemed, they cannot be reused. Re-running the request returns a fresh code with a fresh TTL.
 - After the user redeems the code, your existing poll loop receives the proof exactly as it does in QR mode.
 
