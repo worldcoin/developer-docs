@@ -84,8 +84,8 @@ Use `presetWithInviteCode(_:)` on the builder to return an `IDKitInviteCodeReque
 let request = try IDKit.request(config: config)
   .presetWithInviteCode(selfieCheckLegacy(signal: "user-123"))
 
-let code = request.code              // 6-character canonical form
-let expiresAt = request.expiresAt    // Date
+let connectorURL = request.connectorURL  // URL with &c=<code>&a=<app_id>
+let expiresAt = request.expiresAt        // Date
 let completion = await request.pollUntilCompletion()
 ```
 
@@ -105,17 +105,17 @@ let completion = await request.pollUntilCompletion()
 let request = try IDKit.request(config: config)
   .presetWithInviteCode(selfieCheckLegacy(signal: "user-123"))
 
-let code = request.code                      // display to user
+let connectorURL = request.connectorURL      // display to user (URL with code embedded)
 let expiresAt = request.expiresAt            // drive a countdown
 let completion = await request.pollUntilCompletion()
 ```
 
-The config object is unchanged. Replace `connectorURL` (QR) with `code` and `expiresAt` in your UI. Polling, proof verification, and nullifier storage stay the same.
+The config object is unchanged. The `connectorURL` now includes `&c=<code>&a=<app_id>` params; use it alongside `expiresAt` in your UI. Polling, proof verification, and nullifier storage stay the same.
 
 `IDKitInviteCodeRequest` exposes:
 
-- `code: String`
+- `connectorURL: URL`
 - `expiresAt: Date`
-- `requestID: UUID`
+- `requestID: String`
 - `pollStatusOnce() async -> IDKitStatus`
 - `pollUntilCompletion(options:) async -> IDKitCompletionResult`

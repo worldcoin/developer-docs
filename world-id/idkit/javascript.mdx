@@ -105,7 +105,7 @@ if (!completion.success) {
 
 ## Invite-code mode
 
-Use `IDKit.requestWithInviteCode(config)` to display a short code instead of a QR. Validation, the returned `Status` shape, and the poll loop are identical to `IDKit.request`. See [Invite-code mode](/world-id/idkit/verification-flows#with-invite-code-mode) for when to use it.
+Use `IDKit.requestWithInviteCode(config)` to open a landing page that displays both an invite code and a QR code. Validation, the returned `Status` shape, and the poll loop are identical to `IDKit.request`. See [Invite-code mode](/world-id/idkit/verification-flows#with-invite-code-mode) for when to use it.
 
 ```ts
 import { IDKit, selfieCheckLegacy } from "@worldcoin/idkit-core";
@@ -117,14 +117,14 @@ const request = await IDKit.requestWithInviteCode({
   allow_legacy_proofs: true,
 }).preset(selfieCheckLegacy({ signal: "user-123" }));
 
-const code = request.code;             // 6-character canonical form
-const expiresAt = request.expiresAt;   // Unix seconds
+const connectorURI = request.connectorURI; // URL with &c=<code>&a=<app_id>
+const expiresAt = request.expiresAt;       // Unix seconds
 const completion = await request.pollUntilCompletion();
 ```
 
 `IDKitInviteCodeRequest` exposes:
 
-- `code`
+- `connectorURI`
 - `expiresAt`
 - `requestId`
 - `pollOnce()`
@@ -154,12 +154,12 @@ const request = await IDKit.requestWithInviteCode({
   allow_legacy_proofs: true,
 }).preset(selfieCheckLegacy({ signal: "user-123" }));
 
-const code = request.code;                   // display to user
+const connectorURI = request.connectorURI;   // display to user (URL with code embedded)
 const expiresAt = request.expiresAt;         // drive a countdown
 const completion = await request.pollUntilCompletion();
 ```
 
-The config object is unchanged. Replace `connectorURI` (QR) with `code` and `expiresAt` in your UI. Polling, proof verification, and nullifier storage stay the same.
+The config object is unchanged. The `connectorURI` now includes `&c=<code>&a=<app_id>` params; use it alongside `expiresAt` in your UI. Polling, proof verification, and nullifier storage stay the same.
 
 ## Server-side helpers
 
