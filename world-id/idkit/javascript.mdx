@@ -130,6 +130,37 @@ const completion = await request.pollUntilCompletion();
 - `pollOnce()`
 - `pollUntilCompletion({ pollInterval, timeout })`
 
+### Migrating from QR / connect-URL
+
+```ts
+// Before — QR / connect-URL flow
+const request = await IDKit.request({
+  app_id: "app_xxxxx",
+  action: "my-action",
+  rp_context,
+  allow_legacy_proofs: true,
+}).preset(orbLegacy({ signal: "user-123" }));
+
+const connectorURI = request.connectorURI;   // render as QR
+const completion = await request.pollUntilCompletion();
+```
+
+```ts
+// After — invite-code mode
+const request = await IDKit.requestWithInviteCode({
+  app_id: "app_xxxxx",
+  action: "my-action",
+  rp_context,
+  allow_legacy_proofs: true,
+}).preset(selfieCheckLegacy({ signal: "user-123" }));
+
+const code = request.code;                   // display to user
+const expiresAt = request.expiresAt;         // drive a countdown
+const completion = await request.pollUntilCompletion();
+```
+
+The config object is unchanged. Replace `connectorURI` (QR) with `code` and `expiresAt` in your UI. Polling, proof verification, and nullifier storage stay the same.
+
 ## Server-side helpers
 
 Use subpath exports on your backend:
