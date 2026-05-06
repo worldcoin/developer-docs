@@ -41,6 +41,21 @@ iOS does not preserve context through the App Store install. This makes the cold
 
 The re-trigger in step 5 is necessary because iOS does not carry the original request context through the App Store install. Once the app is installed and onboarding is complete, the user needs to re-enter the verification flow from your app.
 
+#### With the App Clip (document enrollment)
+
+When your app requests a document credential (e.g., NFC passport or national ID), the World App [App Clip](https://developer.apple.com/app-clips/) lets the user begin enrollment before the full app is installed:
+
+1. Your app triggers an IDKit verification request for a document credential.
+2. The user is presented with the World App App Clip.
+3. The App Clip walks the user through country and document selection (passport, national ID, or My Number Card).
+4. The user scans their document via NFC inside the App Clip.
+5. The App Clip persists the scan data and selected document to a shared container, then prompts the user to install World App.
+6. The user installs World App from the App Store.
+7. World App reads the shared container, completes account creation onboarding, and finishes credential enrollment using the data collected by the App Clip.
+8. The proof consent appears, the user approves, and the proof is returned to your app.
+
+Because the App Clip and World App share a data container, the document scan and selection survive the install — the user does not need to re-scan or re-select their document after installing the full app.
+
 #### With invite-code mode
 
 If your app uses [invite-code mode](/world-id/idkit/invite-code), the re-trigger is avoided:
