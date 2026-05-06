@@ -19,7 +19,7 @@ The cold flow requires the most steps and works differently on each platform bec
 
 ### Android
 
-Android supports deferred deep linking through the Play Store. After the user downloads World App, the original verification context is carried forward at first launch — World App picks up where the user left off and routes them directly into credential enrollment. No re-trigger from your app is needed.
+Android supports deferred deep linking through the Play Store. After the user downloads World App, the original verification context is carried forward at first launch — World App picks up where the user left off and routes them directly into credential enrollment.
 
 ```mermaid
 sequenceDiagram
@@ -48,8 +48,6 @@ iOS does not support deferred deep linking through the App Store. The original v
 2. Your app triggers an IDKit verification request.
 3. World App opens and takes the user through a hot or warm flow.
 4. The proof consent appears, the user approves, and the proof is returned to your app.
-
-Because iOS does not preserve context through the App Store install, your app should direct the user to install World App before issuing the IDKit request.
 
 ```mermaid
 sequenceDiagram
@@ -80,14 +78,24 @@ Invite-code mode displays a short 6-character code in your app that the user ent
 </Note>
 
 1. Your app triggers an IDKit invite-code request.
-2. Your app opens the URL that IDKit provides. A landing page displays the invite code and a QR code for the request.
-3. The user downloads World App from the App Store.
-4. The user opens World App and completes account creation onboarding.
-5. The user enters the invite code.
-6. World App resolves the code, picks up the original verification context, and walks the user through credential enrollment.
-7. The proof consent appears, the user approves, and the proof is returned to your app.
+2. Your app opens the URL that IDKit provides. One of three paths follows:
+   - **User has World App (mobile):** World App launches directly via deep link.
+   - **User has World App (desktop):** The user scans the QR code with World App.
+   - **User needs to install World App:** The user installs World App, completes account onboarding, then enters the invite code to resume the request.
+3. World App restores the verification context, walks the user through credential enrollment if needed, and presents a proof consent.
+4. The user approves and the proof is returned to your app.
 
 The 6-character code persists across the App Store install, so once World App is installed and onboarded the user can resume the verification flow without returning to your app first. This also covers cross-device scenarios (e.g., a desktop browser displaying the QR for the user's phone) where deep linking cannot carry context.
+
+##### Demo
+
+<div style={{ marginBottom: "32px" }}>
+  <video className="m-auto" width="700" autoPlay muted loop playsInline>
+    <source src="/images/docs/world-id/idkit/invite-code-demo.mp4" type="video/mp4" />
+  </video>
+</div>
+
+##### Flow diagram
 
 ```mermaid
 sequenceDiagram
@@ -109,9 +117,11 @@ sequenceDiagram
     WA-->>App: Proof returned
 ```
 
+<div style={{ marginBottom: "32px" }} />
+
 ##### Lifecycle
 
-- Codes expire after a short TTL (currently ten minutes).
+- Codes expire after a short TTL (currently fifteen minutes).
 - Codes are one-shot — once redeemed, they cannot be reused. Re-running the request returns a fresh code with a fresh TTL.
 - After the user redeems the code, your existing poll loop receives the proof exactly as it does in QR mode.
 
@@ -139,8 +149,8 @@ const request = await IDKit.requestWithInviteCode({
   environment: "production",
 }).preset(selfieCheckLegacy({ signal: "user-123" }));
 
-const code = request.code;             // 6-character canonical form
-const expiresAt = request.expiresAt;   // Unix seconds
+// Open the landing page — displays invite code + QR
+window.open(request.connectorURI, "_blank");
 
 const completion = await request.pollUntilCompletion();
 ```
@@ -205,8 +215,8 @@ let config = IDKitRequestConfig(
 let request = try IDKit.request(config: config)
   .presetWithInviteCode(selfieCheckLegacy(signal: "user-123"))
 
-let code = request.code              // 6-character canonical form
-let expiresAt = request.expiresAt    // Date
+// Open the landing page — displays invite code + QR
+await UIApplication.shared.open(request.connectorURL)
 
 let completion = await request.pollUntilCompletion()
 ```
