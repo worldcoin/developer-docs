@@ -116,6 +116,13 @@ func handleRPSignature(w http.ResponseWriter, r *http.Request) {
 </Warning>
 
 
+<Note>
+  The steps below cover the standard request flow. Depending on whether the user
+  already has World App and the credential you're requesting, they may be taken
+  through a different experience. See [Verification flows](/world-id/idkit/verification-flows)
+  for details.
+</Note>
+
 # Step 4: Generate the connect URL and collect proof
 You can test during development using the [simulator](https://simulator.worldcoin.org/) and setting `environment` to `"staging"`.
 

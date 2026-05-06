@@ -1,5 +1,5 @@
 ---
-title: "Javascript"
+title: "JavaScript"
 description: "Reference for `@worldcoin/idkit-core`"
 "og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
@@ -27,7 +27,8 @@ yarn add @worldcoin/idkit-core
 ## Entry points
 
 - `IDKit.request(config)` for uniqueness proofs
-- `orbLegacy`, `secureDocumentLegacy`, `documentLegacy` for presets
+- `IDKit.requestWithInviteCode(config)` for invite-code mode
+- `orbLegacy`, `secureDocumentLegacy`, `documentLegacy`, `selfieCheckLegacy` for presets
 
 Each entry point returns a builder. Finalize it with `.preset(...)`.
 
@@ -101,6 +102,64 @@ if (!completion.success) {
   When running inside World App, native transport is used and `connectorURI` may be empty.
   Outside World App, `connectorURI` is the URL you render as a QR code.
 </Note>
+
+## Invite-code mode
+
+Use `IDKit.requestWithInviteCode(config)` to display a short code instead of a QR. Validation, the returned `Status` shape, and the poll loop are identical to `IDKit.request`. See [Invite-code mode](/world-id/idkit/verification-flows#with-invite-code-mode) for when to use it.
+
+```ts
+import { IDKit, selfieCheckLegacy } from "@worldcoin/idkit-core";
+
+const request = await IDKit.requestWithInviteCode({
+  app_id: "app_xxxxx",
+  action: "my-action",
+  rp_context,
+  allow_legacy_proofs: true,
+}).preset(selfieCheckLegacy({ signal: "user-123" }));
+
+const code = request.code;             // 6-character canonical form
+const expiresAt = request.expiresAt;   // Unix seconds
+const completion = await request.pollUntilCompletion();
+```
+
+`IDKitInviteCodeRequest` exposes:
+
+- `code`
+- `expiresAt`
+- `requestId`
+- `pollOnce()`
+- `pollUntilCompletion({ pollInterval, timeout })`
+
+### Migrating from QR / connect-URL
+
+```ts
+// Before — QR / connect-URL flow
+const request = await IDKit.request({
+  app_id: "app_xxxxx",
+  action: "my-action",
+  rp_context,
+  allow_legacy_proofs: true,
+}).preset(orbLegacy({ signal: "user-123" }));
+
+const connectorURI = request.connectorURI;   // render as QR
+const completion = await request.pollUntilCompletion();
+```
+
+```ts
+// After — invite-code mode
+const request = await IDKit.requestWithInviteCode({
+  app_id: "app_xxxxx",
+  action: "my-action",
+  rp_context,
+  allow_legacy_proofs: true,
+}).preset(selfieCheckLegacy({ signal: "user-123" }));
+
+const code = request.code;                   // display to user
+const expiresAt = request.expiresAt;         // drive a countdown
+const completion = await request.pollUntilCompletion();
+```
+
+The config object is unchanged. Replace `connectorURI` (QR) with `code` and `expiresAt` in your UI. Polling, proof verification, and nullifier storage stay the same.
 
 ## Server-side helpers
 

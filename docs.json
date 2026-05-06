@@ -63,6 +63,7 @@
             "group": "IDKit",
             "pages": [
               "world-id/idkit/integrate",
+              "world-id/idkit/verification-flows",
               "world-id/idkit/credentials",
               "world-id/idkit/signatures",
               "world-id/idkit/build-with-llms",
@@ -772,6 +773,10 @@
     {
       "source": "/world-id/id/idkit-v4-preview",
       "destination": "/world-id/idkit/integrate"
+    },
+    {
+      "source": "/world-id/idkit/invite-code",
+      "destination": "/world-id/idkit/verification-flows#with-invite-code-mode"
     },
     {
       "source": "/world-id/credentials/presets",

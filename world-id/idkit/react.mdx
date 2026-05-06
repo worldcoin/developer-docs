@@ -116,6 +116,77 @@ Hook result fields:
 - `result`
 - `errorCode`
 
+## Invite-code mode
+
+For invite-code flows, use `IDKitInviteCodeRequestWidget` (controlled) or `useIDKitInviteCodeRequest` (headless). Config matches `IDKitRequestWidget` / `useIDKitRequest` — invite-code mode adds no new required fields. See [Invite-code mode](/world-id/idkit/verification-flows#with-invite-code-mode) for when to use it.
+
+```tsx
+import { IDKitInviteCodeRequestWidget, selfieCheckLegacy } from "@worldcoin/idkit";
+
+<IDKitInviteCodeRequestWidget
+  open={open}
+  onOpenChange={setOpen}
+  app_id="app_xxxxx"
+  action="my-action"
+  rp_context={rpContext}
+  allow_legacy_proofs={true}
+  preset={selfieCheckLegacy({ signal: "user-123" })}
+  handleVerify={async (result) => { /* ... */ }}
+  onSuccess={() => { /* ... */ }}
+/>;
+```
+
+`useIDKitInviteCodeRequest` result fields (sibling of `useIDKitRequest`'s):
+
+- `open()`
+- `reset()`
+- `isAwaitingUserConnection`
+- `isAwaitingUserConfirmation`
+- `isSuccess`
+- `isError`
+- `code`
+- `codeExpiresAt`
+- `result`
+- `errorCode`
+
+### Migrating from QR / connect-URL
+
+```tsx
+// Before — QR / connect-URL widget
+import { IDKitRequestWidget, orbLegacy } from "@worldcoin/idkit";
+
+<IDKitRequestWidget
+  open={open}
+  onOpenChange={setOpen}
+  app_id="app_xxxxx"
+  action="my-action"
+  rp_context={rpContext}
+  allow_legacy_proofs={true}
+  preset={orbLegacy({ signal: "user-123" })}
+  handleVerify={handleVerify}
+  onSuccess={onSuccess}
+/>;
+```
+
+```tsx
+// After — invite-code widget
+import { IDKitInviteCodeRequestWidget, selfieCheckLegacy } from "@worldcoin/idkit";
+
+<IDKitInviteCodeRequestWidget
+  open={open}
+  onOpenChange={setOpen}
+  app_id="app_xxxxx"
+  action="my-action"
+  rp_context={rpContext}
+  allow_legacy_proofs={true}
+  preset={selfieCheckLegacy({ signal: "user-123" })}
+  handleVerify={handleVerify}
+  onSuccess={onSuccess}
+/>;
+```
+
+Swap the component and preset. Props, callbacks, and backend verification stay the same. The headless equivalent is `useIDKitInviteCodeRequest` in place of `useIDKitRequest`.
+
 ## Presets
 
 React hooks/widgets take `preset` directly in config.

@@ -75,3 +75,47 @@ case .failure(let error):
   print(error)
 }
 ```
+
+## Invite-code mode
+
+Use `presetWithInviteCode(_:)` on the builder to return an `IDKitInviteCodeRequest` instead of `IDKitRequest`. The polling surface is identical. See [Invite-code mode](/world-id/idkit/verification-flows#with-invite-code-mode) for when to use it.
+
+```swift
+let request = try IDKit.request(config: config)
+  .presetWithInviteCode(selfieCheckLegacy(signal: "user-123"))
+
+let code = request.code              // 6-character canonical form
+let expiresAt = request.expiresAt    // Date
+let completion = await request.pollUntilCompletion()
+```
+
+### Migrating from QR / connect-URL
+
+```swift
+// Before — QR / connect-URL flow
+let request = try IDKit.request(config: config)
+  .preset(orbLegacy(signal: "user-123"))
+
+let connectURL = request.connectorURL        // render as QR
+let completion = await request.pollUntilCompletion()
+```
+
+```swift
+// After — invite-code mode
+let request = try IDKit.request(config: config)
+  .presetWithInviteCode(selfieCheckLegacy(signal: "user-123"))
+
+let code = request.code                      // display to user
+let expiresAt = request.expiresAt            // drive a countdown
+let completion = await request.pollUntilCompletion()
+```
+
+The config object is unchanged. Replace `connectorURL` (QR) with `code` and `expiresAt` in your UI. Polling, proof verification, and nullifier storage stay the same.
+
+`IDKitInviteCodeRequest` exposes:
+
+- `code: String`
+- `expiresAt: Date`
+- `requestID: UUID`
+- `pollStatusOnce() async -> IDKitStatus`
+- `pollUntilCompletion(options:) async -> IDKitCompletionResult`
