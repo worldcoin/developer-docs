@@ -29,7 +29,7 @@ iOS does not preserve context through the App Store install. This makes the cold
 
 1. The user downloads World App from the App Store and completes account creation onboarding.
 2. Your app triggers an IDKit verification request.
-3. World App opens and walks the user through credential enrollment.
+3. World App opens and takes the user through a hot or warm flow.
 4. The proof consent appears, the user approves, and the proof is returned to your app.
 
 Because iOS does not preserve context through the App Store install, your app should direct the user to install World App before issuing the IDKit request.
