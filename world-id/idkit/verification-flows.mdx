@@ -62,13 +62,12 @@ Invite-code mode displays a short 6-character code in your app that the user ent
 </Note>
 
 1. Your app triggers an IDKit invite-code request.
-2. Your app displays a verify URL (typically as a QR) that embeds a 6-character invite code.
-3. The user opens the URL on their phone. The `world.org/verify` landing page surfaces the code and a download link.
-4. The user downloads World App from the App Store.
-5. The user opens World App and completes account creation onboarding.
-6. The user enters the invite code.
-7. World App resolves the code, picks up the original verification context, and walks the user through credential enrollment.
-8. The proof consent appears, the user approves, and the proof is returned to your app.
+2. Your app opens the URL that IDKit provides. The `world.org/verify` landing page displays the invite code and a QR code for the request.
+3. The user downloads World App from the App Store.
+4. The user opens World App and completes account creation onboarding.
+5. The user enters the invite code.
+6. World App resolves the code, picks up the original verification context, and walks the user through credential enrollment.
+7. The proof consent appears, the user approves, and the proof is returned to your app.
 
 The 6-character code persists across the App Store install, so once World App is installed and onboarded the user can resume the verification flow without returning to your app first. This also covers cross-device scenarios (e.g., a desktop browser displaying the QR for the user's phone) where deep linking cannot carry context.
 
