@@ -27,15 +27,12 @@ iOS does not preserve context through the App Store install. This makes the cold
 
 #### Default behavior
 
-1. Your app triggers an IDKit verification request.
-2. The user is redirected to the App Store to download World App.
-3. The user opens World App and completes account creation onboarding.
-4. The user returns to your app (manually or via a redirect).
-5. Your app re-triggers the IDKit request.
-6. World App opens and walks the user through credential enrollment.
-7. The proof consent appears, the user approves, and the proof is returned to your app.
+1. The user downloads World App from the App Store and completes account creation onboarding.
+2. Your app triggers an IDKit verification request.
+3. World App opens and walks the user through credential enrollment.
+4. The proof consent appears, the user approves, and the proof is returned to your app.
 
-The re-trigger in step 5 is necessary because iOS does not carry the original request context through the App Store install. Once the app is installed and onboarding is complete, the user needs to re-enter the verification flow from your app.
+Because iOS does not preserve context through the App Store install, your app should direct the user to install World App before issuing the IDKit request.
 
 #### With the App Clip (document enrollment)
 
