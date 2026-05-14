@@ -67,7 +67,7 @@ sequenceDiagram
 
 #### With invite-code mode
 
-Invite-code mode displays a short 6-character code in your app that the user enters into World App. World App treats the code as an entry point to the in-app onboarding flows the user needs to complete in order to satisfy your IDKit request, then returns the proof.
+Invite-code mode creates a random 6-digit code that the user enters into World App during account creation. World App uses the code to customize the in-app onboarding so the user adds a credential that can satisfy your IDKit request.
 
 <Note>
   Invite-code mode only applies to iOS as Android preserves deferred deep linking context via the Play Store.
