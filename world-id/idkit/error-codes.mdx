@@ -162,7 +162,7 @@ Widgets expose an `onError` callback. Hooks expose `isError` and `errorCode` on 
 
 Version availability errors such as `world_id_4_not_available` and `world_id_3_not_available` are terminal for the current user and request. Retrying the same request usually returns the same result; change the requested credential policy or show a user-facing fallback instead.
 
-In JS and React, match these with `IDKitErrorCodes`. Kotlin and Swift expose the same raw values through their `IDKitErrorCode` enums. Some native protocol responses may use `nullifier_replay`; IDKit normalizes that to the canonical `nullifier_replayed` code.
+In JS and React, match these with `IDKitErrorCodes`. Kotlin and Swift expose the same raw values through their `IDKitErrorCode` enums. 
 
 ```tsx
 <IDKitRequestWidget
