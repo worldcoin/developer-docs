@@ -94,12 +94,16 @@ const unpackedProof = abi.decode(["uint256[8]"], proof)[0];
 
 ## 2. Verifying Uniqueness proofs in `WorldIDVerifier.sol` (World ID 4.0)
 
-<Warning>
-  `WorldIDVerifier` is currently in preview and not yet deployed to mainnet. The interface below may change before release.
-</Warning>
+`WorldIDVerifier` is deployed on World Chain Mainnet as an upgradeable proxy.
+Use the proxy address in your integration:
 
-For v4 uniqueness proofs, call `verify(...)` and store used nullifiers to
-enforce one-human-one-action semantics in your contract.
+| Chain | `WorldIDVerifier` proxy |
+|---|---|
+| World Chain | [0x00000000009E00F9FE82CfeeBB4556686da094d7](https://worldscan.org/address/0x00000000009E00F9FE82CfeeBB4556686da094d7) |
+
+For v4 uniqueness proofs, call `verify(...)` on the `WorldIDVerifier` proxy and
+store used nullifiers to enforce one-human-one-action semantics in your
+contract.
 
 ```solidity
 interface IWorldIDVerifier {
