@@ -12,149 +12,149 @@ This page focuses on IDKit SDK and bridge error codes returned during request fl
 <table>
   <thead>
     <tr>
-      <th className="p-2 text-left align-middle">Code</th>
+      <th className="p-2 text-left align-middle whitespace-nowrap">Code</th>
       <th className="p-2 text-left align-middle">Meaning</th>
       <th className="p-2 text-left align-middle">Typical action</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td className="p-2 align-middle"><code>user_rejected</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>user_rejected</code></td>
       <td className="p-2 align-middle">User cancelled in World App.</td>
       <td className="p-2 align-middle">Treat as user cancellation, allow retry.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>verification_rejected</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>verification_rejected</code></td>
       <td className="p-2 align-middle">Legacy rejection code (older bridge/app behavior).</td>
       <td className="p-2 align-middle">Handle same as <code>user_rejected</code>.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>credential_unavailable</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>credential_unavailable</code></td>
       <td className="p-2 align-middle">Requested credential type is not available for that user.</td>
       <td className="p-2 align-middle">Offer fallback credential policy or explain requirement.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>world_id_4_not_available</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>world_id_4_not_available</code></td>
       <td className="p-2 align-middle">World ID 4.0 credential is not available for that user.</td>
       <td className="p-2 align-middle">Use a compatible fallback request or explain the World ID 4.0 requirement.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>world_id_3_not_available</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>world_id_3_not_available</code></td>
       <td className="p-2 align-middle">World ID 3.0 credential is not available for that user.</td>
       <td className="p-2 align-middle">Use a compatible fallback request or explain the World ID 3.0 requirement.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>malformed_request</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>malformed_request</code></td>
       <td className="p-2 align-middle">Payload or configuration is invalid.</td>
       <td className="p-2 align-middle">Check <code>app_id</code>, <code>rp_context</code>, and request shape.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>invalid_network</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>invalid_network</code></td>
       <td className="p-2 align-middle">Environment mismatch between app config and World App context.</td>
       <td className="p-2 align-middle">Align staging/production settings.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>inclusion_proof_pending</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>inclusion_proof_pending</code></td>
       <td className="p-2 align-middle">Credential inclusion data is not ready yet.</td>
       <td className="p-2 align-middle">Retry later.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>inclusion_proof_failed</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>inclusion_proof_failed</code></td>
       <td className="p-2 align-middle">Inclusion proof retrieval failed.</td>
       <td className="p-2 align-middle">Retry; if repeated, treat as operational incident.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>unexpected_response</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>unexpected_response</code></td>
       <td className="p-2 align-middle">Malformed or unsupported bridge/app response.</td>
       <td className="p-2 align-middle">Log diagnostics and retry once.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>connection_failed</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>connection_failed</code></td>
       <td className="p-2 align-middle">Could not establish/maintain bridge communication.</td>
       <td className="p-2 align-middle">Check connectivity and bridge reachability.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>max_verifications_reached</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>max_verifications_reached</code></td>
       <td className="p-2 align-middle">Action already verified the maximum allowed number of times.</td>
       <td className="p-2 align-middle">Treat as terminal business-rule outcome.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>failed_by_host_app</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>failed_by_host_app</code></td>
       <td className="p-2 align-middle">Host app callback failed while processing a successful proof.</td>
       <td className="p-2 align-middle">Fix host callback/backend logic and retry.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>invalid_rp_signature</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>invalid_rp_signature</code></td>
       <td className="p-2 align-middle">RP signature could not be verified.</td>
       <td className="p-2 align-middle">Check the RP signing key, nonce, timestamps, action, and signed message.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>nullifier_replayed</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>nullifier_replayed</code></td>
       <td className="p-2 align-middle">Nullifier was already used for this action.</td>
       <td className="p-2 align-middle">Treat as an already-verified outcome; do not retry the same action as a new verification.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>duplicate_nonce</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>duplicate_nonce</code></td>
       <td className="p-2 align-middle">RP reused a signature nonce.</td>
       <td className="p-2 align-middle">Generate a fresh nonce and signed RP context for each request.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>unknown_rp</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>unknown_rp</code></td>
       <td className="p-2 align-middle">RP is not known to the registry.</td>
       <td className="p-2 align-middle">Check the registered RP ID and app configuration.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>inactive_rp</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>inactive_rp</code></td>
       <td className="p-2 align-middle">RP is registered but inactive.</td>
       <td className="p-2 align-middle">Reactivate or reconfigure the RP before retrying.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>timestamp_too_old</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>timestamp_too_old</code></td>
       <td className="p-2 align-middle">RP request timestamp is too old.</td>
       <td className="p-2 align-middle">Generate a new signed RP context with a current timestamp.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>timestamp_too_far_in_future</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>timestamp_too_far_in_future</code></td>
       <td className="p-2 align-middle">RP request timestamp is too far in the future.</td>
       <td className="p-2 align-middle">Fix server clock skew and generate a new signed RP context.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>invalid_timestamp</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>invalid_timestamp</code></td>
       <td className="p-2 align-middle">RP request timestamp is invalid.</td>
       <td className="p-2 align-middle">Check timestamp format and regenerate the signed RP context.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>rp_signature_expired</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>rp_signature_expired</code></td>
       <td className="p-2 align-middle">RP signature has expired.</td>
       <td className="p-2 align-middle">Request a fresh RP signature before starting verification.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>user_presence_failed</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>user_presence_failed</code></td>
       <td className="p-2 align-middle">Required user-presence check was not completed.</td>
       <td className="p-2 align-middle">Let the user retry the request.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>identity_attributes_not_matched</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>identity_attributes_not_matched</code></td>
       <td className="p-2 align-middle">User identity attributes did not match the requested constraints.</td>
       <td className="p-2 align-middle">Show an eligibility fallback or adjust the requested attribute constraints.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>generic_error</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>generic_error</code></td>
       <td className="p-2 align-middle">Catch-all unknown failure.</td>
       <td className="p-2 align-middle">Log details and retry with backoff.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>invalid_rp_id_format</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>invalid_rp_id_format</code></td>
       <td className="p-2 align-middle">RP ID is malformed.</td>
       <td className="p-2 align-middle">Use the registered <code>rp_...</code> ID from your app configuration.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>timeout</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>timeout</code></td>
       <td className="p-2 align-middle">Client-side polling timeout.</td>
       <td className="p-2 align-middle">Extend timeout or let the user retry.</td>
     </tr>
     <tr>
-      <td className="p-2 align-middle"><code>cancelled</code></td>
+      <td className="p-2 align-middle whitespace-nowrap"><code>cancelled</code></td>
       <td className="p-2 align-middle">Client-side cancellation (abort/task cancel/user close).</td>
       <td className="p-2 align-middle">Treat as neutral cancellation path.</td>
     </tr>
