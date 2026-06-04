@@ -10,7 +10,7 @@ When your app requests a World ID proof, the user is taken through one of three 
 | Flow | World App installed | Has credential | What happens |
 | --- | --- | --- | --- |
 | Hot | Yes | Yes | World App opens, displays a proof consent, and the user approves. Typically under 10 seconds. |
-| Warm | Yes | No | World App opens and walks the user through credential enrollment (e.g., PoH, Face, or NFC). Once issued, a proof consent appears and the user approves. |
+| Warm | Yes | No | World App opens and walks the user through credential enrollment (e.g., PoH, or NFC). Once issued, a proof consent appears and the user approves. Note: Selfie check does not have a distinct warm flow - the "Hot Flow" is used for all "app installed" cases. |
 | Cold | No | No | The user must install World App first. The experience differs by platform — see below. |
 
 ## Cold flow
