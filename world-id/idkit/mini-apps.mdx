@@ -1,6 +1,5 @@
 ---
 title: "Mini Apps"
-description: "Use IDKit for World ID and Selfie Check verification inside Mini Apps."
 "og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
@@ -11,17 +10,17 @@ IDKit is the verification layer for Mini Apps. MiniKit handles native Mini App c
 
 Inside World App, IDKit uses the native World App transport — no QR code is shown. The same widget also works outside World App, where it falls back to the normal connect URL and QR experience. Your backend responsibilities do not change: sign each request server-side, verify the proof server-side, and store nullifiers for replay protection.
 
-{/* TODO: upload demo video, then uncomment.
-<video className="m-auto" width="700" autoPlay muted loop playsInline>
-  <source src="/images/docs/world-id/idkit/mini-apps-demo.mp4" type="video/mp4" />
-</video>
-*/}
-
 <Note>
   If you are migrating from MiniKit 1.x, replace `MiniKit.verify(...)` or
   `MiniKit.commandsAsync.verify(...)` with IDKit. MiniKit 2.x does not proxy
   verification requests.
 </Note>
+
+<video className="m-auto" width="300" autoPlay muted loop playsInline>
+  <source src="/images/docs/mini-apps/commands/verify.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+
 
 ## How IDKit fits a Mini App
 
