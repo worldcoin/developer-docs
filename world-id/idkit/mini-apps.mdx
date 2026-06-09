@@ -1,0 +1,72 @@
+---
+title: "Mini Apps"
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+{/* cspell:ignore idkit minikit rp_context app_id rp_id selfie sybil nullifier */}
+
+IDKit is the verification layer for Mini Apps. MiniKit handles native Mini App commands such as wallet auth, payments, transactions, sharing, and permissions. World ID verification, including Selfie Check, is implemented with `@worldcoin/idkit`.
+
+Inside World App, IDKit uses the native World App transport — no QR code is shown. The same widget also works outside World App, where it falls back to the normal connect URL and QR experience. Your backend responsibilities do not change: sign each request server-side, verify the proof server-side, and store nullifiers for replay protection.
+
+<Note>
+  If you are migrating from MiniKit 1.x, replace `MiniKit.verify(...)` or
+  `MiniKit.commandsAsync.verify(...)` with IDKit. MiniKit 2.x does not proxy
+  verification requests.
+</Note>
+
+<video className="m-auto" width="300" autoPlay muted loop playsInline>
+  <source src="/images/docs/mini-apps/commands/verify.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+
+
+## How IDKit fits a Mini App
+
+The integration is the standard IDKit flow — follow the [Integrate IDKit](/world-id/idkit/integrate) guide for installation, the server-side RP signature endpoint, backend proof verification, and nullifier storage. Nothing in those steps changes for Mini Apps.
+
+The Mini-App-specific details:
+
+- **Separate app IDs.** If your Mini App and World ID integration use separate Developer Portal apps, MiniKit initialization uses the Mini App `app_id`, while IDKit uses the World ID `app_id`, `rp_id`, action, and signing key.
+- **No transport configuration needed.** IDKit detects World App and uses the native transport automatically.
+- **Standalone websites work too.** If your Mini App also runs as a regular website, the same widget handles browser users. For iOS install-continuation flows outside World App, see [invite-code mode](/world-id/idkit/verification-flows#with-invite-code-mode).
+
+## Choose a verification level
+
+| Goal | IDKit preset |
+| --- | --- |
+| Strong sybil resistance or one-human-one-action checks | `proofOfHuman` |
+| Lower-friction liveness or bot deterrence | `selfieCheckLegacy` |
+| Passport-backed checks | `passport` |
+
+Check out this [page](/world-id/idkit/credentials) to learn about the different World ID credentials and which preset to use for each.
+
+## Example
+
+This is the same widget from [Step 4 of the integration guide](/world-id/idkit/integrate#step-4-generate-the-connect-url-and-collect-proof), using the `proofOfHuman` preset:
+
+```tsx title="components/WorldIdGate.tsx"
+<IDKitRequestWidget
+  open={open}
+  onOpenChange={setOpen}
+  app_id={appId} // World ID app_id, not the Mini App app_id
+  action="claim-airdrop-2026"
+  rp_context={rpContext} // Signed by your backend, see the integration guide
+  allow_legacy_proofs={true}
+  preset={proofOfHuman({ signal: userId })}
+  handleVerify={verifyProofOnBackend}
+  onSuccess={() => {
+    // Unlock the protected Mini App experience here.
+  }}
+/>
+```
+
+Use a stable `signal` (user ID, wallet address, claim ID) to bind the proof to app-specific context, and [store the nullifier](/world-id/idkit/integrate#step-6-store-the-nullifier) in your backend to enforce uniqueness.
+
+## Related pages
+
+- [Integrate IDKit](/world-id/idkit/integrate)
+- [Configure Credentials](/world-id/idkit/credentials)
+- [React reference](/world-id/idkit/react)
+- [MiniKit commands](/mini-apps/quick-start/commands)
