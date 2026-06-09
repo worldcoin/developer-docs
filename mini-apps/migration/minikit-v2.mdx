@@ -8,7 +8,7 @@ MiniKit 2.x consolidates command handling around async `MiniKit` methods and rem
 
 ## Breaking Changes
 
-- World ID verification moved out of MiniKit and into [`@worldcoin/idkit`](/world-id/idkit/integrate)
+- World ID verification moved out of MiniKit and into [`@worldcoin/idkit`](/world-id/idkit/mini-apps)
 - Commands moved to top-level async methods on `MiniKit` instead of `commandsAsync` and `commands`
 - Response interface changed to `{ executedWith, data }`
 - Types and helpers moved to `@worldcoin/minikit-js/commands`, `@worldcoin/minikit-js/siwe`, and `@worldcoin/minikit-js/address-book`
@@ -20,8 +20,7 @@ MiniKit 2.x consolidates command handling around async `MiniKit` methods and rem
 
 ## World ID Changes
 
-Any old `MiniKit.verify` or `MiniKit.commandsAsync.verify` flow should be replaced with IDKit. MiniKit 2.x only owns mini app commands.
-
+Any old `MiniKit.verify` or `MiniKit.commandsAsync.verify` flow should be replaced with IDKit. MiniKit 2.x only owns mini app commands. See [IDKit for Mini Apps](/world-id/idkit/mini-apps) for the current integration shape.
 
 ## Old To New
 
