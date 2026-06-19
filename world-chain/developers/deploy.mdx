@@ -90,8 +90,8 @@ In the test directory, delete the existing `Counter.t.sol` and create a new test
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-import "forge-std/Test.sol";
-import "../src/HelloWorldChain.sol";
+import { Test } from "forge-std/Test.sol";
+import { HelloWorldChain } from "../src/HelloWorldChain.sol";
 
 contract HelloWorldChainTest is Test {
     HelloWorldChain helloWorldChain;
