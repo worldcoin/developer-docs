@@ -14,18 +14,17 @@ We will also be using the [Foundry CLI](https://book.getfoundry.sh/) toolkit, wh
 First, we need to install the Foundry CLI toolkit and the Solidity compiler. Solidity comes with a compiler called `solc` which we will use to compile the `HelloWorldChain` contract. The Foundry CLI
 will automatically download the right version of the Solidity compiler for you during the compilation process using `forge build`.
 
-<CodeGroup>
-  ```bash Install Foundry curl -L https://foundry.paradigm.xyz | bash ```
-</CodeGroup>
+```bash Install Foundry
+curl -L https://foundry.paradigm.xyz | bash
+```
 
 ## Create a Foundry project
 
 Open your terminal of choice, navigate to a directory where you want to create your project, and run the following command to create a new Foundry project:
 
-<CodeGroup>
-  ```bash Create a new Foundry project forge init hello-world-chain && cd
-  hello-world-chain ```
-</CodeGroup>
+```bash Create a new Foundry project
+forge init hello-world-chain && cd hello-world-chain
+```
 
 Now that you have created a new Foundry project, you can start writing your smart contract. All smart contracts in Foundry projects are stored in the `src` directory.
 If you are using VSCode, it should look something like this:
@@ -36,17 +35,18 @@ If you are using VSCode, it should look something like this:
 
 First, delete the template file called Counter.sol in the /src directory:
 
-<CodeGroup>```bash Delete Template rm src/Counter.sol ```</CodeGroup>
+```bash Delete Template
+rm src/Counter.sol
+```
 
-Next, create a new file called HelloWorldChain.sol in the /src directory and add the following code to it:
+Next, create a new file called `HelloWorldChain.sol` in the `/src` directory and add the following code to it:
 
-<CodeGroup>
 ```solidity HelloWorldChain.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
 contract HelloWorldChain {
-string private word;
+    string private word;
 
     // Constructor that sets the initial word to "Hello World Chain!"
     constructor() {
@@ -65,8 +65,7 @@ string private word;
 
 }
 
-````
-</CodeGroup>
+```
 
 This contract has a `word` variable that stores a string and two functions: `setWord` to update the word and `getWord` to return the current word.
 
@@ -78,18 +77,15 @@ Since we deleted `Counter.sol`, we need to update or remove the scripts and test
 
 The script directory contains scripts that import `Counter.sol`. Since we no longer have `Counter.sol`, we can delete the entire script directory to avoid any compilation issues:
 
-<CodeGroup>
 ```bash Delete Script Directory
 rm -rf script
-````
+```
 
-</CodeGroup>
 
 **Replace** `Counter.t.sol` with `HelloWorldChain.t.sol`
 
 In the test directory, delete the existing `Counter.t.sol` and create a new test file called `HelloWorldChain.t.sol` and add the following simple tests:
 
-<CodeGroup>
 ```solidity HelloWorldChain.t.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
@@ -98,7 +94,7 @@ import "forge-std/Test.sol";
 import "../src/HelloWorldChain.sol";
 
 contract HelloWorldChainTest is Test {
-HelloWorldChain helloWorldChain;
+    HelloWorldChain helloWorldChain;
 
     function setUp() public {
         helloWorldChain = new HelloWorldChain();
@@ -119,32 +115,32 @@ HelloWorldChain helloWorldChain;
 
 }
 
-````
-</CodeGroup>
+```
 
-**Now You can Run tests:**
+**Now you can run tests:**
 
-<CodeGroup>
 ```bash Test the contract
 forge test
-````
-
-</CodeGroup>
+```
 
 ## Compile the contract
 
 To compile the `HelloWorldChain` contract, run the following command:
 
-<CodeGroup>```bash Compile the contract forge build ```</CodeGroup>
+```bash Compile the contract
+forge build
+```
 
-The `forge build` command will compile the contract using the Solidity compiler and generate the necessary artifacts in the `artifacts` directory.
+The `forge build` command will compile the contract using the Solidity compiler and generate the necessary artifacts in the `out` directory.
 
 ## Generate a wallet
 
 To deploy the `HelloWorldChain` contract to World Chain Sepolia, you will need a wallet with some World Chain Sepolia ETH. An easy way to generate a
 wallet using the Foundry CLI is to run the following command:
 
-<CodeGroup>```bash Generate a wallet cast wallet new ```</CodeGroup>
+```bash Generate a wallet
+cast wallet new
+```
 
 `cast` is a versatile set of utility functions and commands for Solidity development. In this case, we are using one of its many built-in features to generate a wallet with one account.
 
@@ -157,7 +153,7 @@ wallet using the Foundry CLI is to run the following command:
 
 The output of the command will look something like this:
 
-````
+```bash Wallet output
 Successfully created new keypair.
 Address:     0xB815A0c4bC23930119324d4359dB65e27A846A2d
 Private key: 0xcc1b30a6af68ea9a9917f1dda20c927704c5cdb2bbe0076901a8a0e40bf997c5
@@ -173,17 +169,15 @@ group chat on [Telegram](https://t.me/worlddevelopersupport) or [Discord](https:
 
 Now that you have a wallet and you funded it with World Chain Sepolia ETH, you can deploy the `HelloWorldChain` contract to World Chain Sepolia using the following `forge create` command:
 
-<CodeGroup>
-  ```bash Deploy the contract forge create
-  src/HelloWorldChain.sol:HelloWorldChain --rpc-url
-  https://worldchain-sepolia.g.alchemy.com/public --private-key
-  0xcc1b30a6af68ea9a9917f1dda20c927704c5cdb2bbe0076901a8a0e40bf997c5 ```
-</CodeGroup>
+```bash Deploy the contract
+forge create src/HelloWorldChain.sol:HelloWorldChain \
+  --rpc-url https://worldchain-sepolia.g.alchemy.com/public \
+  --private-key 0xcc1b30a6af68ea9a9917f1dda20c927704c5cdb2bbe0076901a8a0e40bf997c5
+```
 
-Here, we are using the `<path>:<contractname>` format to specify the contract. This tells Foundry where to find the contract file (src/HelloWorldChain.sol) and which contract within the file (HelloWorldChain) to deploy.
+Here, we are using the `<path>:<contractname>` format to specify the contract. This tells Foundry where to find the contract file (`src/HelloWorldChain.sol`) and which contract within the file (HelloWorldChain) to deploy.
 We also use the `--rpc-url` flag to specify the RPC URL of the World Chain Sepolia network and the `--private-key` flag to specify the private key of the wallet we generated earlier.
 On top of this we can also provide other flags like `-vvvvv` to get more verbose output from the deployment process, `--verify` to verify the contract on [Worldscan](https://worldscan.org) or [Blockscout](https://worldchain-sepolia.explorer.alchemy.com/) (alongside with an `--etherscan-api-key` flag) and
 several other flags to toggle different features that you can find more about in the [Foundry documentation](https://book.getfoundry.sh/).
 
 And that's it! You have successfully deployed a smart contract to World Chain Sepolia. You can interact with the contract using `forge script` scripts, using a block explorer or any other EVM library like [ethers.js](https://docs.ethers.io/v5/), [alloy-rs](https://github.com/alloy-rs/alloy/), and many others.
-````
