@@ -93,7 +93,10 @@
           },
           {
             "group": "Migration",
-            "pages": ["world-id/4-0-migration"]
+            "pages": [
+              "world-id/4-0-migration",
+              "world-id/from-idkit-standalone"
+            ]
           },
           {
             "group": "Technical Reference",
