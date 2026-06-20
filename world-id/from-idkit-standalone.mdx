@@ -64,7 +64,7 @@ import { IDKit, orbLegacy } from "@worldcoin/idkit-core";
 const action = "my-action";
 const signal = "user-123";
 
-const rpSig = await fetch("/api/rp-signature", {
+const rpContext = await fetch("/api/rp-signature", {
   method: "POST",
   headers: { "content-type": "application/json" },
   body: JSON.stringify({ action }),
@@ -75,10 +75,10 @@ const request = await IDKit.request({
   action,
   rp_context: {
     rp_id: "rp_xxxxx",
-    nonce: rpSig.nonce,
-    created_at: rpSig.created_at,
-    expires_at: rpSig.expires_at,
-    signature: rpSig.sig,
+    nonce: rpContext.nonce,
+    created_at: rpContext.created_at,
+    expires_at: rpContext.expires_at,
+    signature: rpContext.sig,
   },
   allow_legacy_proofs: true,
   environment: "production",
