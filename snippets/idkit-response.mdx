@@ -13,7 +13,8 @@
       "merkle_root": "0x0abc123...root_hash",
       "nullifier": "0x04e5f6...nullifier_hash"
     }
-  ]
+  ],
+  "user_presence_completed": false
 }
 ```
 
@@ -25,14 +26,15 @@
   "environment": "production",
   "responses": [
     {
-      "identifier": "orb",
+      "identifier": "proof_of_human",
       "signal_hash": "0x0",
       "proof": ["0x1a2b...", "0x3c4d...", "0x5e6f...", "0x7a8b...", "0x9c0d..."],
       "nullifier": "0x04e5f6...rp_scoped_nullifier",
       "issuer_schema_id": 1,
       "expires_at_min": 1756166400
     }
-  ]
+  ],
+  "user_presence_completed": false
 }
 ```
 
@@ -40,18 +42,19 @@
 {
   "protocol_version": "4.0",
   "nonce": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "session_id": "ses_abc123",
+  "session_id": "session_5f3a9c2e...8d1b0a",
   "environment": "production",
   "responses": [
     {
-      "identifier": "orb",
+      "identifier": "proof_of_human",
       "signal_hash": "0x0",
       "proof": ["0x1a2b...", "0x3c4d...", "0x5e6f...", "0x7a8b...", "0x9c0d..."],
       "session_nullifier": ["0x04e5f6...session_nullifier", "0x07a8b9...generated_action"],
       "issuer_schema_id": 1,
       "expires_at_min": 1756166400
     }
-  ]
+  ],
+  "user_presence_completed": false
 }
 ```
 </CodeGroup>

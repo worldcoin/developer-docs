@@ -93,11 +93,11 @@ The credential decides what the user proves. Get this explicit before scaffoldin
 
 | Preset | What it proves | Use it for |
 |---|---|---|
-| **`orbLegacy`** — Proof of Human (flagship) | The user is a unique person, biometrically verified at an Orb | Sybil resistance, airdrops, one-vote-per-human, gated signups. **The default if the user said "proof of human" or "verify a real human."** |
-| **`secureDocumentLegacy`** — Passport | The user holds a valid government passport (NFC-verified) | Higher-assurance flows where you need document-grade identity (regulated apps, age-gating, KYC-adjacent). |
+| **`proofOfHuman`** — Proof of Human (flagship) | The user is a unique person, biometrically verified at an Orb | Sybil resistance, airdrops, one-vote-per-human, gated signups. **The default if the user said "proof of human" or "verify a real human."** |
+| **`passport`** — Passport | The user holds a valid government passport (NFC-verified) | Higher-assurance flows where you need document-grade identity (regulated apps, age-gating, KYC-adjacent). |
 | **`selfieCheckLegacy`** — Selfie check | A liveness selfie signal | Lower-assurance "is a human in front of the camera" — friction/bot deterrence without the full Orb requirement. |
 
-**DO NOT default to `orbLegacy` if the user said "passport" or "verify their ID"** — that's `secureDocumentLegacy`. **DO NOT default to `orbLegacy` if the user said "selfie" or "liveness"** — that's `selfieCheckLegacy`. When in doubt, ask one question.
+**DO NOT default to `proofOfHuman` if the user said "passport" or "verify their ID"** — that's `passport`. **DO NOT default to `proofOfHuman` if the user said "selfie" or "liveness"** — that's `selfieCheckLegacy`. When in doubt, ask one question.
 
 Other legacy presets exist (`documentLegacy`, `deviceLegacy`); reach for them only when the user asks specifically. For sign-in / session reuse across visits, use the v4 **session** flow instead of a uniqueness preset (see the integrate doc).
 
@@ -137,10 +137,11 @@ Surface these proactively when you see the corresponding symptom — don't make 
 |---|---|---|
 | World App shows "action not found" or QR scan does nothing | Action wasn't created in the environment IDKit is pointing at | Create the missing action with `create_world_id_action` (`environment: "production"` for real devices, `"staging"` for simulator). Confirm `NEXT_PUBLIC_WLD_ENVIRONMENT` matches. |
 | `/api/v4/verify/{rp_id}` returns `invalid_proof` or `verification_failed` | Often staging/production env mismatch, or proof was mutated before forward | Re-check Step E. Forward the proof JSON byte-for-byte without re-encoding fields. |
+| Verification fails in JS/React and the error code alone isn't enough | Need transport/payload diagnostics | Read `getDebugReport()` (or the `onError` `debugReport` arg) — it carries `transport`, `request_id`, request/response payloads, and World App `mini_app` channel info. JS SDKs only. |
 | `/api/v4/verify/{rp_id}` returns `not_registered` or 4xx with `rp` errors | On-chain registration is still `pending` | Poll `get_world_id_registration_status` until `production_status: registered` and `staging_status: registered`. Don't ship until both. |
 | Signing key is gone (lost `.env`, never persisted) | `signing_key.private_key` is returned exactly once at create/rotate time | `rotate_world_id_signing_key`, persist the new key immediately, redeploy. The old key is invalidated. |
 | Duplicate-verification (user submits the same proof twice) | Expected — that's what nullifiers prevent | Reject on the unique-constraint violation. **Do not** "helpfully" upsert. |
-| TypeScript: `Property 'allow_legacy_proofs' is missing` | v4 requires this prop on `IDKitRequestWidget` | Add `allow_legacy_proofs={true}` for `orbLegacy` and other legacy presets. |
+| TypeScript: `Property 'allow_legacy_proofs' is missing` | v4 requires this prop on `IDKitRequestWidget` | Add `allow_legacy_proofs={true}` for `proofOfHuman`, `orbLegacy`, and other legacy/fallback presets. |
 | TypeScript: import errors for `IRpContext` / `ISuccessResult` | v3 type names — removed in v4 | Use `RpContext` / `IDKitResult`. No `I` prefix. |
 | Widget never opens | Treating `IDKitRequestWidget` as a render-prop / function-as-child component | v4 widget is **controlled** — pass `open` and `onOpenChange` props. There is no child function. |
 | `npm install` fails: `No matching version found for @worldcoin/idkit@^2.x` (or 3.x) | Stale code sample | Pin `^4.x`. Run `npm view @worldcoin/idkit version` to confirm the latest. |

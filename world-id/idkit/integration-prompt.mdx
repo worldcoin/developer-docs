@@ -22,13 +22,13 @@ Integrate World ID into my project using IDKit. Here are my app details:
 
 2. Create a backend endpoint that generates RP signatures.
    Signatures verify that proof requests come from my app.
-   Use `signRequest(action, signingKey)` which returns `{ sig, nonce, createdAt, expiresAt }`.
+   Use `signRequest({ signingKeyHex, action })` which returns `{ sig, nonce, createdAt, expiresAt }`.
    Never expose the signing key to the client.
 
 3. On the client, fetch the RP signature from my backend, then create an IDKit request with:
-   - `app_id`, `action`, and `rp_context` (containing `rp_id`, `nonce`, `created_at`, `expires_at`, `signature` from the RP signature)
+   - `app_id`, `action`, and `rp_context` (containing `rp_id`, `nonce`, `created_at`, `expires_at`, `signature`; map the RP signature's `sig`->`signature`, `createdAt`->`created_at`, `expiresAt`->`expires_at`)
    - `allow_legacy_proofs: true`
-   - `.preset(orbLegacy())` for Orb verification
+   - `.preset(proofOfHuman())` for Proof of Human (World ID 4.0, with Orb fallback)
    - Signal is optional — use it to bind context like a user ID or wallet address into the proof. The backend should enforce the same value.
 
 4. On success, send the IDKit result to my backend.

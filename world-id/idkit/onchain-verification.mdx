@@ -166,10 +166,10 @@ contract VerifyUniquenessV4 {
 Minimal mapping from IDKit result:
 - `nullifier` = `responses[i].nullifier`
 - `action` = `keccak256(action)` as `uint256`
-- `rpId` = numeric `rp_id`
+- `rpId` = numeric form of your `rp_context.rp_id` (the `rp_`-prefixed string from your RP context, not the result)
 - `nonce` = top-level `nonce`
 - `signalHash` = `responses[i].signal_hash`
 - `expiresAtMin` = `responses[i].expires_at_min`
 - `issuerSchemaId` = `responses[i].issuer_schema_id`
-- `credentialGenesisIssuedAtMin` = `responses[i].credential_genesis_issued_at_min ?? 0`
+- `credentialGenesisIssuedAtMin` = the request's `genesis_issued_at_min` constraint (`0` if unconstrained) — not returned in `responses[i]`
 - `proof` = `responses[i].proof` (`uint256[5]`)

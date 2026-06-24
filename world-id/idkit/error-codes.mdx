@@ -165,15 +165,19 @@ This page focuses on IDKit SDK and bridge error codes returned during request fl
 
 Widgets expose an `onError` callback. Hooks expose `isError` and `errorCode` on the result object.
 
+In JS and React, failed requests expose an `IDKitDebugReport` for triage. The widget `onError` callback receives it as a second `debugReport` argument for flow/bridge errors (host-app verify failures such as `failed_by_host_app` omit it); hooks expose `getDebugReport(): IDKitDebugReport | undefined`.
+
 Version availability errors such as `world_id_4_not_available` and `world_id_3_not_available` are terminal for the current user and request. Retrying the same request usually returns the same result; change the requested credential policy or show a user-facing fallback instead.
 
-In JS and React, match these with `IDKitErrorCodes`. Kotlin and Swift expose the same raw values through their `IDKitErrorCode` enums. 
+In JS and React, match these with `IDKitErrorCodes`. Kotlin and Swift expose the same raw values through their `IDKitErrorCode` enums.
+
+<Note>The `IDKitDebugReport` is JS-only, exported from `@worldcoin/idkit-core` and re-exported from `@worldcoin/idkit`; the related `MiniAppDebugInfo` type is exported from `@worldcoin/idkit-core` only. The Kotlin, Swift, and Go SDKs do not provide it.</Note>
 
 ```tsx
 <IDKitRequestWidget
   // ...
-  onError={(errorCode) => {
-    console.error("IDKit error", errorCode);
+  onError={(errorCode, debugReport) => {
+    console.error("IDKit error", errorCode, debugReport);
   }}
 />
 ```
@@ -182,6 +186,6 @@ In JS and React, match these with `IDKitErrorCodes`. Kotlin and Swift expose the
 const flow = useIDKitRequest({ /* ... */ });
 
 if (flow.isError) {
-  console.error(flow.errorCode);
+  console.error(flow.errorCode, flow.getDebugReport());
 }
 ```
