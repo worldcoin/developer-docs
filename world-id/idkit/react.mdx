@@ -67,8 +67,8 @@ const rpContext: RpContext = {
     // Called after `handleVerify` resolves (or immediately if omitted).
     // Update your app state/UI here.
   }}
-  onError={(errorCode) => {
-    console.error("IDKit error", errorCode);
+  onError={(errorCode, debugReport) => {
+    console.error("IDKit error", errorCode, debugReport);
   }}
 />;
 ```
@@ -115,6 +115,7 @@ Hook result fields:
 - `connectorURI`
 - `result`
 - `errorCode`
+- `getDebugReport()`
 
 ## Invite-code mode
 
@@ -148,6 +149,7 @@ import { IDKitInviteCodeRequestWidget, selfieCheckLegacy } from "@worldcoin/idki
 - `codeExpiresAt`
 - `result`
 - `errorCode`
+- `getDebugReport()`
 
 ### Migrating from QR / connect-URL
 
@@ -186,6 +188,10 @@ import { IDKitInviteCodeRequestWidget, selfieCheckLegacy } from "@worldcoin/idki
 ```
 
 Swap the component and preset. Props, callbacks, and backend verification stay the same. The headless equivalent is `useIDKitInviteCodeRequest` in place of `useIDKitRequest`.
+
+## Session flows
+
+Session verification uses `IDKitSessionWidget` (controlled) or `useIDKitSession` (headless); `onSuccess` returns an `IDKitResultSession`. Both share the request flows' widget callbacks and hook-result fields — including `onError(errorCode, debugReport?)` and `getDebugReport()`.
 
 ## Presets
 

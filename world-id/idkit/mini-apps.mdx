@@ -59,6 +59,10 @@ This is the same widget from [Step 4 of the integration guide](/world-id/idkit/i
   onSuccess={() => {
     // Unlock the protected Mini App experience here.
   }}
+  onError={(errorCode, debugReport) => {
+    // Inside World App, debugReport?.transport is "mini_app".
+    console.error("IDKit error", errorCode, debugReport);
+  }}
 />
 ```
 

@@ -79,6 +79,7 @@ After `.preset(...)`, you get an `IDKitRequest` object:
 - `requestId`
 - `pollOnce()`
 - `pollUntilCompletion({ pollInterval, timeout })`
+- `getDebugReport()`
 
 ```ts
 import { IDKitErrorCodes } from "@worldcoin/idkit-core";
@@ -101,6 +102,26 @@ if (!completion.success) {
 <Note>
   When running inside World App, native transport is used and `connectorURI` may be empty.
   Outside World App, `connectorURI` is the URL you render as a QR code.
+</Note>
+
+## Debug report
+
+Both `IDKitRequest` and `IDKitInviteCodeRequest` expose `getDebugReport(): IDKitDebugReport` with diagnostics for the latest request state.
+
+```ts
+import type { IDKitDebugReport } from "@worldcoin/idkit-core";
+
+const completion = await request.pollUntilCompletion();
+if (!completion.success) {
+  const report = request.getDebugReport();
+  console.error(report.transport, report.request_id, report);
+}
+```
+
+`IDKitDebugReport` fields: `version`, `package_version`, `transport` (`"bridge" | "mini_app"`), `generated_at`, and optional `request_id`, `request_payload`, `response_payload`, and `mini_app` (`MiniAppDebugInfo`). For bridge transport `response_payload` is the decrypted plaintext response string once the request completes; for native (`mini_app`) transport it is a structured debug object. The `mini_app` object holds World App native-transport diagnostics: `verify_version`, `platform`, `send_channel`, `minikit_subscribed`, and `response_channel`.
+
+<Note>
+  `setDebug(true)` (or `window.IDKIT_DEBUG = true`) and `isDebug()` toggle verbose `console.debug` logging. This is separate from `getDebugReport()`, which works regardless.
 </Note>
 
 ## Invite-code mode
@@ -129,6 +150,7 @@ const completion = await request.pollUntilCompletion();
 - `requestId`
 - `pollOnce()`
 - `pollUntilCompletion({ pollInterval, timeout })`
+- `getDebugReport()`
 
 ### Migrating from QR / connect-URL
 
