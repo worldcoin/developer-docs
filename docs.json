@@ -448,10 +448,6 @@
       "destination": "/world-id/overview"
     },
     {
-      "source": "/id/sign-in",
-      "destination": "/world-id/overview"
-    },
-    {
       "source": "/protocol",
       "destination": "https://whitepaper.world.org/#protocol"
     },
@@ -620,10 +616,6 @@
       "destination": "/world-id/reference/idkit"
     },
     {
-      "source": "/reference/sign-in",
-      "destination": "/world-id/reference/sign-in"
-    },
-    {
       "source": "/poh-issuer",
       "destination": "/world-id/reference/poh-issuer"
     },
@@ -634,10 +626,6 @@
     {
       "source": "/reference/world-id-2-migration-guide",
       "destination": "/world-id/reference/world-id-2-migration-guide"
-    },
-    {
-      "source": "/sign-in",
-      "destination": "/world-id/overview"
     },
     {
       "source": "/try",
@@ -685,18 +673,6 @@
     },
     {
       "source": "/world-id/id/incognito-actions",
-      "destination": "/world-id/idkit/integrate"
-    },
-    {
-      "source": "/world-id/id/sign-in",
-      "destination": "/world-id/overview"
-    },
-    {
-      "source": "/world-id/sign-in",
-      "destination": "/world-id/overview"
-    },
-    {
-      "source": "/world-id/sign-in/pitfalls",
       "destination": "/world-id/idkit/integrate"
     },
     {

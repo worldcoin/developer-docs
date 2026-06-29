@@ -510,7 +510,7 @@
                 "properties": {
                   "action": {
                     "type": "string",
-                    "description": "Action identifier passed to IDKit. Optional for Sign in with World ID flows."
+                    "description": "Action identifier passed to IDKit."
                   },
                   "nullifier_hash": {
                     "type": "string",
