@@ -33,12 +33,11 @@ Replace `api_...` with the API key you copied from the Developer Portal.
 <Tabs>
   <Tab title="Claude Code">
     ```bash
-    claude mcp add \
+    claude mcp add world-developer-portal \
+      https://developer.world.org/api/mcp \
       --transport http \
       --scope project \
-      --header "Authorization: Bearer api_..." \
-      world-developer-portal \
-      https://developer.world.org/api/mcp
+      --header "Authorization: Bearer api_..."
     ```
   </Tab>
   <Tab title="Codex">
