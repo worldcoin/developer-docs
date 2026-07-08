@@ -1,6 +1,6 @@
 ---
-title: "Verification Flows"
-description: "Understand the three verification paths a user can take when your app requests a World ID proof — hot, warm, and cold."
+title: "User Journeys"
+description: "Understand the three verification paths a user can take when your app requests a World ID proof."
 "og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
@@ -10,7 +10,7 @@ When your app requests a World ID proof, the user is taken through one of three 
 | Flow | World App installed | Has credential | What happens |
 | --- | --- | --- | --- |
 | Hot | Yes | Yes | World App opens, displays a proof consent, and the user approves. Typically under 10 seconds. |
-| Warm | Yes | No | World App opens and walks the user through credential enrollment (e.g., PoH, or NFC). Once issued, a proof consent appears and the user approves. Note: Selfie check does not have a distinct warm flow - the "Hot Flow" is used for all "app installed" cases. |
+| Warm | Yes | No | World App opens and walks the user through credential enrollment (e.g., PoH, or NFC). Once issued, a proof consent appears and the user approves. **Note: The Selfie Check is identical to the hot flow.** |
 | Cold | No | No | The user must install World App first. The experience differs by platform — see below. |
 
 ## Cold flow
@@ -19,7 +19,8 @@ The cold flow requires the most steps and works differently on each platform bec
 
 ### Android
 
-Android supports deferred deep linking through the Play Store. After the user downloads World App, the original verification context is carried forward at first launch — World App picks up where the user left off and routes them directly into credential enrollment.
+Android supports deferred deep linking through the Play Store. After the user downloads World App, they could either create an account or log in to an existing one, and then World App resumes the verification flow.
+
 
 ```mermaid
 sequenceDiagram
@@ -31,8 +32,11 @@ sequenceDiagram
     App->>User: IDKit request (connect URL / QR)
     User->>Play: Download World App
     Play-->>WA: Deferred deep link preserved
-    WA->>User: Account onboarding
-    WA->>User: Credential enrollment
+
+    WA->>User: Account onboarding OR Login
+    opt Has credential
+      WA->>User: Credential enrollment
+    end
     WA->>User: Proof consent
     User->>WA: Approve
     WA-->>App: Proof returned
@@ -58,7 +62,7 @@ sequenceDiagram
 
     App->>User: Prompt to install World App
     User->>Store: Download World App
-    WA->>User: Account onboarding
+    WA->>User: Account onboarding OR Login
     User->>App: Return to your app
     App->>User: IDKit request (connect URL / QR)
     WA->>User: Hot or warm flow
@@ -124,119 +128,3 @@ sequenceDiagram
 - Codes expire after a short TTL (currently fifteen minutes).
 - Codes are one-shot — once redeemed, they cannot be reused. Re-running the request returns a fresh code with a fresh TTL.
 - After the user redeems the code, your existing poll loop receives the proof exactly as it does in QR mode.
-
-##### Integrate
-
-The setup steps that precede the request — creating an app in the Developer Portal and generating an RP signature on your backend — are identical to the [standard integration](/world-id/idkit/integrate). Only the request call and the rendered UI change.
-
-<CodeGroup title="Create an invite-code request">
-
-```typescript
-import { IDKit, selfieCheckLegacy } from "@worldcoin/idkit-core";
-
-// `rpSig` is fetched from your backend — see the standard integration guide.
-const request = await IDKit.requestWithInviteCode({
-  app_id: "app_xxxxx",
-  action: "my-action",
-  rp_context: {
-    rp_id: "rp_xxxxx",
-    nonce: rpSig.nonce,
-    created_at: rpSig.created_at,
-    expires_at: rpSig.expires_at,
-    signature: rpSig.sig,
-  },
-  allow_legacy_proofs: true,
-  environment: "production",
-}).preset(selfieCheckLegacy({ signal: "user-123" }));
-
-// Open the landing page — displays invite code + QR
-window.open(request.connectorURI, "_blank");
-
-const completion = await request.pollUntilCompletion();
-```
-
-```tsx
-import {
-  IDKitInviteCodeRequestWidget,
-  selfieCheckLegacy,
-  type RpContext,
-} from "@worldcoin/idkit";
-
-const rpContext: RpContext = {
-  rp_id: "rp_xxxxx",
-  nonce: rpSig.nonce,
-  created_at: rpSig.created_at,
-  expires_at: rpSig.expires_at,
-  signature: rpSig.sig,
-};
-
-<IDKitInviteCodeRequestWidget
-  open={open}
-  onOpenChange={setOpen}
-  app_id="app_xxxxx"
-  action="my-action"
-  rp_context={rpContext}
-  allow_legacy_proofs={true}
-  preset={selfieCheckLegacy({ signal: "user-123" })}
-  handleVerify={async (result) => {
-    const response = await fetch("/api/verify-proof", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ rp_id: rpContext.rp_id, idkitResponse: result }),
-    });
-    if (!response.ok) throw new Error("Backend verification failed");
-  }}
-  onSuccess={() => {
-    // Update app state here.
-  }}
-/>;
-```
-
-```swift
-import IDKit
-
-// `rpSig` is fetched from your backend — see the standard integration guide.
-let rpContext = try RpContext(
-  rpId: "rp_xxxxx",
-  nonce: rpSig.nonce,
-  createdAt: rpSig.createdAt,
-  expiresAt: rpSig.expiresAt,
-  signature: rpSig.sig
-)
-
-let config = IDKitRequestConfig(
-  appId: "app_xxxxx",
-  action: "my-action",
-  rpContext: rpContext,
-  allowLegacyProofs: true,
-  environment: .production
-)
-
-let request = try IDKit.request(config: config)
-  .presetWithInviteCode(selfieCheckLegacy(signal: "user-123"))
-
-// Open the landing page — displays invite code + QR
-await UIApplication.shared.open(request.connectorURL)
-
-let completion = await request.pollUntilCompletion()
-```
-
-</CodeGroup>
-
-<Warning>
-  Generate `rp_context` in your backend only. Never expose your RP signing key in client code.
-</Warning>
-
-The config object is the same one you pass to `IDKit.request(...)` — invite-code mode introduces no new required fields.
-
-Set `allow_legacy_proofs: true` because `selfieCheckLegacy` is a v3 ("legacy") preset; the flag lets World App accept v3 proofs to satisfy the request. When invite-code mode adds support for v4 presets, set it to `false` for those flows.
-
-Polling and proof verification are unchanged from QR mode: the same `Status` values are emitted and the same `IDKitCompletionResult` is returned. Forward the result payload as-is to `POST https://developer.world.org/api/v4/verify/{rp_id}` — see [Verify the proof in your backend](/world-id/idkit/integrate#step-5-verify-the-proof-in-your-backend).
-
-##### SDK references
-
-For the full surface — entry points, hook results, and type signatures — see the per-SDK reference:
-
-- [JavaScript](/world-id/idkit/javascript#invite-code-mode)
-- [React](/world-id/idkit/react#invite-code-mode)
-- [Swift](/world-id/idkit/swift#invite-code-mode)
