@@ -4,7 +4,15 @@ title: "Build with LLMs"
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-Copy this prompt and paste it into Codex, Claude, Cursor, or your preferred AI coding assistant to integrate World ID into your existing project.
+## Before you start
+
+You only need an existing project with a client and a backend or serverless function that can keep secrets. The skill will guide you through the rest of the integration, including Developer Portal setup.
+
+If you already have a World ID app in the [Developer Portal](https://developer.world.org), have its `app_id` and `rp_id` ready. Store the RP signing key as a server-side secret—never paste it into the prompt.
+
+Prefer to integrate manually? Follow the [IDKit integration guide](/world-id/idkit/integrate) for the complete client, signing, verification, and testing flow.
+
+Copy this prompt and paste it into Codex, Claude, Cursor, or your preferred AI coding assistant:
 
 ```text title="Copy this prompt"
 Read world.id/SKILL.md and add World ID to my app
