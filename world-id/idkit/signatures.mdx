@@ -7,7 +7,7 @@ description: "Spec for generating RP signatures, with pseudocode, SDK examples, 
 
 Relying Party (RP) signatures prove that a proof request genuinely comes from your app, preventing impersonation attacks.
 Your backend signs every request with the `signing_key` from the [Developer Portal](https://developer.world.org),
-and World App verifies the signature before generating a proof. RP signatures are enforced for [World ID 4.0 requests](/world-id/4-0-migration).
+and World ID verifies the signature before generating a proof. RP signatures are enforced for [World ID 4.0 requests](/world-id/4-0-migration).
 
 <Warning>
   Never expose your signing key to client-side code. If the key leaks, rotate it immediately in the Developer Portal.

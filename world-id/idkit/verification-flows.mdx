@@ -5,17 +5,17 @@ description: "The flows your integration can land users in when you request a Wo
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-When your app requests a World ID proof, the user lands in one of three flows based on two factors: whether they have World App installed, and — if not — whether they already have a World App account.
+When your app requests a World ID proof, the user lands in one of three flows based on two factors: whether they have World ID installed, and — if not — whether they already have a World ID.
 
 <Note>
   The integration flow is the same for all three paths, but the user experience differs.
 </Note>
 
-| Flow | World App installed | Existing account | What happens |
+| Flow | World ID installed | Existing account | What happens |
 | --- | --- | --- | --- |
-| Hot | Yes | — | World App opens, displays a proof consent, and the user approves. Typically under 10 seconds. If the user does not yet hold the requested [credential](/world-id/idkit/credentials), World App walks them through enrollment first — your integration sees no difference. |
-| Cold | No | No | The user installs World App and completes account onboarding first. The experience differs by platform — see below. |
-| Semi-cold | No | Yes | The user installs World App and logs in to their existing account. **Android:** the flow resumes automatically. **iOS:** the user must return to your app and rescan, unless you use invite-code mode — see below. |
+| Hot | Yes | — | World ID opens, displays a proof consent, and the user approves. Typically under 10 seconds. If the user does not yet hold the requested [credential](/world-id/idkit/credentials), World ID walks them through enrollment first — your integration sees no difference. |
+| Cold | No | No | The user installs World ID and completes account onboarding first. The experience differs by platform — see below. |
+| Semi-cold | No | Yes | The user installs World ID and logs in to their existing account. **Android:** the flow resumes automatically. **iOS:** the user must return to your app and rescan, unless you use invite-code mode — see below. |
 
 ## Cold and semi-cold flows
 
@@ -23,17 +23,17 @@ Both flows require an install and work differently on each platform because of h
 
 ### Android
 
-Android supports deferred deep linking through the Play Store. After the user downloads World App, they either create an account (cold) or log in to an existing one (semi-cold), then World App resumes the verification flow automatically.
+Android supports deferred deep linking through the Play Store. After the user downloads World ID, they either create an account (cold) or log in to an existing one (semi-cold), then World ID resumes the verification flow automatically.
 
 ```mermaid
 sequenceDiagram
     participant App as Your App
     participant User
     participant Play as Play Store
-    participant WA as World App
+    participant WA as World ID
 
     App->>User: IDKit request (connect URL / QR)
-    User->>Play: Download World App
+    User->>Play: Download World ID
     Play-->>WA: Deferred deep link preserved
 
     WA->>User: Account onboarding OR Login
@@ -51,9 +51,9 @@ iOS does not support deferred deep linking through the App Store. The original v
 
 #### Default behavior
 
-1. The user downloads World App from the App Store and creates an account or logs in to an existing one.
+1. The user downloads World ID from the App Store and creates an account or logs in to an existing one.
 2. The user returns to your app, which re-triggers the IDKit verification request (e.g., the user rescans the QR code).
-3. World App opens and takes the user through the standard in-app flow.
+3. World ID opens and takes the user through the standard in-app flow.
 4. The proof consent appears, the user approves, and the proof is returned to your app.
 
 ```mermaid
@@ -61,10 +61,10 @@ sequenceDiagram
     participant App as Your App
     participant User
     participant Store as App Store
-    participant WA as World App
+    participant WA as World ID
 
-    App->>User: Prompt to install World App
-    User->>Store: Download World App
+    App->>User: Prompt to install World ID
+    User->>Store: Download World ID
     WA->>User: Account onboarding OR Login
     User->>App: Return to your app
     App->>User: IDKit request (rescan QR / connect URL)
@@ -74,7 +74,7 @@ sequenceDiagram
 
 #### With invite-code mode
 
-Invite-code mode displays a short 6-character code in your app that the user enters into World App. World App treats the code as an entry point to the in-app onboarding flows the user needs to complete in order to satisfy your IDKit request, then returns the proof.
+Invite-code mode displays a short 6-character code in your app that the user enters into World ID. World ID treats the code as an entry point to the in-app onboarding flows the user needs to complete in order to satisfy your IDKit request, then returns the proof.
 
 <Note>
   Invite-code mode exists because iOS lacks deferred deep linking — Android preserves the context via the Play Store.
@@ -82,13 +82,13 @@ Invite-code mode displays a short 6-character code in your app that the user ent
 
 1. Your app triggers an IDKit invite-code request.
 2. Your app opens the URL that IDKit provides. One of three paths follows:
-   - **User has World App (mobile):** World App launches directly via deep link.
-   - **User has World App (desktop):** The user scans the QR code with World App.
-   - **User needs to install World App:** The user installs World App, completes account onboarding or logs in, then enters the invite code to resume the request.
-3. World App restores the verification context, walks the user through credential enrollment if needed, and presents a proof consent.
+   - **User has World ID (mobile):** World ID launches directly via deep link.
+   - **User has World ID (desktop):** The user scans the QR code with World ID.
+   - **User needs to install World ID:** The user installs World ID, completes account onboarding or logs in, then enters the invite code to resume the request.
+3. World ID restores the verification context, walks the user through credential enrollment if needed, and presents a proof consent.
 4. The user approves and the proof is returned to your app.
 
-The 6-character code persists across the App Store install, so once World App is installed and onboarded the user can resume the verification flow without returning to your app first. This also covers cross-device scenarios (e.g., a desktop browser displaying the QR for the user's phone) where deep linking cannot carry context.
+The 6-character code persists across the App Store install, so once World ID is installed and onboarded the user can resume the verification flow without returning to your app first. This also covers cross-device scenarios (e.g., a desktop browser displaying the QR for the user's phone) where deep linking cannot carry context.
 
 **Demo**
 
@@ -106,11 +106,11 @@ sequenceDiagram
     participant User
     participant LP as Landing Page
     participant Store as App Store
-    participant WA as World App
+    participant WA as World ID
 
     App->>LP: Open IDKit-provided URL
     LP->>User: Display invite code + QR
-    User->>Store: Download World App
+    User->>Store: Download World ID
     WA->>User: Account onboarding OR Login
     User->>WA: Enter invite code
     WA->>WA: Resolve code & restore context

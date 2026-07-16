@@ -1,7 +1,7 @@
 ---
 name: world-id-integration
 description: |
-  Use this skill when adding, upgrading, debugging, or testing World ID verification with IDKit in a new or existing web or mobile app. Covers Proof of Human, passport/document, Face Check, and session/sign-in flows; Developer Portal app, RP, and action setup; server-side signing and proof verification; environment matching; nullifier replay protection; and launch testing. Trigger when the user asks to add World ID, verify humans, stop bots or multi-accounting, add Sybil resistance, or mentions IDKit, Orb, World App proof flows, @worldcoin/idkit, signing keys, rp_id, or app_id.
+  Use this skill when adding, upgrading, debugging, or testing World ID verification with IDKit in a new or existing web or mobile app. Covers Proof of Human, passport/document, Face Check, and session/sign-in flows; Developer Portal app, RP, and action setup; server-side signing and proof verification; environment matching; nullifier replay protection; and launch testing. Trigger when the user asks to add World ID, verify humans, stop bots or multi-accounting, add Sybil resistance, or mentions IDKit, Orb, World ID proof flows, World App proof flows, @worldcoin/idkit, signing keys, rp_id, or app_id.
 version: 0.1.0
 metadata:
   author: worldcoin
@@ -35,7 +35,7 @@ Before changing code or creating Portal resources:
    - integration goal and credential preset
    - new or existing project; client, backend, package manager, and persistence layer
    - Developer Portal account/team, `app_id`, `rp_id`, and action
-   - target environment and test path: staging simulator, production World App, or both
+   - target environment and test path: staging simulator, production World ID, or both
    - Developer Portal MCP connection
    - whether an RP signing key already exists in a server-side secret store
    - credential access, especially Face Check
@@ -144,17 +144,17 @@ The full code for each step is at [https://docs.world.org/world-id/idkit/integra
 1. **Install IDKit** — `^4.x`, the right package for the platform (table in Phase 2).
 2. **Create or reuse the Portal resources.** Use the MCP when available. Reuse an existing app, RP, and action when they match the requested integration. For a new RP, capture `app_id`, `rp_id`, and `signing_key.private_key` from `configure_world_id`, create the action in the intended environment, and write the signing key to the prepared server-only secret store in the same step. The portal returns it exactly once. **Do not print, log, or return the private key to chat.** If the key is lost, explain that `get_world_id_signing_key` cannot recover it; rotation creates a new key and invalidates the old signer.
 3. **Generate the RP signature in your backend.** *Why backend?* The signing key authenticates your app to the protocol. Leaking it lets anyone impersonate your app and forge proof requests. **CRITICAL: never sign on the client. Never expose `RP_SIGNING_KEY` as a `NEXT_PUBLIC_*` var. Never log it.**
-4. **Open the IDKit widget on the client** with the signature your backend returned. The widget hands off to the World App, which produces a zero-knowledge proof.
+4. **Open the IDKit widget on the client** with the signature your backend returned. The widget hands off to World ID, which produces a zero-knowledge proof.
 5. **Verify the proof in your backend** by POSTing it **as-is** to `https://developer.world.org/api/v4/verify/{rp_id}`. *Why backend?* A client can return any JSON it wants. Only the World verifier — called from a trusted server — confirms the proof is real and tied to a unique credential. Verifying client-side defeats the entire point. **DO NOT mutate, re-encode, or trim the proof JSON before forwarding** — pass exactly what IDKit returned.
 6. **Store the nullifier.** Every successful proof returns a `nullifier` — an RP-scoped, action-scoped, non-reversible identifier for that user. *Why store it?* Without uniqueness storage, a user can verify the same proof twice and double-claim a reward, vote, etc. Persist `(action, nullifier)` with a `UNIQUE` constraint and reject duplicates on insert. Column type: **`NUMERIC(78, 0)`** (256-bit field elements). The nullifier reveals nothing about the user — it's safe to store, but it's the *only* anti-replay mechanism, so it's required.
 
 ## Phase 5 — Match environments end-to-end
 
-- The **production** World App only signs **production** proofs.
-- A **staging** action only verifies against the World App **simulator** ([https://simulator.worldcoin.org](https://simulator.worldcoin.org)).
+- The **production** World ID app only signs **production** proofs.
+- A **staging** action only verifies against the World ID **Simulator** ([https://simulator.worldcoin.org](https://simulator.worldcoin.org)).
 - The IDKit `environment` prop, the action's `environment`, and the simulator-vs-real-app choice **must all match.**
 
-**CRITICAL: if real users will scan with their phones, the action environment must be `production`.** A staging action with the production World App will silently produce zero proofs and look like a frontend bug. If the user needs both simulator testing and real-device QA, create separate staging and production actions.
+**CRITICAL: if real users will scan with their phones, the action environment must be `production`.** A staging action with the production World ID app will silently produce zero proofs and look like a frontend bug. If the user needs both simulator testing and real-device QA, create separate staging and production actions.
 
 ## Phase 6 — Test the integration end-to-end
 
@@ -162,7 +162,7 @@ Do not declare the integration complete from compilation or Portal configuration
 
 - [ ] RP-signing endpoint succeeds without exposing or logging secrets.
 - [ ] Widget/request opens in the selected environment.
-- [ ] The selected credential completes with the staging simulator or production World App as intended.
+- [ ] The selected credential completes with the staging simulator or production World ID as intended.
 - [ ] Backend verification succeeds and the exact IDKit result reaches `/api/v4/verify/{rp_id}`.
 - [ ] The verified nullifier is persisted.
 - [ ] Replaying the same nullifier is rejected by the database uniqueness constraint.
@@ -180,7 +180,7 @@ Surface these proactively when you see the corresponding symptom — don't make 
 | Symptom | Cause | Recovery |
 |---|---|---|
 | Face Check appears unresponsive or never starts | The app may not be enabled for Face Check | Read `enable_face_check` through MCP when available or `/api/v1/precheck/{app_id}`. If false, stop and explain how to request access. |
-| World App shows "action not found" or QR scan does nothing | Action wasn't created in the environment IDKit is pointing at | Create the missing action with `create_world_id_action` (`environment: "production"` for real devices, `"staging"` for simulator). Confirm `NEXT_PUBLIC_WLD_ENVIRONMENT` matches. |
+| World ID shows "action not found" or QR scan does nothing | Action wasn't created in the environment IDKit is pointing at | Create the missing action with `create_world_id_action` (`environment: "production"` for real devices, `"staging"` for simulator). Confirm `NEXT_PUBLIC_WLD_ENVIRONMENT` matches. |
 | `/api/v4/verify/{rp_id}` returns `invalid_proof` or `verification_failed` | Often staging/production env mismatch, or proof was mutated before forward | Re-check Phase 5. Forward the proof JSON byte-for-byte without re-encoding fields. |
 | Verification fails in JS/React and the error code alone isn't enough | Need transport/payload diagnostics | Read `getDebugReport()` (or the `onError` `debugReport` arg) — it carries `transport`, `request_id`, request/response payloads, and World App `mini_app` channel info. JS SDKs only. |
 | `/api/v4/verify/{rp_id}` returns `not_registered` or 4xx with `rp` errors | On-chain registration is still `pending` | Poll `get_world_id_registration_status` until the intended environment is `registered`. Production must be registered before launch. |
@@ -220,7 +220,7 @@ For launch readiness, also confirm:
 - Error codes: [https://docs.world.org/world-id/idkit/error-codes](https://docs.world.org/world-id/idkit/error-codes)
 - Developer Portal MCP: [https://github.com/worldcoin/developer-portal/tree/main/web/api/mcp](https://github.com/worldcoin/developer-portal/tree/main/web/api/mcp)
 - Developer Portal: [https://developer.world.org](https://developer.world.org)
-- World App simulator (staging only): [https://simulator.worldcoin.org](https://simulator.worldcoin.org)
+- World ID Simulator (staging only): [https://simulator.worldcoin.org](https://simulator.worldcoin.org)
 
 ---
 
