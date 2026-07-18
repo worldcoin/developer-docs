@@ -695,6 +695,16 @@
               "type": "string"
             },
             "description": "RP ID (`rp_...`) is recommended. App ID (`app_...`) is also accepted for backward compatibility."
+          },
+          {
+            "name": "User-Agent",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "my-world-id-backend/1.0"
+            },
+            "description": "Identifies the backend client. Requests without a User-Agent may be rejected by bot protection."
           }
         ],
         "requestBody": {
