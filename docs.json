@@ -65,6 +65,7 @@
               "world-id/idkit/integrate",
               "world-id/idkit/verification-flows",
               "world-id/idkit/credentials",
+              "world-id/idkit/mini-apps",
               "world-id/idkit/signatures",
               "world-id/idkit/build-with-llms",
               "world-id/idkit/onchain-verification",
@@ -92,7 +93,10 @@
           },
           {
             "group": "Migration",
-            "pages": ["world-id/4-0-migration"]
+            "pages": [
+              "world-id/4-0-migration",
+              "world-id/from-idkit-standalone"
+            ]
           },
           {
             "group": "Technical Reference",
@@ -443,10 +447,6 @@
       "destination": "/world-id/overview"
     },
     {
-      "source": "/id/sign-in",
-      "destination": "/world-id/overview"
-    },
-    {
       "source": "/protocol",
       "destination": "https://whitepaper.world.org/#protocol"
     },
@@ -615,10 +615,6 @@
       "destination": "/world-id/reference/idkit"
     },
     {
-      "source": "/reference/sign-in",
-      "destination": "/world-id/reference/sign-in"
-    },
-    {
       "source": "/poh-issuer",
       "destination": "/world-id/reference/poh-issuer"
     },
@@ -629,10 +625,6 @@
     {
       "source": "/reference/world-id-2-migration-guide",
       "destination": "/world-id/reference/world-id-2-migration-guide"
-    },
-    {
-      "source": "/sign-in",
-      "destination": "/world-id/overview"
     },
     {
       "source": "/try",
@@ -680,18 +672,6 @@
     },
     {
       "source": "/world-id/id/incognito-actions",
-      "destination": "/world-id/idkit/integrate"
-    },
-    {
-      "source": "/world-id/id/sign-in",
-      "destination": "/world-id/overview"
-    },
-    {
-      "source": "/world-id/sign-in",
-      "destination": "/world-id/overview"
-    },
-    {
-      "source": "/world-id/sign-in/pitfalls",
       "destination": "/world-id/idkit/integrate"
     },
     {

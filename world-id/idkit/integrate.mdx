@@ -8,7 +8,7 @@ description: "Integrate World ID into your app"
 
 import IDKitResponse from "/snippets/idkit-response.mdx";
 
-IDKit is the SDK for integrating World ID into your app. It handles proof requests, verification flows, and communication with the World App — so your backend receives a cryptographic proof of human, not personal data.
+IDKit is the SDK for integrating World ID into your app. It handles proof requests, verification flows, and communication with the World ID app — so your backend receives a cryptographic proof of human, not personal data.
 
 It's available as a React widget for drop-in integration, or as JS, Swift, and Kotlin SDKs for custom flows. To familiarize yourself with the core concepts of World ID, check out this [page](/world-id/concepts).
 
@@ -16,11 +16,11 @@ It's available as a React widget for drop-in integration, or as JS, Swift, and K
 
 ## How it works
 
-Your app sends a **proof request** through IDKit, challenging the user to prove something about themselves — such as uniqueness, document possession, or liveness — based on their [credentials](/world-id/overview#credentials). The user's World App generates a zero-knowledge proof without revealing any personal data. Your backend then verifies that proof and stores a **nullifier** (a per-app, per-action identifier) to prevent the same person from verifying twice.
+Your app sends a **proof request** through IDKit, challenging the user to prove something about themselves — such as uniqueness, document possession, or liveness — based on their [credentials](/world-id/overview#credentials). The user's World ID app generates a zero-knowledge proof without revealing any personal data. Your backend then verifies that proof and stores a **nullifier** (a per-app, per-action identifier) to prevent the same person from verifying twice.
 
 <img src="/images/docs/idkit-flow.svg" alt="IDKit integration flow" />
 
-There are four components: your **client** (where IDKit runs), your **backend** (which signs requests and verifies proofs), the **World App** (on the user's device), and the **Developer Portal** (which validates proofs on-chain). The steps below walk through each piece.
+There are four components: your **client** (where IDKit runs), your **backend** (which signs requests and verifies proofs), the **World ID app** (on the user's device), and the **Developer Portal** (which validates proofs on-chain). The steps below walk through each piece.
 
 # Step 1: Install IDKit
 
@@ -128,7 +128,7 @@ func handleRPSignature(w http.ResponseWriter, r *http.Request) {
 
 <Note>
   The steps below cover the standard request flow. Depending on whether the user
-  already has World App and the credential you're requesting, they may be taken
+  already has World ID and the credential you're requesting, they may be taken
   through a different experience. See [Verification flows](/world-id/idkit/verification-flows)
   for details.
 </Note>
@@ -373,7 +373,7 @@ sequenceDiagram
 
     Client->>Client: 2. Create IDKit request with RP signature
     Client->>User: 3. Show connect URL / QR code
-    User->>User: 4. Prove uniqueness in World App
+    User->>User: 4. Prove uniqueness in World ID
 
     User-->>Client: 5. Proof returned via IDKit
 

@@ -510,7 +510,7 @@
                 "properties": {
                   "action": {
                     "type": "string",
-                    "description": "Action identifier passed to IDKit. Optional for Sign in with World ID flows."
+                    "description": "Action identifier passed to IDKit."
                   },
                   "nullifier_hash": {
                     "type": "string",
@@ -732,7 +732,7 @@
                     "action": "my_action",
                     "responses": [
                       {
-                        "identifier": "orb",
+                        "identifier": "proof_of_human",
                         "issuer_schema_id": 1,
                         "nullifier": "0x2bf8406809dcefb1486dadc96c0a897db9bab002053054cf64272db512c6fbd8",
                         "expires_at_min": 49012345,
@@ -747,10 +747,10 @@
                   "value": {
                     "protocol_version": "4.0",
                     "nonce": "0xabc123",
-                    "session_id": "1234567890123456789",
+                    "session_id": "session_5f3a9c2e...8d1b0a",
                     "responses": [
                       {
-                        "identifier": "orb",
+                        "identifier": "proof_of_human",
                         "issuer_schema_id": 1,
                         "session_nullifier": ["0xaaa", "0xbbb"],
                         "expires_at_min": 49012345,
@@ -1302,6 +1302,10 @@
             "items": {
               "$ref": "#/components/schemas/VerifyV4ResponseItemV3"
             }
+          },
+          "user_presence_completed": {
+            "type": "boolean",
+            "description": "Whether World App completed the requested user-presence check. IDKit always sends it; treat a missing value as false."
           }
         }
       },
@@ -1335,6 +1339,10 @@
             "items": {
               "$ref": "#/components/schemas/VerifyV4ResponseItemV4"
             }
+          },
+          "user_presence_completed": {
+            "type": "boolean",
+            "description": "Whether World App completed the requested user-presence check. IDKit always sends it; treat a missing value as false."
           }
         }
       },
@@ -1352,7 +1360,9 @@
             "type": "string"
           },
           "session_id": {
-            "type": "string"
+            "type": "string",
+            "description": "Opaque session ID in the format session_<128 hex characters>.",
+            "example": "session_5f3a9c2e...8d1b0a"
           },
           "environment": {
             "type": "string",
@@ -1365,6 +1375,10 @@
             "items": {
               "$ref": "#/components/schemas/VerifyV4SessionResponseItem"
             }
+          },
+          "user_presence_completed": {
+            "type": "boolean",
+            "description": "Whether World App completed the requested user-presence check. IDKit always sends it; treat a missing value as false."
           }
         }
       },
@@ -1422,9 +1436,6 @@
           "expires_at_min": {
             "type": "integer"
           },
-          "credential_genesis_issued_at_min": {
-            "type": "integer"
-          },
           "proof": {
             "type": "array",
             "minItems": 5,
@@ -1466,9 +1477,6 @@
             "description": "Tuple `[nullifier, action]`."
           },
           "expires_at_min": {
-            "type": "integer"
-          },
-          "credential_genesis_issued_at_min": {
             "type": "integer"
           },
           "proof": {
@@ -1524,7 +1532,9 @@
             "enum": ["production", "staging"]
           },
           "session_id": {
-            "type": "string"
+            "type": "string",
+            "description": "Opaque session ID in the format session_<128 hex characters>.",
+            "example": "session_5f3a9c2e...8d1b0a"
           },
           "results": {
             "type": "array",
