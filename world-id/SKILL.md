@@ -24,7 +24,7 @@ The full integration guide with code for every language lives at [https://docs.w
 
 # Agent: read these instructions before doing anything
 
-Take the user from "I want World ID" to a verified working flow. Inspect first, ask only for missing information, and resume from the user's actual state instead of restarting setup.
+Take the user from "I want World ID" to a verified working flow. Inspect first, ask only for missing information, and resume from the user's actual state rather than restarting setup.
 
 ## Phase 0 — Establish readiness
 
@@ -42,7 +42,7 @@ Before changing code or creating Portal resources:
 3. Report a short readiness summary and ask only for unresolved blockers. **Never ask the user to paste a signing key, Portal API key, or other secret into chat.** Ask only whether it exists and where the application expects it.
 4. Build a TODO from the missing steps. Preserve working configuration and existing Portal resources unless the user explicitly wants replacements.
 
-Do not generate or rotate an RP signing key until a server-only secret destination is ready. Rotation invalidates the old signer: explain the impact and get explicit confirmation before rotating.
+Do not generate or rotate an RP signing key until a server-only secret destination is ready. Rotation invalidates the old signer: explain the impact and get explicit confirmation first.
 
 ## Phase 1 — Use the Developer Portal MCP when available
 
@@ -52,7 +52,7 @@ The **World ID Developer Portal MCP** turns the app-creation lifecycle into MCP 
 - Endpoint: `https://developer.world.org/api/mcp` (transport: streamable-http)
 - Auth: `Authorization: Bearer api_<base64(id:secret)>` (Developer Portal team API key)
 
-Prefer the MCP over the dashboard when it is connected. Start with `get_team_context`, then use `get_app_config` for the selected app before creating anything. Clients may namespace MCP tools differently; match these final tool names:
+Prefer the MCP over the dashboard when connected. Start with `get_team_context`, then `get_app_config` for the selected app before creating anything. Clients may namespace MCP tools differently; match these final tool names:
 
 | Dashboard action | MCP tool |
 |---|---|
@@ -71,8 +71,8 @@ If the MCP is not connected, explain that it can inspect and configure the user'
 
 Two paths land here. Identify which:
 
-- **Path 1 — Building from scratch** (demo, hackathon, new product). You have full control of the stack. Default to **Next.js (App Router) + TypeScript** as the golden path — it's what every official sample uses and it's the fastest way to a working flow.
-- **Path 2 — Integrating into an existing stack.** Read the codebase first. Confirm the **frontend** (web / mobile) and the **backend** (where secrets live), then pick the right SDK pair from below.
+- **Path 1 — Building from scratch** (demo, hackathon, new product). You control the full stack. Default to **Next.js (App Router) + TypeScript** as the golden path — every official sample uses it and it's the fastest way to a working flow.
+- **Path 2 — Integrating into an existing stack.** Read the codebase first. Confirm the **frontend** (web / mobile) and the **backend** (where secrets live), then pick the right SDK pair below.
 
 Supported clients and backends — all interoperable:
 
@@ -93,7 +93,7 @@ Supported clients and backends — all interoperable:
 
 ## Phase 3 — Pick the credential and confirm access
 
-The credential decides what the user proves. Get this explicit before scaffolding — switching later means a new action.
+The credential decides what the user proves. Nail this down before scaffolding — switching later means a new action.
 
 | Preset | What it proves | Use it for |
 |---|---|---|
@@ -107,7 +107,7 @@ Other legacy presets exist (`documentLegacy`, `deviceLegacy`); reach for them on
 
 ### Face Check access gate
 
-After the app and action exist—but before implementing or opening a Face Check flow—confirm that the `app_id` is enabled:
+After the app and action exist—but before implementing or opening a Face Check flow—confirm the `app_id` is enabled:
 
 If either resource is missing, mark this gate pending, provision the resource in Phase 4 step 2, and return here before implementing the client request.
 
@@ -123,14 +123,14 @@ If either resource is missing, mark this gate pending, provision the resource in
 
 3. Read `enable_face_check` from the response:
    - `true`: continue.
-   - `false`: stop and tell the user that Face Check is not enabled for this app. Point them to their World contact or a documented support path to request access; if no request path is documented, say so instead of inventing one. Do not let the integration fail as an unexplained spinner.
+   - `false`: stop and tell the user Face Check is not enabled for this app. Point them to their World contact or a documented support path to request access; if none is documented, say so instead of inventing one. Do not let the integration fail as an unexplained spinner.
    - missing field or failed precheck: treat access as unknown, surface the response details, and resolve the gate before continuing.
 
 Do not interpret a valid app, RP, or action as proof of Face Check access. It is a separate app-level capability.
 
 ## Phase 4 — Implement the 6 integration steps and explain the WHY
 
-The full code for each step is at [https://docs.world.org/world-id/idkit/integrate](https://docs.world.org/world-id/idkit/integrate). Don't reproduce it; link to it and adapt to the user's framework. What the agent owns is making sure each step is done **and understood**.
+The full code for each step is at [https://docs.world.org/world-id/idkit/integrate](https://docs.world.org/world-id/idkit/integrate). Don't reproduce it; link to it and adapt to the user's framework. The agent owns making sure each step is done **and understood**.
 
 **Copy this checklist into your TODO and update it as you go.** Don't move on with an unchecked step.
 
@@ -146,7 +146,7 @@ The full code for each step is at [https://docs.world.org/world-id/idkit/integra
 3. **Generate the RP signature in your backend.** *Why backend?* The signing key authenticates your app to the protocol. Leaking it lets anyone impersonate your app and forge proof requests. **CRITICAL: never sign on the client. Never expose `RP_SIGNING_KEY` as a `NEXT_PUBLIC_*` var. Never log it.**
 4. **Open the IDKit widget on the client** with the signature your backend returned. The widget hands off to World ID, which produces a zero-knowledge proof.
 5. **Verify the proof in your backend** by POSTing it **as-is** to `https://developer.world.org/api/v4/verify/{rp_id}`. *Why backend?* A client can return any JSON it wants. Only the World verifier — called from a trusted server — confirms the proof is real and tied to a unique credential. Verifying client-side defeats the entire point. **DO NOT mutate, re-encode, or trim the proof JSON before forwarding** — pass exactly what IDKit returned.
-6. **Store the nullifier.** Every successful proof returns a `nullifier` — an RP-scoped, action-scoped, non-reversible identifier for that user. *Why store it?* Without uniqueness storage, a user can verify the same proof twice and double-claim a reward, vote, etc. Persist `(action, nullifier)` with a `UNIQUE` constraint and reject duplicates on insert. Column type: **`NUMERIC(78, 0)`** (256-bit field elements). The nullifier reveals nothing about the user — it's safe to store, but it's the *only* anti-replay mechanism, so it's required.
+6. **Store the nullifier.** Every successful proof returns a `nullifier` — an RP-scoped, action-scoped, non-reversible identifier for that user. *Why store it?* Without uniqueness storage, a user can verify the same proof twice and double-claim a reward, vote, etc. Persist `(action, nullifier)` with a `UNIQUE` constraint and reject duplicates on insert. Column type: **`NUMERIC(78, 0)`** (256-bit field elements). The nullifier reveals nothing about the user — safe to store, but it's the *only* anti-replay mechanism, so it's required.
 
 ## Phase 5 — Match environments end-to-end
 
@@ -171,11 +171,11 @@ Do not declare the integration complete from compilation or Portal configuration
 
 Run automated tests for the routes and persistence behavior. Clearly identify simulator, phone, or production checks that still require the user; never imply a manual proof flow ran when it did not.
 
-If a check fails, use the concrete error, response payload, or execution trace to fix the root cause, then rerun the failed check and any downstream checks. Do not weaken a security or access gate merely to make validation pass.
+If a check fails, use the concrete error, response payload, or execution trace to fix the root cause, then rerun the failed check and any downstream checks. Do not weaken a security or access gate just to make validation pass.
 
 ## Phase 7 — Gotchas and recovery
 
-Surface these proactively when you see the corresponding symptom — don't make the user search for the cause.
+Surface these proactively when you see the matching symptom — don't make the user search for the cause.
 
 | Symptom | Cause | Recovery |
 |---|---|---|
@@ -207,7 +207,7 @@ For launch readiness, also confirm:
 
 - [ ] `RP_SIGNING_KEY` is server-only, in a real secret store, never logged.
 - [ ] Action exists in `production` (not just `staging`).
-- [ ] Nullifier persistence is real — DB-backed, `NUMERIC(78, 0)`, `UNIQUE (action, nullifier)`. The in-memory `Set` you may see in samples is illustrative only.
+- [ ] Nullifier persistence is real — DB-backed, `NUMERIC(78, 0)`, `UNIQUE (action, nullifier)`. The in-memory `Set` in samples is illustrative only.
 - [ ] On-chain registration polled to `registered` (`get_world_id_registration_status`) before launch.
 - [ ] The user knows that a leaked or lost signing key requires confirmed rotation and redeployment.
 
