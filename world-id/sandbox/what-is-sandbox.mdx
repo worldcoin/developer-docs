@@ -1,0 +1,54 @@
+---
+title: "What is Sandbox?"
+description: "An isolated, production-like environment for testing your World ID integration end-to-end."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+{/* cspell:ignore idkit TestFlight */}
+
+Sandbox is a dedicated, production-like environment for building and testing your
+World ID integration. It runs alongside Production as its own environment, with its
+own backend and its own builds of the World ID app for iOS and Android.
+
+It lets you run a complete integration — from your app or website, through IDKit, into
+the World ID app, and back — without touching production identities or issuing real
+proofs.
+
+## Why use Sandbox
+
+Sandbox is built for integration testing. It gives you:
+
+- **A full end-to-end round trip.** Sandbox is a valid IDKit destination, so you can
+  drive a real request from your surface into the World ID app and receive a proof
+  back over the bridge — the same path your production integration will use.
+- **Resettable accounts.** Delete an account and sign up again as often as you need.
+- **Simulated verification.** Exercise verification flows without real hardware or
+  real-world credentials.
+- **Controllable gating.** You decide whether the system enforces fraud, risk, and
+  attestation checks. Turn enforcement off to move quickly through integration testing,
+  or turn it on to validate how your integration behaves under production-like gating.
+
+## What you can test
+
+The full relying-party journey from your surface into the World ID app and back:
+request handoff, consent, capture, enrollment and matching, proof generation, and
+delivery of the proof to your session.
+
+Both same-device (deep link) and cross-device (QR) flows are supported, on both iOS
+and Android sandbox builds.
+
+## What Sandbox is not
+
+- **Not production.** Accounts and proofs issued in Sandbox are for integration
+  validation only — not load testing, security certification, or production sign-off.
+- **Not a source of real uniqueness.** Sandbox does not represent real-world identity
+  or uniqueness at scale.
+- **Not published to the app stores.** The sandbox World ID builds are distributed
+  directly to testers rather than through the App Store or Google Play. See
+  [How to get access](/world-id/sandbox/sandbox-access) for how to install them.
+
+## Next step
+
+Ready to try it? Head to [How to get access](/world-id/sandbox/sandbox-access) to
+install the sandbox app and point your integration at Sandbox.

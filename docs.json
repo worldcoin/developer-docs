@@ -84,6 +84,13 @@
             ]
           },
           {
+            "group": "Sandbox",
+            "pages": [
+              "world-id/sandbox/what-is-sandbox",
+              "world-id/sandbox/sandbox-access"
+            ]
+          },
+          {
             "group": "Credentials",
             "pages": [
               "world-id/credentials/1",

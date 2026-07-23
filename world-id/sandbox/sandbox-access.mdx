@@ -1,0 +1,63 @@
+---
+title: "How to get access"
+description: "Install the sandbox World ID app and point your integration at the Sandbox environment."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+{/* cspell:ignore idkit TestFlight VZEurhHe Eurh */}
+
+Getting set up in Sandbox has two parts: install the **sandbox World ID app** on your
+test device, and point your **integration** at the Sandbox environment. Both are
+covered below.
+
+New here? Start with [What is Sandbox?](/world-id/sandbox/what-is-sandbox) for context.
+
+## 1. Install the sandbox World ID app
+
+The sandbox builds are not published to the App Store or Google Play. You install them
+directly using the links below.
+
+### iOS — TestFlight
+
+1. Install [TestFlight](https://apps.apple.com/app/testflight/id899247664) from the
+   App Store if you don't have it.
+2. Open the public TestFlight link to join the external tester group:
+   [testflight.apple.com/join/VZEurhHe](https://testflight.apple.com/join/VZEurhHe)
+3. Install the **World ID (Sandbox)** build from TestFlight.
+
+No App Store Connect account or per-email invite is required — the public link admits
+you to the external tester group directly.
+
+### Android
+
+The sandbox build is distributed via **Firebase App Distribution**.
+
+1. Open the invite/download link we provide.
+2. Follow the link to install the **World ID (Sandbox)** build.
+
+You may be prompted to install the App Tester helper the first time.
+
+<Note>
+Contact your World point of contact to get the current Android links.
+</Note>
+
+## 2. Point your integration at Sandbox
+
+1. **Update IDKit** to the latest version.
+2. **Set `environment: sandbox`** in your IDKit configuration.
+
+Nothing else is required — the handoff will open the sandbox World ID app and return a
+proof to your session over the bridge.
+
+## Things to know
+
+- **Sandbox apps aren't in the app stores.** Because the builds are distributed
+  directly to testers, install/store deep links won't route to a store listing the way
+  they do in production. Testers install via TestFlight (iOS) or the Android link
+  instead — so any journey that depends on a real store install can't be exercised
+  exactly as it will be in production.
+- **Proofs are non-production.** Identities and proofs issued in Sandbox are for
+  integration validation only.
+- **Accounts are resettable.** You can delete and recreate accounts freely while
+  testing.
