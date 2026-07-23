@@ -5,9 +5,9 @@ description: "Spec for generating RP signatures, with pseudocode, SDK examples, 
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-Relying Party (RP) signatures prove that a proof request genuinely comes from your app, preventing impersonation attacks.
+Relying Party (RP) signatures prove a proof request comes from your app, preventing impersonation attacks.
 Your backend signs every request with the `signing_key` from the [Developer Portal](https://developer.world.org),
-and World ID verifies the signature before generating a proof. RP signatures are enforced for [World ID 4.0 requests](/world-id/4-0-migration).
+and World ID verifies the signature before generating a proof. World ID enforces RP signatures for [World ID 4.0 requests](/world-id/4-0-migration).
 
 <Warning>
   Never expose your signing key to client-side code. If the key leaks, rotate it immediately in the Developer Portal.
@@ -103,7 +103,7 @@ sig, err = signer.SignRequest(idkit.WithAction("my-action"))
 
 ## Test vectors
 
-Use these to verify your implementation. All vectors use deterministic inputs.
+Verify your implementation against these. All vectors use deterministic inputs.
 
 ### `hash_to_field`
 
