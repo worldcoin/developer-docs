@@ -1,0 +1,68 @@
+---
+title: "Testing Selfie Check in Sandbox"
+description: "Coverage, critical user journeys, and known limitations for testing your Selfie Check integration in Sandbox."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+{/* cspell:ignore idkit DoB reinstalls */}
+
+Sandbox lets you run the full [Selfie Check](/world-id/credentials/11) relying-party
+journey end-to-end — from your surface, through IDKit, into the sandbox World ID app,
+and back — without touching production identities or real proofs.
+
+New to Sandbox? Start with [What is Sandbox?](/world-id/sandbox/what-is-sandbox) and
+[How to get access](/world-id/sandbox/sandbox-access) before working through this
+guide.
+
+<Note>
+  In scope: the full relying-party journey — request handoff, consent, capture,
+  enrollment and matching, proof generation, and delivery of the proof. Out of scope:
+  production identity data and real-world uniqueness at scale. Sandbox accounts and
+  proofs are for integration testing only, not load testing, security certification,
+  or production sign-off.
+</Note>
+
+## Coverage
+
+Testing is organized by entry surface and user state, using the same [Hot, Cold, and
+Semi-cold states](/world-id/idkit/verification-flows) as the rest of World ID:
+
+- **Hot** — the user already has World ID installed. If they're already Selfie Check
+  enrolled, they go straight to face match; if not, World ID walks them through
+  enrollment first, then match. (Selfie Check has no distinct Warm flow — enrollment
+  happens inline within Hot, same as [Verification Flows](/world-id/idkit/verification-flows)
+  describes.)
+- **Cold** — a new user with no World ID app: the full funnel, including install,
+  account creation, date of birth, invite code (iOS), enrollment, and Selfie Check.
+- **Semi-cold** — an existing user without World ID on this device: reinstall and
+  account recovery, then Selfie Check.
+
+| Entry surface | State | What it exercises |
+| --- | --- | --- |
+| Native app | Hot | Same-device: validated user presents a face credential; deep link into World ID and back. |
+| Native app | Cold | Install → create account → add date of birth → redeem invite code → enroll → complete Selfie Check. |
+| Native app | Semi-cold | Existing user reinstalls and recovers their account on a fresh device, then completes Selfie Check. |
+| Web app | Hot | Cross-device: start on web, complete on phone via QR scan, proof returns to the web session. |
+| Web app | Cold | Same cold funnel, cross-device via QR; proof returns to the originating web session. |
+| Web app | Semi-cold | Same semi-cold recovery, cross-device via QR. |
+
+## Known limitations
+
+- **Sandbox apps aren't published to the app stores.** As with other Sandbox testing,
+  install deep links won't route to a store listing the way they do in production —
+  see [How to get access](/world-id/sandbox/sandbox-access#things-to-know). This means
+  the Cold and Semi-cold journeys above can't be exercised exactly as they will be once
+  the app is on the App Store or Play Store.
+- **iOS Semi-cold is currently limited.** The reinstall/login journey reliably works on
+  Android today. On iOS, if the user taps "Sign in" instead of "Sign up" mid-flow,
+  there's no path to add the invite code — they have to restart from a fresh QR or deep
+  link. Expect iOS Semi-cold to behave differently from Android until this is closed.
+- **Invite-code handling in the Cold flow differs by platform.** Confirm how invite
+  codes are presented and redeemed on the platform you're targeting — see
+  [invite-code mode](/world-id/idkit/verification-flows#with-invite-code-mode).
+
+## Next step
+
+Questions, or found a journey these scenarios don't cover? Reach out to your World
+point of contact.
