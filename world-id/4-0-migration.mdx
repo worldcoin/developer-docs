@@ -10,8 +10,8 @@ tag: "Coming Soon"
 ## Start Here
 
 - Register or upgrade your app in the [Developer Portal](https://developer.worldcoin.org).
-- Upgrade to IDKit 4.x as we describe below.
-- Choose the migration path below based on your app behavior.
+- Upgrade to IDKit 4.x (see below).
+- Choose a migration path below based on your app's behavior.
 
 ### Uniqueness vs Session Proofs (3.0 to 4.0)
 
@@ -20,8 +20,7 @@ World ID 4.0 has two proof types:
 - **Session proofs** for returning-user continuity (new in 4.0).
 
 In 3.0, many RPs treated nullifiers as persistent user identifiers. In 4.0,
-nullifiers are one-time-use, while `session_id` is the stable
-link across requests.
+nullifiers are one-time-use, and `session_id` is the stable link across requests.
 
 | Proof type | World ID 3.0 | World ID 4.0 | What your backend should store |
 | --- | --- | --- | --- |
@@ -32,18 +31,18 @@ Rule of thumb: use `nullifier` for one-time uniqueness and `session_id` for cont
 
 ## Upgrading to IDKit 4.x 
 
-A prerequisite to adopting World ID 4.0 is upgrading to IDKit 4.x, which makes major breaking changes to support new protocol. Here's what changed:
+Adopting World ID 4.0 requires upgrading to IDKit 4.x, which introduces major breaking changes to support the new protocol. What changed:
 
 1. **RP context is required**: Requests now require `rp_context` (`rp_id`, `nonce`, `created_at`, `expires_at`, `signature`).
-2. **IDKit response changed**: You no longer need to reshape the payload or compute `signal_hash` for the verify endpoint. 
+2. **IDKit response changed**: No longer reshape the payload or compute `signal_hash` for the verify endpoint.
 3. **[Backend verification endpoint](/api-reference/developer-portal/verify) changed**: Use `POST /api/v4/verify/{rp_id}`.
 4. `@worldcoin/idkit-standalone` is discontinued. Use `@worldcoin/idkit-core` for vanilla JS/browser.
 
-For more details and example code, see the [IDKit 4.0 integration guide](/world-id/idkit/integrate).
+For details and example code, see the [IDKit 4.0 integration guide](/world-id/idkit/integrate).
 
 ## Migration Timeline (Phase Dates)
 
-Use these dates as the default migration timeline for planning:
+Use these dates as the default migration timeline:
 
 - **Phase 1 (Migration):** through **June 1, 2026**
   - Upgrade SDKs/contracts, register your RP, and create v4 actions.
@@ -59,11 +58,11 @@ If your rollout needs more time, extend Phase 2 and move `CD` later.
 
 ## Migration Path
 
-Below we outline migration paths based on how you previously used World ID in your application.
+Choose a migration path based on how you previously used World ID in your application.
 
 ### One time actions
 
-These apps have a single long running action.
+These apps have a single long-running action.
 
 **Examples:** A stamp for every verified human in the world. A token given to every human in the world once.
 
@@ -122,12 +121,12 @@ sequenceDiagram
 
 #### Step-by-step Migration Details
 
-1. **Update SDKs and Contracts:** RPs upgrade SDKs, contracts, and API calls to enable baseline support for the upgraded protocol. This is backwards compatible.
-2. **Register in Developer Portal:** RPs generate their new RP registration and relevant actions for the v4 protocol in the Developer Portal.
+1. **Update SDKs and Contracts:** Upgrade SDKs, contracts, and API calls to enable baseline support for the upgraded protocol. This is backwards compatible.
+2. **Register in Developer Portal:** Generate your new RP registration and relevant actions for the v4 protocol in the Developer Portal.
 3. **For long-running actions:**
-   - RP decides a transition date (`TD`) to start accepting v4 proofs. They specify a minimum `genesis_issued_at = TD` timestamp in the IDKit request with `allow_legacy_proofs: true` as a temporary compatibility mode. This means only users who get their Orb credential (or document credentials) from this point forward can generate v4 proofs. Users who have not upgraded their World ID can still issue v3 proofs during this window. RPs should keep track of both nullifiers.
-   - At a future cut-off date (`CD > TD`), the RP should switch their IDKit request to `allow_legacy_proofs: false` to stop accepting v3 proofs and only accept v4 proofs.
-4. **For limited-time actions** (for example, recurring grant drops): The transition can be made at the action level. Short-running actions have a simpler migration path.
+   - Decide a transition date (`TD`) to start accepting v4 proofs. Specify a minimum `genesis_issued_at = TD` timestamp in the IDKit request with `allow_legacy_proofs: true` as a temporary compatibility mode. Only users who get their Orb credential (or document credentials) from this point forward can generate v4 proofs. Users who have not upgraded their World ID can still issue v3 proofs during this window. Track both nullifiers.
+   - At a future cut-off date (`CD > TD`), switch the IDKit request to `allow_legacy_proofs: false` to stop accepting v3 proofs and accept only v4 proofs.
+4. **For limited-time actions** (for example, recurring grant drops): Make the transition at the action level. Short-running actions have a simpler migration path.
 
 #### Example Code
 
@@ -177,7 +176,7 @@ These apps create multiple one-time actions. These actions are short lived.
 
 **Example:** A daily voting app where each vote requires a fresh proof of unique human.
 
-**Migration approach:** Simply migrate your SDK and Developer Portal account. Pick a new action in the future to start only accepting v4 proofs.
+**Migration approach:** Migrate your SDK and Developer Portal account. Pick a new future action to start accepting only v4 proofs.
 #### Migration Flow Diagram
 
 This diagram shows a simpler two-phase migration with a hard cutover.
@@ -215,7 +214,7 @@ For apps that rely on unlimited verifications of the same action.
 
 **Examples:** Partners that check for users who've added new credentials. Apps that allow users to verify before each claim using the same action (note this is an anti-pattern of World ID).
 
-**Migration approach:** Migrate to using [Session Proofs](https://github.com/worldcoin/world-id-protocol/blob/main/docs/world-id-4-specs/README.md#session-proofs), which allow developers to verify credentials over a period of time while ensuring it's the same user. The session ID returned in the proof will be the long-lived stable identifier instead.
+**Migration approach:** Migrate to [Session Proofs](https://github.com/worldcoin/world-id-protocol/blob/main/docs/world-id-4-specs/README.md#session-proofs), which let you verify credentials over a period of time while ensuring it's the same user. The session ID returned in the proof becomes the long-lived stable identifier instead.
 
 #### Migration Flow Diagram
 
