@@ -8,23 +8,23 @@ description: "Integrate World ID into your app"
 
 import IDKitResponse from "/snippets/idkit-response.mdx";
 
-IDKit is the SDK for integrating World ID into your app. It handles proof requests, verification flows, and communication with the World ID app — so your backend receives a cryptographic proof of human, not personal data.
+IDKit is the SDK for integrating World ID into your app. It handles proof requests, verification flows, and communication with the World ID app, so your backend receives a cryptographic proof of human, not personal data.
 
-It's available as a React widget for drop-in integration, or as JS, Swift, and Kotlin SDKs for custom flows. To familiarize yourself with the core concepts of World ID, check out this [page](/world-id/concepts).
+Use the React widget for drop-in integration, or the JS, Swift, and Kotlin SDKs for custom flows. For the core concepts of World ID, see [this page](/world-id/concepts).
 
-> Tip: To integrate faster, give your coding agent the [Build with LLMs prompt](/world-id/idkit/build-with-llms) — copy it once, paste into Claude, Cursor, or any AI coding assistant.
+> Tip: To integrate faster, give your coding agent the [Build with LLMs prompt](/world-id/idkit/build-with-llms) — copy it once, then paste into Claude, Cursor, or any AI coding assistant.
 
 ## How it works
 
-Your app sends a **proof request** through IDKit, challenging the user to prove something about themselves — such as uniqueness, document possession, or liveness — based on their [credentials](/world-id/overview#credentials). The user's World ID app generates a zero-knowledge proof without revealing any personal data. Your backend then verifies that proof and stores a **nullifier** (a per-app, per-action identifier) to prevent the same person from verifying twice.
+Send a **proof request** through IDKit, challenging the user to prove something about themselves — such as uniqueness, document possession, or liveness — based on their [credentials](/world-id/overview#credentials). The user's World ID app generates a zero-knowledge proof without revealing personal data. Your backend then verifies the proof and stores a **nullifier** (a per-app, per-action identifier) to prevent the same person from verifying twice.
 
 <img src="/images/docs/idkit-flow.svg" alt="IDKit integration flow" />
 
-There are four components: your **client** (where IDKit runs), your **backend** (which signs requests and verifies proofs), the **World ID app** (on the user's device), and the **Developer Portal** (which validates proofs on-chain). The steps below walk through each piece.
+Four components are involved: your **client** (where IDKit runs), your **backend** (which signs requests and verifies proofs), the **World ID app** (on the user's device), and the **Developer Portal** (which validates proofs on-chain). The steps below cover each one.
 
 # Step 1: Install IDKit
 
-Make sure you're using the latest `4.x` version.
+Use the latest `4.x` version.
 
 <CodeGroup title="Install">
 ```bash title="JavaScript"
@@ -48,13 +48,13 @@ dependencies {
 
 # Step 2: Create an app in the Developer Portal
 
-Create your app in the [Developer Portal](https://developer.world.org). If you're migrating from an old app you have to go through RP registration by clicking the Enable World ID 4.0 banner. Keep these values:
+Create your app in the [Developer Portal](https://developer.world.org). If you're migrating from an old app, complete RP registration by clicking the Enable World ID 4.0 banner. Keep these values:
   - `app_id`
   - `rp_id`
   - `signing_key` - this should be stored as a secret.
 
 # Step 3: Generate an RP signature in your backend
-Signatures verify that proof requests genuinely come from your app, preventing attackers from performing impersonation attacks.
+Signatures verify that proof requests come from your app, preventing impersonation attacks.
 
 <CodeGroup title="Generate RP signature">
 ```typescript title="JavaScript"
@@ -128,13 +128,13 @@ func handleRPSignature(w http.ResponseWriter, r *http.Request) {
 
 <Note>
   The steps below cover the standard request flow. Depending on whether the user
-  already has World ID and the credential you're requesting, they may be taken
-  through a different experience. See [Verification flows](/world-id/idkit/verification-flows)
+  already has World ID and the credential you're requesting, they may see a
+  different experience. See [Verification flows](/world-id/idkit/verification-flows)
   for details.
 </Note>
 
 # Step 4: Generate the connect URL and collect proof
-You can test during development using the [simulator](https://simulator.worldcoin.org/) and setting `environment` to `"staging"`.
+To test during development, use the [simulator](https://simulator.worldcoin.org/) and set `environment` to `"staging"`.
 
 <CodeGroup title="Create request and collect proof">
 ```typescript title="JavaScript"
@@ -298,14 +298,14 @@ val completion = request.pollUntilCompletion()
 
 ### IDKit response
 
-After the user completes the verification flow, IDKit returns one of the following response shapes depending on the protocol version and proof type.
+After the user completes the verification flow, IDKit returns one of the following response shapes, depending on the protocol version and proof type.
 
 <IDKitResponse />
 
 # Step 5: Verify the proof in your backend
 
-After successful completion, send the returned payload to your backend and
-forward it directly to: `POST https://developer.world.org/api/v4/verify/{rp_id}`
+After completion, send the returned payload to your backend and
+forward it directly to `POST https://developer.world.org/api/v4/verify/{rp_id}`.
 
 <Note>
   Forward the IDKit result payload as-is. No field remapping is required.
@@ -341,11 +341,11 @@ export async function POST(request: Request): Promise<Response> {
 
 # Step 6: Store the nullifier
 
-Every World ID proof contains a nullifier — a value derived from the user's World ID, your app, and the action. The same person verifying the same action always produces the same nullifier, but different apps or actions produce different ones — making nullifiers unlinkable across apps.
+Every World ID proof contains a nullifier — a value derived from the user's World ID, your app, and the action. The same person verifying the same action always produces the same nullifier, but different apps or actions produce different ones, making nullifiers unlinkable across apps.
 
-The Developer Portal confirms the proof is **cryptographically valid**, but your backend must check that the nullifier hasn't been used before. Without this, the same person could verify multiple times for the same action.
+The Developer Portal confirms the proof is **cryptographically valid**, but your backend must check that the nullifier hasn't been used before. Otherwise, the same person could verify multiple times for the same action.
 
-Nullifiers are returned as 0x-prefixed hex strings representing 256-bit integers. We recommend converting and storing them as numbers to avoid parsing and casing issues that can lead to security vulnerabilities. For example, PostgreSQL doesn't natively support 256-bit integers, instead you can convert to the nullifier to a decimal and store it as `NUMERIC(78, 0)`.
+Nullifiers are returned as 0x-prefixed hex strings representing 256-bit integers. Convert and store them as numbers to avoid parsing and casing issues that can lead to security vulnerabilities. For example, PostgreSQL doesn't natively support 256-bit integers, so convert the nullifier to a decimal and store it as `NUMERIC(78, 0)`.
 
 <CodeGroup>
 ```sql title="PostgreSQL schema"

@@ -7,8 +7,7 @@ description: "Migrate from @worldcoin/idkit-standalone to @worldcoin/idkit-core.
 
 {/* cspell:ignore idkit standalone rp_context app_id rp_id orblegacy signal_hash nullifier nullifiers verifyCloudProof pollUntilCompletion connectorURI */}
 
-This guide helps you migrate from `@worldcoin/idkit-standalone` to `@worldcoin/idkit-core`. The `idkit-standalone` package has been discontinued. If you used it
-for a vanilla JavaScript or custom QR flow, migrate to `@worldcoin/idkit-core`.
+The `@worldcoin/idkit-standalone` package is discontinued. Migrate any vanilla JavaScript or custom QR flow to `@worldcoin/idkit-core`.
 
 ## Migration Checklist
 
@@ -19,8 +18,7 @@ for a vanilla JavaScript or custom QR flow, migrate to `@worldcoin/idkit-core`.
 5. Replace `verifyCloudProof(...)` with a backend POST to `https://developer.world.org/api/v4/verify/{rp_id}`.
 6. Store the verified `nullifier` for replay protection.
 
-For the broader protocol migration, including proof types and timelines, see
-[World ID 4.0](/world-id/4-0-migration).
+For the broader protocol migration, including proof types and timelines, see [World ID 4.0](/world-id/4-0-migration).
 
 ## Install
 
@@ -40,7 +38,7 @@ yarn add @worldcoin/idkit-core
 
 ## Request a Proof
 
-In standalone, the package mounted UI through browser globals:
+Standalone mounted UI through browser globals:
 
 ```ts title="Before"
 import "@worldcoin/idkit-standalone";
@@ -55,8 +53,7 @@ IDKit.init({
 await IDKit.open();
 ```
 
-With `idkit-core`, fetch an RP signature from your backend, build the request,
-render the `connectorURI`, and poll until World ID returns a proof.
+With `idkit-core`, fetch an RP signature from your backend, build the request, render the `connectorURI`, and poll until World ID returns a proof.
 
 ```ts title="After"
 import { IDKit, orbLegacy } from "@worldcoin/idkit-core";
@@ -104,12 +101,10 @@ await fetch("/api/verify-proof", {
 
 ## Credential Mapping
 
-Standalone used `verification_level` to choose what the user should prove. In
-`idkit-core`, use a legacy preset instead. These presets are drop-in
-replacements for the old verification levels. 
+Standalone used `verification_level` to choose what the user proves. In `idkit-core`, use a legacy preset instead. These presets are drop-in replacements for the old verification levels.
 
 <Note type="info">
-  The legacy presets will return the maximum credential a user has. For example, if a user has an Orb credential, but you request `documentLegacy`, they will verify with their Orb credential. 
+  Legacy presets return the maximum credential a user has. For example, if a user has an Orb credential but you request `documentLegacy`, they verify with their Orb credential.
 </Note>
 
 | Standalone | `idkit-core` preset |
@@ -136,16 +131,13 @@ const request = await IDKit.request(config).preset(
 
 ## RP Signatures
 
-IDKit 4.x requests require `rp_context`, signed by your backend with the
-Developer Portal `signing_key`. Do not generate signatures in client code.
+IDKit 4.x requests require `rp_context`, signed by your backend with the Developer Portal `signing_key`. Never generate signatures in client code.
 
-For implementation details, use the [RP Signatures](/world-id/idkit/signatures)
-reference. It includes the JavaScript helper, the signing algorithm, and test
-vectors for non-JavaScript backends.
+For implementation details, see the [RP Signatures](/world-id/idkit/signatures) reference. It includes the JavaScript helper, the signing algorithm, and test vectors for non-JavaScript backends.
 
 ## Verify the Proof
 
-Standalone integrations usually verified with `verifyCloudProof(...)`:
+Standalone integrations typically verified with `verifyCloudProof(...)`:
 
 ```ts title="Before"
 import { verifyCloudProof } from "@worldcoin/idkit";
@@ -153,8 +145,7 @@ import { verifyCloudProof } from "@worldcoin/idkit";
 const response = await verifyCloudProof(proof, app_id, action, signal);
 ```
 
-In IDKit 4.x, send the IDKit result to your backend and forward it directly to
-the [v4 verify endpoint](/api-reference/developer-portal/verify).
+In IDKit 4.x, send the IDKit result to your backend and forward it directly to the [v4 verify endpoint](/api-reference/developer-portal/verify).
 
 ```ts title="After"
 import type { IDKitResult } from "@worldcoin/idkit-core";
@@ -182,7 +173,4 @@ export async function POST(request: Request): Promise<Response> {
 
 ## Store the Nullifier
 
-After `/api/v4/verify/{rp_id}` succeeds, store the verified `nullifier` for the
-action and reject duplicates. During migration, keep checking any old
-`nullifier_hash` records if the same user could have verified before the
-upgrade.
+After `/api/v4/verify/{rp_id}` succeeds, store the verified `nullifier` for the action and reject duplicates. During migration, keep checking any old `nullifier_hash` records if the same user could have verified before the upgrade.
