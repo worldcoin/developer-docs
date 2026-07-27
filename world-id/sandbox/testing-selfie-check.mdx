@@ -49,11 +49,11 @@ Semi-cold states](/world-id/idkit/verification-flows) as the rest of World ID:
 
 ## Known limitations
 
-- **Sandbox apps aren't published to the app stores.** As with other Sandbox testing,
-  install deep links won't route to a store listing the way they do in production —
-  see [How to get access](/world-id/sandbox/sandbox-access#things-to-know). This means
-  the Cold and Semi-cold journeys above can't be exercised exactly as they will be once
-  the app is on the App Store or Play Store.
+- **Sandbox apps aren't publicly listed in the app stores.** Testers install through
+  TestFlight on iOS or a private Google Play testing link on Android. Because those
+  testing programs gate access, app-store acquisition can differ from a public
+  production listing — see
+  [How to get access](/world-id/sandbox/sandbox-access#things-to-know).
 - **iOS Semi-cold is currently limited.** The reinstall/login journey reliably works on
   Android today. On iOS, if the user taps "Sign in" instead of "Sign up" mid-flow,
   there's no path to add the invite code — they have to restart from a fresh QR or deep

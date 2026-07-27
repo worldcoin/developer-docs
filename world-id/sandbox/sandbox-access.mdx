@@ -15,8 +15,8 @@ New here? Start with [What is Sandbox?](/world-id/sandbox/what-is-sandbox) for c
 
 ## 1. Install the sandbox World ID app
 
-The sandbox builds are not published to the App Store or Google Play. You install them
-directly using the links below.
+The sandbox apps are not publicly listed in the App Store or on Google Play. You
+install them through the testing links below.
 
 ### iOS — TestFlight
 
@@ -29,18 +29,16 @@ directly using the links below.
 No App Store Connect account or per-email invite is required — the public link admits
 you to the external tester group directly.
 
-### Android
+### Android — Google Play
 
-The sandbox build is distributed via **Firebase App Distribution**.
+The sandbox build is distributed through a **private testing track on Google Play**.
 
-1. Open the invite/download link we provide.
-2. Follow the link to install the **World ID (Sandbox)** build.
-
-You may be prompted to install the App Tester helper the first time.
-
-<Note>
-Contact your World point of contact to get the current Android links.
-</Note>
+1. In the Developer Portal, select **World ID Sandbox** from the sidebar.
+2. Enter the email address associated with your Google Play account to request tester
+   access.
+3. Once access is granted, scan the QR code or open the Google Play link on the same
+   page.
+4. Sign in with the same Google Account and install the **World ID (Sandbox)** build.
 
 ## 2. Point your integration at Sandbox
 
@@ -52,11 +50,10 @@ proof to your session over the bridge.
 
 ## Things to know
 
-- **Sandbox apps aren't in the app stores.** Because the builds are distributed
-  directly to testers, install/store deep links won't route to a store listing the way
-  they do in production. Testers install via TestFlight (iOS) or the Android link
-  instead — so any journey that depends on a real store install can't be exercised
-  exactly as it will be in production.
+- **Sandbox apps aren't publicly listed in the app stores.** Testers install via
+  TestFlight (iOS) or a private Google Play testing link (Android). Because access is
+  gated to testers, install links and store acquisition can behave differently from a
+  public production listing.
 - **Proofs are non-production.** Identities and proofs issued in Sandbox are for
   integration validation only.
 - **Accounts are resettable.** You can delete and recreate accounts freely while
