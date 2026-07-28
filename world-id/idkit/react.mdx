@@ -77,7 +77,7 @@ const rpContext: RpContext = {
 
 - `onSuccess` is required for `IDKitRequestWidget` and `IDKitSessionWidget`.
 - `handleVerify` is optional and only available on widgets. Use it to verify the proof in your backend before success is emitted.
-- If `handleVerify` throws/rejects, the widget enters an error state, emits `onError("failed_by_host_app")`, and does not call `onSuccess`.
+- If `handleVerify` throws/rejects, the widget enters an error state, emits `onError("failed_by_host_app")`, and does not call `onSuccess`. This means World App already returned a proof, but your callback or backend did not accept it.
 - `onError` is optional.
 
 ## Headless hooks

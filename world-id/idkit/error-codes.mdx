@@ -80,8 +80,8 @@ This page documents the IDKit SDK and bridge error codes returned during request
     </tr>
     <tr>
       <td className="p-2 align-middle whitespace-nowrap"><code>failed_by_host_app</code></td>
-      <td className="p-2 align-middle">Host app callback failed while processing a successful proof.</td>
-      <td className="p-2 align-middle">Fix host callback/backend logic and retry.</td>
+      <td className="p-2 align-middle">World App returned a proof, but the host app's <code>handleVerify</code> callback threw or rejected it.</td>
+      <td className="p-2 align-middle">Inspect the callback and backend verification response. This is not a camera or credential-enrollment failure.</td>
     </tr>
     <tr>
       <td className="p-2 align-middle whitespace-nowrap"><code>invalid_rp_signature</code></td>

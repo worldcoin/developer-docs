@@ -682,7 +682,7 @@
     "/api/v4/verify/{rp_id}": {
       "post": {
         "summary": "Verify",
-        "description": "Verifies World ID 4.0 proofs and legacy 3.0 proofs. Use `rp_id` (`rp_...`) when possible; `app_id` (`app_...`) is still accepted for backward compatibility.",
+        "description": "Verifies World ID 4.0 proofs and legacy 3.0 proofs. Forward the complete IDKit result without remapping response identifiers or constructing a legacy `verification_level`. Use `rp_id` (`rp_...`) when possible; `app_id` (`app_...`) is still accepted for backward compatibility.",
         "x-mint": {
           "href": "/api-reference/developer-portal/verify"
         },
@@ -854,7 +854,14 @@
           },
           "verification_level": {
             "type": "string",
-            "description": "The verification level, as provided by [IDKit](/world-id/idkit/integrate)."
+            "enum": [
+              "orb",
+              "secure_document",
+              "document",
+              "device",
+              "selfie"
+            ],
+            "description": "The legacy verification level. Use `selfie` for Selfie Check. The historical `face` value remains accepted for backward compatibility and behaves the same as `selfie`."
           },
           "action": {
             "type": "string",
@@ -1388,7 +1395,7 @@
         "properties": {
           "identifier": {
             "type": "string",
-            "description": "Credential type (e.g. orb)."
+            "description": "Credential identifier returned by IDKit (for example, `orb` or `selfie`). Use `selfie` for Selfie Check; the historical `face` value remains accepted as a backward-compatible alias."
           },
           "signal_hash": {
             "type": "string",
