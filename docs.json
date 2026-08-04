@@ -103,6 +103,7 @@
             "group": "Migration",
             "pages": [
               "world-id/4-0-migration",
+              "world-id/deprecations",
               "world-id/from-idkit-standalone"
             ]
           },
