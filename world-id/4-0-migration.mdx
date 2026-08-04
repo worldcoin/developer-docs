@@ -43,16 +43,7 @@ Adopting World ID 4.0 requires upgrading to IDKit 4.x, which introduces major br
 
 For details and example code, see the [IDKit 4.0 integration guide](/world-id/idkit/integrate).
 
-### Legacy credential compatibility
-
-You can use IDKit 4.x even when a credential still uses a World ID 3.0 proof
-flow. You do not need to downgrade the SDK.
-
-| Credential | Current compatibility behavior |
-| --- | --- |
-| Selfie Check (Beta) | Request it with `selfieCheckLegacy()`. It currently returns World ID 3.0 proofs; World ID 4.0 Selfie Check is not yet available. |
-| Device verification | `deviceLegacy()` is World ID 3.0-only and should be used only for existing integrations. World ID 4.0 does not have a Device preset; choose a current credential for new integrations. |
-
+See [Configure Credentials](/world-id/idkit/credentials) to choose a World ID 4.0 credential, or [Other legacy presets](/world-id/idkit/credentials#other-legacy-presets) to maintain an existing World ID 3.0 integration.
 
 ## Migration Path
 
