@@ -861,7 +861,7 @@
               "device",
               "selfie"
             ],
-            "description": "The legacy verification level. Use `selfie` for Selfie Check. The historical `face` value remains accepted for backward compatibility and behaves the same as `selfie`."
+            "description": "The legacy verification level. Use `selfie` for Selfie Check (Beta). The historical `face` value remains accepted for backward compatibility and behaves the same as `selfie`."
           },
           "action": {
             "type": "string",
@@ -1395,7 +1395,7 @@
         "properties": {
           "identifier": {
             "type": "string",
-            "description": "Credential identifier returned by IDKit (for example, `orb` or `selfie`). Use `selfie` for Selfie Check; the historical `face` value remains accepted as a backward-compatible alias."
+            "description": "Credential identifier returned by IDKit (for example, `orb` or `selfie`). Use `selfie` for Selfie Check (Beta); the historical `face` value remains accepted as a backward-compatible alias."
           },
           "signal_hash": {
             "type": "string",
