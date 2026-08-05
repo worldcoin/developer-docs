@@ -1,7 +1,7 @@
 ---
 name: world-id-integration
 description: |
-  Use this skill when adding, upgrading, debugging, or testing World ID verification with IDKit in a new or existing web or mobile app. Covers Proof of Human, passport/document, Face Check, and session/sign-in flows; Developer Portal app, RP, and action setup; server-side signing and proof verification; environment matching; nullifier replay protection; and launch testing. Trigger when the user asks to add World ID, verify humans, stop bots or multi-accounting, add Sybil resistance, or mentions IDKit, Orb, World ID proof flows, World App proof flows, @worldcoin/idkit, signing keys, rp_id, or app_id.
+  Use this skill when adding, upgrading, debugging, or testing World ID verification with IDKit in a new or existing web or mobile app. Covers Proof of Human, passport/document, Selfie Check (Beta), and session/sign-in flows; Developer Portal app, RP, and action setup; server-side signing and proof verification; environment matching; nullifier replay protection; and launch testing. Trigger when the user asks to add World ID, verify humans, stop bots or multi-accounting, add Sybil resistance, or mentions IDKit, Orb, World ID proof flows, World App proof flows, @worldcoin/idkit, signing keys, rp_id, or app_id.
 version: 0.1.0
 metadata:
   author: worldcoin
@@ -38,7 +38,7 @@ Before changing code or creating Portal resources:
    - target environment and test path: staging simulator, production World ID, or both
    - Developer Portal MCP connection
    - whether an RP signing key already exists in a server-side secret store
-   - credential access, especially Face Check
+   - requested credential policy, feature access (especially Selfie Check (Beta)), and whether legacy proof fallback is needed
 3. Report a short readiness summary and ask only for unresolved blockers. **Never ask the user to paste a signing key, Portal API key, or other secret into chat.** Ask only whether it exists and where the application expects it.
 4. Build a TODO from the missing steps. Preserve working configuration and existing Portal resources unless the user explicitly wants replacements.
 
@@ -99,34 +99,18 @@ The credential decides what the user proves. Nail this down before scaffolding �
 |---|---|---|
 | **`proofOfHuman`** — Proof of Human (flagship) | The user is a unique person, biometrically verified at an Orb | Sybil resistance, airdrops, one-vote-per-human, gated signups. **The default if the user said "proof of human" or "verify a real human."** |
 | **`passport`** — Passport | The user holds a valid government passport (NFC-verified) | Higher-assurance flows where you need document-grade identity (regulated apps, age-gating, KYC-adjacent). |
-| **`selfieCheckLegacy`** — Selfie check | A liveness selfie signal | Lower-assurance "is a human in front of the camera" — friction/bot deterrence without the full Orb requirement. |
+| **`selfieCheckLegacy`** — Selfie Check (Beta) | A liveness selfie signal backed by a World ID 3.0 proof | Lower-assurance "is a human in front of the camera" — friction/bot deterrence without the full Orb requirement. |
 
 **DO NOT default to `proofOfHuman` if the user said "passport" or "verify their ID"** — that's `passport`. **DO NOT default to `proofOfHuman` if the user said "selfie" or "liveness"** — that's `selfieCheckLegacy`. When in doubt, ask one question.
 
 Other legacy presets exist (`documentLegacy`, `deviceLegacy`); reach for them only when the user asks specifically. For sign-in / session reuse across visits, use the v4 **session** flow instead of a uniqueness preset (see the integrate doc).
 
-### Face Check access gate
+### Selfie Check (Beta) access
 
-After the app and action exist—but before implementing or opening a Face Check flow—confirm the `app_id` is enabled:
-
-If either resource is missing, mark this gate pending, provision the resource in Phase 4 step 2, and return here before implementing the client request.
-
-1. Prefer `get_app_config` if the MCP response exposes `enable_face_check`.
-2. Otherwise call the public precheck endpoint with the real app and action:
-
-   ```http
-   POST https://developer.world.org/api/v1/precheck/{app_id}
-   Content-Type: application/json
-
-   { "action": "your-action" }
-   ```
-
-3. Read `enable_face_check` from the response:
-   - `true`: continue.
-   - `false`: stop and tell the user Face Check is not enabled for this app. Point them to their World contact or a documented support path to request access; if none is documented, say so instead of inventing one. Do not let the integration fail as an unexplained spinner.
-   - missing field or failed precheck: treat access as unknown, surface the response details, and resolve the gate before continuing.
-
-Do not interpret a valid app, RP, or action as proof of Face Check access. It is a separate app-level capability.
+Before implementing or testing Selfie Check, confirm that its feature flag is
+enabled for the target app. If it is not enabled, stop and tell the user to
+request access through their World contact or the documented support path. A
+valid app or action does not imply Selfie Check access.
 
 ## Phase 4 — Implement the 6 integration steps and explain the WHY
 
@@ -145,7 +129,7 @@ The full code for each step is at [https://docs.world.org/world-id/idkit/integra
 2. **Create or reuse the Portal resources.** Use the MCP when available. Reuse an existing app, RP, and action when they match the requested integration. For a new RP, capture `app_id`, `rp_id`, and `signing_key.private_key` from `configure_world_id`, create the action in the intended environment, and write the signing key to the prepared server-only secret store in the same step. The portal returns it exactly once. **Do not print, log, or return the private key to chat.** If the key is lost, explain that `get_world_id_signing_key` cannot recover it; rotation creates a new key and invalidates the old signer.
 3. **Generate the RP signature in your backend.** *Why backend?* The signing key authenticates your app to the protocol. Leaking it lets anyone impersonate your app and forge proof requests. **CRITICAL: never sign on the client. Never expose `RP_SIGNING_KEY` as a `NEXT_PUBLIC_*` var. Never log it.**
 4. **Open the IDKit widget on the client** with the signature your backend returned. The widget hands off to World ID, which produces a zero-knowledge proof.
-5. **Verify the proof in your backend** by POSTing it **as-is** to `https://developer.world.org/api/v4/verify/{rp_id}`. *Why backend?* A client can return any JSON it wants. Only the World verifier — called from a trusted server — confirms the proof is real and tied to a unique credential. Verifying client-side defeats the entire point. **DO NOT mutate, re-encode, or trim the proof JSON before forwarding** — pass exactly what IDKit returned.
+5. **Verify the proof in your backend** by POSTing it **as-is** to `https://developer.world.org/api/v4/verify/{rp_id}`. *Why backend?* A client can return any JSON it wants. Only the World verifier — called from a trusted server — confirms the proof is real and tied to a unique credential. Verifying client-side defeats the entire point. **DO NOT mutate, re-encode, or trim the proof JSON before forwarding** — pass exactly what IDKit returned. For Selfie Check, IDKit returns `responses[].identifier: "selfie"`. Do not turn it into a hand-built `verification_level`; `face` is only a backward-compatible alias for legacy integrations.
 6. **Store the nullifier.** Every successful proof returns a `nullifier` — an RP-scoped, action-scoped, non-reversible identifier for that user. *Why store it?* Without uniqueness storage, a user can verify the same proof twice and double-claim a reward, vote, etc. Persist `(action, nullifier)` with a `UNIQUE` constraint and reject duplicates on insert. Column type: **`NUMERIC(78, 0)`** (256-bit field elements). The nullifier reveals nothing about the user — safe to store, but it's the *only* anti-replay mechanism, so it's required.
 
 ## Phase 5 — Match environments end-to-end
@@ -166,7 +150,7 @@ Do not declare the integration complete from compilation or Portal configuration
 - [ ] Backend verification succeeds and the exact IDKit result reaches `/api/v4/verify/{rp_id}`.
 - [ ] The verified nullifier is persisted.
 - [ ] Replaying the same nullifier is rejected by the database uniqueness constraint.
-- [ ] Relevant failures—unavailable Face Check, invalid action/signature, or environment mismatch—produce an actionable user-facing error instead of an indefinite loading state.
+- [ ] Relevant failures—unavailable Selfie Check, invalid action/signature, or environment mismatch—produce an actionable user-facing error instead of an indefinite loading state.
 - [ ] JS/React failures retain the `debugReport` and `request_id` needed for diagnosis without logging secrets.
 
 Run automated tests for the routes and persistence behavior. Clearly identify simulator, phone, or production checks that still require the user; never imply a manual proof flow ran when it did not.
@@ -179,7 +163,6 @@ Surface these proactively when you see the matching symptom — don't make the u
 
 | Symptom | Cause | Recovery |
 |---|---|---|
-| Face Check appears unresponsive or never starts | The app may not be enabled for Face Check | Read `enable_face_check` through MCP when available or `/api/v1/precheck/{app_id}`. If false, stop and explain how to request access. |
 | World ID shows "action not found" or QR scan does nothing | Action wasn't created in the environment IDKit is pointing at | Create the missing action with `create_world_id_action` (`environment: "production"` for real devices, `"staging"` for simulator). Confirm `NEXT_PUBLIC_WLD_ENVIRONMENT` matches. |
 | `/api/v4/verify/{rp_id}` returns `invalid_proof` or `verification_failed` | Often staging/production env mismatch, or proof was mutated before forward | Re-check Phase 5. Forward the proof JSON byte-for-byte without re-encoding fields. |
 | Verification fails in JS/React and the error code alone isn't enough | Need transport/payload diagnostics | Read `getDebugReport()` (or the `onError` `debugReport` arg) — it carries `transport`, `request_id`, request/response payloads, and World App `mini_app` channel info. JS SDKs only. |
