@@ -1,0 +1,130 @@
+---
+title: "World ID for YC Startups"
+description: "The simplest way to add proof of human to your startup."
+hidden: true
+hideFooterPagination: true
+---
+
+World ID lets your app verify that a real, unique human is behind an action—without collecting the person's identity or biometric data.
+
+For most startups, the simplest place to start is **Proof of Human**: require one proof before a user creates an account, claims a reward, or takes another high-value action.
+
+## Use World ID when one person should get one chance
+
+World ID is a strong fit when duplicate accounts, bots, or impersonation can change the outcome:
+
+| If you're building... | Use World ID to... |
+| --- | --- |
+| An AI consumer product | Protect free trials, credits, referrals, and limited-access features from bot abuse. |
+| A marketplace or community | Make reviews, reputation, applications, and participation harder to manipulate. |
+| A rewards or growth loop | Give each person one reward, invite bonus, waitlist spot, or vote. |
+| A crypto product | Support fair claims, allocations, grants, governance, or incentive programs. |
+| A product with high-stakes actions | Establish a clear human approval boundary before an agent or automated system acts. |
+
+<Note>
+  World ID proves a unique human, not a person's legal identity. Start with Proof of Human for anti-Sybil protection; add an identity credential later only when your product needs an eligibility attribute such as age or nationality.
+</Note>
+
+## The simplest production path
+
+### 1. Create your app and action
+
+In the [Developer Portal](https://developer.world.org), create an app, register a World ID relying party (RP), and create an action such as `verify-account` or `claim-referral-reward`.
+
+`app_id` and `rp_id` are public identifiers and can be included where the SDK needs them. Keep the RP signing key secret and on the server:
+
+- RP signing key
+
+<Warning>
+  Never expose the RP signing key in browser code or a `NEXT_PUBLIC_` environment variable. It authenticates proof requests from your app.
+</Warning>
+
+### 2. Add the React widget
+
+Install the React SDK:
+
+```bash
+npm i @worldcoin/idkit
+```
+
+Request an RP context from a server endpoint, then open the [IDKit React widget](/world-id/idkit/react). The outline below requests the current Proof of Human credential and sends the result to your backend for verification and authorization.
+
+```tsx
+import { useState } from "react";
+import {
+  IDKitRequestWidget,
+  proofOfHuman,
+  type RpContext,
+} from "@worldcoin/idkit";
+
+export function VerifyAccount({
+  accountId,
+  rpContext,
+}: {
+  accountId: string;
+  rpContext: RpContext;
+}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <button onClick={() => setOpen(true)}>Verify account</button>
+      <IDKitRequestWidget
+        open={open}
+        onOpenChange={setOpen}
+        app_id="app_xxxxx"
+        action="verify-account"
+        rp_context={rpContext}
+        allow_legacy_proofs={true}
+        environment="production"
+        preset={proofOfHuman({ signal: accountId })}
+        handleVerify={async (idkitResponse) => {
+          const response = await fetch("/api/verify-proof", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              idkitResponse,
+            }),
+          });
+
+          if (!response.ok) throw new Error("Verification failed");
+        }}
+        onSuccess={() => {
+          // Refresh client UI only. The backend authorized the protected operation.
+        }}
+      />
+    </>
+  );
+}
+```
+
+For a staging test, use the [World ID Simulator](https://simulator.worldcoin.org/) and a staging action. Use a production action and `environment="production"` for real users.
+
+### 3. Verify on your backend and store the nullifier
+
+Your backend must:
+
+1. From the authenticated server session, select an allowed action and derive the expected account context and signal. Do not accept these authorization inputs from the browser.
+2. Generate the `rp_context` with the RP signing key. See [RP signatures](/world-id/idkit/signatures).
+3. Forward the IDKit result **unchanged** to the verification endpoint constructed with the trusted, server-configured RP ID: `POST https://developer.world.org/api/v4/verify/{rp_id}`. Do not accept an RP ID from the browser. See [backend verification](/world-id/idkit/integrate#step-5-verify-the-proof-in-your-backend).
+4. Validate that the verified proof matches the server-selected action and expected account context/signal, then store the `(action, nullifier)` pair with a database uniqueness constraint. Reject a duplicate insert so the same person cannot repeat the action. Grant the protected operation only after every check succeeds. See [nullifier storage](/world-id/idkit/integrate#step-6-store-the-nullifier).
+
+<Tip>
+  The nullifier is a per-app, per-action identifier. It prevents repeat use while remaining unlinkable across other apps and actions.
+</Tip>
+
+## Start with one high-value moment
+
+Avoid gating every click. Choose the point where abuse is expensive—for example, account creation, a free-credit claim, a referral reward, a vote, or a marketplace listing—and require Proof of Human there first.
+
+After that works, add World ID to other high-value actions with separate actions and nullifier records.
+
+## Add more trust only when you need it
+
+- Need a fresh human-presence check for a sensitive action? Review [user presence and liveness](/world-id/idkit/credentials#user-presence-and-liveness).
+- Need an eligibility signal such as age, nationality, or document type? Review [Identity Check](/world-id/idkit/credentials#identity-check-preview).
+- Building an agentic product? Use [AgentKit](/agents/agent-kit/integrate) after defining the human approval point.
+
+## Build the complete integration
+
+This page is the fast path. Follow the [full IDKit integration guide](/world-id/idkit/integrate) for server-side signatures, complete SDK examples, testing, and production rollout details.
