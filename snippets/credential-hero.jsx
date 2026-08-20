@@ -67,7 +67,7 @@ export const CredentialHero = ({
       {/* Metadata table */}
       <div>
         {issuerName && (
-          <div className="flex items-center gap-3 border-b border-zinc-200 px-6 py-3.5 text-[14px] md:px-8 dark:border-zinc-800">
+          <div className="flex items-center gap-3 border-b border-zinc-200 px-6 py-3.5 text-[14px] last:border-b-0 md:px-8 dark:border-zinc-800">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-200/70 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
               <Icon icon="building" size={16} />
             </span>
@@ -100,7 +100,7 @@ export const CredentialHero = ({
           </div>
         )}
         {status && (
-          <div className="flex items-center gap-3 border-b border-zinc-200 px-6 py-3.5 text-[14px] md:px-8 dark:border-zinc-800">
+          <div className="flex items-center gap-3 border-b border-zinc-200 px-6 py-3.5 text-[14px] last:border-b-0 md:px-8 dark:border-zinc-800">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-200/70 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
               <Icon icon="signal" size={16} />
             </span>
@@ -125,7 +125,7 @@ export const CredentialHero = ({
           </div>
         )}
         {id != null && (
-          <div className="flex items-center gap-3 border-b border-zinc-200 px-6 py-3.5 text-[14px] md:px-8 dark:border-zinc-800">
+          <div className="flex items-center gap-3 border-b border-zinc-200 px-6 py-3.5 text-[14px] last:border-b-0 md:px-8 dark:border-zinc-800">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-200/70 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
               <Icon icon="hashtag" size={16} />
             </span>
@@ -138,7 +138,7 @@ export const CredentialHero = ({
           </div>
         )}
         {sybilResistance != null && (
-          <div className="flex items-center gap-3 border-b border-zinc-200 px-6 py-3.5 text-[14px] md:px-8 dark:border-zinc-800">
+          <div className="flex items-center gap-3 border-b border-zinc-200 px-6 py-3.5 text-[14px] last:border-b-0 md:px-8 dark:border-zinc-800">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-200/70 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
               <Icon icon="shield-check" size={16} />
             </span>
@@ -179,7 +179,7 @@ export const CredentialHero = ({
           </div>
         )}
         {validityPeriod && (
-          <div className="flex items-center gap-3 border-b border-zinc-200 px-6 py-3.5 text-[14px] md:px-8 dark:border-zinc-800">
+          <div className="flex items-center gap-3 border-b border-zinc-200 px-6 py-3.5 text-[14px] last:border-b-0 md:px-8 dark:border-zinc-800">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-zinc-200/70 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
               <Icon icon="clock" size={16} />
             </span>
