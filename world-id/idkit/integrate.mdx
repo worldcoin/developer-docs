@@ -8,19 +8,19 @@ description: "Integrate World ID into your app"
 
 import IDKitResponse from "/snippets/idkit-response.mdx";
 
-IDKit is the SDK for integrating World ID into your app. It handles proof requests, verification flows, and communication with the World ID app, so your backend receives a cryptographic proof of human, not personal data.
+IDKit is the SDK for integrating World ID into your app. It handles proof requests, verification flows and communication with the World ID App, so your backend receives cryptographic proof of human, not personal data.
 
-Use the React widget for drop-in integration, or the JS, Swift, and Kotlin SDKs for custom flows. For the core concepts of World ID, see [this page](/world-id/concepts).
+Use the React widget for drop-in integration, or the JS, Swift and Kotlin SDKs for custom flows. For the core concepts of World ID, see [this page](/world-id/concepts).
 
-> Tip: To integrate faster, give your coding agent the [Build with LLMs prompt](/world-id/idkit/build-with-llms) — copy it once, then paste into Claude, Cursor, or any AI coding assistant.
+> Tip: To integrate faster, give your coding agent the [Build with LLMs prompt](/world-id/idkit/build-with-llms) — copy it once, then paste into Claude, Cursor or any AI coding assistant.
 
 ## How it works
 
-Send a **proof request** through IDKit, challenging the user to prove something about themselves — such as uniqueness, document possession, or liveness — based on their [credentials](/world-id/overview#credentials). The user's World ID app generates a zero-knowledge proof without revealing personal data. Your backend then verifies the proof and stores a **nullifier** (a per-app, per-action identifier) to prevent the same person from verifying twice.
+Send a **proof request** through IDKit, challenging the user to prove something about themselves — such as uniqueness, document possession or liveness — based on their [credentials](/world-id/overview#credentials). The user's World ID App generates a zero-knowledge proof without revealing personal data. Your backend then verifies the proof and stores a **nullifier** (a per-app, per-action identifier) to prevent the same person from verifying twice.
 
 <img src="/images/docs/idkit-flow.svg" alt="IDKit integration flow" />
 
-Four components are involved: your **client** (where IDKit runs), your **backend** (which signs requests and verifies proofs), the **World ID app** (on the user's device), and the **Developer Portal** (which validates proofs on-chain). The steps below cover each one.
+Four components are involved: your **client** (where IDKit runs), your **backend** (which signs requests and verifies proofs), the **World ID App** (on the user's device) and the **Developer Portal** (which validates proofs on-chain). The steps below cover each one.
 
 # Step 1: Install IDKit
 
