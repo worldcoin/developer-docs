@@ -25,7 +25,7 @@
   #sidebar-content
     li[data-active]
     img[src$="/images/docs/human-badge-gray.svg"] {
-    filter: sepia(1) saturate(8) hue-rotate(175deg);
+    content: url("/images/docs/human-badge-blue.svg");
   }
 
   /* Page content text links only (anchors without custom classes) */
