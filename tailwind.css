@@ -21,6 +21,13 @@
 }
 
 @layer components {
+  /* Tint the custom Proof of Human badge when its sidebar page is selected. */
+  #sidebar-content
+    li[data-active]
+    img[src$="/images/docs/human-badge-gray.svg"] {
+    filter: sepia(1) saturate(8) hue-rotate(175deg);
+  }
+
   /* Page content text links only (anchors without custom classes) */
   .prose a:not([class]),
   .prose a:not([class]):hover,
