@@ -128,6 +128,9 @@ import { DeveloperStories } from "/snippets/developer-stories.jsx";
         the server-side NEXT_SERVER_BRAZE_TOKEN. A static Mintlify site cannot
         hold that secret, so this form needs either a public subscribe endpoint
         from the web team or a Braze public-key integration before it can ship.
+        Endpoint proposed as https://github.com/worldcoin/company-website/pull/4481 —
+        once merged (plus its Cloudflare rate rule), point this form at
+        POST https://world.org/api/subscribe with body {email} and uncomment.
 
     <div className="landing-newsletter">
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "48px", alignItems: "center" }}>
