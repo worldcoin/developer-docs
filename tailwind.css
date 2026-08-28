@@ -151,7 +151,10 @@
 
   /* Landing page — developer stories carousel.
      Cards are 4:3 (756x567 in the mock); two fill the content column with the
-     third peeking past the edge, matching the design's resting composition. */
+     third peeking past the edge, matching the design's resting composition.
+     Kept as a CSS class on purpose: an arbitrary utility like
+     w-[min(760px,85%)] is silently dropped by Mintlify's Tailwind compiler
+     (values with a comma + %), which renders the cards at zero size. */
   .landing-story-card {
     width: calc(50% - 44px);
     aspect-ratio: 4 / 3;
