@@ -8,71 +8,111 @@ description: "Build Mini Apps, integrate World ID, and deploy on World Chain wit
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
+import { DeveloperStories } from "/snippets/developer-stories.jsx";
+
+{/* cspell:ignore worldcoin Estevez Jangwon Toktokhan Hyrax gigagas flashblock prismic */}
 
 <div className="landing-container">
 
-<div
-  className="landing-hero"
-  style={{
-    fontSize: "40px",
-    lineHeight: 1.3,
-    letterSpacing: "-0.8px",
-    fontWeight: 300,
-    marginBottom: "48px",
-    maxWidth: "796px",
-  }}
->
-  Build Mini Apps, integrate World ID and deploy on World Chain with official developer documentation.
+<div style={{ marginBottom: "128px" }}>
+  <h1 className="landing-hero-title" style={{ margin: 0 }}>World Developer Docs</h1>
+  <div className="landing-hero-sub">
+    Integrate World ID and deploy on World Chain with official developer documentation.
+  </div>
 </div>
 
-<div className="landing-card-grid" style={{ marginBottom: "64px" }}>
+<div className="landing-card-grid" style={{ marginBottom: "192px" }}>
 
-  <a href="/world-id/overview" className="product-card" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", aspectRatio: "1 / 1", padding: "24px", borderRadius: "16px", textDecoration: "none", cursor: "pointer" }}>
-    <img src="/icons/landing/world-id.svg" alt="" className="product-card-icon" style={{ width: "32px", height: "32px", display: "block" }} />
+  <a href="/world-id/overview" className="product-card">
+    <div className="product-card-tile">
+      <img src="/icons/landing/world-id.svg" alt="" className="product-card-icon" style={{ width: "40px", height: "40px", display: "block" }} />
+    </div>
     <div>
-      <div className="product-card-title" style={{ fontSize: "24px", lineHeight: 1.3, letterSpacing: "-0.24px", fontWeight: 450 }}>Integrate World ID</div>
-      <div className="product-card-desc" style={{ fontSize: "16px", lineHeight: 1.4, fontWeight: 300, marginTop: "10px" }}>Anonymous proof of human for your website or app</div>
+      <div className="product-card-title" style={{ fontSize: "32px", lineHeight: 1.2, letterSpacing: "-0.32px", fontWeight: 300 }}>Integrate World ID</div>
+      <div className="product-card-desc" style={{ fontSize: "16px", lineHeight: 1.4, fontWeight: 300, marginTop: "10px", maxWidth: "280px" }}>Anonymous Proof of Human for your website or app</div>
     </div>
   </a>
 
-  <a href="/mini-apps" className="product-card" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", aspectRatio: "1 / 1", padding: "24px", borderRadius: "16px", textDecoration: "none", cursor: "pointer" }}>
-    <img src="/icons/landing/mini-app.svg" alt="" className="product-card-icon" style={{ width: "32px", height: "32px", display: "block" }} />
+  <a href="/mini-apps" className="product-card">
+    <div className="product-card-tile">
+      <img src="/icons/landing/mini-app.svg" alt="" className="product-card-icon" style={{ width: "40px", height: "40px", display: "block" }} />
+    </div>
     <div>
-      <div className="product-card-title" style={{ fontSize: "24px", lineHeight: 1.3, letterSpacing: "-0.24px", fontWeight: 450 }}>Create a Mini App</div>
-      <div className="product-card-desc" style={{ fontSize: "16px", lineHeight: 1.4, fontWeight: 300, marginTop: "10px" }}>Mini applications distributed in World App</div>
+      <div className="product-card-title" style={{ fontSize: "32px", lineHeight: 1.2, letterSpacing: "-0.32px", fontWeight: 300 }}>Create a Mini App</div>
+      <div className="product-card-desc" style={{ fontSize: "16px", lineHeight: 1.4, fontWeight: 300, marginTop: "10px", maxWidth: "280px" }}>Mini applications distributed in World App</div>
     </div>
   </a>
 
-  <a href="/agents/agent-kit/integrate" className="product-card" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", aspectRatio: "1 / 1", padding: "24px", borderRadius: "16px", textDecoration: "none", cursor: "pointer" }}>
-    <img src="/icons/landing/agentkit.svg" alt="" className="product-card-icon" style={{ width: "32px", height: "32px", display: "block" }} />
+  <a href="/agents/agent-kit/integrate" className="product-card">
+    <div className="product-card-tile">
+      <img src="/icons/landing/agentkit.svg" alt="" className="product-card-icon" style={{ width: "40px", height: "40px", display: "block" }} />
+    </div>
     <div>
-      <div className="product-card-title" style={{ fontSize: "24px", lineHeight: 1.3, letterSpacing: "-0.24px", fontWeight: 450 }}>AgentKit</div>
-      <div className="product-card-desc" style={{ fontSize: "16px", lineHeight: 1.4, fontWeight: 300, marginTop: "10px" }}>Distinguish human-backed agents from bots and scripts</div>
+      <div className="product-card-title" style={{ fontSize: "32px", lineHeight: 1.2, letterSpacing: "-0.32px", fontWeight: 300 }}>AgentKit</div>
+      <div className="product-card-desc" style={{ fontSize: "16px", lineHeight: 1.4, fontWeight: 300, marginTop: "10px", maxWidth: "280px" }}>Distinguish human-backed agents from bots and scripts</div>
     </div>
   </a>
 
-  <a href="/world-chain" className="product-card" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", aspectRatio: "1 / 1", padding: "24px", borderRadius: "16px", textDecoration: "none", cursor: "pointer" }}>
-    <img src="/icons/landing/world-chain.svg" alt="" className="product-card-icon" style={{ width: "32px", height: "32px", display: "block" }} />
+  <a href="/world-chain" className="product-card">
+    <div className="product-card-tile">
+      <img src="/icons/landing/world-chain.svg" alt="" className="product-card-icon" style={{ width: "40px", height: "40px", display: "block" }} />
+    </div>
     <div>
-      <div className="product-card-title" style={{ fontSize: "24px", lineHeight: 1.3, letterSpacing: "-0.24px", fontWeight: 450 }}>World Chain</div>
-      <div className="product-card-desc" style={{ fontSize: "16px", lineHeight: 1.4, fontWeight: 300, marginTop: "10px" }}>Build directly on our blockchain infrastructure</div>
+      <div className="product-card-title" style={{ fontSize: "32px", lineHeight: 1.2, letterSpacing: "-0.32px", fontWeight: 300 }}>World Chain</div>
+      <div className="product-card-desc" style={{ fontSize: "16px", lineHeight: 1.4, fontWeight: 300, marginTop: "10px", maxWidth: "280px" }}>Build directly on World’s blockchain infrastructure</div>
     </div>
   </a>
 
 </div>
 
-<div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "80px" }}>
-  <a href="https://t.me/worlddevelopersupport" className="landing-link" style={{ display: "inline-flex", alignItems: "center", gap: "10px", fontSize: "16px", textDecoration: "underline", textUnderlineOffset: "4px", width: "fit-content" }}>
-    <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.828.94z"/></svg>
-    Telegram Support Channel
-  </a>
-  <a href="mailto:developers@toolsforhumanity.com" className="landing-link" style={{ display: "inline-flex", alignItems: "center", gap: "10px", fontSize: "16px", textDecoration: "underline", textUnderlineOffset: "4px", width: "fit-content" }}>
-    <svg width="16" height="16" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-    Email Support
-  </a>
-  <a href="https://github.com/worldcoin" className="landing-link" style={{ display: "inline-flex", alignItems: "center", gap: "10px", fontSize: "16px", textDecoration: "underline", textUnderlineOffset: "4px", width: "fit-content" }}>
-    <svg width="16" height="16" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-    GitHub
+<div style={{ marginBottom: "192px" }}>
+  <DeveloperStories
+    title="Developer stories"
+    subtitle="See how developers build trusted, human-centered apps with World."
+    items={[
+      {
+        name: "Diego Estevez",
+        role: "Co-Founder",
+        company: "Divine",
+        youtubeId: "DPiCrh4-5Dc",
+        poster: "https://images.prismic.io/worldcoin-company-website/agb7nKYofJOwHRRv_Frame2147264383-1-.png?auto=format,compress&w=1200",
+      },
+      {
+        name: "Jangwon Seo",
+        role: "Founder",
+        company: "Toktokhan.dev",
+        youtubeId: "KsOXJx_JQ7w",
+        poster: "https://images.prismic.io/worldcoin-company-website/ag3QGqYofJOwHb_V_aTmV8HNYClf9oBXK_age-verification-privacy-paradox1-1-.png?auto=format,compress&w=1200",
+      },
+      {
+        name: "Corey Miller",
+        role: "Co-Founder",
+        company: "tbd.vote",
+        youtubeId: "cnM2VuLlElw",
+        poster: "https://images.prismic.io/worldcoin-company-website/ag7vZKYofJOwHe23_0dde88b74912f140608b064cc58853a26bbda0cc.jpg?auto=format,compress&w=1200",
+      },
+    ]}
+  />
+</div>
+
+<div style={{ marginBottom: "128px" }}>
+  <div className="landing-section-title" style={{ marginBottom: "48px" }}>World Tech Updates</div>
+  <div className="landing-updates">
+    <a className="landing-update" href="https://world.org/blog/engineering/world-chain-full-block-access-lists" target="_blank" rel="noopener noreferrer">
+      <div className="landing-update-title">World Chain launches full block access lists</div>
+      <p className="landing-update-desc">World Chain now streams full EIP-7928 block access lists in every flashblock, enabling parallel block verification, faster validation, and a path toward gigagas-per-second throughput without increasing validator hardware requirements.</p>
+    </a>
+    <a className="landing-update" href="https://world.org/blog/engineering/world-zkgpu-for-ml-and-more" target="_blank" rel="noopener noreferrer">
+      <div className="landing-update-title">Remainder: World's GKR prover for ML and more</div>
+      <p className="landing-update-desc">Today we announce the open-sourcing of Remainder (Reasonable Machine Learning Doubly-Efficient Prover), Tools for Humanity's in-house GKR + Hyrax proof system. Remainder enables World's users to run ML models locally over private data and prove that they executed them correctly.</p>
+    </a>
+    <a className="landing-update" href="https://world.org/blog/engineering/introducing-world-id-4.0" target="_blank" rel="noopener noreferrer">
+      <div className="landing-update-title">Introducing World ID 4.0 - Request for Comments</div>
+      <p className="landing-update-desc">The new World ID 4.0 upgrade introduces account abstraction with multi-key support, transforming a World ID from a single secret into an abstract record in a public registry. This increases protocol resilience by allowing the introduction of multiple key support, portability, recovery and improved privacy.</p>
+    </a>
+  </div>
+  <a href="https://world.org/blog/engineering" target="_blank" rel="noopener noreferrer" className="landing-link" style={{ display: "inline-block", fontSize: "16px", marginTop: "32px", textDecoration: "none" }}>
+    Go to World Tech
   </a>
 </div>
 
@@ -82,34 +122,41 @@ description: "Build Mini Apps, integrate World ID, and deploy on World Chain wit
 <div className="landing-footer">
   <div className="landing-footer-inner">
 
-    {/* Newsletter — uncomment when provider is ready
+    {/* Newsletter — uncomment when a subscribe endpoint exists.
+        Why it is disabled: world.org's form submits through a Next.js server
+        action (company-website src/actions/subscribe.ts) that calls Braze with
+        the server-side NEXT_SERVER_BRAZE_TOKEN. A static Mintlify site cannot
+        hold that secret, so this form needs either a public subscribe endpoint
+        from the web team or a Braze public-key integration before it can ship.
+
     <div className="landing-newsletter">
-      <div style={{ maxWidth: "756px", margin: "0 auto", textAlign: "center" }}>
-        <div className="landing-newsletter-title" style={{ fontSize: "32px", lineHeight: 1.3, letterSpacing: "-0.64px", fontWeight: 300, marginBottom: "32px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "48px", alignItems: "center" }}>
+        <div className="landing-newsletter-title" style={{ fontSize: "40px", lineHeight: 1.2, letterSpacing: "-0.8px", fontWeight: 300 }}>
           Subscribe to World Developers Newsletter
         </div>
-        <form className="landing-email-field" style={{ display: "flex", alignItems: "center", maxWidth: "520px", margin: "0 auto", borderRadius: "30px", padding: "10px 10px 10px 24px", gap: "12px" }}>
-          <input type="email" placeholder="Your email" className="landing-email-input" style={{ flex: 1, border: "none", outline: "none", fontSize: "20px", fontWeight: 300, background: "transparent", fontFamily: "inherit" }} />
-          <button type="submit" style={{ width: "40px", height: "40px", borderRadius: "20px", backgroundColor: "#2D2C2C", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8.5 2.8L13.2 7.5H2V8.5H13.2L8.5 13.2L9.2 13.9L15.1 8L9.2 2.1L8.5 2.8Z" fill="white"/></svg>
-          </button>
-        </form>
-        <div style={{ fontSize: "12px", lineHeight: 1.4, color: "#9D9B96", marginTop: "32px", maxWidth: "605px", margin: "32px auto 0" }}>
-          By entering your email address and clicking "Subscribe," you consent to receive newsletters, marketing communications and ecosystem updates. For details on how we process your personal data, including your rights and how to exercise them, please review our <a href="https://world.org/legal/privacy-notice" target="_blank" style={{ color: "#2D2C2C", textDecoration: "underline" }} className="landing-privacy-link">Privacy Notice</a>.
+        <div>
+          <form className="landing-email-field" style={{ display: "flex", alignItems: "center", borderRadius: "30px", padding: "10px 10px 10px 24px", gap: "12px" }}>
+            <input type="email" placeholder="Your email" className="landing-email-input" style={{ flex: 1, border: "none", outline: "none", fontSize: "20px", fontWeight: 300, background: "transparent", fontFamily: "inherit" }} />
+            <button type="submit" style={{ width: "40px", height: "40px", borderRadius: "20px", backgroundColor: "#181818", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8.5 2.8L13.2 7.5H2V8.5H13.2L8.5 13.2L9.2 13.9L15.1 8L9.2 2.1L8.5 2.8Z" fill="white"/></svg>
+            </button>
+          </form>
+          <div style={{ fontSize: "12px", lineHeight: 1.4, color: "#9D9B96", marginTop: "24px" }}>
+            By entering your email address and clicking “Subscribe,” you consent to receive newsletters, marketing communications and ecosystem updates. For details on how we process your personal data, including your rights and how to exercise them, please review our <a href="https://world.org/legal/privacy-notice" target="_blank" style={{ textDecoration: "underline" }} className="landing-privacy-link">Privacy Notice</a>.
+          </div>
         </div>
       </div>
     </div>
     */}
 
-    {/* Footer links */}
-    <div className="landing-footer-links" style={{ display: "flex", gap: "160px", fontSize: "16px", lineHeight: 1.4, fontWeight: 300 }}>
-      <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+    {/* Footer links — single row per Docs 3.0: trademark left, links right */}
+    <div className="landing-footer-links" style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: "24px 48px", fontSize: "16px", lineHeight: 1.4, fontWeight: 300 }}>
+      <span>™ 2026 World</span>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "16px 40px" }}>
         <a href="https://world.org" className="landing-footer-link">About World</a>
         <a href="https://world.org/developers" className="landing-footer-link">Developers</a>
         <a href="https://whitepaper.world.org" className="landing-footer-link">Whitepaper</a>
         <a href="https://github.com/worldcoin" className="landing-footer-link">Open Source</a>
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
         <a href="https://world.org/ecosystem" className="landing-footer-link">Ecosystem</a>
         <a href="https://world.org/careers" className="landing-footer-link">Careers</a>
       </div>
