@@ -46,18 +46,15 @@ export const Quickstart = ({
   };
 
   return (
-    <div className="not-prose rounded-3xl bg-zinc-100 p-6 md:p-8 dark:bg-zinc-900">
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-[minmax(280px,1fr)_minmax(360px,1.45fr)] md:items-start">
-        <div>
-          <h3 className="m-0 text-2xl leading-tight font-semibold text-zinc-900 dark:text-zinc-100">
-            {title}
-          </h3>
-          <p className="mt-3 max-w-[560px] text-[16px] leading-7 text-zinc-600 dark:text-zinc-300">
-            {description}
-          </p>
-        </div>
-
-        <div className="quickstart-code min-w-0">{children}</div>
+    <div className="not-prose rounded-3xl border border-[#E1DFDA] bg-white p-6 md:p-8 dark:border-zinc-800 dark:bg-zinc-900">
+      <div>
+        <h3 className="m-0 text-2xl leading-tight font-semibold text-zinc-900 dark:text-zinc-100">
+          {title}
+        </h3>
+        <p className="mt-3 text-[16px] leading-7 text-zinc-800 dark:text-zinc-200">
+          {description}
+        </p>
+        <div className="quickstart-code mt-6 min-w-0">{children}</div>
       </div>
 
       {promptText ? (
@@ -67,7 +64,7 @@ export const Quickstart = ({
             <span className="font-mono text-xs text-zinc-500 dark:text-zinc-400">OR</span>
             <div className="h-px flex-1 bg-zinc-200 dark:bg-white/10"></div>
           </div>
-          <p className="m-0 mb-2 text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="m-0 mb-2 text-[16px] text-zinc-800 dark:text-zinc-200">
             Tell your coding agent to:
           </p>
           <div

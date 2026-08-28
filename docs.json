@@ -2,6 +2,9 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "World Documentation",
+  "styling": {
+    "codeblocks": "system"
+  },
   "colors": {
     "primary": "#007CFB",
     "light": "#4B5563",
