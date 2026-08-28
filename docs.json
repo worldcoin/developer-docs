@@ -7,6 +7,9 @@
       "light": "#F9F9F8"
     }
   },
+  "styling": {
+    "codeblocks": "system"
+  },
   "colors": {
     "primary": "#007CFB",
     "light": "#4B5563",
