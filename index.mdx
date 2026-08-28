@@ -14,6 +14,10 @@ import { DeveloperStories } from "/snippets/developer-stories.jsx";
 
 <div className="landing-container">
 
+{/* Hero + cards fill the first viewport (minus the fixed nav chrome) so the
+    Developer stories section always starts below the fold, on any screen. */}
+<div style={{ minHeight: "calc(100vh - 90px)", display: "flex", flexDirection: "column" }}>
+
 <div style={{ marginBottom: "128px" }}>
   <h1 className="landing-hero-title" style={{ margin: 0 }}>World Developer Docs</h1>
   <div className="landing-hero-sub">
@@ -21,7 +25,7 @@ import { DeveloperStories } from "/snippets/developer-stories.jsx";
   </div>
 </div>
 
-<div className="landing-card-grid" style={{ marginBottom: "320px" }}>
+<div className="landing-card-grid" style={{ marginBottom: "192px" }}>
 
   <a href="/world-id/overview" className="product-card">
     <div className="product-card-tile">
@@ -62,6 +66,8 @@ import { DeveloperStories } from "/snippets/developer-stories.jsx";
       <div className="product-card-desc" style={{ fontSize: "16px", lineHeight: 1.4, fontWeight: 300, marginTop: "10px", maxWidth: "280px" }}>Build directly on World’s blockchain infrastructure</div>
     </div>
   </a>
+
+</div>
 
 </div>
 
