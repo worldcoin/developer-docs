@@ -5,6 +5,7 @@ description: ""
 ---
 
 import { Quickstart } from "/snippets/quickstart.jsx";
+import { FeatureBlocks } from "/snippets/feature-blocks.jsx";
 
 ## World ID
 
@@ -23,7 +24,7 @@ Through credentials like Proof of Human, Document, and Selfie Check, World ID ex
   buttonLabel="Open integration guide"
   agentPrompt={{ skillUrl: "world.id/SKILL.md", productName: "World ID" }}
 >
-  ```tsx lines
+  ```tsx
   import { IDKitRequestWidget } from "@worldcoin/idkit";
   const rpContext = await getRpContext("verify-account");
   <IDKitRequestWidget
@@ -61,27 +62,40 @@ Through credentials like Proof of Human, Document, and Selfie Check, World ID ex
 
 ## Start building
 
-<CardGroup cols={2}>
-  <Card title="Stop bots and duplicate accounts" icon="user">
-    Use proof of human to enforce one human per account and reduce Sybil abuse in rewards, referrals, governance, and account creation.
-  </Card>
-  <Card title="Protect conversion and user privacy" icon="shield-check">
-    Replace CAPTCHA-heavy or document-heavy gating with reusable proof flows. Relying parties receive proofs, not personal data.
-  </Card>
-</CardGroup>
+<FeatureBlocks
+  items={[
+    {
+      icon: "user",
+      title: "Stop bots and duplicate accounts",
+      body: "Use proof of human to enforce one human per account and reduce Sybil abuse in rewards, referrals, governance, and account creation.",
+    },
+    {
+      icon: "shield-check",
+      title: "Protect conversion and user privacy",
+      body: "Replace CAPTCHA-heavy or document-heavy gating with reusable proof flows. Relying parties receive proofs, not personal data.",
+    },
+  ]}
+/>
 
 
 ## Privacy by architecture
 
-<CardGroup cols={2}>
-  <Card title="Zero-knowledge proofs" icon="eye">
-    Users prove what is true without revealing personal information. Proofs are unlinkable across apps.
-  </Card>
-  <Card title="Multi-party computation" icon="users">
-    Matching and uniqueness checks are split across independent nodes so no single party holds complete sensitive data.
-  </Card>
-</CardGroup>
-
-<Card title="Self-custodial" icon="shield">
-  Proof generation happens on the user's device. Your app receives a proof, not raw personal data.
-</Card>
+<FeatureBlocks
+  items={[
+    {
+      icon: "eye",
+      title: "Zero-knowledge proofs",
+      body: "Users prove what is true without revealing personal information. Proofs are unlinkable across apps.",
+    },
+    {
+      icon: "community",
+      title: "Multi-party computation",
+      body: "Matching and uniqueness checks are split across independent nodes so no single party holds complete sensitive data.",
+    },
+    {
+      icon: "shield",
+      title: "Self-custodial",
+      body: "Proof generation happens on the user’s device. Your app receives a proof, not raw personal data.",
+    },
+  ]}
+/>
