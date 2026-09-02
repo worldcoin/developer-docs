@@ -103,20 +103,19 @@ The credential decides what the user proves. Nail this down before scaffolding �
 
 **DO NOT default to `proofOfHuman` if the user said "passport" or "verify their ID"** — that's `passport`. **DO NOT default to `proofOfHuman` if the user said "selfie" or "liveness"** — that's `selfieCheck`. When in doubt, ask one question.
 
-Other legacy presets exist (`documentLegacy`, `selfieCheckLegacy`, `deviceLegacy`); reach for them only when the user asks specifically. For sign-in / session reuse across visits, use the v4 **session** flow instead of a uniqueness preset (see the integrate doc).
+Other legacy presets exist (`documentLegacy`, `deviceLegacy`); reach for them only when the user asks specifically. For sign-in / session reuse across visits, use the v4 **session** flow instead of a uniqueness preset (see the integrate doc).
 
 ### Selfie Check
 
-Use `selfieCheck`, which requests the Selfie Check credential and
-always disables legacy proof fallback. Each Selfie Check response includes a
-required integer `sybil_score`; forward the complete IDKit result unchanged so
-the Developer Portal can verify the proof and version 2 integrity signature
-before the app uses the score.
+Use `selfieCheck`, which requests the Selfie Check credential. Each Selfie Check
+response includes a required integer `sybil_score`; forward the complete IDKit
+result unchanged so the Developer Portal can verify the proof and version 2
+integrity signature before the app uses the score.
 
 World ID 4.0 uniqueness proofs are one-time per action for each user. If the
 same user needs to complete Selfie Check more than once, use a different action
-for each check. Keep the deprecated `selfieCheckLegacy` preset only when
-maintaining an existing World ID 3.0 integration.
+for each check. Migrate existing `selfieCheckLegacy` integrations to
+`selfieCheck`.
 
 ## Phase 4 — Implement the 6 integration steps and explain the WHY
 

@@ -80,11 +80,6 @@ const rpContext: RpContext = {
 - If `handleVerify` throws/rejects, the widget enters an error state, emits `onError("failed_by_host_app")`, and does not call `onSuccess`. This means World App already returned a proof, but your callback or backend did not accept it.
 - `onError` is optional.
 
-For `selfieCheck`, `result.responses` contains a typed
-`SelfieCheckResponseItemV4` with a required numeric `sybil_score`. Only use the
-score after `handleVerify` has successfully verified the complete result through
-your backend.
-
 ## Headless hooks
 
 ### `useIDKitRequest`
@@ -127,7 +122,7 @@ Hook result fields:
 For invite-code flows, use `IDKitInviteCodeRequestWidget` (controlled) or `useIDKitInviteCodeRequest` (headless). Config matches `IDKitRequestWidget` / `useIDKitRequest` — invite-code mode adds no new required fields. See [Invite-code mode](/world-id/idkit/verification-flows#with-invite-code-mode) for when to use it.
 
 ```tsx
-import { IDKitInviteCodeRequestWidget, selfieCheck } from "@worldcoin/idkit";
+import { IDKitInviteCodeRequestWidget, proofOfHuman } from "@worldcoin/idkit";
 
 <IDKitInviteCodeRequestWidget
   open={open}
@@ -135,8 +130,8 @@ import { IDKitInviteCodeRequestWidget, selfieCheck } from "@worldcoin/idkit";
   app_id="app_xxxxx"
   action="my-action"
   rp_context={rpContext}
-  allow_legacy_proofs={false}
-  preset={selfieCheck({ signal: "user-123" })}
+  allow_legacy_proofs={true}
+  preset={proofOfHuman({ signal: "user-123" })}
   handleVerify={async (result) => { /* ... */ }}
   onSuccess={() => { /* ... */ }}
 />;
@@ -177,7 +172,7 @@ import { IDKitRequestWidget, orbLegacy } from "@worldcoin/idkit";
 
 ```tsx
 // After — invite-code widget
-import { IDKitInviteCodeRequestWidget, selfieCheck } from "@worldcoin/idkit";
+import { IDKitInviteCodeRequestWidget, proofOfHuman } from "@worldcoin/idkit";
 
 <IDKitInviteCodeRequestWidget
   open={open}
@@ -185,8 +180,8 @@ import { IDKitInviteCodeRequestWidget, selfieCheck } from "@worldcoin/idkit";
   app_id="app_xxxxx"
   action="my-action"
   rp_context={rpContext}
-  allow_legacy_proofs={false}
-  preset={selfieCheck({ signal: "user-123" })}
+  allow_legacy_proofs={true}
+  preset={proofOfHuman({ signal: "user-123" })}
   handleVerify={handleVerify}
   onSuccess={onSuccess}
 />;

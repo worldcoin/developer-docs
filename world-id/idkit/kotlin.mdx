@@ -71,10 +71,6 @@ if (completion is IDKitCompletionResult.Success) {
 }
 ```
 
-For `selfieCheck`, the successful result contains a `ResponseItem.SelfieV4`
-item with a required `sybilScore: ULong` value. Forward the complete result to
-your backend before using the score.
-
 ## Presets
 
 ```kotlin
@@ -82,28 +78,6 @@ import com.worldcoin.idkit.IDKit
 import com.worldcoin.idkit.orbLegacy
 
 val request = IDKit.request(config).preset(orbLegacy(signal = "user-123"))
-```
-
-Use `selfieCheck` for Selfie Check. Set
-`allowLegacyProofs` to `false`; the preset also enforces this value so it never
-falls back to a legacy proof.
-
-```kotlin
-import com.worldcoin.idkit.IDKit
-import com.worldcoin.idkit.selfieCheck
-
-val selfieConfig = IDKitRequestConfig(
-  appId = "app_xxxxx",
-  action = "my-action",
-  rpContext = rpContext,
-  allowLegacyProofs = false,
-  returnTo = "myapp://verify-done",
-  environment = Environment.PRODUCTION,
-)
-
-val request = IDKit.request(selfieConfig).preset(
-  selfieCheck(signal = "user-123")
-)
 ```
 
 ## Polling patterns
