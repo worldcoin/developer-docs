@@ -5,7 +5,7 @@ description: "Install the sandbox World ID app and point your integration at the
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-{/* cspell:ignore idkit TestFlight VZEurhHe Eurh */}
+{/* cspell:ignore idkit TestFlight */}
 
 Getting set up in Sandbox has two parts: install the **sandbox World ID app** on your
 test device, and point your **integration** at the Sandbox environment. Both are
@@ -20,14 +20,32 @@ install them through the testing links below.
 
 ### iOS — TestFlight
 
+The sandbox build is distributed through TestFlight, and gated behind an enrollment
+request.
+
+#### Request tester access
+
 1. Install [TestFlight](https://apps.apple.com/app/testflight/id899247664) from the
    App Store if you don't have it.
-2. Open the public TestFlight link to join the external tester group:
-   [testflight.apple.com/join/VZEurhHe](https://testflight.apple.com/join/VZEurhHe)
-3. Install the **World ID (Sandbox)** build from TestFlight.
+2. In the [Developer Portal](https://developer.world.org), select **World ID Sandbox**
+   from the sidebar, choose the **iOS** tab, and submit the Apple Account email you
+   want enrolled. Enrollment is tied to a team, so open the sandbox panel from within
+   a team.
+3. Wait for approval.
 
-No App Store Connect account or per-email invite is required — the public link admits
-you to the external tester group directly.
+#### Install the build
+
+1. Once your request is approved, you'll get a TestFlight invitation email.
+2. Accept the invitation.
+3. Install it.
+
+#### Troubleshooting FAQ
+
+- Confirm the email you submitted is the Apple Account you'll use to sign in to
+  TestFlight, not any other email.
+- If your request was rejected or your access was revoked, submitting the same email
+  again won't create a new request. Contact Sandbox Support at
+  sandbox.access@toolsforhumanity.org.
 
 ### Android — Google Play
 
