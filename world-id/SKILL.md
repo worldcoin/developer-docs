@@ -107,7 +107,7 @@ Other legacy presets exist (`documentLegacy`, `selfieCheckLegacy`, `deviceLegacy
 
 ### Selfie Check
 
-Use `selfieCheck`, which requests the World ID 4.0 Selfie Check credential and
+Use `selfieCheck`, which requests the Selfie Check credential and
 always disables legacy proof fallback. Each Selfie Check response includes a
 required integer `sybil_score`; forward the complete IDKit result unchanged so
 the Developer Portal can verify the proof and version 2 integrity signature

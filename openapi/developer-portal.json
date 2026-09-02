@@ -743,7 +743,7 @@
                   }
                 },
                 "selfie_check_v4": {
-                  "summary": "Selfie Check (protocol 4.0)",
+                  "summary": "Selfie Check",
                   "value": {
                     "protocol_version": "4.0",
                     "nonce": "0xabc123",
@@ -1279,7 +1279,7 @@
       "IntegrityBundle": {
         "type": "object",
         "required": ["version", "signature_format", "timestamp", "signature", "jwt"],
-        "description": "World ID App integrity attestation. Selfie Check 4.0 requires version 2, which covers the disclosed `sybil_score`.",
+        "description": "World ID App integrity attestation. Selfie Check responses with `issuer_schema_id: 11` require version 2, which covers the disclosed `sybil_score`.",
         "properties": {
           "version": {
             "type": "integer",
@@ -1527,7 +1527,7 @@
           "sybil_score": {
             "type": "integer",
             "minimum": 0,
-            "description": "Selfie Check z-score decoded to an integer. Required only when `issuer_schema_id` is 11. Higher values indicate a stronger potential duplicate signal; this is not a probability or match count."
+            "description": "Versioned Selfie Check risk signal represented as an integer. Required only when `issuer_schema_id` is 11."
           }
         }
       },
@@ -1574,7 +1574,7 @@
           "sybil_score": {
             "type": "integer",
             "minimum": 0,
-            "description": "Selfie Check z-score decoded to an integer. Required only when `issuer_schema_id` is 11."
+            "description": "Versioned Selfie Check risk signal represented as an integer. Required only when `issuer_schema_id` is 11."
           }
         }
       },
