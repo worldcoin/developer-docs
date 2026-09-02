@@ -1368,7 +1368,7 @@
           },
           "user_presence_completed": {
             "type": "boolean",
-            "description": "Whether World App completed the requested user-presence check. IDKit always sends it; treat a missing value as false."
+            "description": "Whether World App completed the requested user-presence check. IDKit includes this field only when `require_user_presence` was true in the request."
           }
         }
       },
@@ -1413,7 +1413,7 @@
           },
           "user_presence_completed": {
             "type": "boolean",
-            "description": "Whether World App completed the requested user-presence check. IDKit always sends it; treat a missing value as false."
+            "description": "Whether World App completed the requested user-presence check. IDKit includes this field only when `require_user_presence` was true in the request."
           }
         }
       },
@@ -1457,7 +1457,7 @@
           },
           "user_presence_completed": {
             "type": "boolean",
-            "description": "Whether World App completed the requested user-presence check. IDKit always sends it; treat a missing value as false."
+            "description": "Whether World App completed the requested user-presence check. IDKit includes this field only when `require_user_presence` was true in the request."
           }
         }
       },
