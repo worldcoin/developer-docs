@@ -76,13 +76,26 @@ case .failure(let error):
 }
 ```
 
+For `selfieCheck`, the successful result contains a `ResponseItem.selfieV4`
+case with a required `sybilScore: UInt64` value. Forward the complete result to
+your backend before using the score.
+
 ## Invite-code mode
 
 Use `presetWithInviteCode(_:)` on the builder to return an `IDKitInviteCodeRequest` instead of `IDKitRequest`. The polling surface is identical. See [Invite-code mode](/world-id/idkit/verification-flows#with-invite-code-mode) for when to use it.
 
 ```swift
-let request = try IDKit.request(config: config)
-  .presetWithInviteCode(selfieCheckLegacy(signal: "user-123"))
+let selfieConfig = IDKitRequestConfig(
+  appId: "app_xxxxx",
+  action: "my-action",
+  rpContext: rpContext,
+  allowLegacyProofs: false,
+  returnTo: "myapp://verify-done",
+  environment: .production
+)
+
+let request = try IDKit.request(config: selfieConfig)
+  .presetWithInviteCode(selfieCheck(signal: "user-123"))
 
 let connectorURL = request.connectorURL  // URL with &c=<code>&a=<app_id>
 let expiresAt = request.expiresAt        // Date
@@ -102,15 +115,18 @@ let completion = await request.pollUntilCompletion()
 
 ```swift
 // After — invite-code mode
-let request = try IDKit.request(config: config)
-  .presetWithInviteCode(selfieCheckLegacy(signal: "user-123"))
+let request = try IDKit.request(config: selfieConfig)
+  .presetWithInviteCode(selfieCheck(signal: "user-123"))
 
 let connectorURL = request.connectorURL      // display to user (URL with code embedded)
 let expiresAt = request.expiresAt            // drive a countdown
 let completion = await request.pollUntilCompletion()
 ```
 
-The config object is unchanged. The `connectorURL` now includes `&c=<code>&a=<app_id>` params; use it alongside `expiresAt` in your UI. Polling, proof verification, and nullifier storage stay the same.
+The `connectorURL` now includes `&c=<code>&a=<app_id>` params; use it alongside
+`expiresAt` in your UI. Polling, proof verification, and nullifier storage stay
+the same. Set `allowLegacyProofs` for the preset you choose; `selfieCheck`
+always uses `false`.
 
 `IDKitInviteCodeRequest` exposes:
 

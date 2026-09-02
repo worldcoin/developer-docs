@@ -313,6 +313,11 @@ forward it directly to `POST https://developer.world.org/api/v4/verify/{rp_id}`.
   Forward the IDKit result payload as-is. No field remapping is required.
 </Note>
 
+For Selfie Check, only use `responses[].sybil_score` after this endpoint returns
+success. Selfie Check responses require integrity bundle version 2, which lets
+the Developer Portal verify that the score was included in the World ID App
+integrity signature.
+
 ```typescript title="app/api/verify-proof/route.ts"
 import { NextResponse } from "next/server";
 import type { IDKitResult } from "@worldcoin/idkit";

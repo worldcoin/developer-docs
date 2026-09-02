@@ -28,7 +28,8 @@ yarn add @worldcoin/idkit-core
 
 - `IDKit.request(config)` for uniqueness proofs
 - `IDKit.requestWithInviteCode(config)` for invite-code mode
-- `orbLegacy`, `secureDocumentLegacy`, `documentLegacy`, `selfieCheckLegacy` for presets
+- `proofOfHuman`, `passport`, `selfieCheck`, and `identityCheck` for current presets
+- `orbLegacy`, `secureDocumentLegacy`, `documentLegacy`, `selfieCheckLegacy`, and `deviceLegacy` for legacy presets
 
 Each entry point returns a builder. Finalize it with `.preset(...)`.
 
@@ -81,6 +82,10 @@ After `.preset(...)`, you get an `IDKitRequest` object:
 - `pollUntilCompletion({ pollInterval, timeout })`
 - `getDebugReport()`
 
+When you use `selfieCheck`, the successful result contains a
+`SelfieCheckResponseItemV4`. Its required `sybil_score` field is a JavaScript
+`number`. Forward the complete result to your backend before using the score.
+
 ```ts
 import { IDKitErrorCodes } from "@worldcoin/idkit-core";
 
@@ -129,14 +134,14 @@ if (!completion.success) {
 Use `IDKit.requestWithInviteCode(config)` to open a landing page that displays both an invite code and a QR code. Validation, the returned `Status` shape, and the poll loop are identical to `IDKit.request`. See [Invite-code mode](/world-id/idkit/verification-flows#with-invite-code-mode) for when to use it.
 
 ```ts
-import { IDKit, selfieCheckLegacy } from "@worldcoin/idkit-core";
+import { IDKit, selfieCheck } from "@worldcoin/idkit-core";
 
 const request = await IDKit.requestWithInviteCode({
   app_id: "app_xxxxx",
   action: "my-action",
   rp_context,
-  allow_legacy_proofs: true,
-}).preset(selfieCheckLegacy({ signal: "user-123" }));
+  allow_legacy_proofs: false,
+}).preset(selfieCheck({ signal: "user-123" }));
 
 const connectorURI = request.connectorURI; // URL with &c=<code>&a=<app_id>
 const expiresAt = request.expiresAt;       // Unix seconds
@@ -173,15 +178,18 @@ const request = await IDKit.requestWithInviteCode({
   app_id: "app_xxxxx",
   action: "my-action",
   rp_context,
-  allow_legacy_proofs: true,
-}).preset(selfieCheckLegacy({ signal: "user-123" }));
+  allow_legacy_proofs: false,
+}).preset(selfieCheck({ signal: "user-123" }));
 
 const connectorURI = request.connectorURI;   // display to user (URL with code embedded)
 const expiresAt = request.expiresAt;         // drive a countdown
 const completion = await request.pollUntilCompletion();
 ```
 
-The config object is unchanged. The `connectorURI` now includes `&c=<code>&a=<app_id>` params; use it alongside `expiresAt` in your UI. Polling, proof verification, and nullifier storage stay the same.
+The `connectorURI` now includes `&c=<code>&a=<app_id>` params; use it alongside
+`expiresAt` in your UI. Polling, proof verification, and nullifier storage stay
+the same. Set `allow_legacy_proofs` for the preset you choose; `selfieCheck`
+always uses `false`.
 
 ## Server-side helpers
 

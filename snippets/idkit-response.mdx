@@ -38,6 +38,34 @@
 }
 ```
 
+```json title="World ID 4.0 Selfie Check"
+{
+  "protocol_version": "4.0",
+  "nonce": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "action": "selfie-check-2026-09-02",
+  "environment": "production",
+  "integrity_bundle": {
+    "version": 2,
+    "signature_format": "apple_app_attest",
+    "timestamp": 1788302923,
+    "signature": "a1b2c3d4...device_signature",
+    "jwt": "eyJ...attestation_jwt"
+  },
+  "responses": [
+    {
+      "identifier": "selfie",
+      "signal_hash": "0x0",
+      "proof": ["0x1a2b...", "0x3c4d...", "0x5e6f...", "0x7a8b...", "0x9c0d..."],
+      "nullifier": "0x04e5f6...rp_scoped_nullifier",
+      "issuer_schema_id": 11,
+      "expires_at_min": 1788302888,
+      "sybil_score": 10
+    }
+  ],
+  "user_presence_completed": true
+}
+```
+
 ```json title="World ID 4.0 Session"
 {
   "protocol_version": "4.0",

@@ -742,6 +742,32 @@
                     ]
                   }
                 },
+                "selfie_check_v4": {
+                  "summary": "Selfie Check (protocol 4.0)",
+                  "value": {
+                    "protocol_version": "4.0",
+                    "nonce": "0xabc123",
+                    "action": "selfie-check-2026-09-02",
+                    "integrity_bundle": {
+                      "version": 2,
+                      "signature_format": "apple_app_attest",
+                      "timestamp": 1788302923,
+                      "signature": "a1b2c3d4",
+                      "jwt": "eyJ..."
+                    },
+                    "responses": [
+                      {
+                        "identifier": "selfie",
+                        "issuer_schema_id": 11,
+                        "nullifier": "0x2bf8406809dcefb1486dadc96c0a897db9bab002053054cf64272db512c6fbd8",
+                        "expires_at_min": 1788302888,
+                        "proof": ["0x111", "0x222", "0x333", "0x444", "0x555"],
+                        "signal_hash": "0x0",
+                        "sybil_score": 10
+                      }
+                    ]
+                  }
+                },
                 "session_v4": {
                   "summary": "Session proof (protocol 4.0)",
                   "value": {
@@ -861,7 +887,7 @@
               "device",
               "selfie"
             ],
-            "description": "The legacy verification level. Use `selfie` for Selfie Check (Beta). The historical `face` value remains accepted for backward compatibility and behaves the same as `selfie`."
+            "description": "The legacy verification level. Use `selfie` for Selfie Check. The historical `face` value remains accepted for backward compatibility and behaves the same as `selfie`."
           },
           "action": {
             "type": "string",
@@ -1250,6 +1276,33 @@
         "additionalProperties": true,
         "description": "Pass-through GraphQL response. Usually includes `data` and optionally `errors`."
       },
+      "IntegrityBundle": {
+        "type": "object",
+        "required": ["version", "signature_format", "timestamp", "signature", "jwt"],
+        "description": "World ID App integrity attestation. Selfie Check 4.0 requires version 2, which covers the disclosed `sybil_score`.",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "enum": [1, 2]
+          },
+          "signature_format": {
+            "type": "string",
+            "enum": ["apple_app_attest", "android_keystore"]
+          },
+          "timestamp": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "signature": {
+            "type": "string",
+            "description": "Hex-encoded device signature."
+          },
+          "jwt": {
+            "type": "string",
+            "description": "Attestation Gateway JWT used to verify the signing key."
+          }
+        }
+      },
       "VerifyV4Request": {
         "description": "Choose one request type.",
         "oneOf": [
@@ -1303,6 +1356,9 @@
             "enum": ["production", "staging"],
             "default": "production"
           },
+          "integrity_bundle": {
+            "$ref": "#/components/schemas/IntegrityBundle"
+          },
           "responses": {
             "type": "array",
             "minItems": 1,
@@ -1337,8 +1393,16 @@
           },
           "environment": {
             "type": "string",
-            "enum": ["production", "staging"],
+            "enum": ["production", "staging", "sandbox"],
             "default": "production"
+          },
+          "integrity_bundle": {
+            "description": "Required with version 2 when any response item is a Selfie Check credential (`issuer_schema_id: 11`).",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IntegrityBundle"
+              }
+            ]
           },
           "responses": {
             "type": "array",
@@ -1373,8 +1437,16 @@
           },
           "environment": {
             "type": "string",
-            "enum": ["production", "staging"],
+            "enum": ["production", "staging", "sandbox"],
             "default": "production"
+          },
+          "integrity_bundle": {
+            "description": "Required with version 2 when any response item is a Selfie Check credential (`issuer_schema_id: 11`).",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IntegrityBundle"
+              }
+            ]
           },
           "responses": {
             "type": "array",
@@ -1395,7 +1467,7 @@
         "properties": {
           "identifier": {
             "type": "string",
-            "description": "Credential identifier returned by IDKit (for example, `orb` or `selfie`). Use `selfie` for Selfie Check (Beta); the historical `face` value remains accepted as a backward-compatible alias."
+            "description": "Credential identifier returned by IDKit (for example, `orb` or `selfie`). Use `selfie` for Selfie Check; the historical `face` value remains accepted as a backward-compatible alias."
           },
           "signal_hash": {
             "type": "string",
@@ -1451,6 +1523,11 @@
               "type": "string"
             },
             "description": "Exactly 5 hex elements (4 compressed proof elements + Merkle root)."
+          },
+          "sybil_score": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Selfie Check z-score decoded to an integer. Required only when `issuer_schema_id` is 11. Higher values indicate a stronger potential duplicate signal; this is not a probability or match count."
           }
         }
       },
@@ -1493,6 +1570,11 @@
             "items": {
               "type": "string"
             }
+          },
+          "sybil_score": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Selfie Check z-score decoded to an integer. Required only when `issuer_schema_id` is 11."
           }
         }
       },
