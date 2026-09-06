@@ -82,7 +82,7 @@ Use `presetWithInviteCode(_:)` on the builder to return an `IDKitInviteCodeReque
 
 ```swift
 let request = try IDKit.request(config: config)
-  .presetWithInviteCode(selfieCheckLegacy(signal: "user-123"))
+  .presetWithInviteCode(proofOfHuman(signal: "user-123"))
 
 let connectorURL = request.connectorURL  // URL with &c=<code>&a=<app_id>
 let expiresAt = request.expiresAt        // Date
@@ -103,7 +103,7 @@ let completion = await request.pollUntilCompletion()
 ```swift
 // After — invite-code mode
 let request = try IDKit.request(config: config)
-  .presetWithInviteCode(selfieCheckLegacy(signal: "user-123"))
+  .presetWithInviteCode(proofOfHuman(signal: "user-123"))
 
 let connectorURL = request.connectorURL      // display to user (URL with code embedded)
 let expiresAt = request.expiresAt            // drive a countdown

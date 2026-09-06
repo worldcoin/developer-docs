@@ -28,7 +28,8 @@ yarn add @worldcoin/idkit-core
 
 - `IDKit.request(config)` for uniqueness proofs
 - `IDKit.requestWithInviteCode(config)` for invite-code mode
-- `orbLegacy`, `secureDocumentLegacy`, `documentLegacy`, `selfieCheckLegacy` for presets
+- `proofOfHuman`, `passport`, `selfieCheck`, and `identityCheck` for current presets
+- `orbLegacy`, `secureDocumentLegacy`, `documentLegacy`, and `deviceLegacy` for legacy presets
 
 Each entry point returns a builder. Finalize it with `.preset(...)`.
 
@@ -129,14 +130,14 @@ if (!completion.success) {
 Use `IDKit.requestWithInviteCode(config)` to open a landing page that displays both an invite code and a QR code. Validation, the returned `Status` shape, and the poll loop are identical to `IDKit.request`. See [Invite-code mode](/world-id/idkit/verification-flows#with-invite-code-mode) for when to use it.
 
 ```ts
-import { IDKit, selfieCheckLegacy } from "@worldcoin/idkit-core";
+import { IDKit, proofOfHuman } from "@worldcoin/idkit-core";
 
 const request = await IDKit.requestWithInviteCode({
   app_id: "app_xxxxx",
   action: "my-action",
   rp_context,
   allow_legacy_proofs: true,
-}).preset(selfieCheckLegacy({ signal: "user-123" }));
+}).preset(proofOfHuman({ signal: "user-123" }));
 
 const connectorURI = request.connectorURI; // URL with &c=<code>&a=<app_id>
 const expiresAt = request.expiresAt;       // Unix seconds
@@ -174,7 +175,7 @@ const request = await IDKit.requestWithInviteCode({
   action: "my-action",
   rp_context,
   allow_legacy_proofs: true,
-}).preset(selfieCheckLegacy({ signal: "user-123" }));
+}).preset(proofOfHuman({ signal: "user-123" }));
 
 const connectorURI = request.connectorURI;   // display to user (URL with code embedded)
 const expiresAt = request.expiresAt;         // drive a countdown
