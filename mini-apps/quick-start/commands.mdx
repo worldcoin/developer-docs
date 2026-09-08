@@ -3,6 +3,8 @@ title: "Commands"
 description: "Overview of current MiniKit commands for mini apps."
 ---
 
+import { QRCodeGenerator } from "/snippets/qr-code-generator.jsx";
+
 Commands are async methods on `MiniKit`. Use `await MiniKit.<command>()` and handle the returned `{ executedWith, data }` result.
 
 <Note>
@@ -13,30 +15,25 @@ Commands are async methods on `MiniKit`. Use `await MiniKit.<command>()` and han
 Try our preview mini app to get a sense of how commands work.
 
 {/*
-  The QR code below is wrapped in <Visibility for="humans"> (rendered on the web,
-  excluded from the copy-page/.md export) with a plain-markdown twin in
-  <Visibility for="agents">. It is a static render of the former
-  /snippets/qr-code-generator.jsx with this page's fixed props — the encoded
-  value is https://world.org/mini-app?app_id=app_dfbe55706a640c82dce839bb0ecae74d.
+  The QR section below is wrapped in <Visibility for="humans"> (rendered on the
+  web, excluded from the copy-page/.md export) with a plain-markdown twin in
+  <Visibility for="agents"> (excluded from the web, rendered in the export).
+  The snippet import is safe ONLY because the usage sits inside the for="humans"
+  block: Mintlify inlines a snippet's full source into the export when the
+  component appears in exported content, and drops it when all usages are hidden
+  (verified on a preview deploy). Keep the twin in sync when editing.
 */}
 
 <Visibility for="humans">
   Scan the QR code below with your phone (you must have World App installed).
 
   <div className="flex justify-center my-4">
-    <div className="not-prose p-4 border rounded-xl space-y-4">
-      <div>
-        <div className="flex items-center justify-center border rounded-xl p-2 bg-white">
-          <img
-            src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https%3A%2F%2Fworld.org%2Fmini-app%3Fapp_id%3Dapp_dfbe55706a640c82dce839bb0ecae74d"
-            alt="QR for https://world.org/mini-app?app_id=app_dfbe55706a640c82dce839bb0ecae74d"
-            width="200"
-            height="200"
-            loading="eager"
-          />
-        </div>
-      </div>
-    </div>
+    <QRCodeGenerator
+      hideInput={true}
+      hideDetails={true}
+      appId="app_dfbe55706a640c82dce839bb0ecae74d"
+      baseUrl="https://world.org/mini-app"
+    />
   </div>
 </Visibility>
 
