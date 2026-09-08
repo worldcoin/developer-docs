@@ -13,7 +13,7 @@
   "license": "MIT",
   "packageManager": "pnpm@10.13.1",
   "dependencies": {
-    "mint": "^4.2.462"
+    "mint": "^4.2.876"
   },
   "devDependencies": {
     "cspell": "^9.7.0"
@@ -32,7 +32,7 @@
       "fdir>picomatch": "^4.0.4",
       "flatted": ">=3.4.2",
       "lodash": ">=4.17.23",
-      "js-yaml@>=4": ">=4.1.1",
+      "js-yaml@>=4": ">=4.1.1 <5",
       "yaml": ">=2.8.3",
       "qs": ">=6.14.1"
     }

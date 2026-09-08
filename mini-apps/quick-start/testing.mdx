@@ -5,8 +5,6 @@ description: "Enter your App ID and scan the generated QR code to test your mini
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-import { QRCodeGenerator } from "/snippets/qr-code-generator.jsx";
-
 # Testing
 
 ### Testing your mini app
@@ -14,7 +12,78 @@ import { QRCodeGenerator } from "/snippets/qr-code-generator.jsx";
 Enter your app id in the text box below and scan the QR code generated with your phone's camera.
 Your app id is in the developer portal in the format `app_xxxxxxxxxx`.
 
-<QRCodeGenerator />
+{/*
+  The interactive QR generator below is wrapped in <Visibility for="humans">
+  (rendered on the web, excluded from the copy-page/.md export) with a
+  plain-markdown twin in <Visibility for="agents">. The component (formerly
+  /snippets/qr-code-generator.jsx) is defined inline because Mintlify inlines
+  imported component source into the Markdown export.
+*/}
+
+<Visibility for="humans">
+  {(() => {
+    /* Simple QR generator with no external NPM deps: renders an <img> that
+       points to a public QR service. */
+    const QRCodeGenerator = () => {
+      const baseUrl = "https://worldcoin.org/mini-app";
+      const [appId, setAppId] = useState("");
+      const trimmed = appId.trim();
+      const isValid = /^app_[a-f0-9]+$/.test(trimmed);
+      const payload = trimmed && isValid ? `${baseUrl}?app_id=${trimmed}` : "";
+      const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(payload)}`;
+      return (
+        <div className="not-prose p-4 border rounded-xl space-y-4">
+          <label className="block text-sm font-medium">
+            App ID
+            <input
+              type="text"
+              placeholder="Enter App Id (eg. app_f88bb2a....)"
+              value={appId}
+              onChange={(e) => setAppId(e.target.value)}
+              className="mt-1 w-full rounded-lg border px-3 py-2"
+              aria-label="App ID"
+            />
+          </label>
+
+          {trimmed && !isValid && (
+            <p className="text-sm text-red-600">Invalid App Id. Eg. app_xxxxxxxxxxx</p>
+          )}
+
+          <div className="grid gap-4 md:grid-cols-[200px_1fr] items-start">
+            <div className="flex items-center justify-center border rounded-xl p-2 bg-white">
+              {isValid && payload ? (
+                <img src={qrSrc} alt={`QR for ${payload}`} width="200" height="200" loading="eager" />
+              ) : (
+                <div className="w-[200px] h-[200px] grid place-items-center text-sm text-gray-500">Enter a valid App ID</div>
+              )}
+            </div>
+
+            <div className="space-y-2 text-sm">
+              <div className="text-gray-700">
+                Encoded value:
+                <code className="ml-2 px-2 py-1 rounded bg-gray-100">{payload || "(empty)"}</code>
+              </div>
+              <ol className="list-decimal pl-5 space-y-1">
+                <li>Enter your App ID above.</li>
+                <li>Scan the QR with your phone’s camera.</li>
+                <li>Confirm the prompt in World App.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      );
+    };
+    return <QRCodeGenerator />;
+  })()}
+</Visibility>
+
+<Visibility for="agents">
+  To test on a phone, open `https://worldcoin.org/mini-app?app_id=<your_app_id>` (the docs page renders this link as a scannable QR code):
+
+  1. Build the URL with your App ID from the developer portal.
+  2. Scan the QR (or open the URL) with your phone’s camera.
+  3. Confirm the prompt in World App.
+</Visibility>
 
 ### Tips
 
