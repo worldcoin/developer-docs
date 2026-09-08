@@ -99,9 +99,9 @@ The credential decides what the user proves. Nail this down before scaffolding �
 |---|---|---|
 | **`proofOfHuman`** — Proof of Human (flagship) | The user is a unique person, biometrically verified at an Orb | Sybil resistance, airdrops, one-vote-per-human, gated signups. **The default if the user said "proof of human" or "verify a real human."** |
 | **`passport`** — Passport | The user holds a valid government passport (NFC-verified) | Higher-assurance flows where you need document-grade identity (regulated apps, age-gating, KYC-adjacent). |
-| **`selfieCheckLegacy`** — Selfie Check (Beta) | A liveness selfie signal backed by a World ID 3.0 proof | Lower-assurance "is a human in front of the camera" — friction/bot deterrence without the full Orb requirement. |
+| **`selfieCheck`** — Selfie Check (Beta) | A liveness selfie signal backed by a World ID 4.0 proof | Lower-assurance "is a human in front of the camera" — friction/bot deterrence without the full Orb requirement. Use `selfieCheckLegacy` only when maintaining a World ID 3.0 integration. |
 
-**DO NOT default to `proofOfHuman` if the user said "passport" or "verify their ID"** — that's `passport`. **DO NOT default to `proofOfHuman` if the user said "selfie" or "liveness"** — that's `selfieCheckLegacy`. When in doubt, ask one question.
+**DO NOT default to `proofOfHuman` if the user said "passport" or "verify their ID"** — that's `passport`. **DO NOT default to `proofOfHuman` if the user said "selfie" or "liveness"** — that's `selfieCheck`. When in doubt, ask one question.
 
 Other legacy presets exist (`documentLegacy`, `deviceLegacy`); reach for them only when the user asks specifically. For sign-in / session reuse across visits, use the v4 **session** flow instead of a uniqueness preset (see the integrate doc).
 
