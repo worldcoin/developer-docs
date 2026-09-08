@@ -105,13 +105,6 @@ The credential decides what the user proves. Nail this down before scaffolding â
 
 Other legacy presets exist (`documentLegacy`, `deviceLegacy`); reach for them only when the user asks specifically. For sign-in / session reuse across visits, use the v4 **session** flow instead of a uniqueness preset (see the integrate doc).
 
-### Selfie Check (Beta) access
-
-Before implementing or testing Selfie Check, confirm that its feature flag is
-enabled for the target app. If it is not enabled, stop and tell the user to
-request access through their World contact or the documented support path. A
-valid app or action does not imply Selfie Check access.
-
 ## Phase 4 â€” Implement the 6 integration steps and explain the WHY
 
 The full code for each step is at [https://docs.world.org/world-id/idkit/integrate](https://docs.world.org/world-id/idkit/integrate). Don't reproduce it; link to it and adapt to the user's framework. The agent owns making sure each step is done **and understood**.
