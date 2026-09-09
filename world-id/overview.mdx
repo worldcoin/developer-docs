@@ -17,13 +17,43 @@ Through credentials like Proof of Human, Document, and Selfie Check, World ID ex
 
 {/* cspell:ignore worldcoin idkit orblegacy rp_context app_id rp_id selfie-check sybil PoH CAPTCHAs NFC unlinkable nullifier */}
 
-<Quickstart
-  title="Developer Quickstart"
-  description="Add proof of human to your app with one React widget."
-  buttonHref="/world-id/idkit/integrate"
-  buttonLabel="Open integration guide"
-  agentPrompt={{ skillUrl: "world.id/SKILL.md", productName: "World ID" }}
->
+{/*
+  Each visual section below is wrapped in <Visibility for="humans"> (rendered on
+  the web, excluded from the copy-page/.md export) and paired with a
+  <Visibility for="agents"> markdown twin (excluded from the web, rendered in
+  the export). Snippet imports are safe ONLY because every usage sits inside a
+  for="humans" block: Mintlify inlines a snippet's full source into the export
+  when the component appears in exported content, and drops it when all usages
+  are hidden (verified on a preview deploy). Keep each twin's copy in sync with
+  its visual section when editing.
+*/}
+
+<Visibility for="humans">
+  <Quickstart
+    title="Developer Quickstart"
+    description="Add proof of human to your app with one React widget."
+    buttonHref="/world-id/idkit/integrate"
+    buttonLabel="Open integration guide"
+    agentPrompt={{ skillUrl: "world.id/SKILL.md", productName: "World ID" }}
+  >
+    ```tsx
+    import { IDKitRequestWidget } from "@worldcoin/idkit";
+    const rpContext = await getRpContext("verify-account");
+    <IDKitRequestWidget
+      app_id="app_xxxxx"
+      action="verify-account"
+      rp_context={rpContext}
+      // verify proof + nullifier on your backend
+      handleVerify={verifyOnBackend}
+      onSuccess={unlockFeature}
+    />
+    ```
+  </Quickstart>
+</Visibility>
+
+<Visibility for="agents">
+  **Developer Quickstart** — add proof of human to your app with one React widget:
+
   ```tsx
   import { IDKitRequestWidget } from "@worldcoin/idkit";
   const rpContext = await getRpContext("verify-account");
@@ -36,66 +66,92 @@ Through credentials like Proof of Human, Document, and Selfie Check, World ID ex
     onSuccess={unlockFeature}
   />
   ```
-</Quickstart>
+
+  Or tell your coding agent to: `Read world.id/SKILL.md and add World ID to my app` ([world.id/SKILL.md](https://world.id/SKILL.md)).
+
+  Full walkthrough: [integration guide](/world-id/idkit/integrate).
+</Visibility>
 
 ## Credentials
 
-<div className="not-prose mt-5">
-  <div className="grid gap-10 md:grid-cols-3">
-    <a href="/world-id/credentials/1" className="block no-underline transition-transform duration-200 hover:-translate-y-0.5">
-      <img noZoom src="/images/docs/credential-card-human.png" alt="Proof of Human credential card" className="w-full h-auto" />
-      <h3 className="mt-5 mb-0 text-xl font-medium text-zinc-900 dark:text-zinc-100">Proof of Human</h3>
-      <p className="mt-2 text-base text-zinc-800 dark:text-zinc-300">Highest-assurance uniqueness signal from Orb verification. Best for one-person-one-action flows and strong Sybil resistance.</p>
-    </a>
-    <a href="/world-id/credentials/9303" className="block no-underline transition-transform duration-200 hover:-translate-y-0.5">
-      <img noZoom src="/images/docs/credential-card-document.png" alt="Document credential card" className="w-full h-auto" />
-      <h3 className="mt-5 mb-0 text-xl font-medium text-zinc-900 dark:text-zinc-100">Document</h3>
-      <p className="mt-2 text-base text-zinc-800 dark:text-zinc-300">Proves possession of a unique government document through NFC checks. Useful for proof of age and document-backed access flows.</p>
-    </a>
-    <a href="/world-id/credentials/11" className="block no-underline transition-transform duration-200 hover:-translate-y-0.5">
-      <img noZoom src="/images/docs/credential-card-face.png" alt="Selfie Check credential card" className="w-full h-auto" />
-      <h3 className="mt-5 mb-0 flex items-center gap-2 text-xl font-medium text-zinc-900 dark:text-zinc-100">Selfie Check <span className="method-pill rounded-lg bg-blue-400/20 px-1.5 py-0.5 text-sm leading-5 font-semibold text-blue-700 dark:bg-blue-400/20 dark:text-blue-300">Beta</span></h3>
-      <p className="mt-2 text-base text-zinc-800 dark:text-zinc-300">Low-friction liveness and uniqueness signal from a selfie flow. Best for sign-up and bot defense where speed matters most.</p>
-    </a>
+<Visibility for="humans">
+  <div className="not-prose mt-5">
+    <div className="grid gap-10 md:grid-cols-3">
+      <a href="/world-id/credentials/1" className="block no-underline transition-transform duration-200 hover:-translate-y-0.5">
+        <img noZoom src="/images/docs/credential-card-human.png" alt="Proof of Human credential card" className="w-full h-auto" />
+        <h3 className="mt-5 mb-0 text-xl font-medium text-zinc-900 dark:text-zinc-100">Proof of Human</h3>
+        <p className="mt-2 text-base text-zinc-800 dark:text-zinc-300">Highest-assurance uniqueness signal from Orb verification. Best for one-person-one-action flows and strong Sybil resistance.</p>
+      </a>
+      <a href="/world-id/credentials/9303" className="block no-underline transition-transform duration-200 hover:-translate-y-0.5">
+        <img noZoom src="/images/docs/credential-card-document.png" alt="Document credential card" className="w-full h-auto" />
+        <h3 className="mt-5 mb-0 text-xl font-medium text-zinc-900 dark:text-zinc-100">Document</h3>
+        <p className="mt-2 text-base text-zinc-800 dark:text-zinc-300">Proves possession of a unique government document through NFC checks. Useful for proof of age and document-backed access flows.</p>
+      </a>
+      <a href="/world-id/credentials/11" className="block no-underline transition-transform duration-200 hover:-translate-y-0.5">
+        <img noZoom src="/images/docs/credential-card-face.png" alt="Selfie Check credential card" className="w-full h-auto" />
+        <h3 className="mt-5 mb-0 flex items-center gap-2 text-xl font-medium text-zinc-900 dark:text-zinc-100">Selfie Check <span className="method-pill rounded-lg bg-blue-400/20 px-1.5 py-0.5 text-sm leading-5 font-semibold text-blue-700 dark:bg-blue-400/20 dark:text-blue-300">Beta</span></h3>
+        <p className="mt-2 text-base text-zinc-800 dark:text-zinc-300">Low-friction liveness and uniqueness signal from a selfie flow. Best for sign-up and bot defense where speed matters most.</p>
+      </a>
+    </div>
   </div>
-</div>
+</Visibility>
+
+<Visibility for="agents">
+  - [Proof of Human](/world-id/credentials/1) — Highest-assurance uniqueness signal from Orb verification. Best for one-person-one-action flows and strong Sybil resistance.
+  - [Document](/world-id/credentials/9303) — Proves possession of a unique government document through NFC checks. Useful for proof of age and document-backed access flows.
+  - [Selfie Check (Beta)](/world-id/credentials/11) — Low-friction liveness and uniqueness signal from a selfie flow. Best for sign-up and bot defense where speed matters most.
+</Visibility>
 
 ## Start building
 
-<FeatureBlocks
-  items={[
-    {
-      icon: "user",
-      title: "Stop bots and duplicate accounts",
-      body: "Use proof of human to enforce one human per account and reduce Sybil abuse in rewards, referrals, governance, and account creation.",
-    },
-    {
-      icon: "shield-check",
-      title: "Protect conversion and user privacy",
-      body: "Replace CAPTCHA-heavy or document-heavy gating with reusable proof flows. Relying parties receive proofs, not personal data.",
-    },
-  ]}
-/>
+<Visibility for="humans">
+  <FeatureBlocks
+    items={[
+      {
+        icon: "user",
+        title: "Stop bots and duplicate accounts",
+        body: "Use proof of human to enforce one human per account and reduce Sybil abuse in rewards, referrals, governance, and account creation.",
+      },
+      {
+        icon: "shield-check",
+        title: "Protect conversion and user privacy",
+        body: "Replace CAPTCHA-heavy or document-heavy gating with reusable proof flows. Relying parties receive proofs, not personal data.",
+      },
+    ]}
+  />
+</Visibility>
 
+<Visibility for="agents">
+  - **Stop bots and duplicate accounts** — Use proof of human to enforce one human per account and reduce Sybil abuse in rewards, referrals, governance, and account creation.
+  - **Protect conversion and user privacy** — Replace CAPTCHA-heavy or document-heavy gating with reusable proof flows. Relying parties receive proofs, not personal data.
+</Visibility>
 
 ## Privacy by architecture
 
-<FeatureBlocks
-  items={[
-    {
-      icon: "eye",
-      title: "Zero-knowledge proofs",
-      body: "Users prove what is true without revealing personal information. Proofs are unlinkable across apps.",
-    },
-    {
-      icon: "community",
-      title: "Multi-party computation",
-      body: "Matching and uniqueness checks are split across independent nodes so no single party holds complete sensitive data.",
-    },
-    {
-      icon: "shield",
-      title: "Self-custodial",
-      body: "Proof generation happens on the user’s device. Your app receives a proof, not raw personal data.",
-    },
-  ]}
-/>
+<Visibility for="humans">
+  <FeatureBlocks
+    items={[
+      {
+        icon: "eye",
+        title: "Zero-knowledge proofs",
+        body: "Users prove what is true without revealing personal information. Proofs are unlinkable across apps.",
+      },
+      {
+        icon: "community",
+        title: "Multi-party computation",
+        body: "Matching and uniqueness checks are split across independent nodes so no single party holds complete sensitive data.",
+      },
+      {
+        icon: "shield",
+        title: "Self-custodial",
+        body: "Proof generation happens on the user’s device. Your app receives a proof, not raw personal data.",
+      },
+    ]}
+  />
+</Visibility>
+
+<Visibility for="agents">
+  - **Zero-knowledge proofs** — Users prove what is true without revealing personal information. Proofs are unlinkable across apps.
+  - **Multi-party computation** — Matching and uniqueness checks are split across independent nodes so no single party holds complete sensitive data.
+  - **Self-custodial** — Proof generation happens on the user’s device. Your app receives a proof, not raw personal data.
+</Visibility>

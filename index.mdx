@@ -12,6 +12,18 @@ import { DeveloperStories } from "/snippets/developer-stories.jsx";
 
 {/* cspell:ignore worldcoin Estevez Jangwon Toktokhan Hyrax gigagas flashblock prismic */}
 
+{/*
+  The visual landing layout is wrapped in <Visibility for="humans"> (rendered on
+  the web, excluded from the copy-page/.md export) and paired with a
+  <Visibility for="agents"> markdown twin (excluded from the web, rendered in
+  the export). The snippet import is safe ONLY because its usage sits inside the
+  for="humans" block: Mintlify inlines a snippet's full source into the export
+  when the component appears in exported content, and drops it when all usages
+  are hidden (verified on a preview deploy). Keep the twin's links and copy in
+  sync when editing.
+*/}
+
+<Visibility for="humans">
 <div className="landing-container">
 
 <div style={{ marginBottom: "128px" }}>
@@ -167,3 +179,26 @@ import { DeveloperStories } from "/snippets/developer-stories.jsx";
 
   </div>
 </div>
+</Visibility>
+
+<Visibility for="agents">
+  Integrate World ID and deploy on World Chain with official developer documentation.
+
+  - [Integrate World ID](/world-id/overview) — Anonymous Proof of Human for your website or app.
+  - [Create a Mini App](/mini-apps) — Mini applications distributed in World App.
+  - [AgentKit](/agents/agent-kit/integrate) — Distinguish human-backed agents from bots and scripts.
+  - [World Chain](/world-chain) — Build directly on World’s blockchain infrastructure.
+
+  **Developer stories** — how developers build trusted, human-centered apps with World:
+
+  - Diego Estevez, Co-Founder, Divine: [video](https://www.youtube.com/watch?v=DPiCrh4-5Dc)
+  - Jangwon Seo, Founder, Toktokhan.dev: [video](https://www.youtube.com/watch?v=KsOXJx_JQ7w)
+  - Corey Miller, Co-Founder, tbd.vote: [video](https://www.youtube.com/watch?v=cnM2VuLlElw)
+
+  **World Tech Updates:**
+
+  - [World Chain launches full block access lists](https://world.org/blog/engineering/world-chain-full-block-access-lists) — World Chain now streams full EIP-7928 block access lists in every flashblock, enabling parallel block verification, faster validation, and a path toward gigagas-per-second throughput without increasing validator hardware requirements.
+  - [Remainder: World's GKR prover for ML and more](https://world.org/blog/engineering/world-zkgpu-for-ml-and-more) — Remainder (Reasonable Machine Learning Doubly-Efficient Prover) is Tools for Humanity's open-sourced in-house GKR + Hyrax proof system. It enables World's users to run ML models locally over private data and prove that they executed them correctly.
+  - [Introducing World ID 4.0 - Request for Comments](https://world.org/blog/engineering/introducing-world-id-4.0) — World ID 4.0 introduces account abstraction with multi-key support, transforming a World ID from a single secret into an abstract record in a public registry, improving resilience, portability, recovery and privacy.
+  - More at [World Tech](https://world.org/blog/engineering).
+</Visibility>
