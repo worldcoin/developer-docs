@@ -165,7 +165,7 @@ contract VerifyUniquenessV4 {
 
 Minimal mapping from IDKit result:
 - `nullifier` = `responses[i].nullifier`
-- `action` = `keccak256(action)` as `uint256`
+- `action` = `hashToField(action)`, i.e. `uint256(keccak256(action)) >> 8`
 - `rpId` = numeric form of your `rp_context.rp_id` (the `rp_`-prefixed string from your RP context, not the result)
 - `nonce` = top-level `nonce`
 - `signalHash` = `responses[i].signal_hash`
