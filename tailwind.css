@@ -60,6 +60,200 @@
     color: #e5e7eb; /* gray-200 */
   }
 
+  /* ------------------------------------------------------------------ */
+  /* Tab bar (Docs 3.0 header) — pill tabs in the design language: ink   */
+  /* labels, black pill for the active tab (inverted in dark mode), no   */
+  /* underline indicator, hairline divider before the menu tabs.         */
+  /* ------------------------------------------------------------------ */
+  #navbar .nav-tabs {
+    align-items: center;
+    gap: 0 !important;
+  }
+  #navbar .nav-tabs-item {
+    height: 32px !important;
+    padding: 6px 10px;
+    border-radius: 42px;
+    color: #181818 !important;
+    transition: background-color 0.15s ease;
+  }
+  #navbar .nav-tabs-item:hover {
+    color: #181818 !important;
+    background-color: #F3F2F0;
+  }
+  #navbar .nav-tabs-item[data-active="true"] {
+    padding: 6px 14px;
+    background-color: #181818;
+    color: #F9F9F8 !important;
+    text-shadow: none;
+  }
+  #navbar .nav-tabs-item[data-active="true"]:hover {
+    color: #F9F9F8 !important;
+    background-color: #181818;
+  }
+  /* The theme's active-tab underline indicator */
+  #navbar .nav-tabs-item > div.absolute {
+    display: none;
+  }
+  /* Hairline divider between the page tabs and the Resources/Support
+     menus (the menu tabs render as <button>, page tabs as <a>). */
+  #navbar .nav-tabs > button.nav-tabs-item:first-of-type {
+    margin-left: 17px;
+  }
+  #navbar .nav-tabs > button.nav-tabs-item:first-of-type::before {
+    content: "";
+    position: absolute;
+    left: -9px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 24px;
+    background-color: #E1DFDA;
+  }
+  .dark #navbar .nav-tabs > button.nav-tabs-item:first-of-type::before {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+  .dark #navbar .nav-tabs-item {
+    color: #F3F2F0 !important;
+  }
+  .dark #navbar .nav-tabs-item:hover {
+    color: #F3F2F0 !important;
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+  .dark #navbar .nav-tabs-item[data-active="true"],
+  .dark #navbar .nav-tabs-item[data-active="true"]:hover {
+    background-color: #F3F2F0;
+    color: #181818 !important;
+  }
+
+  /* Search entry — quiet bordered pill per design */
+  #navbar #search-bar-entry {
+    border-radius: 20px;
+    background-color: #F9F9F8;
+    box-shadow: none;
+    --tw-ring-color: #E1DFDA;
+    color: #181818;
+  }
+  .dark #navbar #search-bar-entry {
+    background-color: rgb(24, 25, 27);
+    --tw-ring-color: rgba(255, 255, 255, 0.15);
+    color: #F3F2F0;
+  }
+
+  /* Developer Portal CTA — pill radius to match the design language */
+  #topbar-cta-button a > span.absolute {
+    border-radius: 20px;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Floating pill header (Docs 3.0, desktop ≥1440px) — collapse the     */
+  /* theme's two-row header into the design's single 84px rounded bar.   */
+  /* The theme's row scaffolding is flattened with display:contents so   */
+  /* the logo, the tab row, and the search/assistant cluster lay out on  */
+  /* ONE flex line — no absolute positioning, so the variable-width      */
+  /* hosted cluster (Search + Ask Assistant) can never overlap the tabs. */
+  /* Below 1440px the two-row layout above remains.                      */
+  /* ------------------------------------------------------------------ */
+  @media (min-width: 1440px) {
+    /* No full-width backdrop: the pill floats on the page background. */
+    #navbar #navbar-transition {
+      display: none;
+    }
+    /* The pill is the flex row. */
+    #navbar > div.max-w-8xl {
+      display: flex;
+      align-items: center;
+      column-gap: 16px;
+      /* Side margins scale with the viewport (the design frame's 63/1728
+         ratio) instead of stepping at a breakpoint, so the pill keeps the
+         same proportions as the window shrinks. */
+      width: calc(100% - 7.3vw);
+      max-width: 1602px !important;
+      height: 84px;
+      margin: 24px auto 0;
+      padding: 0 25px 0 33px;
+      background-color: #FFFFFF;
+      border: 1px solid #E1DFDA;
+      border-radius: 18px;
+      box-shadow: 0px 15px 20px -5px rgba(0, 0, 0, 0.03);
+    }
+    .dark #navbar > div.max-w-8xl {
+      background-color: rgb(24, 25, 27);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+    /* Flatten the two-row scaffolding into the pill's flex line. */
+    #navbar > div.max-w-8xl > div,
+    #navbar > div.max-w-8xl > div > div.relative,
+    #navbar div.lg\:px-12,
+    #navbar div.lg\:px-12 > div {
+      display: contents !important;
+    }
+    /* Logo | tabs | search cluster; the two auto margins center the
+       tabs in the free space between logo and cluster. */
+    #navbar div.lg\:px-12 > div > div.flex-1:first-child {
+      order: 1;
+      flex: 0 0 auto !important;
+    }
+    #navbar .max-w-8xl > div > div.px-12 {
+      order: 2;
+      position: static;
+      width: max-content;
+      height: auto !important;
+      padding: 0 !important;
+      margin-left: auto;
+    }
+    #navbar div.lg\:px-12 div.z-20 {
+      order: 3;
+      flex: 0 0 auto !important;
+      margin-left: auto;
+    }
+    /* Logo at the design scale: the mock's logo block is 166px wide;
+       our combined SVG hits that width at 17.5px tall. */
+    #navbar div.lg\:px-12 .nav-logo {
+      height: 17.5px !important;
+    }
+    /* Search pill at the design metrics: 34px tall, 6/14 padding. */
+    #navbar #search-bar-entry {
+      width: auto !important;
+      height: 34px !important;
+      padding: 6px 14px !important;
+      border-radius: 20px;
+      box-shadow: none;
+    }
+    #navbar #search-bar-entry span.text-xs {
+      display: none;
+    }
+    /* Ask Assistant (hosted-only) — the design's "Ask AI" pill. */
+    #navbar #assistant-entry {
+      height: 34px !important;
+      padding: 6px 14px !important;
+      border-radius: 20px !important;
+      background-color: #F9F9F8 !important;
+      border: 1px solid #E1DFDA !important;
+      box-shadow: none !important;
+      color: #181818 !important;
+    }
+    #navbar #assistant-entry kbd,
+    #navbar #assistant-entry .text-xs {
+      display: none !important;
+    }
+    .dark #navbar #assistant-entry {
+      background-color: rgb(24, 25, 27) !important;
+      border-color: rgba(255, 255, 255, 0.15) !important;
+      color: #F3F2F0 !important;
+    }
+    /* The design's header right side is just the Search / Ask pills:
+       no Explore Integrations link (Ecosystem lives in the Resources
+       menu and the footer), no Developer Portal CTA (moved into the
+       Resources menu at these widths), no theme toggle (the theme still
+       follows the system preference; both remain below 1440px). */
+    #navbar li.navbar-link,
+    #navbar #topbar-cta-button,
+    #navbar #theme-preference-menu-trigger,
+    #navbar div.lg\:px-12 > div > div.justify-end {
+      display: none !important;
+    }
+  }
+
   /* Quickstart: tighten code block spacing within the card */
   .quickstart-code .code-block {
     margin-top: 0.5rem !important;
