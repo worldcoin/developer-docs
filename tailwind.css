@@ -560,9 +560,15 @@
   /* the logo, the tab row, and the search/assistant cluster lay out on  */
   /* ONE flex line — no absolute positioning, so the variable-width      */
   /* hosted cluster (Search + Ask Assistant) can never overlap the tabs. */
-  /* Below 1440px the two-row layout above remains.                      */
+  /* Below 1440px — including when the hosted assistant panel narrows    */
+  /* the page without changing the window width — the two-row layout     */
+  /* above remains: the pill activates on the header's own width via a   */
+  /* container query, not a viewport media query.                        */
   /* ------------------------------------------------------------------ */
-  @media (min-width: 1440px) {
+  #navbar {
+    container-type: inline-size;
+  }
+  @container (min-width: 1440px) {
     /* No full-width backdrop: the pill floats on the page background. */
     #navbar #navbar-transition {
       display: none;
@@ -572,10 +578,11 @@
       display: flex;
       align-items: center;
       column-gap: 16px;
-      /* Side margins scale with the viewport (the design frame's 63/1728
-         ratio) instead of stepping at a breakpoint, so the pill keeps the
-         same proportions as the window shrinks. */
-      width: calc(100% - 7.3vw);
+      /* Side margins scale with the header's own width (the design
+         frame's 63/1728 ratio), so the pill keeps the same proportions
+         as the window — or the page area beside the assistant panel —
+         shrinks. */
+      width: calc(100% - 7.3cqw);
       max-width: 1602px !important;
       height: 84px;
       margin: 24px auto 0;
@@ -602,10 +609,14 @@
       order: 1;
       flex: 0 0 auto !important;
     }
+    #navbar .nav-tabs-item {
+      white-space: nowrap;
+    }
     #navbar .max-w-8xl > div > div.px-12 {
       order: 2;
       position: static;
       width: max-content;
+      flex-shrink: 0;
       height: auto !important;
       padding: 0 !important;
       margin-left: auto;
