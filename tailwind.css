@@ -308,6 +308,66 @@
   .dark .landing-footer-links {
     color: #F3F2F0;
   }
+
+  /* ------------------------------------------------------------------ */
+  /* Docs-page footer (Docs 3.0) — restyle Mintlify's advanced footer    */
+  /* into the design's single row: "™ 2026 World" left, links right.     */
+  /* The homepage keeps its own hand-built .landing-footer.              */
+  /* ------------------------------------------------------------------ */
+  #footer.advanced-footer {
+    border-top: none;
+  }
+  #footer.advanced-footer > div {
+    max-width: 1728px !important;
+  }
+  @media (min-width: 1024px) {
+    #footer.advanced-footer > div {
+      padding: 48px 96px 64px !important;
+    }
+  }
+  /* Replace the footer logo with the trademark line from the design. */
+  #footer.advanced-footer .nav-logo {
+    display: none !important;
+  }
+  #footer.advanced-footer a.select-none::after {
+    content: "™ 2026 World";
+    font-size: 16px;
+    line-height: 1.4;
+    font-weight: 300;
+    color: #181818;
+    white-space: nowrap;
+  }
+  .dark #footer.advanced-footer a.select-none::after {
+    color: #F3F2F0;
+  }
+  /* Link row: right-aligned single row, ink links per design. */
+  @media (min-width: 768px) {
+    #footer.advanced-footer .md\:justify-center {
+      justify-content: flex-end !important;
+      gap: 40px !important;
+    }
+  }
+  #footer.advanced-footer a[class*="max-w-36"] {
+    max-width: none !important;
+    font-size: 16px !important;
+    line-height: 1.4;
+    font-weight: 300;
+    color: #181818 !important;
+  }
+  #footer.advanced-footer a[class*="max-w-36"]:hover {
+    color: #181818 !important;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .dark #footer.advanced-footer a[class*="max-w-36"],
+  .dark #footer.advanced-footer a[class*="max-w-36"]:hover {
+    color: #F3F2F0 !important;
+  }
+  /* The design's footer carries no social icons (those links live in the
+     footer links row; GitHub also sits in the Resources menu). */
+  #footer.advanced-footer div[class*="min-w-[140px]"] {
+    display: none !important;
+  }
   @media (max-width: 900px) {
     .landing-footer-inner {
       padding: 0 24px 48px;
