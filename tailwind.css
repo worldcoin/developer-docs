@@ -163,7 +163,10 @@
       display: flex;
       align-items: center;
       column-gap: 16px;
-      width: calc(100% - 48px);
+      /* Side margins scale with the viewport (the design frame's 63/1728
+         ratio) instead of stepping at a breakpoint, so the pill keeps the
+         same proportions as the window shrinks. */
+      width: calc(100% - 7.3vw);
       max-width: 1602px !important;
       height: 84px;
       margin: 24px auto 0;
@@ -248,13 +251,6 @@
     #navbar #theme-preference-menu-trigger,
     #navbar div.lg\:px-12 > div > div.justify-end {
       display: none !important;
-    }
-  }
-  @media (min-width: 1600px) {
-    /* At the design frame, side margins widen to 63px so the logo sits
-       on the shared 96px gutter. */
-    #navbar > div.max-w-8xl {
-      width: calc(100% - 126px);
     }
   }
 
