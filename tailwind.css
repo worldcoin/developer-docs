@@ -60,6 +60,89 @@
     color: #e5e7eb; /* gray-200 */
   }
 
+  /* ------------------------------------------------------------------ */
+  /* Tab bar (Docs 3.0 header) — pill tabs in the design language: ink   */
+  /* labels, black pill for the active tab (inverted in dark mode), no   */
+  /* underline indicator, hairline divider before the menu tabs.         */
+  /* ------------------------------------------------------------------ */
+  #navbar .nav-tabs {
+    align-items: center;
+    gap: 4px !important;
+  }
+  #navbar .nav-tabs-item {
+    height: 32px !important;
+    padding: 6px 14px;
+    border-radius: 42px;
+    color: #181818 !important;
+    transition: background-color 0.15s ease;
+  }
+  #navbar .nav-tabs-item:hover {
+    color: #181818 !important;
+    background-color: #F3F2F0;
+  }
+  #navbar .nav-tabs-item[data-active="true"] {
+    background-color: #181818;
+    color: #F9F9F8 !important;
+    text-shadow: none;
+  }
+  #navbar .nav-tabs-item[data-active="true"]:hover {
+    color: #F9F9F8 !important;
+    background-color: #181818;
+  }
+  /* The theme's active-tab underline indicator */
+  #navbar .nav-tabs-item > div.absolute {
+    display: none;
+  }
+  /* Hairline divider between the page tabs and the Resources/Support
+     menus (the menu tabs render as <button>, page tabs as <a>). */
+  #navbar .nav-tabs > button.nav-tabs-item:first-of-type {
+    margin-left: 21px;
+  }
+  #navbar .nav-tabs > button.nav-tabs-item:first-of-type::before {
+    content: "";
+    position: absolute;
+    left: -13px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 24px;
+    background-color: #E1DFDA;
+  }
+  .dark #navbar .nav-tabs > button.nav-tabs-item:first-of-type::before {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+  .dark #navbar .nav-tabs-item {
+    color: #F3F2F0 !important;
+  }
+  .dark #navbar .nav-tabs-item:hover {
+    color: #F3F2F0 !important;
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+  .dark #navbar .nav-tabs-item[data-active="true"],
+  .dark #navbar .nav-tabs-item[data-active="true"]:hover {
+    background-color: #F3F2F0;
+    color: #181818 !important;
+  }
+
+  /* Search entry — quiet bordered pill per design */
+  #navbar #search-bar-entry {
+    border-radius: 20px;
+    background-color: #F9F9F8;
+    box-shadow: none;
+    --tw-ring-color: #E1DFDA;
+    color: #181818;
+  }
+  .dark #navbar #search-bar-entry {
+    background-color: rgb(24, 25, 27);
+    --tw-ring-color: rgba(255, 255, 255, 0.15);
+    color: #F3F2F0;
+  }
+
+  /* Developer Portal CTA — pill radius to match the design language */
+  #topbar-cta-button a > span.absolute {
+    border-radius: 20px;
+  }
+
   /* Quickstart: tighten code block spacing within the card */
   .quickstart-code .code-block {
     margin-top: 0.5rem !important;
