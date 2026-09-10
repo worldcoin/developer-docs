@@ -616,9 +616,14 @@
     #navbar #search-bar-entry span.text-xs {
       display: none;
     }
-    /* The design's header carries no Explore Integrations link (Ecosystem
-       lives in the Resources menu and the footer). */
-    #navbar li.navbar-link {
+    /* The design's header right side is just the Search / Ask pills:
+       no Explore Integrations link (Ecosystem lives in the Resources
+       menu and the footer), no Developer Portal CTA (moved into the
+       Resources menu at these widths), no theme toggle (the theme still
+       follows the system preference; both remain below 1440px). */
+    #navbar li.navbar-link,
+    #navbar #topbar-cta-button,
+    #navbar #theme-preference-menu-trigger {
       display: none !important;
     }
   }
@@ -632,14 +637,6 @@
     #navbar #search-bar-entry {
       height: 34px !important;
       padding: 6px 14px !important;
-    }
-  }
-  /* Between 1440-1600px the pill is narrower than the design frame, so
-     shed the secondary utilities (theme toggle, contextual toggle) to
-     keep logo/tabs/search/CTA from colliding; they return at 1600px+. */
-  @media (min-width: 1440px) and (max-width: 1599px) {
-    #navbar #theme-preference-menu-trigger {
-      display: none !important;
     }
   }
   @media (min-width: 1600px) {

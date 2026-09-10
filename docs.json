@@ -384,6 +384,10 @@
         "tab": "Resources",
         "menu": [
           {
+            "item": "Developer Portal",
+            "href": "https://developer.worldcoin.org"
+          },
+          {
             "item": "World Tech Blog",
             "href": "https://world.org/blog?blog_type=world-tech"
           },
