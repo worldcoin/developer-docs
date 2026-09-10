@@ -9,6 +9,7 @@ description: "Build Mini Apps, integrate World ID, and deploy on World Chain wit
 ---
 
 import { DeveloperStories } from "/snippets/developer-stories.jsx";
+import { NewsletterForm } from "/snippets/newsletter-form.jsx";
 
 {/* cspell:ignore worldcoin Estevez Jangwon Toktokhan Hyrax gigagas flashblock prismic */}
 
@@ -134,35 +135,10 @@ import { DeveloperStories } from "/snippets/developer-stories.jsx";
 <div className="landing-footer">
   <div className="landing-footer-inner">
 
-    {/* Newsletter — uncomment when a subscribe endpoint exists.
-        Why it is disabled: world.org's form submits through a Next.js server
-        action (company-website src/actions/subscribe.ts) that calls Braze with
-        the server-side NEXT_SERVER_BRAZE_TOKEN. A static Mintlify site cannot
-        hold that secret, so this form needs either a public subscribe endpoint
-        from the web team or a Braze public-key integration before it can ship.
-        Endpoint proposed as https://github.com/worldcoin/company-website/pull/4481 —
-        once merged (plus its Cloudflare rate rule), point this form at
-        POST https://world.org/api/subscribe with body {email} and uncomment.
-
-    <div className="landing-newsletter">
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "48px", alignItems: "center" }}>
-        <div className="landing-newsletter-title" style={{ fontSize: "40px", lineHeight: 1.2, letterSpacing: "-0.8px", fontWeight: 300 }}>
-          Subscribe to World Developers Newsletter
-        </div>
-        <div>
-          <form className="landing-email-field" style={{ display: "flex", alignItems: "center", borderRadius: "30px", padding: "10px 10px 10px 24px", gap: "12px" }}>
-            <input type="email" placeholder="Your email" className="landing-email-input" style={{ flex: 1, border: "none", outline: "none", fontSize: "20px", fontWeight: 300, background: "transparent", fontFamily: "inherit" }} />
-            <button type="submit" style={{ width: "40px", height: "40px", borderRadius: "20px", backgroundColor: "#181818", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8.5 2.8L13.2 7.5H2V8.5H13.2L8.5 13.2L9.2 13.9L15.1 8L9.2 2.1L8.5 2.8Z" fill="white"/></svg>
-            </button>
-          </form>
-          <div style={{ fontSize: "12px", lineHeight: 1.4, color: "#9D9B96", marginTop: "24px" }}>
-            By entering your email address and clicking “Subscribe,” you consent to receive newsletters, marketing communications and ecosystem updates. For details on how we process your personal data, including your rights and how to exercise them, please review our <a href="https://world.org/legal/privacy-notice" target="_blank" style={{ textDecoration: "underline" }} className="landing-privacy-link">Privacy Notice</a>.
-          </div>
-        </div>
-      </div>
-    </div>
-    */}
+    {/* Newsletter — submits to world.org's public subscribe endpoint
+        (worldcoin/company-website#4481). If that endpoint is not live yet,
+        the form shows an explicit error instead of failing silently. */}
+    <NewsletterForm />
 
     {/* Footer links — single row per Docs 3.0: trademark left, links right */}
     <div className="landing-footer-links" style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: "24px 48px", fontSize: "16px", lineHeight: 1.4, fontWeight: 300 }}>
