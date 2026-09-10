@@ -616,6 +616,25 @@
     #navbar #search-bar-entry span.text-xs {
       display: none;
     }
+    /* Ask Assistant (hosted-only) — the design's "Ask AI" pill. */
+    #navbar #assistant-entry {
+      height: 34px !important;
+      padding: 6px 14px !important;
+      border-radius: 20px !important;
+      background-color: #F9F9F8 !important;
+      border: 1px solid #E1DFDA !important;
+      box-shadow: none !important;
+      color: #181818 !important;
+    }
+    #navbar #assistant-entry kbd,
+    #navbar #assistant-entry .text-xs {
+      display: none !important;
+    }
+    .dark #navbar #assistant-entry {
+      background-color: rgb(24, 25, 27) !important;
+      border-color: rgba(255, 255, 255, 0.15) !important;
+      color: #F3F2F0 !important;
+    }
     /* The design's header right side is just the Search / Ask pills:
        no Explore Integrations link (Ecosystem lives in the Resources
        menu and the footer), no Developer Portal CTA (moved into the
