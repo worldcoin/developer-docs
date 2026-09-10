@@ -469,11 +469,11 @@
   /* Tab bar — pill tabs per Docs 3.0 header design */
   #navbar .nav-tabs {
     align-items: center;
-    gap: 4px;
+    gap: 0 !important;
   }
   #navbar .nav-tabs-item {
     height: 32px !important;
-    padding: 6px 14px;
+    padding: 6px 10px;
     border-radius: 42px;
     color: #181818 !important;
     transition: background-color 0.15s ease;
@@ -483,6 +483,7 @@
     background-color: #F3F2F0;
   }
   #navbar .nav-tabs-item[data-active="true"] {
+    padding: 6px 14px;
     background-color: #181818;
     color: #F9F9F8 !important;
     text-shadow: none;
@@ -498,12 +499,12 @@
   /* Hairline divider between the page tabs and the Resources/Support
      menus (the menu tabs render as <button>, page tabs as <a>). */
   #navbar .nav-tabs > button.nav-tabs-item:first-of-type {
-    margin-left: 21px;
+    margin-left: 17px;
   }
   #navbar .nav-tabs > button.nav-tabs-item:first-of-type::before {
     content: "";
     position: absolute;
-    left: -13px;
+    left: -9px;
     top: 50%;
     transform: translateY(-50%);
     width: 1px;
@@ -543,6 +544,102 @@
   /* Developer Portal CTA — pill radius to match the design language */
   #topbar-cta-button a > span.absolute {
     border-radius: 20px;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Floating pill header (Docs 3.0, desktop ≥1440px) — collapse the     */
+  /* theme's two-row header into the design's single 84px rounded bar:   */
+  /* logo left, tabs centered, search/CTA right, floating on the page    */
+  /* background. Below 1440px the two-row layout above remains.          */
+  /* ------------------------------------------------------------------ */
+  @media (min-width: 1440px) {
+    /* No full-width backdrop: the pill floats on the page background. */
+    #navbar #navbar-transition {
+      display: none;
+    }
+    #navbar > div.max-w-8xl {
+      width: calc(100% - 48px);
+      max-width: 1602px !important;
+      margin: 24px auto 0;
+      background-color: #FFFFFF;
+      border: 1px solid #E1DFDA;
+      border-radius: 18px;
+      box-shadow: 0px 15px 20px -5px rgba(0, 0, 0, 0.03);
+    }
+    .dark #navbar > div.max-w-8xl {
+      background-color: rgb(24, 25, 27);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+    /* Top row becomes the single 84px pill row (33px inner gutter puts
+       the logo on the 96px page gutter at the 1728px frame). */
+    #navbar div.lg\:px-12 {
+      height: 84px !important;
+      padding-left: 33px !important;
+      padding-right: 25px !important;
+      margin: 0 !important;
+    }
+    #navbar div.lg\:px-12 > div {
+      border-bottom: none !important;
+    }
+    /* Tab row: lift it into the pill row, centered. */
+    #navbar .max-w-8xl div.px-12 {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: max-content;
+      height: 84px !important;
+      padding: 0 !important;
+      z-index: 10;
+    }
+    #navbar .nav-tabs-item {
+      white-space: nowrap;
+    }
+    /* Search (and the assistant entry beside it) become compact pills on
+       the right instead of a stretched center bar. */
+    #navbar div.z-20.justify-center {
+      flex: 0 0 auto !important;
+    }
+    #navbar div.lg\:px-12 .justify-end {
+      flex: 0 0 auto !important;
+    }
+    #navbar #search-bar-entry {
+      width: auto !important;
+    }
+    #navbar #search-bar-entry span.text-xs {
+      display: none;
+    }
+    /* The design's header carries no Explore Integrations link (Ecosystem
+       lives in the Resources menu and the footer). */
+    #navbar li.navbar-link {
+      display: none !important;
+    }
+  }
+  @media (min-width: 1440px) {
+    /* Logo at the design scale (glyph ~24px) */
+    #navbar div.lg\:px-12 .nav-logo {
+      height: 24px !important;
+    }
+    /* Search pill at the design metrics: 34px tall, 6/14 padding */
+    #navbar #search-bar-entry {
+      height: 34px !important;
+      padding: 6px 14px !important;
+    }
+  }
+  /* Between 1440-1600px the pill is narrower than the design frame, so
+     shed the secondary utilities (theme toggle, contextual toggle) to
+     keep logo/tabs/search/CTA from colliding; they return at 1600px+. */
+  @media (min-width: 1440px) and (max-width: 1599px) {
+    #navbar #theme-preference-menu-trigger {
+      display: none !important;
+    }
+  }
+  @media (min-width: 1600px) {
+    /* At the design frame, side margins widen to 63px so the logo sits
+       on the shared 96px gutter. */
+    #navbar > div.max-w-8xl {
+      width: calc(100% - 126px);
+    }
   }
 
   /* ------------------------------------------------------------------ */
