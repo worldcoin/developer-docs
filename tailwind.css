@@ -626,7 +626,9 @@
       padding: 64px 24px;
     }
     .landing-footer-links {
-      gap: 80px !important;
+      /* Wrapped rows stay together: the trademark line sits inline with
+         the links instead of floating far above them. */
+      gap: 16px 40px !important;
     }
   }
   @media (max-width: 600px) {
@@ -647,7 +649,7 @@
       font-size: 18px !important;
     }
     .landing-footer-links {
-      gap: 60px !important;
+      gap: 12px 32px !important;
     }
   }
 
