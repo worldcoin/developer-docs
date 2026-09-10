@@ -156,8 +156,13 @@
      w-[min(760px,85%)] is silently dropped by Mintlify's Tailwind compiler
      (values with a comma + %), which renders the cards at zero size. */
   .landing-story-card {
-    width: calc(50% - 44px);
+    width: calc((100% - 96px) / 2 - 12px);
     aspect-ratio: 4 / 3;
+  }
+  @media (min-width: 901px) {
+    .landing-stories-track {
+      margin-right: -96px;
+    }
   }
   @media (max-width: 900px) {
     .landing-story-card {
@@ -354,8 +359,8 @@
     color: #F3F2F0;
   }
   .landing-hero-sub {
-    margin-top: 20px;
-    max-width: 640px;
+    margin-top: 24px;
+    max-width: 487px;
     font-size: 24px;
     line-height: 1.35;
     letter-spacing: -0.24px;
@@ -380,7 +385,7 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     column-gap: 80px;
-    row-gap: 104px;
+    row-gap: 113px;
   }
   @media (max-width: 900px) {
     .landing-card-grid {
@@ -410,6 +415,32 @@
   @media (max-width: 600px) {
     .landing-container {
       padding: 32px 16px 0;
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Header/content alignment (Docs 3.0 QA) — the navbar container and   */
+  /* the docs-page body use Mintlify's max-w-8xl (the body via a         */
+  /* peer-variant class); match both to the 1728px design frame with     */
+  /* 96px gutters so the logo, tabs, hero, and content share one edge.   */
+  /* ------------------------------------------------------------------ */
+  @media (min-width: 1024px) {
+    [class*="max-w-8xl"] {
+      max-width: 1728px !important;
+    }
+    /* Navbar top row (logo/search/CTA) and tab row: 48px → 96px gutters. */
+    #navbar .lg\:px-12,
+    #navbar .px-12 {
+      padding-left: 96px !important;
+      padding-right: 96px !important;
+    }
+    /* Docs pages: pull the sidebar/content wrapper out to the same frame
+       so the sidebar lines up under the logo (group headers and link text
+       both carry a 16px inset, so 80px padding lands them at 96px).
+       Scoped to non-custom pages; the homepage manages its own gutters. */
+    body:has(#navbar.is-not-custom) div[class*="is-not-custom]:px-4"] {
+      padding-left: 80px !important;
+      padding-right: 80px !important;
     }
   }
 
