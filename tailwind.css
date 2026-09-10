@@ -21,11 +21,18 @@
 }
 
 @layer components {
-  /* Tint the custom Proof of Human badge when its sidebar page is selected. */
-  #sidebar-content
-    li[data-active]
-    img[src$="/images/docs/human-badge-gray.svg"] {
-    content: url("/images/docs/human-badge-blue.svg");
+  /* Sidebar — selected item is a neutral pill per Docs 3.0 (bg gray/a9, ink
+     text), replacing the theme-default blue tint. The Proof of Human badge
+     keeps its gray artwork in both states for the same reason. */
+  #sidebar-content li[data-active="true"] > a {
+    background-color: #F3F2F0 !important;
+    color: #181818 !important;
+    border-radius: 6px !important;
+    text-shadow: none !important;
+  }
+  .dark #sidebar-content li[data-active="true"] > a {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    color: #F3F2F0 !important;
   }
 
   /* Page content text links only (anchors without custom classes) */
