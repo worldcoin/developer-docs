@@ -555,19 +555,28 @@
 
   /* ------------------------------------------------------------------ */
   /* Floating pill header (Docs 3.0, desktop ≥1440px) — collapse the     */
-  /* theme's two-row header into the design's single 84px rounded bar:   */
-  /* logo left, tabs centered, search/CTA right, floating on the page    */
-  /* background. Below 1440px the two-row layout above remains.          */
+  /* theme's two-row header into the design's single 84px rounded bar.   */
+  /* The theme's row scaffolding is flattened with display:contents so   */
+  /* the logo, the tab row, and the search/assistant cluster lay out on  */
+  /* ONE flex line — no absolute positioning, so the variable-width      */
+  /* hosted cluster (Search + Ask Assistant) can never overlap the tabs. */
+  /* Below 1440px the two-row layout above remains.                      */
   /* ------------------------------------------------------------------ */
   @media (min-width: 1440px) {
     /* No full-width backdrop: the pill floats on the page background. */
     #navbar #navbar-transition {
       display: none;
     }
+    /* The pill is the flex row. */
     #navbar > div.max-w-8xl {
+      display: flex;
+      align-items: center;
+      column-gap: 16px;
       width: calc(100% - 48px);
       max-width: 1602px !important;
+      height: 84px;
       margin: 24px auto 0;
+      padding: 0 25px 0 33px;
       background-color: #FFFFFF;
       border: 1px solid #E1DFDA;
       border-radius: 18px;
@@ -577,41 +586,44 @@
       background-color: rgb(24, 25, 27);
       border-color: rgba(255, 255, 255, 0.12);
     }
-    /* Top row becomes the single 84px pill row (33px inner gutter puts
-       the logo on the 96px page gutter at the 1728px frame). */
-    #navbar div.lg\:px-12 {
-      height: 84px !important;
-      padding-left: 33px !important;
-      padding-right: 25px !important;
-      margin: 0 !important;
-    }
+    /* Flatten the two-row scaffolding into the pill's flex line. */
+    #navbar > div.max-w-8xl > div,
+    #navbar > div.max-w-8xl > div > div.relative,
+    #navbar div.lg\:px-12,
     #navbar div.lg\:px-12 > div {
-      border-bottom: none !important;
+      display: contents !important;
     }
-    /* Tab row: lift it into the pill row, centered. */
-    #navbar .max-w-8xl div.px-12 {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
+    /* Logo | tabs | search cluster; the two auto margins center the
+       tabs in the free space between logo and cluster. */
+    #navbar div.lg\:px-12 > div > div.flex-1:first-child {
+      order: 1;
+      flex: 0 0 auto !important;
+    }
+    #navbar .max-w-8xl > div > div.px-12 {
+      order: 2;
+      position: static;
       width: max-content;
-      height: 84px !important;
+      height: auto !important;
       padding: 0 !important;
-      z-index: 10;
+      margin-left: auto;
     }
-    #navbar .nav-tabs-item {
-      white-space: nowrap;
-    }
-    /* Search (and the assistant entry beside it) become compact pills on
-       the right instead of a stretched center bar. */
-    #navbar div.z-20.justify-center {
+    #navbar div.lg\:px-12 div.z-20 {
+      order: 3;
       flex: 0 0 auto !important;
+      margin-left: auto;
     }
-    #navbar div.lg\:px-12 .justify-end {
-      flex: 0 0 auto !important;
+    /* Logo at the design scale: the mock's logo block is 166px wide;
+       our combined SVG hits that width at 17.5px tall. */
+    #navbar div.lg\:px-12 .nav-logo {
+      height: 17.5px !important;
     }
+    /* Search pill at the design metrics: 34px tall, 6/14 padding. */
     #navbar #search-bar-entry {
       width: auto !important;
+      height: 34px !important;
+      padding: 6px 14px !important;
+      border-radius: 20px;
+      box-shadow: none;
     }
     #navbar #search-bar-entry span.text-xs {
       display: none;
@@ -642,20 +654,9 @@
        follows the system preference; both remain below 1440px). */
     #navbar li.navbar-link,
     #navbar #topbar-cta-button,
-    #navbar #theme-preference-menu-trigger {
+    #navbar #theme-preference-menu-trigger,
+    #navbar div.lg\:px-12 > div > div.justify-end {
       display: none !important;
-    }
-  }
-  @media (min-width: 1440px) {
-    /* Logo at the design scale: the mock's logo block is 166px wide;
-       our combined SVG hits that width at 17.5px tall. */
-    #navbar div.lg\:px-12 .nav-logo {
-      height: 17.5px !important;
-    }
-    /* Search pill at the design metrics: 34px tall, 6/14 padding */
-    #navbar #search-bar-entry {
-      height: 34px !important;
-      padding: 6px 14px !important;
     }
   }
   @media (min-width: 1600px) {
