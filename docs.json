@@ -428,19 +428,6 @@
     "light": "/logo/world-developers.svg",
     "dark": "/logo/world-developers-white.svg"
   },
-  "navbar": {
-    "links": [
-      {
-        "label": "Explore Integrations",
-        "href": "https://world.org/ecosystem"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Developer Portal",
-      "href": "https://developer.worldcoin.org"
-    }
-  },
   "footer": {
     "socials": {
       "x": "https://x.com/worldnetwork",
