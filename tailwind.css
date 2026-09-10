@@ -215,9 +215,9 @@
   }
   @media (min-width: 1440px) {
     /* Logo at the design scale: the mock's logo block is 166px wide;
-       our combined SVG hits that width at 17px tall. */
+       our combined SVG hits that width at 17.5px tall. */
     #navbar div.lg\:px-12 .nav-logo {
-      height: 17px !important;
+      height: 17.5px !important;
     }
     /* Search pill at the design metrics: 34px tall, 6/14 padding */
     #navbar #search-bar-entry {
