@@ -309,6 +309,13 @@
   .dark .landing-email-input::placeholder {
     color: #75726F;
   }
+  @media (max-width: 900px) {
+    /* Newsletter stacks on small screens (the grid is inline-styled). */
+    .landing-newsletter > div {
+      grid-template-columns: 1fr !important;
+      gap: 32px !important;
+    }
+  }
   .landing-privacy-link {
     color: #2D2C2C !important;
   }
