@@ -608,6 +608,15 @@
   #footer.advanced-footer div[class*="min-w-[140px]"] {
     display: none !important;
   }
+  /* The design's footer is the single links row only: drop the theme's
+     bottom utility row (Powered by Mintlify + theme icons) and its
+     divider. Branding removal is a paid-plan Mintlify feature — if the
+     org's plan requires attribution, revert this rule or use the
+     dashboard's hide-branding toggle instead. */
+  #footer.advanced-footer > div > div.h-px,
+  #footer.advanced-footer > div > div:last-child {
+    display: none !important;
+  }
   @media (max-width: 900px) {
     .landing-footer-inner {
       padding: 0 24px 48px;
