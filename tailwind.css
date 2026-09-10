@@ -272,6 +272,20 @@
     display: none !important;
   }
 
+  /* ------------------------------------------------------------------ */
+  /* Assistant chat — remove the duplicate chat entry points; the        */
+  /* assistant stays reachable from the header (Ask Assistant / ⌘I).     */
+  /* The hosted site renders a sticky "Ask a question" bar at the bottom */
+  /* of every docs page; local `mint dev` renders a draggable floating   */
+  /* launcher instead. Hide both.                                        */
+  /* ------------------------------------------------------------------ */
+  div[data-assistant-bar] {
+    display: none !important;
+  }
+  body > div.z-999.cursor-grab.touch-none[role="status"] {
+    display: none !important;
+  }
+
   /* Landing page — product cards (borderless icon-tile rows per Docs 3.0) */
   a.product-card {
     display: flex;
