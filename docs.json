@@ -379,27 +379,46 @@
             ]
           }
         ]
+      },
+      {
+        "tab": "Resources",
+        "menu": [
+          {
+            "item": "World Tech Blog",
+            "href": "https://world.org/blog?blog_type=world-tech"
+          },
+          {
+            "item": "Open Source",
+            "href": "https://github.com/worldcoin"
+          },
+          {
+            "item": "Whitepaper",
+            "href": "https://whitepaper.world.org"
+          },
+          {
+            "item": "Ecosystem",
+            "href": "https://world.org/ecosystem"
+          }
+        ]
+      },
+      {
+        "tab": "Support",
+        "menu": [
+          {
+            "item": "Telegram Support Channel",
+            "href": "https://t.me/worlddevelopersupport"
+          },
+          {
+            "item": "Email Support",
+            "href": "mailto:developers@toolsforhumanity.com"
+          },
+          {
+            "item": "Mini Apps FAQ",
+            "href": "/mini-apps/more/faq"
+          }
+        ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Telegram Support Channel",
-          "href": "https://t.me/worlddevelopersupport",
-          "icon": "telegram"
-        },
-        {
-          "anchor": "Email Support",
-          "href": "mailto:developers@toolsforhumanity.com",
-          "icon": "envelope"
-        },
-        {
-          "anchor": "GitHub",
-          "href": "https://github.com/worldcoin",
-          "icon": "github"
-        }
-      ]
-    }
+    ]
   },
   "logo": {
     "light": "/logo/world-developers.svg",
@@ -423,7 +442,37 @@
       "x": "https://x.com/worldnetwork",
       "github": "https://github.com/worldcoin",
       "discord": "https://world.org/discord"
-    }
+    },
+    "links": [
+      {
+        "items": [
+          {
+            "label": "About World",
+            "href": "https://world.org"
+          },
+          {
+            "label": "Developers",
+            "href": "https://world.org/developers"
+          },
+          {
+            "label": "Whitepaper",
+            "href": "https://whitepaper.world.org"
+          },
+          {
+            "label": "Open Source",
+            "href": "https://github.com/worldcoin"
+          },
+          {
+            "label": "Ecosystem",
+            "href": "https://world.org/ecosystem"
+          },
+          {
+            "label": "Careers",
+            "href": "https://world.org/careers"
+          }
+        ]
+      }
+    ]
   },
   "contextual": {
     "options": [
