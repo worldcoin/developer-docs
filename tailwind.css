@@ -259,17 +259,18 @@
       border-color: rgba(255, 255, 255, 0.15) !important;
       color: #F3F2F0 !important;
     }
-    /* The design's header right side is just the Search / Ask pills:
-       no Explore Integrations link (Ecosystem lives in the Resources
-       menu and the footer), no Developer Portal CTA (moved into the
-       Resources menu at these widths), no theme toggle (the theme still
-       follows the system preference; both remain below 1440px). */
-    #navbar li.navbar-link,
-    #navbar #topbar-cta-button,
-    #navbar #theme-preference-menu-trigger,
+    /* The emptied right-hand group collapses inside the pill. */
     #navbar div.lg\:px-12 > div > div.justify-end {
       display: none !important;
     }
+  }
+  /* The header chrome is identical at every size, per the design: no
+     Explore Integrations link and no Developer Portal CTA (both removed
+     from docs.json navbar — Ecosystem and Developer Portal live in the
+     Resources menu and footer), and no theme toggle (the theme follows
+     the system preference). */
+  #navbar #theme-preference-menu-trigger {
+    display: none !important;
   }
 
   /* Quickstart: tighten code block spacing within the card */
