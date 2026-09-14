@@ -564,7 +564,7 @@
     #footer.advanced-footer > div {
       /* Generous clearance between the page's last content (pagination)
          and the footer row, per the design's section rhythm. */
-      padding: 96px 96px 64px !important;
+      padding: 96px 96px 48px !important;
     }
   }
   /* Replace the footer logo with the trademark line from the design. */
