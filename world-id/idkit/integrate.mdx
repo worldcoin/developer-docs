@@ -307,7 +307,7 @@ After the user completes the verification flow, IDKit returns one of the followi
 # Step 5: Verify the proof in your backend
 
 After completion, send the returned payload to your backend and
-forward it directly to `POST https://developer.world.org/api/v4/verify/{rp_id}`.
+forward it directly to `POST https://developer.world.org/api/v4/verify/{rp_id}`. Check that the verify response’s `environment` matches your backend’s expected environment (assert `"production"` for production integrations).
 
 <Note>
   Forward the IDKit result payload as-is. No field remapping is required.
