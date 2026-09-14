@@ -555,14 +555,16 @@
   /* The homepage keeps its own hand-built .landing-footer.              */
   /* ------------------------------------------------------------------ */
   #footer.advanced-footer {
-    border-top: none;
+    border-top: none !important;
   }
   #footer.advanced-footer > div {
     max-width: 1728px !important;
   }
   @media (min-width: 1024px) {
     #footer.advanced-footer > div {
-      padding: 48px 96px 64px !important;
+      /* Generous clearance between the page's last content (pagination)
+         and the footer row, per the design's section rhythm. */
+      padding: 136px 96px 64px !important;
     }
   }
   /* Replace the footer logo with the trademark line from the design. */
