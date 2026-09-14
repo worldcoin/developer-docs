@@ -733,7 +733,10 @@
   /* 96px gutters so the logo, tabs, hero, and content share one edge.   */
   /* ------------------------------------------------------------------ */
   @media (min-width: 1024px) {
-    [class*="max-w-8xl"] {
+    /* Custom pages share the conditional max-w-8xl class token, but need
+       a full-width wrapper so their own containers can center the content. */
+    #navbar [class~="max-w-8xl"],
+    body:has(#navbar.is-not-custom) [class*="max-w-8xl"] {
       max-width: 1728px !important;
     }
     /* Navbar top row (logo/search/CTA) and tab row: 48px → 96px gutters. */
