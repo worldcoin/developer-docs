@@ -124,7 +124,10 @@
                 "pages": [
                   {
                     "group": "Indexer",
-                    "openapi": "https://indexer.us.id-infra.worldcoin.dev/openapi.json",
+                    "openapi": {
+                      "source": "https://indexer.us.id-infra.worldcoin.dev/openapi.json",
+                      "directory": "api-reference/indexer"
+                    },
                     "pages": [
                       "POST /inclusion-proof",
                       "POST /packed-account",
@@ -134,7 +137,10 @@
                   },
                   {
                     "group": "Gateway",
-                    "openapi": "https://gateway.id-infra.worldcoin.dev/openapi.json",
+                    "openapi": {
+                      "source": "https://gateway.id-infra.worldcoin.dev/openapi.json",
+                      "directory": "api-reference/gateway"
+                    },
                     "pages": [
                       "POST /create-account",
                       "POST /insert-authenticator",
