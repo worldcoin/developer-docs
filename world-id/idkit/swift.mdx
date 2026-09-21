@@ -57,6 +57,16 @@ let request = try IDKit.request(config: config).preset(
 )
 ```
 
+For Selfie Check, use `selfieCheck(signal:)`. It requests World ID 4.0 and always
+disables legacy fallback. See [Configure Credentials](/world-id/idkit/credentials#selfie-check)
+for response verification and repeated-check guidance.
+
+```swift
+let request = try IDKit.request(config: config).preset(
+  selfieCheck(signal: "user-123")
+)
+```
+
 ## Polling API
 
 - `pollStatusOnce() async -> IDKitStatus`
