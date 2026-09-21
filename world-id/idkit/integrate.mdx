@@ -16,19 +16,7 @@ Use the React widget for drop-in integration, or the JS, Swift and Kotlin SDKs f
 
 ## How it works
 
-Send a **proof request** through IDKit, challenging the user to prove something about themselves — such as uniqueness, document possession or liveness — based on their [credentials](/world-id/overview#credentials). The user's World ID App generates a zero-knowledge proof without revealing personal data. Your backend verifies the proof before authorizing the operation.
-
-Choose the proof flow based on whether the user should verify once or return for
-future checks:
-
-| Your use case | Flow |
-| --- | --- |
-| Each user may complete an action once, such as claiming a reward. | A uniqueness request. Follow the steps below and store the nullifier. |
-| The same user needs to verify again, including repeated Selfie Check. | [Session proofs](/world-id/idkit/session-proofs). Reuse a verified `session_id` across checks. |
-
-Both flows share installation, Portal setup, RP signing, and backend verification.
-For sessions, use the [session guide](/world-id/idkit/session-proofs) for signing
-without an action, creating and proving sessions, and storing session results.
+Use IDKit to request a proof and verify it on your backend: follow this guide for one-time checks, or use [session proofs](/world-id/idkit/session-proofs) for returning users.
 
 <div className="dark:rounded-2xl dark:bg-white dark:p-6">
   <img src="/images/docs/idkit-flow-v2.svg" alt="IDKit integration flow: your app sends a proof request to World App, receives a ZK proof, forwards it to your backend, and the backend verifies it with the World ID Developer Portal" />
