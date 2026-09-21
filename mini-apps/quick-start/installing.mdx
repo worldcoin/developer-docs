@@ -10,7 +10,7 @@ description: "Create a Mini App with the official template or install MiniKit-JS
 ## Quick Start
 
 The fastest way to get started is by using our template next-15 repository.
-Run the following command and follow the instructions to create a new mini app. This installs dependencies with `npm`; if you prefer `pnpm`, see [Manual Installation](#manual-installation) below.
+Run the following command and follow the instructions to create a new mini app. This installs dependencies with `npm`; if you prefer `pnpm`, see [Manual Installation](#manual-installation).
 
 ```bash
 npx @worldcoin/create-mini-app@latest my-first-mini-app
@@ -93,7 +93,7 @@ import { MiniKit } from "@worldcoin/minikit-js";
 console.log(MiniKit.isInstalled());
 ```
 
-3. Or, in a React component, read the same state reactively with the `useMiniKit()` hook (this is what the official starter template itself uses):
+3. Or, in a React component, read the same state reactively with the `useMiniKit()` hook, used by the official starter template:
 
 ```tsx
 import { useMiniKit } from "@worldcoin/minikit-js/minikit-provider";
@@ -116,7 +116,7 @@ The [World Docs MCP](/model-context-protocol/world-docs) lets any coding assista
     ```bash
     claude mcp add --transport http --scope project world-docs https://docs.world.org/mcp
     ```
-    `--scope project` writes a shareable `.mcp.json` to your project (recommended); omit it and the server is instead registered only for you, in your global Claude config.
+    `--scope project` writes a shareable `.mcp.json` to your project (recommended). Omit it to register the server only for you, in your global Claude config.
   </Tab>
   <Tab title="Codex">
     ```bash

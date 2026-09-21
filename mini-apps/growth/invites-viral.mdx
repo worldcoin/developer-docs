@@ -38,7 +38,7 @@ Deep-link (opens World App directly if installed)
 
 `worldapp://mini-app?app_id={app_id}&path={path}`
 
-Note: path should be URL encoded. Rather than hand-building this URL, you can use the SDK helper `MiniKit.getMiniAppUrl(appId, path)`, which builds the `world.org` universal link and encodes the path for you.
+Note: path should be URL encoded — or use the SDK helper `MiniKit.getMiniAppUrl(appId, path)`, which builds and encodes the link for you.
 ### 2. Generate Share Links
 
 Create a shareable link that includes the referral information:
@@ -55,7 +55,7 @@ function generateInviteLink(userId: string): string {
 
 ### 3. Implement Share Functionality
 
-Add share buttons at key moments in your user journey. Note: `trackEvent` below is a placeholder for whatever analytics tool you integrate yourself (Segment, PostHog, a custom endpoint, etc.)—it is not a MiniKit command.
+Add share buttons at key moments in your user journey. `trackEvent` below is a placeholder for your own analytics tool (Segment, PostHog, etc.), not a MiniKit command.
 
 ```typescript
 import { MiniKit } from "@worldcoin/minikit-js";
@@ -109,7 +109,7 @@ function handleReferral() {
 
 Implement two-sided rewards that benefit both parties:
 
-This sample requires the caller to already have a World-ID-verified session (see [Wallet Auth](/mini-apps/commands/wallet-auth)) and adds server-side self-referral and idempotency checks—never trust `newUserId`/`referrerCode` from an unauthenticated request body:
+Requires a World-ID-verified session (see [Wallet Auth](/mini-apps/commands/wallet-auth)). Never trust `newUserId`/`referrerCode` from an unauthenticated request—add server-side self-referral and idempotency checks:
 
 ```typescript
 // api/process-referral.ts
@@ -117,7 +117,7 @@ export async function processReferral(data: {
   newUserId: string;
   referrerCode: string;
 }) {
-  // Require a verified session for newUserId (e.g. from your walletAuth backend check)
+  // Require a verified session for newUserId (e.g. via your walletAuth backend check)
   if (!(await isVerifiedSession(data.newUserId))) {
     return { success: false, reason: "unverified_user" };
   }
@@ -221,7 +221,7 @@ const events = {
 ```
 
 <Note>
-If you're using the canonical [Core Event Set](/mini-apps/growth/analytics#2-core-event-set-6-lines-of-code) from the Data & Analytics guide, `invite_link_created`/`invite_link_clicked` above map to that guide's `invite_sent`/`invite_accepted` events for the Invite Acceptance Rate metric—pick one taxonomy and use it consistently.
+If you use the canonical [Core Event Set](/mini-apps/growth/analytics#2-core-event-set-6-lines-of-code), `invite_link_created`/`invite_link_clicked` map to `invite_sent`/`invite_accepted` there. Pick one taxonomy and use it consistently.
 </Note>
 
 ### Key Metrics Dashboard
@@ -249,6 +249,6 @@ Test these variables to optimize your viral loop:
 
 1. Implement universal links for your invite flow
 2. Add share buttons after key user achievements
-3. Set up two-sided rewards, gated on World ID verification plus server-side self-referral and idempotency checks
+3. Set up two-sided rewards with World ID verification, self-referral, and idempotency checks
 4. Track invite metrics and run small A/B tests
 5. Scale successful invite mechanics across more touchpoints

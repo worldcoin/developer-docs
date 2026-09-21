@@ -8,7 +8,7 @@ description: "Sign an EIP-191 message using the unified MiniKit API."
 Use `MiniKit.signMessage()` to request a personal signature from the user's wallet.
 
 <Note>
-**TypeScript setup**: `@worldcoin/minikit-js`'s shipped types reference `window.WorldApp` without declaring it, which fails under `"skipLibCheck": false`. Set `"skipLibCheck": true` in your `tsconfig.json` (or add your own `Window.WorldApp` shim) so the package's types compile.
+**TypeScript setup**: the shipped types reference `window.WorldApp` without declaring it, which fails under `"skipLibCheck": false`. Set `"skipLibCheck": true` in `tsconfig.json` (or add your own `Window.WorldApp` shim).
 </Note>
 
 ## Basic Usage

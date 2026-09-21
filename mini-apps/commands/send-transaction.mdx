@@ -174,7 +174,7 @@ You can either use the `@worldcoin/minikit-react` hook or poll the Developer Por
 to check when the user operation is mined and get the final `transaction_hash`.
 
 <Warning>
-`poll()` runs an unbounded loop with no built-in timeout, and it **throws** (`Error("Transaction failed")`) if the user operation's status resolves to `failed`. Always call it inside a `try`/`catch`, and wrap it in your own timeout/abort logic if you need an upper bound on wait time.
+`poll()` runs an unbounded loop with no built-in timeout, and it **throws** (`Error("Transaction failed")`) if the user operation's status resolves to `failed`. Call it inside a `try`/`catch`, and add your own timeout/abort logic for an upper bound on wait time.
 </Warning>
 
 <CodeGroup>
@@ -194,7 +194,7 @@ const onClick = async () => {
   const result = await MiniKit.sendTransaction({...});
 
   try {
-    // Optionally race against your own timeout — poll() has no built-in one.
+    // poll() has no built-in timeout — race your own if needed.
     const { receipt } = await poll(result.data.userOpHash);
     // receipt contains the final transaction receipt
   } catch (error) {
