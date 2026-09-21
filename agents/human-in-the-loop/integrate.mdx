@@ -19,11 +19,11 @@ Built on the [Workflow SDK](https://useworkflow.dev) and the [Vercel AI SDK](htt
 ## Install
 
 ```bash
-# Server — human-in-the-loop + peer dependencies
-npm install @worldcoin/human-in-the-loop ai workflow
+# Server — human-in-the-loop + peer dependencies (ai@^5 is the supported major)
+npm install @worldcoin/human-in-the-loop ai@^5 workflow @workflow/ai
 
 # Client — React bindings + peer dependencies
-npm install @worldcoin/human-in-the-loop-react @worldcoin/idkit ai react
+npm install @worldcoin/human-in-the-loop-react @worldcoin/idkit ai@^5 react
 ```
 
 ## Environment variables
@@ -43,7 +43,7 @@ Get these from the [World developer portal](https://developer.world.org) by crea
 
 ```ts
 // src/workflows/chat/index.ts
-import { DurableAgent } from 'workflow/ai'
+import { DurableAgent } from '@workflow/ai/agent'
 import { getWritable } from 'workflow'
 import { openai } from '@workflow/ai/openai'
 import { tools } from './steps/tools'
@@ -66,6 +66,10 @@ export async function chatWorkflow(messages: ModelMessage[]) {
 
 ## Step 2: Register the approval tool
 
+<Warning>
+The World ID binding only protects what you bind it to. If you leave `action` at its default (the tool call's `toolCallId`), the proof is bound to an opaque per-invocation ID, not to the action being approved — which defeats the "no replay" guarantee for any tool that has a real side effect. The tool that performs that side effect (not just the approval tool) must **derive its own `action` string from that action's specific parameters**, and **independently re-verify the returned `IDKitResult` against World ID** before trusting it — tool inputs are LLM-generated, so the agent could pass a different or tampered result to the executing tool. See the [flight booking example](https://github.com/worldcoin/human-in-the-loop/tree/main/examples/flight-booking) for a complete, end-to-end implementation of this pattern.
+</Warning>
+
 ```ts
 // src/workflows/chat/steps/tools.ts
 import { requestHumanAuthorization } from '@worldcoin/human-in-the-loop/workflows'
@@ -74,13 +78,27 @@ import { z } from 'zod'
 export const tools = {
   approveAction: {
     description: 'Request human approval via World ID before a sensitive action.',
-    inputSchema: z.object({ summary: z.string() }),
+    inputSchema: z.object({ summary: z.string(), flightNumber: z.string() }),
 
     // Pauses the workflow, streams approval context to the client,
     // waits for World ID proof, verifies it, then resumes.
-    // Action defaults to toolCallId; pass a function to bind to input fields:
-    //   action: ({ input }) => `booking:${input.flightNumber}`
-    execute: requestHumanAuthorization(),
+    // Bind `action` to the specific action being approved — never leave
+    // this at the toolCallId default for a real side-effecting action:
+    execute: requestHumanAuthorization({
+      action: ({ input }) => `booking:${input.flightNumber}`,
+    }),
+  },
+  bookFlight: {
+    description: 'Book the flight after approval.',
+    inputSchema: z.object({ flightNumber: z.string() }),
+    // This tool performs the real side effect, so it must independently
+    // re-verify the World ID proof against the SAME `action` string above
+    // before booking — never trust that the approval happened just because
+    // the model called this tool. See the flight-booking example for the
+    // full bookingApproval() re-verification helper.
+    execute: async ({ flightNumber }) => {
+      // ...verify the proof for `booking:${flightNumber}`, then book
+    },
   },
   // ...your other tools
 }
