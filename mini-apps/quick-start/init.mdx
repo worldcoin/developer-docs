@@ -118,9 +118,11 @@ MiniKit normalizes the raw World App launch origin into:
 If you need the untransformed World App payload, read `window.WorldApp` directly.
 
 <Note>
-`@worldcoin/minikit-js` doesn't ship a `Window.WorldApp` type. Declare it yourself, matching the shape below:
+`@worldcoin/minikit-js` doesn't ship a `Window.WorldApp` type. Declare it yourself in a `global.d.ts` file, matching the shape below:
 
 ```tsx
+export {}; // required so this file is a module and `declare global` is valid
+
 declare global {
   interface Window {
     WorldApp?: {

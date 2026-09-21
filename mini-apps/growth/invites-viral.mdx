@@ -109,7 +109,7 @@ function handleReferral() {
 
 Implement two-sided rewards that benefit both parties:
 
-Requires a World-ID-verified session (see [Wallet Auth](/mini-apps/commands/wallet-auth)). Never trust `newUserId`/`referrerCode` from an unauthenticated request—add server-side self-referral and idempotency checks:
+Requires a World-ID-verified user (an [IDKit](/world-id/idkit/integrate) proof, not [Wallet Auth](/mini-apps/commands/wallet-auth) — SIWE only proves wallet control, not personhood, so gating on it alone lets one person collect the bonus from many wallets). Never trust `newUserId`/`referrerCode` from an unauthenticated request, and claim the referral atomically so concurrent requests can't double-credit it:
 
 ```typescript
 // api/process-referral.ts
@@ -117,8 +117,9 @@ export async function processReferral(data: {
   newUserId: string;
   referrerCode: string;
 }) {
-  // Require a verified session for newUserId (e.g. via your walletAuth backend check)
-  if (!(await isVerifiedSession(data.newUserId))) {
+  // Require a stored World ID nullifier for newUserId, set when they verified
+  // with IDKit — not a Wallet Auth session, which only proves wallet control.
+  if (!(await hasVerifiedWorldId(data.newUserId))) {
     return { success: false, reason: "unverified_user" };
   }
 
@@ -131,12 +132,16 @@ export async function processReferral(data: {
     return { success: false, reason: "self_referral" };
   }
 
-  // Idempotency: only credit a given new user once, ever
-  if (await hasAlreadyBeenReferred(data.newUserId)) {
+  // Atomically claim the referral (e.g. INSERT ... ON CONFLICT DO NOTHING on
+  // a unique referred_user_id column) before crediting anything. If two
+  // requests race, only one INSERT succeeds.
+  const claimed = await claimReferral(data.newUserId, referrer.id);
+  if (!claimed) {
     return { success: false, reason: "already_referred" };
   }
 
-  // Credit both users
+  // Credit both users. If a credit fails after the claim succeeds, retry the
+  // credit step alone — the unique claim already prevents a duplicate credit.
   await Promise.all([
     creditUser(referrer.id, {
       type: "referral_bonus",
@@ -149,8 +154,6 @@ export async function processReferral(data: {
       reason: "Welcome bonus for joining via invite",
     }),
   ]);
-
-  await markAsReferred(data.newUserId, referrer.id);
 
   return { success: true };
 }

@@ -219,7 +219,9 @@ type UserOperationStatus =
   | {
       status: "failed";
       userOpHash: string;
-      error?: string;
+      sender: string | null;
+      transaction_hash: string | null;
+      nonce: string | null;
     };
 
 const response = await fetch(
@@ -236,7 +238,7 @@ const status: UserOperationStatus = await response.json();
 if (status.status === "success") {
   console.log(status.transaction_hash);
 } else if (status.status === "failed") {
-  console.error("User operation failed:", status.error);
+  console.error("User operation failed:", status.userOpHash);
 }
 ```
 </CodeGroup>
