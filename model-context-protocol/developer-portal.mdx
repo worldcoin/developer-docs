@@ -28,13 +28,13 @@ Developer portal API keys start with `api_`.
 
 ## Authentication errors
 
-Requests with a missing, malformed, or invalid API key all return the same JSON-RPC error:
+A missing, malformed, or invalid API key returns the same JSON-RPC error — even a well-formed `api_...` key that just isn't valid, so a missing key and a rejected key look identical:
 
 ```json
 {"jsonrpc": "2.0", "id": 1, "error": {"code": -32001, "message": "API key is required."}}
 ```
 
-This message is returned even when a well-formed `api_...` key is present but not valid, so a missing key and a rejected key are not distinguishable from the error alone. If you see this error with a key you believe is correct, re-copy it from the Developer Portal rather than assuming the failure has another cause. The endpoint only accepts `POST`; a `GET` request returns HTTP 405 with `allow: POST, OPTIONS`.
+If you see this with a key you believe is correct, re-copy it from the Developer Portal. The endpoint only accepts `POST`; `GET` returns HTTP 405 with `allow: POST, OPTIONS`.
 
 ## Connect your client
 
@@ -52,11 +52,10 @@ Replace `api_...` with the API key you copied from the Developer Portal.
   </Tab>
   <Tab title="Codex">
     ```bash
+    export WORLD_DEVELOPER_API_KEY=api_...
     codex mcp add world-developer-portal \
-      --env WORLD_DEVELOPER_API_KEY=api_... \
-      -- npx -y mcp-remote https://developer.world.org/api/mcp \
-        --transport http-only \
-        --header 'Authorization:Bearer ${WORLD_DEVELOPER_API_KEY}'
+      --url https://developer.world.org/api/mcp \
+      --bearer-token-env-var WORLD_DEVELOPER_API_KEY
     ```
   </Tab>
   <Tab title="Cursor">
@@ -151,17 +150,17 @@ upload_app_image { app_id, image_type: "showcase_1", image_base64 | source_url }
 
 ## Timeouts and retries
 
-`rotate_world_id_signing_key` and `submit_app_for_review` are not guaranteed idempotent. If the underlying call times out or the connection drops after the server has already processed the request, retrying it can repeat the mutation rather than simply resurface the original result:
+`rotate_world_id_signing_key` and `submit_app_for_review` aren't idempotent. Retrying after a timeout or dropped connection can repeat the mutation instead of just resurfacing the original result:
 
-- Retrying `rotate_world_id_signing_key` after an unclear result generates another new signing key; it does not replay the previous one, and the key from the interrupted call becomes unrecoverable. Before retrying, call `get_world_id_signing_key` to check whether the signer address already changed.
-- Retrying `submit_app_for_review` after an unclear result may resubmit the app for review. Before retrying, call `get_app_config` to check the app's current review status.
+- `rotate_world_id_signing_key`: a retry generates a new key rather than replaying the old one, and the interrupted call's key becomes unrecoverable. Check `get_world_id_signing_key` first for the current signer address.
+- `submit_app_for_review`: a retry can resubmit the app. Check `get_app_config` first for its review status.
 
-Have the assistant confirm the outcome by re-reading state (`get_world_id_signing_key`, `get_world_id_registration_status`, or `get_app_config`) rather than trusting the original call's own success or failure signal alone.
+Confirm the outcome by re-reading state (`get_world_id_signing_key`, `get_world_id_registration_status`, `get_app_config`) rather than trusting the original call's success or failure signal.
 
 ## Security notes
 
 - Store generated World ID private keys immediately. They are returned once and are not recoverable from the portal.
-- `rotate_world_id_signing_key` returns the private key as an MCP tool call result, not a one-time on-screen dialog. That result passes through the AI assistant's model context and, depending on the client, may be persisted to disk in session transcripts or debug logs. Treat the returned key as sensitive within that session, and rotate again immediately if it was ever generated through an MCP client whose transcripts or logs aren't under your team's control.
+- `rotate_world_id_signing_key` returns the private key as a tool call result, not a one-time dialog — it passes through the assistant's model context and, depending on the client, may be persisted in session transcripts or debug logs. Treat it as sensitive, and rotate again if it was generated through a client whose logs aren't under your team's control.
 - Use a separate API key per local agent or project when possible.
 - Delete or rotate API keys that are no longer needed.
 - Confirm destructive actions before asking the assistant to rotate a signer key or submit an app for review.

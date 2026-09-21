@@ -28,7 +28,7 @@ The docs MCP does not require authentication.
   </Tab>
   <Tab title="Codex">
     ```bash
-    codex mcp add world-docs -- npx -y mcp-remote https://docs.world.org/mcp --transport http-only
+    codex mcp add world-docs --url https://docs.world.org/mcp
     ```
   </Tab>
   <Tab title="Cursor">
@@ -65,10 +65,8 @@ The docs MCP does not require authentication.
 | Tool | Purpose |
 | --- | --- |
 | `search_world_documentation` | Search and retrieve relevant World documentation for the current task. |
-| `query_docs_filesystem_world_documentation` | Run shell-like queries (`rg`, `grep`, `find`, `tree`, `ls`, `cat`, `head`, `tail`, `stat`, `wc`, `sort`, `uniq`, `cut`, `sed`, `awk`, `jq`) over the full docs corpus, including OpenAPI specs. Use it to read a full page or spec rather than a search snippet. |
+| `query_docs_filesystem_world_documentation` | Run shell-like queries (`rg`, `grep`, `find`, `tree`, `ls`, `cat`, `head`, `tail`, `stat`, `wc`, `sort`, `uniq`, `cut`, `sed`, `awk`, `jq`) over the full docs corpus, including OpenAPI specs, to read a full page or spec instead of a search snippet. |
 | `submit_feedback` | Submit feedback about the documentation to the World docs team. |
-
-Apart from `submit_feedback`, every tool on this server is read-only. `submit_feedback` is the one tool that writes data (it files feedback to the docs team) rather than only reading it.
 
 ## Suggested prompts
 
@@ -82,4 +80,4 @@ Search the World docs for World ID verification and explain which endpoint this 
 
 ## When to use it
 
-Use the docs MCP for documentation lookup and filesystem-style queries over the docs corpus. Apart from `submit_feedback`, it is read-only. To create or configure apps in the developer portal, use the [Developer Portal MCP](/model-context-protocol/developer-portal).
+Use the docs MCP for documentation lookup and filesystem-style queries over the docs corpus (read-only except for `submit_feedback`). To create or configure apps in the developer portal, use the [Developer Portal MCP](/model-context-protocol/developer-portal).
