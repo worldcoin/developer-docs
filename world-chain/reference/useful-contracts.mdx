@@ -412,10 +412,14 @@ You can find the World ID Address Book for all chains [here](https://docs.world.
       </td>
     </tr>
     <tr>
-      <td className="p-2 align-middle">ezETH/USD</td>
+      <td className="p-2 align-middle">ezETH/ETH</td>
       <td className="p-2 align-middle">
         [`0x78ce3664d1582e14270092ea9817f111ac53524b`](https://worldscan.org/address/0x78ce3664d1582e14270092ea9817f111ac53524b#code)
       </td>
     </tr>
   </tbody>
 </table>
+
+This feed reports the ezETH redemption rate against ETH, not a USD price. To
+derive a USD price for ezETH, multiply this rate by a separate ETH/USD feed
+(such as the one listed above).
