@@ -129,7 +129,9 @@
                       "POST /inclusion-proof",
                       "POST /packed-account",
                       "POST /signature-nonce",
-                      "POST /authenticator-pubkeys"
+                      "POST /authenticator-pubkeys",
+                      "POST /pending-recovery-agent",
+                      "POST /recovery-agent"
                     ]
                   },
                   {
@@ -142,7 +144,11 @@
                       "POST /remove-authenticator",
                       "POST /recover-account",
                       "GET /is-valid-root",
-                      "GET /status/{id}"
+                      "GET /status/{id}",
+                      "GET /health",
+                      "POST /initiate-recovery-agent-update",
+                      "POST /execute-recovery-agent-update",
+                      "POST /cancel-recovery-agent-update"
                     ]
                   },
                   {
@@ -214,6 +220,7 @@
               "mini-apps/reference/status-page",
               "mini-apps/reference/payment-methods",
               "mini-apps/reference/microphone",
+              "mini-apps/reference/credit-api",
               {
                 "group": "Quick Actions",
                 "pages": [
@@ -222,7 +229,8 @@
                   "mini-apps/sharing/swap-qa",
                   "mini-apps/sharing/earn-wld-qa",
                   "mini-apps/sharing/dna-qa",
-                  "mini-apps/sharing/sage-qa"
+                  "mini-apps/sharing/sage-qa",
+                  "mini-apps/sharing/world-chat-qa"
                 ]
               }
             ]
@@ -359,7 +367,11 @@
               "GET /api/v2/minikit/userop/{user_op_hash}",
               "GET /api/v2/minikit/transaction/debug",
               "GET /api/v2/minikit/user-grant-cycle",
-              "GET /public/v1/miniapps/prices"
+              "GET /public/v1/miniapps/prices",
+              "POST /api/v2/create-action/{app_id}",
+              "POST /api/v1/precheck/{app_id}",
+              "GET /api/v1/jwks",
+              "POST /api/v1/graphql"
             ]
           }
         ]
@@ -492,11 +504,11 @@
     },
     {
       "source": "/idkit",
-      "destination": "/world-id/cloud"
+      "destination": "/world-id/idkit/integrate"
     },
     {
       "source": "/js",
-      "destination": "/world-id/cloud"
+      "destination": "/world-id/idkit/integrate"
     },
     {
       "source": "/id",
@@ -524,7 +536,7 @@
     },
     {
       "source": "/zkp",
-      "destination": "/world-id/further-reading/zero-knowledge-proofs"
+      "destination": "/world-id/concepts"
     },
     {
       "source": "/id/anonymous-actions",
@@ -552,7 +564,7 @@
     },
     {
       "source": "/advanced/zero-knowledge-proofs",
-      "destination": "/world-id/further-reading/zero-knowledge-proofs"
+      "destination": "/world-id/concepts"
     },
     {
       "source": "/advanced/privacy",
@@ -584,15 +596,15 @@
     },
     {
       "source": "/further-reading/protocol-internals",
-      "destination": "/world-id/further-reading/protocol-internals"
+      "destination": "/world-id/concepts"
     },
     {
       "source": "/further-reading/world-id-reset",
-      "destination": "/world-id/further-reading/world-id-reset"
+      "destination": "/world-id/concepts"
     },
     {
       "source": "/further-reading/zero-knowledge-proofs",
-      "destination": "/world-id/further-reading/zero-knowledge-proofs"
+      "destination": "/world-id/concepts"
     },
     {
       "source": "/id/cloud",
@@ -664,7 +676,7 @@
     },
     {
       "source": "/reference/errors",
-      "destination": "/world-id/reference/errors"
+      "destination": "/world-id/idkit/error-codes"
     },
     {
       "source": "/reference/idkit",
@@ -680,11 +692,11 @@
     },
     {
       "source": "/reference/world-id-2-migration-guide",
-      "destination": "/world-id/reference/world-id-2-migration-guide"
+      "destination": "/world-id/4-0-migration"
     },
     {
       "source": "/try",
-      "destination": "/world-id/try"
+      "destination": "/world-id/overview"
     },
     {
       "source": "/use-cases",
@@ -744,7 +756,7 @@
     },
     {
       "source": "/world-id/quick-start/templates",
-      "destination": "/world-id/quick-start"
+      "destination": "/world-id/idkit/integrate"
     },
     {
       "source": "/world-id/reference/address-book",
@@ -776,7 +788,7 @@
     },
     {
       "source": "/world-id/id/web-react",
-      "destination": "/world-id/idkit/react-widget-and-hooks"
+      "destination": "/world-id/idkit/react"
     },
     {
       "source": "/world-id/id/web-vanilla",
@@ -816,7 +828,7 @@
     },
     {
       "source": "/world-id/credentials/presets",
-      "destination": "/world-id/credentials#legacy-presets"
+      "destination": "/world-id/idkit/credentials#other-legacy-presets"
     },
     {
       "source": "/world-id/selfie-check/overview",
@@ -828,11 +840,11 @@
     },
     {
       "source": "/world-id/face-check/web-integration",
-      "destination": "/world-id/credentials#legacy-presets"
+      "destination": "/world-id/idkit/credentials#other-legacy-presets"
     },
     {
       "source": "/world-id/face-check/testing",
-      "destination": "/world-id/credentials#legacy-presets"
+      "destination": "/world-id/idkit/credentials#other-legacy-presets"
     },
     {
       "source": "/world-id/credentials",
