@@ -177,7 +177,7 @@
             }
           },
           "404": {
-            "description": "API key not recognized. Reuses the `not_found` code family also used for an unrecognized `app_id`; check the `attribute` field (`api_key` vs `app_id`) to distinguish the two cases.",
+            "description": "API key not recognized. Also returned for an unrecognized `app_id`; check `attribute` (`api_key` vs `app_id`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -456,7 +456,7 @@
             }
           },
           "426": {
-            "description": "Rejected by an app-version/client gate on this backend. This endpoint expects to be called from an approved client (e.g. World App); the exact header(s) required to pass the gate are not publicly documented.",
+            "description": "Rejected by an app-version/client gate. Expects an approved client (e.g. World App); required header(s) aren't publicly documented.",
             "content": {
               "application/json": {
                 "example": {
@@ -586,7 +586,7 @@
             }
           },
           "404": {
-            "description": "API key not recognized. Reuses the `not_found` code family also used for an unrecognized `app_id`; check the `attribute` field (`api_key` vs `app_id`) to distinguish the two cases.",
+            "description": "API key not recognized. Also returned for an unrecognized `app_id`; check `attribute` (`api_key` vs `app_id`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -652,7 +652,7 @@
         },
         "responses": {
           "200": {
-            "description": "OK. The `app_id` in the example below is illustrative only and may not correspond to a live app; requests for a nonexistent or inactive app_id return 404 (see below).",
+            "description": "OK. The `app_id` in the example is illustrative; a nonexistent or inactive app_id returns 404.",
             "content": {
               "application/json": {
                 "schema": {
@@ -707,8 +707,7 @@
                 "example": {
                   "code": "not_found",
                   "detail": "We couldn't find an app with this ID. Action may be inactive.",
-                  "attribute": null,
-                  "app_id": "app_staging_4cfd049031b0da1e8b62084b09a9f430"
+                  "attribute": null
                 }
               }
             }
@@ -719,7 +718,7 @@
     "/api/v1/jwks": {
       "get": {
         "summary": "Get JWK Keys",
-        "description": "Retrieve JWKs (public keys) used to verify JWT signatures for verification requests. This response is not edge-cached (no `Cache-Control`, `ETag`, or `Expires` headers are set) and no dedicated rate limit is published for this endpoint. Clients should cache the JWKS response client-side and only refetch on a `kid` cache miss, rather than re-fetching on every signature verification.",
+        "description": "Retrieve JWKs (public keys) used to verify JWT signatures for verification requests. Not edge-cached, and no dedicated rate limit is published; cache client-side and refetch only on a `kid` miss.",
         "x-mint": {
           "href": "/api-reference/developer-portal/get-jwk-keys"
         },
@@ -762,7 +761,7 @@
     "/api/v1/graphql": {
       "post": {
         "summary": "GraphQL Proxy",
-        "description": "Proxy endpoint for Developer Portal GraphQL queries and mutations. Supports user JWTs and API keys. The example query below requires an authenticated request (JWT or API key) to resolve; an unauthenticated request still returns HTTP 200 with a GraphQL-level error (for example `no_queries_available`) rather than a 401.",
+        "description": "Proxy endpoint for Developer Portal GraphQL queries and mutations. Supports user JWTs and API keys. The example query requires authentication; an unauthenticated request returns HTTP 200 with a GraphQL-level error (e.g. `no_queries_available`), not a 401.",
         "x-mint": {
           "href": "/api-reference/developer-portal/graphql-proxy"
         },
@@ -1046,7 +1045,7 @@
               },
               "mini_app_path": {
                 "type": "string",
-                "description": "Deeplink to route the user to when they tap the notification. Must be one of: a WorldApp or World ID mini app deeplink (`worldapp://mini-app?app_id=...` or `worldid://mini-app?app_id=...`), a Deep Face Universal Link (`https://world.org/verify?t=deepface`), or a Deep Face deeplink (`worldapp://verify?t=deepface`, `worldid://verify?t=deepface`, or `worldidstg://verify?t=deepface`)."
+                "description": "Deeplink to open when the user taps the notification: a WorldApp/World ID mini app deeplink (`worldapp://mini-app?app_id=...` or `worldid://mini-app?app_id=...`), a Deep Face Universal Link (`https://world.org/verify?t=deepface`), or a Deep Face deeplink (`worldapp://verify?t=deepface`, `worldid://verify?t=deepface`, `worldidstg://verify?t=deepface`)."
               },
               "app_id": {
                 "type": "string"
@@ -1080,7 +1079,7 @@
               },
               "mini_app_path": {
                 "type": "string",
-                "description": "Deeplink to route the user to when they tap the notification. Must be one of: a WorldApp or World ID mini app deeplink (`worldapp://mini-app?app_id=...` or `worldid://mini-app?app_id=...`), a Deep Face Universal Link (`https://world.org/verify?t=deepface`), or a Deep Face deeplink (`worldapp://verify?t=deepface`, `worldid://verify?t=deepface`, or `worldidstg://verify?t=deepface`)."
+                "description": "Deeplink to open when the user taps the notification: a WorldApp/World ID mini app deeplink (`worldapp://mini-app?app_id=...` or `worldid://mini-app?app_id=...`), a Deep Face Universal Link (`https://world.org/verify?t=deepface`), or a Deep Face deeplink (`worldapp://verify?t=deepface`, `worldid://verify?t=deepface`, `worldidstg://verify?t=deepface`)."
               },
               "app_id": {
                 "type": "string"
