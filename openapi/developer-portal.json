@@ -132,6 +132,7 @@
         "x-mint": {
           "href": "/api-reference/developer-portal/send-notification"
         },
+        "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -144,7 +145,7 @@
                 "wallet_addresses": ["0x123", "0x456"],
                 "title": "title",
                 "message": "Hello ${username}, your transaction is complete!",
-                "mini_app_path": "mini_app_path"
+                "mini_app_path": "worldapp://mini-app?app_id=app_id"
               }
             }
           }
@@ -156,6 +157,36 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SendNotificationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "unauthorized",
+                  "detail": "API key is required.",
+                  "attribute": "api_key"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "API key not recognized. Reuses the `not_found` code family also used for an unrecognized `app_id`; check the `attribute` field (`api_key` vs `app_id`) to distinguish the two cases.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "not_found",
+                  "detail": "API key not found.",
+                  "attribute": "api_key"
                 }
               }
             }
@@ -207,6 +238,21 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GetTransactionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid transaction ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "invalid_parameter",
+                  "detail": "Invalid transaction ID",
+                  "attribute": "transaction_id"
                 }
               }
             }
@@ -313,6 +359,7 @@
         "x-mint": {
           "href": "/api-reference/developer-portal/get-transaction-debug-url"
         },
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
             "name": "app_id",
@@ -343,6 +390,21 @@
                       "walletAddress": "0x1234..."
                     }
                   ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "unauthorized",
+                  "detail": "API key is required.",
+                  "attribute": "api_key"
                 }
               }
             }
@@ -392,6 +454,21 @@
                 }
               }
             }
+          },
+          "426": {
+            "description": "Rejected by an app-version/client gate on this backend. This endpoint expects to be called from an approved client (e.g. World App); the exact header(s) required to pass the gate are not publicly documented.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "allowRetry": false,
+                  "error": {
+                    "success": false,
+                    "code": "AU-001",
+                    "message": "App update required"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -437,7 +514,19 @@
             }
           },
           "400": {
-            "description": "User not found / app not installed / no active cycles"
+            "description": "User not found / app not installed / no active cycles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "validation_error",
+                  "detail": "app_id is required",
+                  "attribute": "app_id"
+                }
+              }
+            }
           }
         }
       }
@@ -449,6 +538,7 @@
         "x-mint": {
           "href": "/api-reference/developer-portal/create-incognito-action"
         },
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
             "name": "app_id",
@@ -476,6 +566,36 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CreateActionResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "unauthorized",
+                  "detail": "API key is required.",
+                  "attribute": "api_key"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "API key not recognized. Reuses the `not_found` code family also used for an unrecognized `app_id`; check the `attribute` field (`api_key` vs `app_id`) to distinguish the two cases.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "not_found",
+                  "detail": "API key not found.",
+                  "attribute": "api_key"
                 }
               }
             }
@@ -532,7 +652,7 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "OK. The `app_id` in the example below is illustrative only and may not correspond to a live app; requests for a nonexistent or inactive app_id return 404 (see below).",
             "content": {
               "application/json": {
                 "schema": {
@@ -576,6 +696,22 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "App not found or inactive",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "not_found",
+                  "detail": "We couldn't find an app with this ID. Action may be inactive.",
+                  "attribute": null,
+                  "app_id": "app_staging_4cfd049031b0da1e8b62084b09a9f430"
+                }
+              }
+            }
           }
         }
       }
@@ -583,7 +719,7 @@
     "/api/v1/jwks": {
       "get": {
         "summary": "Get JWK Keys",
-        "description": "Retrieve JWKs (public keys) used to verify JWT signatures for verification requests.",
+        "description": "Retrieve JWKs (public keys) used to verify JWT signatures for verification requests. This response is not edge-cached (no `Cache-Control`, `ETag`, or `Expires` headers are set) and no dedicated rate limit is published for this endpoint. Clients should cache the JWKS response client-side and only refetch on a `kid` cache miss, rather than re-fetching on every signature verification.",
         "x-mint": {
           "href": "/api-reference/developer-portal/get-jwk-keys"
         },
@@ -626,7 +762,7 @@
     "/api/v1/graphql": {
       "post": {
         "summary": "GraphQL Proxy",
-        "description": "Proxy endpoint for Developer Portal GraphQL queries and mutations. Supports user JWTs and API keys.",
+        "description": "Proxy endpoint for Developer Portal GraphQL queries and mutations. Supports user JWTs and API keys. The example query below requires an authenticated request (JWT or API key) to resolve; an unauthenticated request still returns HTTP 200 with a GraphQL-level error (for example `no_queries_available`) rather than a 401.",
         "x-mint": {
           "href": "/api-reference/developer-portal/graphql-proxy"
         },
@@ -859,6 +995,7 @@
               "secure_document",
               "document",
               "device",
+              "face",
               "selfie"
             ],
             "description": "The legacy verification level. Use `selfie` for Selfie Check (Beta). The historical `face` value remains accepted for backward compatibility and behaves the same as `selfie`."
@@ -908,12 +1045,14 @@
                 "maxLength": 200
               },
               "mini_app_path": {
-                "type": "string"
+                "type": "string",
+                "description": "Deeplink to route the user to when they tap the notification. Must be one of: a WorldApp or World ID mini app deeplink (`worldapp://mini-app?app_id=...` or `worldid://mini-app?app_id=...`), a Deep Face Universal Link (`https://world.org/verify?t=deepface`), or a Deep Face deeplink (`worldapp://verify?t=deepface`, `worldid://verify?t=deepface`, or `worldidstg://verify?t=deepface`)."
               },
               "app_id": {
                 "type": "string"
               }
-            }
+            },
+            "additionalProperties": false
           },
           {
             "type": "object",
@@ -940,12 +1079,14 @@
                 "description": "Localized notification content. Include at least `en`."
               },
               "mini_app_path": {
-                "type": "string"
+                "type": "string",
+                "description": "Deeplink to route the user to when they tap the notification. Must be one of: a WorldApp or World ID mini app deeplink (`worldapp://mini-app?app_id=...` or `worldid://mini-app?app_id=...`), a Deep Face Universal Link (`https://world.org/verify?t=deepface`), or a Deep Face deeplink (`worldapp://verify?t=deepface`, `worldid://verify?t=deepface`, or `worldidstg://verify?t=deepface`)."
               },
               "app_id": {
                 "type": "string"
               }
-            }
+            },
+            "additionalProperties": false
           }
         ],
         "description": "Supports legacy payload (`title` + `message`) and localized payload (`localisations`). If both are provided, localized payload is used."
@@ -1185,32 +1326,6 @@
           }
         }
       },
-      "CreditBorrower": {
-        "type": "object",
-        "required": ["state", "score"],
-        "properties": {
-          "state": {
-            "type": "string",
-            "enum": ["INACTIVE", "ACTIVE", "DEFAULTED"],
-            "description": "Borrower status on Credit"
-          },
-          "score": {
-            "type": "integer",
-            "format": "int32",
-            "minimum": 0,
-            "description": "The borrower's credit score"
-          }
-        }
-      },
-      "CreditError": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "string",
-            "description": "Error message"
-          }
-        }
-      },
       "ErrorResponse": {
         "type": "object",
         "properties": {
@@ -1300,7 +1415,7 @@
           },
           "environment": {
             "type": "string",
-            "enum": ["production", "staging"],
+            "enum": ["production", "staging", "sandbox"],
             "default": "production"
           },
           "responses": {
@@ -1337,7 +1452,7 @@
           },
           "environment": {
             "type": "string",
-            "enum": ["production", "staging"],
+            "enum": ["production", "staging", "sandbox"],
             "default": "production"
           },
           "responses": {
@@ -1373,7 +1488,7 @@
           },
           "environment": {
             "type": "string",
-            "enum": ["production", "staging"],
+            "enum": ["production", "staging", "sandbox"],
             "default": "production"
           },
           "responses": {
@@ -1536,7 +1651,7 @@
           },
           "environment": {
             "type": "string",
-            "enum": ["production", "staging"]
+            "enum": ["production", "staging", "sandbox"]
           },
           "session_id": {
             "type": "string",
