@@ -167,7 +167,7 @@ contract VerifyUniquenessV4 {
 
 Minimal mapping from IDKit result:
 - `nullifier` = `responses[i].nullifier`
-- `action` = `hash_to_field(action)` (i.e. `keccak256(action) >> 8`, the same field-reduction used for [RP signatures](/world-id/idkit/signatures#algorithm)) as `uint256`
+- `action` = `hash_to_field(action)` as `uint256` (same field-reduction as [RP signatures](/world-id/idkit/signatures#algorithm))
 - `rpId` = numeric form of your `rp_context.rp_id` (the `rp_`-prefixed string from your RP context, not the result)
 - `nonce` = top-level `nonce`
 - `signalHash` = `responses[i].signal_hash`
@@ -177,5 +177,5 @@ Minimal mapping from IDKit result:
 - `proof` = `responses[i].proof` (`uint256[5]`)
 
 <Warning>
-  Do not pass a raw, unreduced `keccak256(action)` — it is a 256-bit value that generally exceeds the BN254 scalar field and will cause the proof verification to revert with `PublicInputNotInField`. Always reduce it with `hash_to_field` (`keccak256(action) >> 8`) first.
+  Never pass a raw, unreduced `keccak256(action)` — it exceeds the BN254 scalar field and reverts with `PublicInputNotInField`. Reduce it with `hash_to_field` (`keccak256(action) >> 8`) first.
 </Warning>
