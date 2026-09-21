@@ -38,13 +38,13 @@ each example invocation.
 ## Create a session
 
 ```typescript
-import { IDKit, CredentialRequest } from "@worldcoin/idkit-core";
+import { IDKit, selfieCheck } from "@worldcoin/idkit-core";
 
 const request = await IDKit.createSession({
   app_id,
   rp_context,
   environment: "production",
-}).constraints(CredentialRequest("selfie"));
+}).preset(selfieCheck());
 
 // Display request.connectorURI as a link or QR code, then wait for the user.
 const completion = await request.pollUntilCompletion({ timeout: 120_000 });
@@ -54,9 +54,8 @@ if (!completion.success) throw new Error(completion.error);
 // Save its session_id against the account only after verification succeeds.
 ```
 
-Sessions select credentials with `.constraints()`. They do not accept
-`.preset(selfieCheck())`. To use another credential, change `"selfie"` to its
-[credential identifier](/world-id/idkit/credentials).
+The `selfieCheck()` preset selects the Selfie Check credential. See
+[Configure Credentials](/world-id/idkit/credentials) for credential options.
 
 Your backend must verify the complete result before saving its `session_id`.
 Associate it with the account completing enrollment. Treat linking or replacing
@@ -69,13 +68,13 @@ Load the saved session ID from your backend for the account being verified, and
 obtain a fresh RP signature. Prove that existing session:
 
 ```typescript
-import { IDKit, CredentialRequest } from "@worldcoin/idkit-core";
+import { IDKit, selfieCheck } from "@worldcoin/idkit-core";
 
 const request = await IDKit.proveSession(savedSessionId, {
   app_id,
   rp_context,
   environment: "production",
-}).constraints(CredentialRequest("selfie"));
+}).preset(selfieCheck());
 
 const completion = await request.pollUntilCompletion({ timeout: 120_000 });
 if (!completion.success) throw new Error(completion.error);
@@ -89,41 +88,6 @@ Preserve it unchanged. Creating a new session on each visit does not establish
 continuity with the account's existing session.
 
 For React, use `IDKitSessionWidget` with
-`constraints={CredentialRequest("selfie")}`. Omit `existing_session_id` for
+`preset={selfieCheck()}`. Omit `existing_session_id` for
 creation and set it to the saved session ID for subsequent checks. The widget's
 `handleVerify` callback should call your backend before `onSuccess` grants access.
-
-## Verify and authorize on your backend
-
-Use the [shared verification flow](/world-id/idkit/integrate#step-5-verify-the-proof-in-your-backend),
-with these session requirements:
-
-- Verify against your backend's configured RP and require the expected environment
-  and credential. For Selfie Check, require a successfully verified response for
-  `issuer_schema_id: 11`.
-- Bind the result to the pending check using its nonce. For a returning user,
-  require the verified `session_id` to equal the value saved for that account.
-- Reject proof replay before authorizing the operation. Atomically consume the
-  pending check and record accepted session nullifiers, scoped to your RP and
-  environment. Each `session_nullifier` contains both a nullifier and an action;
-  preserve both values when recording it.
-- Forward the complete result, including `sybil_score` and `integrity_bundle`
-  for Selfie Check. Only apply your score policy after server-side verification
-  succeeds.
-
-Do not use the uniqueness flow's `responses[].nullifier` storage example for
-session results: session responses contain `session_nullifier` instead.
-
-## Require fresh liveness when needed
-
-Proving a session establishes continuity. If your operation also requires a fresh
-liveness check, set `require_user_presence: true` on creation or subsequent
-requests and require the verified result's `user_presence_completed` to be true.
-See [user presence and liveness](/world-id/idkit/credentials#user-presence-and-liveness).
-
-## Test the full lifecycle
-
-Test session creation and a later proof of the saved session. Confirm your backend
-rejects a different session for the account, a reused proof, and an unexpected
-environment. For Selfie Check device flows, see
-[Testing Selfie Check in Sandbox](/world-id/sandbox/testing-selfie-check).

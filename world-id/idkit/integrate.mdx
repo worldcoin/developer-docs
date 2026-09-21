@@ -357,7 +357,7 @@ export async function POST(request: Request): Promise<Response> {
 # Step 6: Store the nullifier
 
 This step applies to uniqueness requests. For session proofs, follow the
-[session verification and storage guidance](/world-id/idkit/session-proofs#verify-and-authorize-on-your-backend).
+[session guide](/world-id/idkit/session-proofs).
 
 Every uniqueness proof contains a nullifier — a value derived from the user's World ID, your app, and the action. The same person verifying the same action always produces the same nullifier, but different apps or actions produce different ones, making nullifiers unlinkable across apps.
 

@@ -108,8 +108,8 @@ Other legacy presets exist (`documentLegacy`, `deviceLegacy`); reach for them on
 ### Selfie Check
 
 For repeated Selfie Check verification, use `IDKit.createSession` followed by
-`IDKit.proveSession` with `CredentialRequest("selfie")` constraints. Sessions do
-not accept presets. Save the verified `session_id` against the application account
+`IDKit.proveSession` with `.preset(selfieCheck())`.
+Save the verified `session_id` against the application account
 and require that same session on later checks; enforce per-proof replay protection.
 
 For a one-time uniqueness check, use the `selfieCheck` preset. Each Selfie Check
@@ -132,7 +132,7 @@ The full code for each step is at [https://docs.world.org/world-id/idkit/integra
 The checklist below describes uniqueness requests. For session integrations,
 adapt it using `/world-id/idkit/session-proofs`: omit action setup and omit the
 action from RP signing,
-use `IDKitSessionWidget` or the session builders with constraints, and replace
+use `IDKitSessionWidget` or the session builders with presets, and replace
 uniqueness-nullifier storage with verified account-to-session binding and
 per-proof replay protection. Test both creation and proving the saved session.
 
