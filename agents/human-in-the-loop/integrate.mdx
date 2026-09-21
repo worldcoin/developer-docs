@@ -57,7 +57,7 @@ export async function chatWorkflow(messages: ModelMessage[]) {
     model: openai('gpt-5.4'),
     tools,
     system:
-      'You are a helpful assistant. Before performing any sensitive action, use the approveAction tool.',
+      'You are a helpful assistant. Before performing any sensitive action, call approveAction first, then pass its returned result as the `approval` argument to the action tool — never call the action tool without it.',
   })
 
   await agent.stream({ messages, writable })
@@ -89,12 +89,22 @@ export const tools = {
     }),
   },
   bookFlight: {
-    description: 'Book the flight after approval.',
-    inputSchema: z.object({ flightNumber: z.string() }),
+    description: 'Book the flight. Requires the IDKitResult from approveAction as `approval` — the model cannot call this without it.',
+    // `approval` is required input, not something execute reads from
+    // elsewhere: a model that skips approveAction has no value to pass here.
+    inputSchema: z.object({
+      flightNumber: z.string(),
+      approval: z.object({ action: z.string() }).passthrough(),
+    }),
     // Must independently re-verify the proof for this same `action`
-    // before booking. See the flight-booking example's bookingApproval().
-    execute: async ({ flightNumber }) => {
-      // ...verify the proof for `booking:${flightNumber}`, then book
+    // before booking — never trust that approveAction ran just because
+    // this tool was called. See the flight-booking example's bookFlight().
+    execute: async ({ flightNumber, approval }) => {
+      const expectedAction = `booking:${flightNumber}`
+      if (approval.action !== expectedAction) {
+        throw new Error(`approval does not match this booking (expected action: ${expectedAction})`)
+      }
+      // ...re-verify `approval` against the World ID verify endpoint, then book
     },
   },
   // ...your other tools
