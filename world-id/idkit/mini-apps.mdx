@@ -40,6 +40,10 @@ The Mini-App-specific details:
 | Lower-friction liveness or bot deterrence | `selfieCheck` |
 | Passport-backed checks | `passport` |
 
+For repeated Selfie Check verification of returning users, use
+[session proofs](/world-id/idkit/session-proofs) with `CredentialRequest("selfie")`
+instead of the one-time `selfieCheck` preset.
+
 Check out this [page](/world-id/idkit/credentials) to learn about the different World ID credentials and which preset to use for each.
 
 ## Example

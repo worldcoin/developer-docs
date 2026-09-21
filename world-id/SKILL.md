@@ -103,25 +103,38 @@ The credential decides what the user proves. Nail this down before scaffolding �
 
 **DO NOT default to `proofOfHuman` if the user said "passport" or "verify their ID"** — that's `passport`. **DO NOT default to `proofOfHuman` if the user said "selfie" or "liveness"** — that's `selfieCheck`. When in doubt, ask one question.
 
-Other legacy presets exist (`documentLegacy`, `deviceLegacy`); reach for them only when the user asks specifically. For sign-in / session reuse across visits, use the v4 **session** flow instead of a uniqueness preset (see the integrate doc).
+Other legacy presets exist (`documentLegacy`, `deviceLegacy`); reach for them only when the user asks specifically. For sign-in / session reuse across visits, use the v4 **session** flow (see `/world-id/idkit/session-proofs`).
 
 ### Selfie Check
 
-Use `selfieCheck`, which requests the Selfie Check credential. Each Selfie Check
+For repeated Selfie Check verification, use `IDKit.createSession` followed by
+`IDKit.proveSession` with `CredentialRequest("selfie")` constraints. Sessions do
+not accept presets. Save the verified `session_id` against the application account
+and require that same session on later checks; enforce per-proof replay protection.
+
+For a one-time uniqueness check, use the `selfieCheck` preset. Each Selfie Check
 response includes a required integer `sybil_score`; forward the complete IDKit
 result unchanged so the Developer Portal can verify the proof and version 2
 integrity signature before the app uses the score.
 
-World ID 4.0 uniqueness proofs are one-time per action for each user. If the
-same user needs to complete Selfie Check more than once, use a different action
-for each check. Migrate existing `selfieCheckLegacy` integrations to
-`selfieCheck`.
+World ID 4.0 uniqueness proofs are one-time per action for each user. Use separate
+actions for separate one-time operations, and sessions for recurring checks.
+Migrate existing `selfieCheckLegacy` integrations to the appropriate World ID 4.0
+flow above. See `/world-id/idkit/session-proofs` for the session lifecycle and
+backend requirements.
 
 ## Phase 4 — Implement the 6 integration steps and explain the WHY
 
 The full code for each step is at [https://docs.world.org/world-id/idkit/integrate](https://docs.world.org/world-id/idkit/integrate). Don't reproduce it; link to it and adapt to the user's framework. The agent owns making sure each step is done **and understood**.
 
 **Copy this checklist into your TODO and update it as you go.** Don't move on with an unchecked step.
+
+The checklist below describes uniqueness requests. For session integrations,
+adapt it using `/world-id/idkit/session-proofs`: omit action setup and omit the
+action from RP signing,
+use `IDKitSessionWidget` or the session builders with constraints, and replace
+uniqueness-nullifier storage with verified account-to-session binding and
+per-proof replay protection. Test both creation and proving the saved session.
 
 - [ ] Step 1 — Install IDKit
 - [ ] Step 2 — Create or reuse app + RP + action (store any newly generated signing key immediately)
