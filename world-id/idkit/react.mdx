@@ -122,7 +122,7 @@ Hook result fields:
 For invite-code flows, use `IDKitInviteCodeRequestWidget` (controlled) or `useIDKitInviteCodeRequest` (headless). Config matches `IDKitRequestWidget` / `useIDKitRequest` — invite-code mode adds no new required fields. See [Invite-code mode](/world-id/idkit/verification-flows#with-invite-code-mode) for when to use it.
 
 ```tsx
-import { IDKitInviteCodeRequestWidget, selfieCheckLegacy } from "@worldcoin/idkit";
+import { IDKitInviteCodeRequestWidget, proofOfHuman } from "@worldcoin/idkit";
 
 <IDKitInviteCodeRequestWidget
   open={open}
@@ -131,7 +131,7 @@ import { IDKitInviteCodeRequestWidget, selfieCheckLegacy } from "@worldcoin/idki
   action="my-action"
   rp_context={rpContext}
   allow_legacy_proofs={true}
-  preset={selfieCheckLegacy({ signal: "user-123" })}
+  preset={proofOfHuman({ signal: "user-123" })}
   handleVerify={async (result) => { /* ... */ }}
   onSuccess={() => { /* ... */ }}
 />;
@@ -172,7 +172,7 @@ import { IDKitRequestWidget, orbLegacy } from "@worldcoin/idkit";
 
 ```tsx
 // After — invite-code widget
-import { IDKitInviteCodeRequestWidget, selfieCheckLegacy } from "@worldcoin/idkit";
+import { IDKitInviteCodeRequestWidget, proofOfHuman } from "@worldcoin/idkit";
 
 <IDKitInviteCodeRequestWidget
   open={open}
@@ -181,7 +181,7 @@ import { IDKitInviteCodeRequestWidget, selfieCheckLegacy } from "@worldcoin/idki
   action="my-action"
   rp_context={rpContext}
   allow_legacy_proofs={true}
-  preset={selfieCheckLegacy({ signal: "user-123" })}
+  preset={proofOfHuman({ signal: "user-123" })}
   handleVerify={handleVerify}
   onSuccess={onSuccess}
 />;
