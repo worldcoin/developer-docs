@@ -25,4 +25,18 @@ Or you can request it manually, using the `getUserByAddress` method on MiniKit:
 const worldIdUser = await MiniKit.getUserByAddress(userAddress)
 ```
 
+You can also look a user up by their username with `getUserByUsername`:
+
+```tsx
+const worldIdUser = await MiniKit.getUserByUsername(username)
+```
+
+Both methods resolve to the same shape: `{ walletAddress: string; username: string; profilePictureUrl: string; }`.
+
+<Note>
+Neither method throws for an unknown address or username—the underlying request can 404, in which case the promise still resolves, with `walletAddress`, `username`, and `profilePictureUrl` all `undefined`. Check for a falsy `walletAddress` before using the result.
+</Note>
+
+`MiniKit.getUserInfo` is also available as an alias of `getUserByAddress` (same signature, same behavior).
+
 Other ways involve querying the [usernames service](https://usernames.worldcoin.org/docs).

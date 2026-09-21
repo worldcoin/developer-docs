@@ -173,6 +173,10 @@ submitted, so the first identifier you receive is `userOpHash`.
 You can either use the `@worldcoin/minikit-react` hook or poll the Developer Portal 
 to check when the user operation is mined and get the final `transaction_hash`.
 
+<Warning>
+`poll()` runs an unbounded loop with no built-in timeout, and it **throws** (`Error("Transaction failed")`) if the user operation's status resolves to `failed`. Always call it inside a `try`/`catch`, and wrap it in your own timeout/abort logic if you need an upper bound on wait time.
+</Warning>
+
 <CodeGroup>
 ```tsx title="React"
 import { useUserOperationReceipt } from "@worldcoin/minikit-react";
@@ -188,28 +192,51 @@ const { poll, isLoading, reset } = useUserOperationReceipt({ client });
 
 const onClick = async () => {
   const result = await MiniKit.sendTransaction({...});
-  const { receipt } = await poll(result.data.userOpHash);
-  // receipt contains the final transaction receipt
+
+  try {
+    // Optionally race against your own timeout — poll() has no built-in one.
+    const { receipt } = await poll(result.data.userOpHash);
+    // receipt contains the final transaction receipt
+  } catch (error) {
+    // poll() throws if the user operation status resolves to "failed"
+    console.error("User operation failed:", error);
+  }
 };
 ```
 
 ```ts title="API"
-type UserOperationStatusSuccess = {
-  status: "success";
-  userOpHash: string;
-  sender: string;
-  transaction_hash: string;
-  nonce: string;
-};
+type UserOperationStatus =
+  | {
+      status: "pending";
+    }
+  | {
+      status: "success";
+      userOpHash: string;
+      sender: string;
+      transaction_hash: string;
+      nonce: string;
+    }
+  | {
+      status: "failed";
+      userOpHash: string;
+      error?: string;
+    };
 
 const response = await fetch(
   `https://developer.world.org/api/v2/minikit/userop/${userOpHash}`,
 );
-const status = await response.json();
+
+// The endpoint also returns 400/500 on a bad request or server error.
+if (!response.ok) {
+  throw new Error(`Failed to fetch user operation status: ${response.status}`);
+}
+
+const status: UserOperationStatus = await response.json();
 
 if (status.status === "success") {
-  const success = status as UserOperationStatusSuccess;
-  console.log(success.transaction_hash);
+  console.log(status.transaction_hash);
+} else if (status.status === "failed") {
+  console.error("User operation failed:", status.error);
 }
 ```
 </CodeGroup>

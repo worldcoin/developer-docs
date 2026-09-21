@@ -14,12 +14,16 @@ Referral programs are proven growth drivers because they leverage trust. People 
 
 Create server-side invite pages that work across all platforms:
 
-```typescript
+```tsx
 // pages/invite.tsx
+import { useEffect } from "react";
+
+const appId = process.env.NEXT_PUBLIC_APP_ID;
+
 export default function InvitePage({ code }: { code: string }) {
 	useEffect(() => {
 		// Redirect to mini app
-		window.location.href = `https://world.org/mini-app?app_id=${YOUR_APP_ID}&path=/invite?code=${code}`
+		window.location.href = `https://world.org/mini-app?app_id=${appId}&path=${encodeURIComponent(`/invite?code=${code}`)}`
 	}, [code])
 
 	return <div>Redirecting to mini app...</div>
@@ -34,9 +38,7 @@ Deep-link (opens World App directly if installed)
 
 `worldapp://mini-app?app_id={app_id}&path={path}`
 
-To force opening in the device browser instead of the native webview, append `open_out_of_window=true` to the URL (works for both universal and deep links).
-
-Note: path should be URL encoded.
+Note: path should be URL encoded. Rather than hand-building this URL, you can use the SDK helper `MiniKit.getMiniAppUrl(appId, path)`, which builds the `world.org` universal link and encodes the path for you.
 ### 2. Generate Share Links
 
 Create a shareable link that includes the referral information:
@@ -53,7 +55,7 @@ function generateInviteLink(userId: string): string {
 
 ### 3. Implement Share Functionality
 
-Add share buttons at key moments in your user journey:
+Add share buttons at key moments in your user journey. Note: `trackEvent` below is a placeholder for whatever analytics tool you integrate yourself (Segment, PostHog, a custom endpoint, etc.)—it is not a MiniKit command.
 
 ```typescript
 import { MiniKit } from "@worldcoin/minikit-js";
@@ -107,15 +109,31 @@ function handleReferral() {
 
 Implement two-sided rewards that benefit both parties:
 
+This sample requires the caller to already have a World-ID-verified session (see [Wallet Auth](/mini-apps/commands/wallet-auth)) and adds server-side self-referral and idempotency checks—never trust `newUserId`/`referrerCode` from an unauthenticated request body:
+
 ```typescript
 // api/process-referral.ts
 export async function processReferral(data: {
   newUserId: string;
   referrerCode: string;
 }) {
+  // Require a verified session for newUserId (e.g. from your walletAuth backend check)
+  if (!(await isVerifiedSession(data.newUserId))) {
+    return { success: false, reason: "unverified_user" };
+  }
+
   const referrer = await getUserByCode(data.referrerCode);
   if (!referrer) {
     return { success: false, reason: "invalid_referrer" };
+  }
+
+  if (referrer.id === data.newUserId) {
+    return { success: false, reason: "self_referral" };
+  }
+
+  // Idempotency: only credit a given new user once, ever
+  if (await hasAlreadyBeenReferred(data.newUserId)) {
+    return { success: false, reason: "already_referred" };
   }
 
   // Credit both users
@@ -131,6 +149,8 @@ export async function processReferral(data: {
       reason: "Welcome bonus for joining via invite",
     }),
   ]);
+
+  await markAsReferred(data.newUserId, referrer.id);
 
   return { success: true };
 }
@@ -200,6 +220,10 @@ const events = {
 };
 ```
 
+<Note>
+If you're using the canonical [Core Event Set](/mini-apps/growth/analytics#2-core-event-set-6-lines-of-code) from the Data & Analytics guide, `invite_link_created`/`invite_link_clicked` above map to that guide's `invite_sent`/`invite_accepted` events for the Invite Acceptance Rate metric—pick one taxonomy and use it consistently.
+</Note>
+
 ### Key Metrics Dashboard
 
 - **Invite Conversion Rate**: (Signups from invites) / (Total invite links clicked)
@@ -225,6 +249,6 @@ Test these variables to optimize your viral loop:
 
 1. Implement universal links for your invite flow
 2. Add share buttons after key user achievements
-3. Set up two-sided rewards with World ID verification
+3. Set up two-sided rewards, gated on World ID verification plus server-side self-referral and idempotency checks
 4. Track invite metrics and run small A/B tests
 5. Scale successful invite mechanics across more touchpoints

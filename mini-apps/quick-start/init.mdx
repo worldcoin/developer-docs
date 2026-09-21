@@ -75,8 +75,8 @@ import { MiniKit } from "@worldcoin/minikit-js";
 import type { MiniAppGetPermissionsSuccessPayload } from "@worldcoin/minikit-js/commands";
 
 const result = await MiniKit.getPermissions();
-const permissions: MiniAppGetPermissionsSuccessPayload["permissions"] =
-  result.data.permissions;
+const permissions = (result.data as MiniAppGetPermissionsSuccessPayload)
+  .permissions;
 ```
 
 Notes:
@@ -116,6 +116,23 @@ MiniKit normalizes the raw World App launch origin into:
 ## Raw World App Object
 
 If you need the untransformed World App payload, read `window.WorldApp` directly.
+
+<Note>
+`@worldcoin/minikit-js` does not ship a `Window.WorldApp` type augmentation, so TypeScript will not know about this property out of the box. Declare it yourself, matching the shape below:
+
+```tsx
+declare global {
+  interface Window {
+    WorldApp?: {
+      world_app_version: number;
+      device_os: "ios" | "android";
+      // ...see the full shape in the Type tab below
+      [key: string]: unknown;
+    };
+  }
+}
+```
+</Note>
 
 <Tabs>
   <Tab title="Type">

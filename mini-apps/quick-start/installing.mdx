@@ -10,7 +10,7 @@ description: "Create a Mini App with the official template or install MiniKit-JS
 ## Quick Start
 
 The fastest way to get started is by using our template next-15 repository.
-Run the following command and follow the instructions to create a new mini app. For cleanliness we recommend using `pnpm` as your package manager.
+Run the following command and follow the instructions to create a new mini app. This installs dependencies with `npm`; if you prefer `pnpm`, see [Manual Installation](#manual-installation) below.
 
 ```bash
 npx @worldcoin/create-mini-app@latest my-first-mini-app
@@ -93,6 +93,20 @@ import { MiniKit } from "@worldcoin/minikit-js";
 console.log(MiniKit.isInstalled());
 ```
 
+3. Or, in a React component, read the same state reactively with the `useMiniKit()` hook (this is what the official starter template itself uses):
+
+```tsx
+import { useMiniKit } from "@worldcoin/minikit-js/minikit-provider";
+
+export function AuthButton() {
+  const { isInstalled, user } = useMiniKit();
+
+  if (!isInstalled) return null;
+
+  return <span>{user?.username ?? "Not signed in"}</span>;
+}
+```
+
 ## Build with AI
 
 The [World Docs MCP](/model-context-protocol/world-docs) lets any coding assistant search the World documentation to help you build your mini app.
@@ -100,12 +114,13 @@ The [World Docs MCP](/model-context-protocol/world-docs) lets any coding assista
 <Tabs>
   <Tab title="Claude Code">
     ```bash
-    claude mcp add --transport http world https://docs.world.org/mcp
+    claude mcp add --transport http --scope project world-docs https://docs.world.org/mcp
     ```
+    `--scope project` writes a shareable `.mcp.json` to your project (recommended); omit it and the server is instead registered only for you, in your global Claude config.
   </Tab>
   <Tab title="Codex">
     ```bash
-    codex mcp add --transport http world https://docs.world.org/mcp
+    codex mcp add world-docs --url https://docs.world.org/mcp
     ```
   </Tab>
   <Tab title="Cursor">
@@ -113,7 +128,7 @@ The [World Docs MCP](/model-context-protocol/world-docs) lets any coding assista
     ```json
     {
       "mcpServers": {
-        "world": {
+        "world-docs": {
           "url": "https://docs.world.org/mcp"
         }
       }
@@ -125,7 +140,7 @@ The [World Docs MCP](/model-context-protocol/world-docs) lets any coding assista
     ```json
     {
       "servers": {
-        "world": {
+        "world-docs": {
           "type": "http",
           "url": "https://docs.world.org/mcp"
         }

@@ -48,5 +48,20 @@ async function signInWithWallet() {
 
 ## Event Subscriptions
 
-For new 2.x command integrations, prefer `await MiniKit.<command>()`.
+For new 2.x command integrations, prefer `await MiniKit.<command>()`—it already resolves (or throws) with the result, so you don't need to listen for an event.
+
+MiniKit still exposes the lower-level event API it uses internally, in case you need to observe a response event directly (for example, to fan the same response out to multiple listeners):
+
+```tsx
+import { MiniKit, ResponseEvent } from "@worldcoin/minikit-js";
+
+MiniKit.subscribe(ResponseEvent.MiniAppWalletAuth, (payload) => {
+  console.log(payload);
+});
+
+// Later, to stop listening:
+MiniKit.unsubscribe(ResponseEvent.MiniAppWalletAuth);
+```
+
+`MiniKit.trigger(event, payload)` dispatches an event to subscribers manually and is mainly useful for testing. For application code, `await MiniKit.<command>()` remains the recommended pattern.
 

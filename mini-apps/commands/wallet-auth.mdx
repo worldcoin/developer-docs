@@ -61,7 +61,7 @@ type MiniKitWalletAuthOptions = {
   expirationTime?: Date;
   notBefore?: Date;
   requestId?: string;
-  fallback?: () => unknown;
+  fallback?: () => Promise<unknown> | unknown;
 };
 ```
 </CodeGroup>
@@ -77,6 +77,7 @@ type WalletAuthResponse =
         address: string;
         message: string;
         signature: string;
+        version?: number; // Command protocol version (present when returned from World App)
       };
     }
   | {
@@ -99,7 +100,7 @@ type WalletAuthResponse =
 
 ## Backend Verification
 
-Always verify the returned SIWE payload on your backend.
+Always verify the returned SIWE payload on your backend. This example targets Next.js 15+, where `cookies()` returns a `Promise`.
 
 ```ts
 import { cookies } from "next/headers";
@@ -115,7 +116,8 @@ type RequestBody = {
 export async function POST(req: NextRequest) {
   const { payload, nonce } = (await req.json()) as RequestBody;
 
-  if (nonce !== cookies().get("siwe")?.value) {
+  const cookieStore = await cookies();
+  if (nonce !== cookieStore.get("siwe")?.value) {
     return NextResponse.json(
       { isValid: false, error: "Invalid nonce" },
       { status: 400 },
@@ -157,7 +159,7 @@ export async function POST(req: NextRequest) {
 | `expirationTime` | `Date` | No | When the SIWE message expires |
 | `notBefore` | `Date` | No | SIWE message is not valid before this time |
 | `requestId` | `string` | No | Arbitrary ID for correlating the request on your backend |
-| `fallback` | `() => Promise<T>` | No | Custom fallback for non-World-App environments |
+| `fallback` | `() => Promise<TFallback> \| TFallback` | No | Custom fallback for non-World-App environments (sync or async) |
 
 ## Notes
 

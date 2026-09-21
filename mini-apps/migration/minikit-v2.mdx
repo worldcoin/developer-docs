@@ -13,7 +13,6 @@ MiniKit 2.x consolidates command handling around async `MiniKit` methods and rem
 - Response interface changed to `{ executedWith, data }`
 - Types and helpers moved to `@worldcoin/minikit-js/commands`, `@worldcoin/minikit-js/siwe`, and `@worldcoin/minikit-js/address-book`
 - `walletAuth` nonce validation is stricter and expects an alphanumeric nonce without hyphens
-- `signTypedData` deprecated
 - `sendTransaction` now takes encoded calldata `transactions` and returns `userOpHash`
   - Permit2 switched from SignatureTransfer to AllowanceTransfer
   - Standard ERC-20 `approve()` calls are now allowed, and approval will be revoked after the transaction
