@@ -34,7 +34,7 @@ A missing, malformed, or invalid API key returns the same JSON-RPC error — eve
 {"jsonrpc": "2.0", "id": 1, "error": {"code": -32001, "message": "API key is required."}}
 ```
 
-If you see this with a key you believe is correct, re-copy it from the Developer Portal. The endpoint only accepts `POST`; `GET` returns HTTP 405 with `allow: POST, OPTIONS`.
+If you see this with a key you believe is correct, check the secure storage where you saved it at creation (it's shown only once and the portal can't display it again) — if it's genuinely lost, generate a new key and update every client using the old one. The endpoint only accepts `POST`; `GET` returns HTTP 405 with `allow: POST, OPTIONS`.
 
 ## Connect your client
 
@@ -160,7 +160,7 @@ Confirm the outcome by re-reading state (`get_world_id_signing_key`, `get_world_
 ## Security notes
 
 - Store generated World ID private keys immediately. They are returned once and are not recoverable from the portal.
-- `rotate_world_id_signing_key` returns the private key as a tool call result, not a one-time dialog — it passes through the assistant's model context and, depending on the client, may be persisted in session transcripts or debug logs. Treat it as sensitive, and rotate again if it was generated through a client whose logs aren't under your team's control.
+- `rotate_world_id_signing_key` returns the private key as a tool call result, not a one-time dialog — it passes through the assistant's model context and, depending on the client, may be persisted in session transcripts or debug logs. Treat it as sensitive. If it was generated through a client whose logs aren't under your team's control, don't just rotate again from that same client — the replacement key would leak through the identical path. Switch to a trusted, log-controlled client or channel first, then rotate.
 - Use a separate API key per local agent or project when possible.
 - Delete or rotate API keys that are no longer needed.
 - Confirm destructive actions before asking the assistant to rotate a signer key or submit an app for review.
