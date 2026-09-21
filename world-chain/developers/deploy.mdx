@@ -177,7 +177,7 @@ forge create src/HelloWorldChain.sol:HelloWorldChain \
 ```
 
 Here, we are using the `<path>:<contractname>` format to specify the contract. This tells Foundry where to find the contract file (`src/HelloWorldChain.sol`) and which contract within the file (HelloWorldChain) to deploy.
-We also use the `--rpc-url` flag to specify the RPC URL of the World Chain Sepolia network and the `--private-key` flag to specify the private key of the wallet we generated earlier. Current versions of Foundry default `forge create` to a dry run, so the `--broadcast` flag is required to actually send the deployment transaction.
+We also use the `--rpc-url` flag to specify the RPC URL of the World Chain Sepolia network and the `--private-key` flag to specify the private key of the wallet we generated earlier. The `--broadcast` flag is required because current versions of Foundry default `forge create` to a dry run.
 On top of this we can also provide other flags like `-vvvvv` to get more verbose output from the deployment process, `--verify` to verify the contract on [Worldscan](https://worldscan.org) or [Blockscout](https://worldchain-sepolia.explorer.alchemy.com/) (alongside with an `--etherscan-api-key` flag) and
 several other flags to toggle different features that you can find more about in the [Foundry documentation](https://book.getfoundry.sh/).
 
