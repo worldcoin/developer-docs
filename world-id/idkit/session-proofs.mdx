@@ -1,0 +1,93 @@
+---
+title: "Session proofs"
+description: "Verify returning users with World ID, including repeated Selfie Check verification."
+"og:image": "https://docs.world.org/images/docs/docs-meta.png"
+"twitter:image": "https://docs.world.org/images/docs/docs-meta.png"
+---
+
+Use session proofs when the same user needs to verify again, such as when returning
+to your app or confirming a sensitive action. This is the recommended flow for
+[Selfie Check](/world-id/credentials/11) integrations that need repeated verification.
+
+A uniqueness request allows each user to complete a particular action once. A
+session lets the user prove continuity across multiple checks: create it once,
+then prove the saved session on subsequent checks.
+
+| Value | Purpose | Backend responsibility |
+| --- | --- | --- |
+| `session_id` | Identifies the session across checks. | Associate the verified value with your application account and require it on later checks. |
+| `session_nullifier` | Per-proof replay protection, returned as `[nullifier, action]`. | Reject reuse of an already accepted proof; do not use this value as the account identifier. |
+
+A World ID session is not your application's login cookie or access token. Your
+backend decides what a successful verification authorizes.
+
+## Before you start
+
+Complete the [installation and Portal setup](/world-id/idkit/integrate#step-1-install-idkit)
+and use the same [backend verification endpoint](/world-id/idkit/integrate#step-5-verify-the-proof-in-your-backend)
+as other IDKit flows. This guide covers the session-specific changes.
+
+Generate fresh [RP signatures](/world-id/idkit/signatures) for session creation and
+each subsequent check. Call `signRequest({ signingKeyHex })` without an `action`;
+session requests do not take an action or support legacy proofs.
+
+The examples assume `app_id` comes from your Portal configuration and `rp_context`
+contains the fresh signature returned by your backend. Use a new `rp_context` for
+each example invocation.
+
+## Create a session
+
+```typescript
+import { IDKit, selfieCheck } from "@worldcoin/idkit-core";
+
+const request = await IDKit.createSession({
+  app_id,
+  rp_context,
+  environment: "production",
+}).preset(selfieCheck());
+
+// Display request.connectorURI as a link or QR code, then wait for the user.
+const completion = await request.pollUntilCompletion({ timeout: 120_000 });
+if (!completion.success) throw new Error(completion.error);
+
+// Send completion.result unchanged to your backend for verification.
+// Save its session_id against the account only after verification succeeds.
+```
+
+The `selfieCheck()` preset selects the Selfie Check credential. See
+[Configure Credentials](/world-id/idkit/credentials) for credential options.
+
+Your backend must verify the complete result before saving its `session_id`.
+Associate it with the account completing enrollment. Treat linking or replacing
+an account's session as an account-security operation; do not silently replace
+the saved value whenever the client submits a new session.
+
+## Verify a returning user
+
+Load the saved session ID from your backend for the account being verified, and
+obtain a fresh RP signature. Prove that existing session:
+
+```typescript
+import { IDKit, selfieCheck } from "@worldcoin/idkit-core";
+
+const request = await IDKit.proveSession(savedSessionId, {
+  app_id,
+  rp_context,
+  environment: "production",
+}).preset(selfieCheck());
+
+const completion = await request.pollUntilCompletion({ timeout: 120_000 });
+if (!completion.success) throw new Error(completion.error);
+
+// Send completion.result unchanged to your backend.
+// Verify it and require session_id to match the account's saved session.
+```
+
+`savedSessionId` is the opaque `session_...` string returned during creation.
+Preserve it unchanged. Creating a new session on each visit does not establish
+continuity with the account's existing session.
+
+For React, use `IDKitSessionWidget` with
+`preset={selfieCheck()}`. Omit `existing_session_id` for
+creation and set it to the saved session ID for subsequent checks. The widget's
+`handleVerify` callback should call your backend before `onSuccess` grants access.

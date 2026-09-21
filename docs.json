@@ -71,6 +71,7 @@
             "group": "IDKit",
             "pages": [
               "world-id/idkit/integrate",
+              "world-id/idkit/session-proofs",
               "world-id/idkit/verification-flows",
               "world-id/idkit/credentials",
               "world-id/idkit/mini-apps",
