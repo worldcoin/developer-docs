@@ -16,11 +16,11 @@ Usage counters are tracked per human per endpoint. Two agents backed by the same
 | ------------ | ------------------------------------------------------ | -------- |
 | `free`       | `{ type: "free" }`                                     | Registered human-backed agents always bypass payment. |
 | `free-trial` | `{ type: "free-trial"; uses?: number }`                | Registered human-backed agents bypass payment the first `N` times. Default `uses` is `1`. |
-| `discount`   | `{ type: "discount"; percent: number; uses?: number }` | Registered human-backed agents can underpay by the configured percentage for the first `N` times. If `uses` is omitted, the discount applies unlimited times, forever. |
+| `discount`   | `{ type: "discount"; percent: number; uses?: number }` | Registered human-backed agents can underpay by the configured percentage for the first `N` times. Omitting `uses` applies the discount forever. |
 
 `discount` mode requires `verifyFailureHook` to be registered on the facilitator. Without it, discounted underpayments fail settlement verification.
 
-Unlike `free-trial`, omitting `uses` in `discount` mode does **not** default to a single use — it defaults to unlimited uses. Always set `uses` explicitly for `discount` mode in production, or every verified human-backed agent gets a permanent discount on that endpoint.
+Unlike `free-trial`, omitting `uses` doesn't default to a single use — always set it explicitly in production, or every verified human-backed agent gets a permanent discount on that endpoint.
 
 ## Agent client APIs
 
@@ -105,7 +105,7 @@ Creates the request-time verification hooks used by the golden path integration.
 | `mode`      | `AgentkitMode`                       | Access mode. Defaults to `{ type: "free" }`. |
 | `storage`   | `AgentKitStorage`                    | Required for `free-trial` and `discount`. Optional for `free`. |
 | `rpcUrl`    | `string`                             | Custom EVM RPC used during signature verification. |
-| `rpcUrls`   | `Record<string, string>`             | Custom RPC URLs keyed by CAIP-2 chain ID, e.g. `{ "eip155:8453": "https://base.example" }`. Use this instead of `rpcUrl` when verifying signatures across multiple chains (for example World Chain + Base). |
+| `rpcUrls`   | `Record<string, string>`             | Custom RPC URLs keyed by CAIP-2 chain ID, e.g. `{ "eip155:8453": "https://base.example" }`. Use this instead of `rpcUrl` when verifying signatures across multiple chains. |
 | `onEvent`   | `(event: AgentkitHookEvent) => void` | Optional logging/debug callback. |
 
 Returns:
@@ -141,7 +141,7 @@ That is why Express and Next.js are compatible even though the docs use Hono for
 | `discount_applied`    | `resource`, `address`, `humanId` |
 | `discount_exhausted`  | `resource`, `address`, `humanId` |
 
-`agent_not_verified` fires whenever the AgentBook lookup resolves to `null` — which includes both "this wallet is genuinely not a registered human-backed agent" **and** "the AgentBook lookup itself failed" (RPC timeout, dropped connection, or the public RPC being down; see [AgentBook lookup](#agentbook-lookup) below). There is no separate event for a failed lookup, so `agent_not_verified` alone is not proof that an agent is unregistered. If you need to tell these apart in production, wrap your `rpcUrl`/`client` with your own timeout and alerting (or a circuit breaker) so a lookup-dependency outage doesn't silently masquerade as routine rejections.
+`agent_not_verified` also fires when the AgentBook lookup itself fails (RPC timeout, dropped connection, public RPC outage) — not only when the wallet is genuinely unregistered. There's no separate event for a failed lookup; see [AgentBook lookup](#agentbook-lookup) for how to tell the two apart.
 
 ## AgentBook lookup
 
@@ -171,7 +171,7 @@ The returned object exposes:
 lookupHuman(address: string): Promise<string | null>
 ```
 
-`lookupHuman` returns `null` both when the wallet is not registered **and** when the on-chain lookup itself fails (RPC timeout, network error, or the default public RPC being unavailable) — failures are swallowed internally and are not distinguishable from "not registered" by return value alone. If you need to alert on lookup-dependency failures separately from routine unregistered-agent rejections, wrap `rpcUrl`/`client` with your own timeout and circuit breaker.
+`lookupHuman` returns `null` both when the wallet is unregistered and when the lookup itself fails (RPC timeout, network error, public RPC outage) — failures are swallowed internally and indistinguishable from "not registered" by return value alone. To alert on lookup failures separately, wrap `rpcUrl`/`client` with your own timeout and circuit breaker.
 
 ## Storage and replay protection
 
