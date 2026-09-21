@@ -14,7 +14,27 @@ import { QRCodeGenerator } from "/snippets/qr-code-generator.jsx";
 Enter your app id in the text box below and scan the QR code generated with your phone's camera.
 Your app id is in the developer portal in the format `app_xxxxxxxxxx`.
 
-<QRCodeGenerator />
+{/*
+  The QR section below is wrapped in <Visibility for="humans"> (rendered on the
+  web, excluded from the copy-page/.md export) with a plain-markdown twin in
+  <Visibility for="agents"> (excluded from the web, rendered in the export).
+  The snippet import is safe ONLY because the usage sits inside the for="humans"
+  block: Mintlify inlines a snippet's full source into the export when the
+  component appears in exported content, and drops it when all usages are hidden
+  (verified on a preview deploy). Keep the twin in sync when editing.
+*/}
+
+<Visibility for="humans">
+  <QRCodeGenerator />
+</Visibility>
+
+<Visibility for="agents">
+  To test on a phone, open `https://worldcoin.org/mini-app?app_id=<your_app_id>` (the docs page renders this link as a scannable QR code):
+
+  1. Build the URL with your App ID from the developer portal.
+  2. Scan the QR (or open the URL) with your phone’s camera.
+  3. Confirm the prompt in World App.
+</Visibility>
 
 ### Tips
 

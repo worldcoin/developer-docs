@@ -21,11 +21,18 @@
 }
 
 @layer components {
-  /* Tint the custom Proof of Human badge when its sidebar page is selected. */
-  #sidebar-content
-    li[data-active]
-    img[src$="/images/docs/human-badge-gray.svg"] {
-    content: url("/images/docs/human-badge-blue.svg");
+  /* Sidebar — selected item is a neutral pill per Docs 3.0 (bg gray/a9, ink
+     text), replacing the theme-default blue tint. The Proof of Human badge
+     keeps its gray artwork in both states for the same reason. */
+  #sidebar-content li[data-active="true"] > a {
+    background-color: #F3F2F0 !important;
+    color: #181818 !important;
+    border-radius: 6px !important;
+    text-shadow: none !important;
+  }
+  .dark #sidebar-content li[data-active="true"] > a {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    color: #F3F2F0 !important;
   }
 
   /* Page content text links only (anchors without custom classes) */
@@ -60,6 +67,230 @@
     color: #e5e7eb; /* gray-200 */
   }
 
+  /* ------------------------------------------------------------------ */
+  /* Tab bar (Docs 3.0 header) — pill tabs in the design language: ink   */
+  /* labels, black pill for the active tab (inverted in dark mode), no   */
+  /* underline indicator, hairline divider before the menu tabs.         */
+  /* ------------------------------------------------------------------ */
+  #navbar .nav-tabs {
+    align-items: center;
+    gap: 0 !important;
+  }
+  #navbar .nav-tabs-item {
+    height: 32px !important;
+    padding: 6px 10px;
+    border-radius: 42px;
+    color: #181818 !important;
+    transition: background-color 0.15s ease;
+  }
+  #navbar .nav-tabs-item:hover {
+    color: #181818 !important;
+    background-color: #F3F2F0;
+  }
+  #navbar .nav-tabs-item[data-active="true"] {
+    padding: 6px 14px;
+    background-color: #181818;
+    color: #F9F9F8 !important;
+    text-shadow: none;
+  }
+  #navbar .nav-tabs-item[data-active="true"]:hover {
+    color: #F9F9F8 !important;
+    background-color: #181818;
+  }
+  /* The theme's active-tab underline indicator */
+  #navbar .nav-tabs-item > div.absolute {
+    display: none;
+  }
+  /* Hairline divider between the page tabs and the Resources/Support
+     menus (the menu tabs render as <button>, page tabs as <a>). */
+  #navbar .nav-tabs > button.nav-tabs-item:first-of-type {
+    margin-left: 17px;
+  }
+  #navbar .nav-tabs > button.nav-tabs-item:first-of-type::before {
+    content: "";
+    position: absolute;
+    left: -9px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 24px;
+    background-color: #E1DFDA;
+  }
+  .dark #navbar .nav-tabs > button.nav-tabs-item:first-of-type::before {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+  .dark #navbar .nav-tabs-item {
+    color: #F3F2F0 !important;
+  }
+  .dark #navbar .nav-tabs-item:hover {
+    color: #F3F2F0 !important;
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+  .dark #navbar .nav-tabs-item[data-active="true"],
+  .dark #navbar .nav-tabs-item[data-active="true"]:hover {
+    background-color: #F3F2F0;
+    color: #181818 !important;
+  }
+
+  /* Search entry — quiet bordered pill per design */
+  #navbar #search-bar-entry {
+    border-radius: 20px;
+    background-color: #F9F9F8;
+    box-shadow: none;
+    --tw-ring-color: #E1DFDA;
+    color: #181818;
+  }
+  .dark #navbar #search-bar-entry {
+    background-color: rgb(24, 25, 27);
+    --tw-ring-color: rgba(255, 255, 255, 0.15);
+    color: #F3F2F0;
+  }
+
+  /* Developer Portal CTA — pill radius to match the design language */
+  #topbar-cta-button a > span.absolute {
+    border-radius: 20px;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Floating pill header (Docs 3.0, desktop ≥1440px) — collapse the     */
+  /* theme's two-row header into the design's single 84px rounded bar.   */
+  /* The theme's row scaffolding is flattened with display:contents so   */
+  /* the logo, the tab row, and the search/assistant cluster lay out on  */
+  /* ONE flex line — no absolute positioning, so the variable-width      */
+  /* hosted cluster (Search + Ask Assistant) can never overlap the tabs. */
+  /* Below 1440px — including when the hosted assistant panel narrows    */
+  /* the page without changing the window width — the two-row layout     */
+  /* above remains: the pill activates on the header's own width via a   */
+  /* container query, not a viewport media query.                        */
+  /* At rest the pill floats 24px below the top edge; once the page      */
+  /* scrolls it rides up and docks flush against the viewport (the       */
+  /* offset lives on the sticky #navbar — see the margin note below).    */
+  /* ------------------------------------------------------------------ */
+  #navbar {
+    container-type: inline-size;
+  }
+  /* #navbar can't query its own width, so its parent — which the navbar
+     fills edge to edge, so both cross 1440px together — is the query
+     container for the one rule below that styles #navbar itself. */
+  div:has(> #navbar) {
+    container-type: inline-size;
+  }
+  @container (min-width: 1440px) {
+    /* No full-width backdrop: the pill floats on the page background. */
+    #navbar #navbar-transition {
+      display: none;
+    }
+    /* The pill's 24px top offset sits on the sticky #navbar, not inside
+       it: a sticky box docks by its border edge, so the offset scrolls
+       away with the page and the pill rides up to sit flush against the
+       top of the viewport (24px gap at rest → docked at 0 once scrolled
+       ≥24px). Mintlify derives --scroll-mt from the navbar's 84px height,
+       so anchored headings still land clear of the docked pill. */
+    #navbar {
+      margin-top: 24px;
+    }
+    /* The pill is the flex row. */
+    #navbar > div.max-w-8xl {
+      display: flex;
+      align-items: center;
+      column-gap: 16px;
+      /* Side margins scale with the header's own width (the design
+         frame's 63/1728 ratio), so the pill keeps the same proportions
+         as the window — or the page area beside the assistant panel —
+         shrinks. */
+      width: calc(100% - 7.3cqw);
+      max-width: 1602px !important;
+      height: 84px;
+      margin: 0 auto;
+      padding: 0 25px 0 33px;
+      background-color: #FFFFFF;
+      border: 1px solid #E1DFDA;
+      border-radius: 18px;
+      box-shadow: 0px 15px 20px -5px rgba(0, 0, 0, 0.03);
+    }
+    .dark #navbar > div.max-w-8xl {
+      background-color: rgb(24, 25, 27);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+    /* Flatten the two-row scaffolding into the pill's flex line. */
+    #navbar > div.max-w-8xl > div,
+    #navbar > div.max-w-8xl > div > div.relative,
+    #navbar div.lg\:px-12,
+    #navbar div.lg\:px-12 > div {
+      display: contents !important;
+    }
+    /* Logo | tabs | search cluster; the two auto margins center the
+       tabs in the free space between logo and cluster. */
+    #navbar div.lg\:px-12 > div > div.flex-1:first-child {
+      order: 1;
+      flex: 0 0 auto !important;
+    }
+    #navbar .nav-tabs-item {
+      white-space: nowrap;
+    }
+    #navbar .max-w-8xl > div > div.px-12 {
+      order: 2;
+      position: static;
+      width: max-content;
+      flex-shrink: 0;
+      height: auto !important;
+      padding: 0 !important;
+      margin-left: auto;
+    }
+    #navbar div.lg\:px-12 div.z-20 {
+      order: 3;
+      flex: 0 0 auto !important;
+      margin-left: auto;
+    }
+    /* Logo at the design scale: the mock's logo block is 166px wide;
+       our combined SVG hits that width at 17.5px tall. */
+    #navbar div.lg\:px-12 .nav-logo {
+      height: 17.5px !important;
+    }
+    /* Search pill at the design metrics: 34px tall, 6/14 padding. */
+    #navbar #search-bar-entry {
+      width: auto !important;
+      height: 34px !important;
+      padding: 6px 14px !important;
+      border-radius: 20px;
+      box-shadow: none;
+    }
+    #navbar #search-bar-entry span.text-xs {
+      display: none;
+    }
+    /* Ask Assistant (hosted-only) — the design's "Ask AI" pill. */
+    #navbar #assistant-entry {
+      height: 34px !important;
+      padding: 6px 14px !important;
+      border-radius: 20px !important;
+      background-color: #F9F9F8 !important;
+      border: 1px solid #E1DFDA !important;
+      box-shadow: none !important;
+      color: #181818 !important;
+    }
+    #navbar #assistant-entry kbd,
+    #navbar #assistant-entry .text-xs {
+      display: none !important;
+    }
+    .dark #navbar #assistant-entry {
+      background-color: rgb(24, 25, 27) !important;
+      border-color: rgba(255, 255, 255, 0.15) !important;
+      color: #F3F2F0 !important;
+    }
+    /* The emptied right-hand group collapses inside the pill. */
+    #navbar div.lg\:px-12 > div > div.justify-end {
+      display: none !important;
+    }
+  }
+  /* The header chrome is identical at every size, per the design: no
+     Explore Integrations link and no Developer Portal CTA (both removed
+     from docs.json navbar — Ecosystem and Developer Portal live in the
+     Resources menu and footer), and no theme toggle (the theme follows
+     the system preference). */
+  #navbar #theme-preference-menu-trigger {
+    display: none !important;
+  }
+
   /* Quickstart: tighten code block spacing within the card */
   .quickstart-code .code-block {
     margin-top: 0.5rem !important;
@@ -75,6 +306,20 @@
 
   /* Quickstart: hide code fade overlay to avoid white brush near copy button */
   .quickstart-code .code-block [data-fade-overlay="true"] {
+    display: none !important;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Assistant chat — remove the duplicate chat entry points; the        */
+  /* assistant stays reachable from the header (Ask Assistant / ⌘I).     */
+  /* The hosted site renders a sticky "Ask a question" bar at the bottom */
+  /* of every docs page; local `mint dev` renders a draggable floating   */
+  /* launcher instead. Hide both.                                        */
+  /* ------------------------------------------------------------------ */
+  div[data-assistant-bar] {
+    display: none !important;
+  }
+  body > div.z-999.cursor-grab.touch-none[role="status"] {
     display: none !important;
   }
 
@@ -156,8 +401,13 @@
      w-[min(760px,85%)] is silently dropped by Mintlify's Tailwind compiler
      (values with a comma + %), which renders the cards at zero size. */
   .landing-story-card {
-    width: calc(50% - 44px);
+    width: calc((100% - 96px) / 2 - 12px);
     aspect-ratio: 4 / 3;
+  }
+  @media (min-width: 901px) {
+    .landing-stories-track {
+      margin-right: -96px;
+    }
   }
   @media (max-width: 900px) {
     .landing-story-card {
@@ -188,11 +438,19 @@
     background-color: rgb(32, 33, 36);
   }
 
-  /* Landing page — World Tech updates list (no divider rules, per design) */
+  /* Landing page — World Tech updates list; rows separated by hairline rules
+     (above each row and below the last) per the Docs 3.0 QA design. */
   .landing-update {
     display: block;
-    padding: 32px 0;
+    padding: 40px 0;
+    border-top: 1px solid #E1DFDA;
     text-decoration: none;
+  }
+  .landing-update:last-child {
+    border-bottom: 1px solid #E1DFDA;
+  }
+  .dark .landing-update {
+    border-color: rgba(255, 255, 255, 0.12);
   }
   .landing-update-title {
     font-size: 24px;
@@ -210,7 +468,7 @@
   }
   .landing-update-desc {
     margin: 12px 0 0;
-    max-width: 1100px;
+    max-width: 886px;
     font-size: 16px;
     line-height: 1.5;
     font-weight: 300;
@@ -308,6 +566,77 @@
   .dark .landing-footer-links {
     color: #F3F2F0;
   }
+
+  /* ------------------------------------------------------------------ */
+  /* Docs-page footer (Docs 3.0) — restyle Mintlify's advanced footer    */
+  /* into the design's single row: "™ 2026 World" left, links right.     */
+  /* The homepage keeps its own hand-built .landing-footer.              */
+  /* ------------------------------------------------------------------ */
+  #footer.advanced-footer {
+    border-top: none !important;
+  }
+  #footer.advanced-footer > div {
+    max-width: 1728px !important;
+  }
+  @media (min-width: 1024px) {
+    #footer.advanced-footer > div {
+      /* Generous clearance between the page's last content (pagination)
+         and the footer row, per the design's section rhythm. */
+      padding: 96px 96px 48px !important;
+    }
+  }
+  /* Replace the footer logo with the trademark line from the design. */
+  #footer.advanced-footer .nav-logo {
+    display: none !important;
+  }
+  #footer.advanced-footer a.select-none::after {
+    content: "™ 2026 World";
+    font-size: 16px;
+    line-height: 1.4;
+    font-weight: 300;
+    color: #181818;
+    white-space: nowrap;
+  }
+  .dark #footer.advanced-footer a.select-none::after {
+    color: #F3F2F0;
+  }
+  /* Link row: right-aligned single row, ink links per design. */
+  @media (min-width: 768px) {
+    #footer.advanced-footer .md\:justify-center {
+      justify-content: flex-end !important;
+      gap: 40px !important;
+    }
+  }
+  #footer.advanced-footer a[class*="max-w-36"] {
+    max-width: none !important;
+    font-size: 16px !important;
+    line-height: 1.4;
+    font-weight: 300;
+    color: #181818 !important;
+  }
+  #footer.advanced-footer a[class*="max-w-36"]:hover {
+    color: #181818 !important;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .dark #footer.advanced-footer a[class*="max-w-36"],
+  .dark #footer.advanced-footer a[class*="max-w-36"]:hover {
+    color: #F3F2F0 !important;
+  }
+  /* The design's footer carries no social icons (those links live in the
+     footer links row; GitHub also sits in the Resources menu). */
+  #footer.advanced-footer div[class*="min-w-[140px]"] {
+    display: none !important;
+  }
+  /* The design's footer is the single links row only: drop the theme's
+     bottom utility row (Powered by Mintlify + theme icons) and its
+     divider. Branding removal is a paid-plan Mintlify feature — if the
+     org's plan requires attribution, revert this rule or use the
+     dashboard's hide-branding toggle instead. */
+  #footer.advanced-footer > div > div.h-px,
+  #footer.advanced-footer > div > div:last-child {
+    display: none !important;
+  }
   @media (max-width: 900px) {
     .landing-footer-inner {
       padding: 0 24px 48px;
@@ -317,7 +646,9 @@
       padding: 64px 24px;
     }
     .landing-footer-links {
-      gap: 80px !important;
+      /* Wrapped rows stay together: the trademark line sits inline with
+         the links instead of floating far above them. */
+      gap: 16px 40px !important;
     }
   }
   @media (max-width: 600px) {
@@ -338,7 +669,7 @@
       font-size: 18px !important;
     }
     .landing-footer-links {
-      gap: 60px !important;
+      gap: 12px 32px !important;
     }
   }
 
@@ -354,8 +685,8 @@
     color: #F3F2F0;
   }
   .landing-hero-sub {
-    margin-top: 20px;
-    max-width: 640px;
+    margin-top: 24px;
+    max-width: 487px;
     font-size: 24px;
     line-height: 1.35;
     letter-spacing: -0.24px;
@@ -380,7 +711,7 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     column-gap: 80px;
-    row-gap: 104px;
+    row-gap: 113px;
   }
   @media (max-width: 900px) {
     .landing-card-grid {
@@ -410,6 +741,35 @@
   @media (max-width: 600px) {
     .landing-container {
       padding: 32px 16px 0;
+    }
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Header/content alignment (Docs 3.0 QA) — the navbar container and   */
+  /* the docs-page body use Mintlify's max-w-8xl (the body via a         */
+  /* peer-variant class); match both to the 1728px design frame with     */
+  /* 96px gutters so the logo, tabs, hero, and content share one edge.   */
+  /* ------------------------------------------------------------------ */
+  @media (min-width: 1024px) {
+    /* Custom pages share the conditional max-w-8xl class token, but need
+       a full-width wrapper so their own containers can center the content. */
+    #navbar [class~="max-w-8xl"],
+    body:has(#navbar.is-not-custom) [class*="max-w-8xl"] {
+      max-width: 1728px !important;
+    }
+    /* Navbar top row (logo/search/CTA) and tab row: 48px → 96px gutters. */
+    #navbar .lg\:px-12,
+    #navbar .px-12 {
+      padding-left: 96px !important;
+      padding-right: 96px !important;
+    }
+    /* Docs pages: pull the sidebar/content wrapper out to the same frame
+       so the sidebar lines up under the logo (group headers and link text
+       both carry a 16px inset, so 80px padding lands them at 96px).
+       Scoped to non-custom pages; the homepage manages its own gutters. */
+    body:has(#navbar.is-not-custom) div[class*="is-not-custom]:px-4"] {
+      padding-left: 80px !important;
+      padding-right: 80px !important;
     }
   }
 

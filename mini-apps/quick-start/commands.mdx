@@ -12,16 +12,34 @@ Commands are async methods on `MiniKit`. Use `await MiniKit.<command>()` and han
   [`@worldcoin/idkit`](/world-id/idkit/mini-apps) for new verification flows.
 </Note>
 
-Try our preview mini app to get a sense of how commands work. Scan the QR code below with your phone (you must have World App installed).
+Try our preview mini app to get a sense of how commands work.
 
-<div className="flex justify-center my-4">
-  <QRCodeGenerator
-    hideInput={true}
-    hideDetails={true}
-    appId="app_dfbe55706a640c82dce839bb0ecae74d"
-    baseUrl="https://world.org/mini-app"
-  />
-</div>
+{/*
+  The QR section below is wrapped in <Visibility for="humans"> (rendered on the
+  web, excluded from the copy-page/.md export) with a plain-markdown twin in
+  <Visibility for="agents"> (excluded from the web, rendered in the export).
+  The snippet import is safe ONLY because the usage sits inside the for="humans"
+  block: Mintlify inlines a snippet's full source into the export when the
+  component appears in exported content, and drops it when all usages are hidden
+  (verified on a preview deploy). Keep the twin in sync when editing.
+*/}
+
+<Visibility for="humans">
+  Scan the QR code below with your phone (you must have World App installed).
+
+  <div className="flex justify-center my-4">
+    <QRCodeGenerator
+      hideInput={true}
+      hideDetails={true}
+      appId="app_dfbe55706a640c82dce839bb0ecae74d"
+      baseUrl="https://world.org/mini-app"
+    />
+  </div>
+</Visibility>
+
+<Visibility for="agents">
+  Open [https://world.org/mini-app?app_id=app_dfbe55706a640c82dce839bb0ecae74d](https://world.org/mini-app?app_id=app_dfbe55706a640c82dce839bb0ecae74d) on a phone with World App installed (the docs page renders this link as a QR code).
+</Visibility>
 
 <table>
   <thead>
