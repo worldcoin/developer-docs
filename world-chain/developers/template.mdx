@@ -16,7 +16,7 @@ Before we start, make sure you have the following tools installed:
 
 - [Git](https://git-scm.com/) (usually pre-installed on most systems)
 - [Node.js](https://nodejs.org/en/)
-- [pnpm](https://yarnpkg.com/) (or equivalent like npm, yarn or bun)
+- [pnpm](https://pnpm.io/) (or equivalent like npm, yarn or bun)
 - [Foundry CLI](https://book.getfoundry.sh/)
 
 ## Clone template
@@ -173,10 +173,10 @@ Once the fork is running, you can deploy the World ID template app to the World 
 ```bash
 # cd into the contracts directory
 cd contracts
-forge create --rpc-url http://localhost:8545 --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 src/Contract.sol:Contract --constructor-args $WORLD_ID_ROUTER $NEXT_PUBLIC_APP_ID $NEXT_PUBLIC_ACTION
+forge create --rpc-url http://localhost:8545 --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 src/Contract.sol:Contract --constructor-args $WORLD_ID_ROUTER $NEXT_PUBLIC_APP_ID $NEXT_PUBLIC_ACTION --broadcast
 ```
 
-This command will deploy the `Contract` contract to the World Chain Sepolia network using the provided RPC URL and private key.
+This command will deploy the `Contract` contract to the World Chain Sepolia network using the provided RPC URL and private key. The `--broadcast` flag is required because current versions of Foundry default `forge create` to a dry run.
 
 ## Local Web Setup
 
