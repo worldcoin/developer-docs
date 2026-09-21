@@ -30,7 +30,7 @@ yarn add @worldcoin/idkit-core
 - `IDKit.requestWithInviteCode(config)` for invite-code mode
 - `orbLegacy`, `secureDocumentLegacy`, `documentLegacy`, `selfieCheckLegacy` for presets
 
-Each entry point returns a builder. Finalize it with `.preset(...)` for common single-credential requests, or `.constraints(...)` for custom/multi-credential requests (required for session flows — see [Constraints](#constraints)).
+Each entry point returns a builder. Finalize it with `.preset(...)` for single-credential requests, or `.constraints(...)` for multi-credential and session requests — see [Constraints](#constraints).
 
 ## Request config
 
@@ -73,7 +73,7 @@ const request = await IDKit.request({
 
 ## Constraints
 
-`.constraints(...)` is an alternative finalizer to `.preset(...)` for building custom, non-legacy (World ID 4.0) credential requests, including composite trees (e.g. Orb OR (Passport AND MNC)). Build the tree with `CredentialRequest`, `any`, `all`, and `enumerate`. It's the only option for `IDKit.createSession()`/`IDKit.proveSession()` builders — calling `.preset()` on a session builder throws.
+`.constraints(...)` builds custom World ID 4.0 credential requests, including composite trees (e.g. Orb OR (Passport AND MNC)), using `CredentialRequest`, `any`, `all`, and `enumerate`. It's the only finalizer `IDKit.createSession()`/`IDKit.proveSession()` builders accept — `.preset()` throws on a session builder.
 
 ```ts
 import { IDKit, CredentialRequest, any, all } from "@worldcoin/idkit-core";

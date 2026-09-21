@@ -42,8 +42,8 @@ npm i @worldcoin/idkit
 ```
 
 ```kotlin title="Kotlin (Gradle)"
-// Published to GitHub Packages, not Maven Central — you need the repository
-// + credentials block too. Full setup: /world-id/idkit/kotlin#install
+// Published to GitHub Packages, not Maven Central.
+// Full setup (repository + credentials): /world-id/idkit/kotlin#install
 dependencies {
     implementation("com.worldcoin:idkit:<version>")
 }
@@ -164,7 +164,7 @@ const request = await IDKit.request({
     signature: rpSig.sig,
   },
   allow_legacy_proofs: true,
-  environment: "production", // "staging" tests with the simulator; "sandbox" tests against a real World ID app — see /world-id/sandbox/what-is-sandbox
+  environment: "production", // "staging" (simulator) or "sandbox" (real World ID app)
   return_to: "myapp://verify-done", // Optional: mobile deep-link callback URL
   // Signal (optional): Bind specific context into the requested proof.
   // Examples: user ID, wallet address. Your backend should enforce the same value.
@@ -300,7 +300,7 @@ val completion = request.pollUntilCompletion()
 ```
 </CodeGroup>
 
-> Advanced: `.preset(...)` covers the common cases shown above. For custom multi-credential requests (e.g. Orb OR (Passport AND MNC)), finalize the builder with `.constraints(...)` instead, using the `any`/`all`/`enumerate`/`CredentialRequest` helpers exported by `@worldcoin/idkit-core`.
+> Advanced: for custom multi-credential requests (e.g. Orb OR (Passport AND MNC)), use `.constraints(...)` instead of `.preset(...)`, built with the `any`/`all`/`enumerate`/`CredentialRequest` helpers from `@worldcoin/idkit-core`.
 
 ### IDKit response
 

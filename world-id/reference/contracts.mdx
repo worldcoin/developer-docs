@@ -133,7 +133,7 @@ One World ID contract is deployed on each bridged chain, with an associated Stat
 The World ID Router will route your call to the correct Identity Manager contract (Ethereum) or World ID contract (L2 Chains) based on the `groupId` argument. This contract is proxied, so you will not need to update your code if the underlying contracts are upgraded.
 
 <Note>
-  Orb credentials are `groupId` `1`. The live router does route additional groups, but those are not RP-facing — for on-chain Orb verification via `verifyProof`, use `groupId` `1`.
+  Orb credentials use `groupId` `1`. The router does route additional groups on-chain, but they aren't RP-facing.
 </Note>
 
 ## Usage
@@ -168,9 +168,9 @@ The `verifyProof` method of the **World ID Router** is used to verify proofs on-
         <code>uint256</code>
       </td>
       <td className="p-2 align-middle">
-        Determines which Credential Type to verify against. For Orb
-        credentials, the RP-facing group, this is <code>1</code>. The router
-        does route additional groups on-chain, but they are not RP-facing.
+        Determines which Credential Type to verify against. Orb credentials
+        are <code>1</code> — the only RP-facing group; the router does route
+        others on-chain.
       </td>
     </tr>
     <tr>

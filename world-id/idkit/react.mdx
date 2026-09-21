@@ -199,7 +199,7 @@ Session verification uses `IDKitSessionWidget` (controlled) or `useIDKitSession`
 
 ## Presets
 
-React hooks/widgets take `preset` directly in config for common single-credential requests. `constraints` is an equally valid, mutually-exclusive alternative for custom/multi-credential requests — a config takes either `preset` or `constraints`, never both. Session hooks/widgets (`useIDKitSession`, `IDKitSessionWidget`) require `constraints`; they have no `preset` option.
+React hooks/widgets take `preset` or `constraints` in config — never both — for single- or multi-credential requests respectively. Session hooks/widgets (`useIDKitSession`, `IDKitSessionWidget`) require `constraints`; they have no `preset` option.
 
 ## Localization and UX notes
 
