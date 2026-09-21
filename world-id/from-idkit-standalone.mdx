@@ -101,18 +101,22 @@ await fetch("/api/verify-proof", {
 
 ## Credential Mapping
 
-Standalone used `verification_level` to choose what the user proves. In `idkit-core`, use a legacy preset instead. These presets are drop-in replacements for the old verification levels.
+Standalone used `verification_level` to choose what the user proves. In `idkit-core`, use a legacy preset instead. These presets only return World ID 3.0 proofs — they're an intermediate, compatibility-only step, not the final destination for a migration.
 
 <Note type="info">
   Legacy presets return the maximum credential a user has. For example, if a user has an Orb credential but you request `documentLegacy`, they verify with their Orb credential.
 </Note>
 
-| Standalone | `idkit-core` preset |
+| Standalone | `idkit-core` preset (compatibility-only) |
 | --- | --- |
 | `verification_level: "orb"` | `orbLegacy({ signal })` |
 | `verification_level: "secure_document"` | `secureDocumentLegacy({ signal })` |
 | `verification_level: "document"` | `documentLegacy({ signal })` |
 | `verification_level: "device"` | `deviceLegacy({ signal })` |
+
+<Note>
+  Once you no longer need World ID 3.0 compatibility, migrate to the v4-native presets instead: `proofOfHuman` (replaces `orbLegacy`) and `passport` (NFC/document credentials). Both return World ID 4.0 credentials with automatic legacy fallback. See [Configure Credentials](/world-id/idkit/credentials).
+</Note>
 
 ```ts
 import {

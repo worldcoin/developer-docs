@@ -42,6 +42,8 @@ npm i @worldcoin/idkit
 ```
 
 ```kotlin title="Kotlin (Gradle)"
+// Published to GitHub Packages, not Maven Central — you need the repository
+// + credentials block too. Full setup: /world-id/idkit/kotlin#install
 dependencies {
     implementation("com.worldcoin:idkit:<version>")
 }
@@ -136,7 +138,7 @@ func handleRPSignature(w http.ResponseWriter, r *http.Request) {
 </Note>
 
 # Step 4: Generate the connect URL and collect proof
-To test during development, use the [simulator](https://simulator.worldcoin.org/) and set `environment` to `"staging"`.
+To test during development, use the [simulator](https://simulator.worldcoin.org/) and set `environment` to `"staging"`. To test against a real World ID app instead, see [Sandbox](/world-id/sandbox/what-is-sandbox).
 
 <CodeGroup title="Create request and collect proof">
 ```typescript title="JavaScript"
@@ -162,7 +164,7 @@ const request = await IDKit.request({
     signature: rpSig.sig,
   },
   allow_legacy_proofs: true,
-  environment: "production", // Only set this to staging for testing with the simulator
+  environment: "production", // "staging" tests with the simulator; "sandbox" tests against a real World ID app — see /world-id/sandbox/what-is-sandbox
   return_to: "myapp://verify-done", // Optional: mobile deep-link callback URL
   // Signal (optional): Bind specific context into the requested proof.
   // Examples: user ID, wallet address. Your backend should enforce the same value.
@@ -297,6 +299,8 @@ val connectorURI = request.connectorURI
 val completion = request.pollUntilCompletion()
 ```
 </CodeGroup>
+
+> Advanced: `.preset(...)` covers the common cases shown above. For custom multi-credential requests (e.g. Orb OR (Passport AND MNC)), finalize the builder with `.constraints(...)` instead, using the `any`/`all`/`enumerate`/`CredentialRequest` helpers exported by `@worldcoin/idkit-core`.
 
 ### IDKit response
 

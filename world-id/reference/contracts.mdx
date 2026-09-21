@@ -41,7 +41,7 @@ All of our smart contracts are available on GitHub:
         />
         <strong>World Chain</strong>
       </td>
-      <td className="p-2 align-middle">World Chain</td>
+      <td className="p-2 align-middle">World Chain Sepolia</td>
       <td className="p-2 align-middle">Bridged</td>
       <td className="p-2 align-middle">~5 Minutes after Ethereum</td>
     </tr>
@@ -80,7 +80,7 @@ All of our smart contracts are available on GitHub:
         />
         <strong>Polygon</strong>
       </td>
-      <td className="p-2 align-middle">Polygon</td>
+      <td className="p-2 align-middle">—</td>
       <td className="p-2 align-middle">Bridged</td>
       <td className="p-2 align-middle">~40 Minutes after Ethereum</td>
     </tr>
@@ -93,7 +93,7 @@ All of our smart contracts are available on GitHub:
         />
         <strong>Base</strong>
       </td>
-      <td className="p-2 align-middle">Base</td>
+      <td className="p-2 align-middle">Base Sepolia</td>
       <td className="p-2 align-middle">Bridged</td>
       <td className="p-2 align-middle">~5 Minutes after Ethereum</td>
     </tr>
@@ -107,7 +107,7 @@ All of our smart contracts are available on GitHub:
 
 ## Architecture
 
-This section offers a high-level overview of the various smart contracts that make up World ID. This structure (including state bridging) is replicated on testnets -- currently Sepolia, Optimism Sepolia, and Base Sepolia.
+This section offers a high-level overview of the various smart contracts that make up World ID. This structure (including state bridging) is replicated on testnets -- currently Sepolia, World Chain Sepolia, Optimism Sepolia, and Base Sepolia. Polygon has no testnet deployment.
 
 ### Identity Managers: `WorldIdIdentityManager`
 
@@ -133,7 +133,7 @@ One World ID contract is deployed on each bridged chain, with an associated Stat
 The World ID Router will route your call to the correct Identity Manager contract (Ethereum) or World ID contract (L2 Chains) based on the `groupId` argument. This contract is proxied, so you will not need to update your code if the underlying contracts are upgraded.
 
 <Note>
-  Only Orb credentials are supported on-chain, so the `groupId` must be `1`.
+  Orb credentials are `groupId` `1`. The live router does route additional groups, but those are not RP-facing — for on-chain Orb verification via `verifyProof`, use `groupId` `1`.
 </Note>
 
 ## Usage
@@ -168,8 +168,9 @@ The `verifyProof` method of the **World ID Router** is used to verify proofs on-
         <code>uint256</code>
       </td>
       <td className="p-2 align-middle">
-        Determines which Credential Type to verify against. As only Orb
-        credentials are supported on-chain, this must be <code>1</code>.
+        Determines which Credential Type to verify against. For Orb
+        credentials, the RP-facing group, this is <code>1</code>. The router
+        does route additional groups on-chain, but they are not RP-facing.
       </td>
     </tr>
     <tr>
@@ -191,9 +192,10 @@ The `verifyProof` method of the **World ID Router** is used to verify proofs on-
         <code>uint256</code>
       </td>
       <td className="p-2 align-middle">
-        The root of the merkle tree to verify against. This is obtained from the
-        IDKit widget as a hex string <code>nullifier_hash</code>, and must be
-        converted to a <code>uint256</code> before passing it to the{" "}
+        The nullifier for this proof, preventing double signaling. This is
+        obtained from the IDKit widget as a hex string{" "}
+        <code>nullifier_hash</code>, and must be converted to a{" "}
+        <code>uint256</code> before passing it to the{" "}
         <code>verifyProof</code> method.
       </td>
     </tr>
@@ -259,7 +261,7 @@ const unpackedProof = decodeAbiParameters([{ type: 'uint256[8]' }], proof)[0]
 ````
 
 ```ts title="ethers.js"
-import { defaultAbiCoder as abi } from '@ethers/utils'
+import { defaultAbiCoder as abi } from '@ethersproject/abi'
 
 const unpackedProof = abi.decode(['uint256[8]'], proof)[0]
 ````

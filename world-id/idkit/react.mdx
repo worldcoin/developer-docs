@@ -108,14 +108,18 @@ Hook result fields:
 
 - `open()`
 - `reset()`
+- `isOpen`
 - `isAwaitingUserConnection`
 - `isAwaitingUserConfirmation`
 - `isSuccess`
 - `isError`
+- `isInWorldApp` — true when running inside the World App (mini app context)
 - `connectorURI`
 - `result`
 - `errorCode`
 - `getDebugReport()`
+
+This is the same `IDKitHookResult<T>` shape returned by `useIDKitInviteCodeRequest` and `useIDKitSession`, and shared by the equivalent widget-based flows.
 
 ## Invite-code mode
 
@@ -195,7 +199,7 @@ Session verification uses `IDKitSessionWidget` (controlled) or `useIDKitSession`
 
 ## Presets
 
-React hooks/widgets take `preset` directly in config.
+React hooks/widgets take `preset` directly in config for common single-credential requests. `constraints` is an equally valid, mutually-exclusive alternative for custom/multi-credential requests — a config takes either `preset` or `constraints`, never both. Session hooks/widgets (`useIDKitSession`, `IDKitSessionWidget`) require `constraints`; they have no `preset` option.
 
 ## Localization and UX notes
 

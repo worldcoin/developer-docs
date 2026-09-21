@@ -2,6 +2,8 @@
 title: "Authenticator Reference"
 ---
 
+{/* cspell:ignore oprf */}
+
 ## Authenticator Requests & Responses
 
 This section describes how authenticators receive and respond to requests from RPs. This also reflects what is implemented in the <Tooltip tip="The Authenticator SDK is called WalletKit"><a href="https://github.com/worldcoin/walletkit" target="_blank" rel="noopener noreferrer">Authenticator SDK</a></Tooltip>.
@@ -25,8 +27,9 @@ The schema for the request is defined in the `world-id-primitives` crate as [`Pr
   "rp_id": "rp_0000000000000000000000000000000000001",
   "action": "0x0000000000000000000000000000000000000000000000000000000000000001",
   "nonce": "0x11d223ce7b91ac212f42cf50f0a3439ae3fcdba4ea32acb7f194d1051ed324c2",
-  "signature": "304502205cce35752b1642327bebf9f203960dc83f92fa919a4567981ce0c157060ca04e022100f328e42ff2609ddc1fbc7da17896ded2687acb3a4eeb8847a6f3a87ce50ed016",
-  "requests": [
+  "signature": "0x111111111111111111111111111111111111111111111111111111111111111122222222222222222222222222222222222222222222222222222222222222221c",
+  "oprf_key_id": "oprf_key_1",
+  "proof_requests": [
     {
       "identifier": "passport",
       "issuer_schema_id": 9303,
@@ -46,8 +49,9 @@ The schema for the request is defined in the `world-id-primitives` crate as [`Pr
       "rp_id": "rp_0000000000000000000000000000000000001",
       "action": "0x0000000000000000000000000000000000000000000000000000000000000001",
       "nonce": "0x11d223ce7b91ac212f42cf50f0a3439ae3fcdba4ea32acb7f194d1051ed324c2",
-      "signature": "304502205cce35752b1642327bebf9f203960dc83f92fa919a4567981ce0c157060ca04e022100f328e42ff2609ddc1fbc7da17896ded2687acb3a4eeb8847a6f3a87ce50ed016",
-      "requests": [
+      "signature": "0x111111111111111111111111111111111111111111111111111111111111111122222222222222222222222222222222222222222222222222222222222222221c",
+      "oprf_key_id": "oprf_key_1",
+      "proof_requests": [
         {
           "identifier": "passport",
           "issuer_schema_id": 9303,
@@ -75,8 +79,9 @@ The schema for the request is defined in the `world-id-primitives` crate as [`Pr
       "rp_id": "rp_0000000000000000000000000000000000001",
       "action": "0x0000000000000000000000000000000000000000000000000000000000000001",
       "nonce": "0x11d223ce7b91ac212f42cf50f0a3439ae3fcdba4ea32acb7f194d1051ed324c2",
-      "signature": "304502205cce35752b1642327bebf9f203960dc83f92fa919a4567981ce0c157060ca04e022100f328e42ff2609ddc1fbc7da17896ded2687acb3a4eeb8847a6f3a87ce50ed016",
-      "requests": [
+      "signature": "0x111111111111111111111111111111111111111111111111111111111111111122222222222222222222222222222222222222222222222222222222222222221c",
+      "oprf_key_id": "oprf_key_1",
+      "proof_requests": [
         {
           "identifier": "passport",
           "issuer_schema_id": 9303,
@@ -135,6 +140,8 @@ This priority mechanism allows RPs to request their preferred credential type wh
 
 The schema for the response is defined in the `world-id-primitives` crate as [`ProofResponse`](https://docs.rs/world-id-primitives/latest/world_id_primitives/request/struct.ProofResponse.html).
 
+Each item in `responses` also includes a required `expires_at_min` field: the minimum expiration required for the credential used in the proof, needed when verifying the proof on-chain.
+
 ### Response Examples
 
 <Tabs>
@@ -148,7 +155,8 @@ The schema for the response is defined in the `world-id-primitives` crate as [`P
             "identifier": "orb",
             "issuer_schema_id": 1,
             "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
-            "nullifier": "nil_00000000000000000000000000000000000000000000000001"
+            "nullifier": "nil_00000000000000000000000000000000000000000000000001",
+            "expires_at_min": 1771613013
         }
     ]
     }
@@ -174,7 +182,8 @@ The schema for the response is defined in the `world-id-primitives` crate as [`P
             "identifier": "orb",
             "issuer_schema_id": 1,
             "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
-            "session_nullifier": "00000000000000000000000000000000000000000000000001"
+            "session_nullifier": "00000000000000000000000000000000000000000000000001",
+            "expires_at_min": 1771613013
         }
     ]
     }
