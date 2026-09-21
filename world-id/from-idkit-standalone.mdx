@@ -115,7 +115,7 @@ Standalone used `verification_level` to choose what the user proves. In `idkit-c
 | `verification_level: "device"` | `deviceLegacy({ signal })` |
 
 <Note>
-  Once you drop World ID 3.0 compatibility, migrate to the v4-native presets: `proofOfHuman` (replaces `orbLegacy`) and `passport` (NFC/document credentials) — both return World ID 4.0 credentials with automatic legacy fallback. See [Configure Credentials](/world-id/idkit/credentials).
+  Once you drop World ID 3.0 compatibility, migrate to the v4-native presets: `proofOfHuman` (replaces `orbLegacy`), `passport` (NFC passports/eIDs), and `mnc` (Japanese My Number Card — also covered by the legacy `document`/`documentLegacy` mapping above) — all three return World ID 4.0 credentials with automatic legacy fallback. See [Configure Credentials](/world-id/idkit/credentials).
 </Note>
 
 ```ts
