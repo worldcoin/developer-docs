@@ -105,9 +105,9 @@ The credential decides what the user proves. Nail this down before scaffolding �
 
 Other legacy presets exist (`documentLegacy`, `deviceLegacy`); reach for them only when the user asks specifically. For sign-in / session reuse across visits, use the v4 **session** flow instead of a uniqueness preset (see the integrate doc).
 
-### National document constraints
+### NFC Credential constraints
 
-A user can enroll only one national document with World ID at a time: a passport, MNC, or eID. When composing constraints with `any()`, `all()`, or `enumerate()`, treat these document types as alternatives. Do not require multiple national documents—for example, `all(passport(), mnc())` cannot be satisfied, and `enumerate()` must not create combinations that require more than one national document.
+A user can have only one [NFC Credential](https://docs.world.org/world-id/credentials/9303) attached to their Authenticator at a time. A passport, MNC, and eID are NFC Credential types and must be treated as alternatives when composing constraints with `any()`, `all()`, or `enumerate()`. Do not require multiple NFC Credentials—for example, `all(passport(), mnc())` cannot be satisfied, and `enumerate()` must not create combinations that require more than one NFC Credential.
 
 ### Selfie Check (Beta) access
 
