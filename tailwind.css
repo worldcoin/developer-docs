@@ -162,14 +162,32 @@
   /* the page without changing the window width — the two-row layout     */
   /* above remains: the pill activates on the header's own width via a   */
   /* container query, not a viewport media query.                        */
+  /* At rest the pill floats 24px below the top edge; once the page      */
+  /* scrolls it rides up and docks flush against the viewport (the       */
+  /* offset lives on the sticky #navbar — see the margin note below).    */
   /* ------------------------------------------------------------------ */
   #navbar {
+    container-type: inline-size;
+  }
+  /* #navbar can't query its own width, so its parent — which the navbar
+     fills edge to edge, so both cross 1440px together — is the query
+     container for the one rule below that styles #navbar itself. */
+  div:has(> #navbar) {
     container-type: inline-size;
   }
   @container (min-width: 1440px) {
     /* No full-width backdrop: the pill floats on the page background. */
     #navbar #navbar-transition {
       display: none;
+    }
+    /* The pill's 24px top offset sits on the sticky #navbar, not inside
+       it: a sticky box docks by its border edge, so the offset scrolls
+       away with the page and the pill rides up to sit flush against the
+       top of the viewport (24px gap at rest → docked at 0 once scrolled
+       ≥24px). Mintlify derives --scroll-mt from the navbar's 84px height,
+       so anchored headings still land clear of the docked pill. */
+    #navbar {
+      margin-top: 24px;
     }
     /* The pill is the flex row. */
     #navbar > div.max-w-8xl {
@@ -183,7 +201,7 @@
       width: calc(100% - 7.3cqw);
       max-width: 1602px !important;
       height: 84px;
-      margin: 24px auto 0;
+      margin: 0 auto;
       padding: 0 25px 0 33px;
       background-color: #FFFFFF;
       border: 1px solid #E1DFDA;

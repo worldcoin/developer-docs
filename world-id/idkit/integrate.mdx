@@ -16,7 +16,7 @@ Use the React widget for drop-in integration, or the JS, Swift and Kotlin SDKs f
 
 ## How it works
 
-Send a **proof request** through IDKit, challenging the user to prove something about themselves — such as uniqueness, document possession or liveness — based on their [credentials](/world-id/overview#credentials). The user's World ID App generates a zero-knowledge proof without revealing personal data. Your backend then verifies the proof and stores a **nullifier** (a per-app, per-action identifier) to prevent the same person from verifying twice.
+Use IDKit to request a proof and verify it on your backend: follow this guide for one-time checks, or use [session proofs](/world-id/idkit/session-proofs) for returning users.
 
 <div className="dark:rounded-2xl dark:bg-white dark:p-6">
   <img src="/images/docs/idkit-flow-v2.svg" alt="IDKit integration flow: your app sends a proof request to World App, receives a ZK proof, forwards it to your backend, and the backend verifies it with the World ID Developer Portal" />
@@ -307,7 +307,7 @@ After the user completes the verification flow, IDKit returns one of the followi
 # Step 5: Verify the proof in your backend
 
 After completion, send the returned payload to your backend and
-forward it directly to `POST https://developer.world.org/api/v4/verify/{rp_id}`.
+forward it directly to `POST https://developer.world.org/api/v4/verify/{rp_id}`. Check that the verify response’s `environment` matches your backend’s expected environment (assert `"production"` for production integrations).
 
 <Note>
   Forward the IDKit result payload as-is. No field remapping is required.
@@ -336,14 +336,18 @@ export async function POST(request: Request): Promise<Response> {
     return NextResponse.json({ error: "Verification failed" }, { status: 400 });
   }
 
-  // Proof is valid — now store the nullifier (see Step 6)
+  // Uniqueness: store the nullifier (Step 6).
+  // Sessions: validate and store the session result (see the session guide).
   return NextResponse.json({ success: true });
 }
 ```
 
 # Step 6: Store the nullifier
 
-Every World ID proof contains a nullifier — a value derived from the user's World ID, your app, and the action. The same person verifying the same action always produces the same nullifier, but different apps or actions produce different ones, making nullifiers unlinkable across apps.
+This step applies to uniqueness requests. For session proofs, follow the
+[session guide](/world-id/idkit/session-proofs).
+
+Every uniqueness proof contains a nullifier — a value derived from the user's World ID, your app, and the action. The same person verifying the same action always produces the same nullifier, but different apps or actions produce different ones, making nullifiers unlinkable across apps.
 
 The Developer Portal confirms the proof is **cryptographically valid**, but your backend must check that the nullifier hasn't been used before. Otherwise, the same person could verify multiple times for the same action.
 

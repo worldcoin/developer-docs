@@ -1,7 +1,7 @@
 ---
 name: world-id-integration
 description: |
-  Use this skill when adding, upgrading, debugging, or testing World ID verification with IDKit in a new or existing web or mobile app. Covers Proof of Human, passport/document, Selfie Check (Beta), and session/sign-in flows; Developer Portal app, RP, and action setup; server-side signing and proof verification; environment matching; nullifier replay protection; and launch testing. Trigger when the user asks to add World ID, verify humans, stop bots or multi-accounting, add Sybil resistance, or mentions IDKit, Orb, World ID proof flows, World App proof flows, @worldcoin/idkit, signing keys, rp_id, or app_id.
+  Use this skill when adding, upgrading, debugging, or testing World ID verification with IDKit in a new or existing web or mobile app. Covers Proof of Human, passport/document, Selfie Check, and session/sign-in flows; Developer Portal app, RP, and action setup; server-side signing and proof verification; environment matching; nullifier replay protection; and launch testing. Trigger when the user asks to add World ID, verify humans, stop bots or multi-accounting, add Sybil resistance, or mentions IDKit, Orb, World ID proof flows, World App proof flows, @worldcoin/idkit, signing keys, rp_id, or app_id.
 version: 0.1.0
 metadata:
   author: worldcoin
@@ -38,7 +38,7 @@ Before changing code or creating Portal resources:
    - target environment and test path: staging simulator, production World ID, or both
    - Developer Portal MCP connection
    - whether an RP signing key already exists in a server-side secret store
-   - requested credential policy, feature access (especially Selfie Check (Beta)), and whether legacy proof fallback is needed
+   - requested credential policy and whether legacy proof fallback is needed
 3. Report a short readiness summary and ask only for unresolved blockers. **Never ask the user to paste a signing key, Portal API key, or other secret into chat.** Ask only whether it exists and where the application expects it.
 4. Build a TODO from the missing steps. Preserve working configuration and existing Portal resources unless the user explicitly wants replacements.
 
@@ -99,28 +99,46 @@ The credential decides what the user proves. Nail this down before scaffolding �
 |---|---|---|
 | **`proofOfHuman`** — Proof of Human (flagship) | The user is a unique person, biometrically verified at an Orb | Sybil resistance, airdrops, one-vote-per-human, gated signups. **The default if the user said "proof of human" or "verify a real human."** |
 | **`passport`** — Passport | The user holds a valid government passport (NFC-verified) | Higher-assurance flows where you need document-grade identity (regulated apps, age-gating, KYC-adjacent). |
-| **`selfieCheckLegacy`** — Selfie Check (Beta) | A liveness selfie signal backed by a World ID 3.0 proof | Lower-assurance "is a human in front of the camera" — friction/bot deterrence without the full Orb requirement. |
+| **`selfieCheck`** — Selfie Check | A liveness and facial-similarity credential backed by a World ID 4.0 proof | Medium-assurance friction and bot deterrence without the full Orb requirement. Returns a verified `sybil_score` risk signal. |
 
-**DO NOT default to `proofOfHuman` if the user said "passport" or "verify their ID"** — that's `passport`. **DO NOT default to `proofOfHuman` if the user said "selfie" or "liveness"** — that's `selfieCheckLegacy`. When in doubt, ask one question.
+**DO NOT default to `proofOfHuman` if the user said "passport" or "verify their ID"** — that's `passport`. **DO NOT default to `proofOfHuman` if the user said "selfie" or "liveness"** — that's `selfieCheck`. When in doubt, ask one question.
 
-Other legacy presets exist (`documentLegacy`, `deviceLegacy`); reach for them only when the user asks specifically. For sign-in / session reuse across visits, use the v4 **session** flow instead of a uniqueness preset (see the integrate doc).
+Other legacy presets exist (`documentLegacy`, `deviceLegacy`); reach for them only when the user asks specifically. For sign-in / session reuse across visits, use the v4 **session** flow (see `/world-id/idkit/session-proofs`).
 
 ### NFC Credential constraints
 
 A user can have only one [NFC Credential](https://docs.world.org/world-id/credentials/9303) attached to their Authenticator at a time. A passport, MNC, and eID are NFC Credential types and must be treated as alternatives when composing constraints with `any()`, `all()`, or `enumerate()`. Do not require multiple NFC Credentials—for example, `all(passport(), mnc())` cannot be satisfied, and `enumerate()` must not create combinations that require more than one NFC Credential.
 
-### Selfie Check (Beta) access
+### Selfie Check
 
-Before implementing or testing Selfie Check, confirm that its feature flag is
-enabled for the target app. If it is not enabled, stop and tell the user to
-request access through their World contact or the documented support path. A
-valid app or action does not imply Selfie Check access.
+For repeated Selfie Check verification, use `IDKit.createSession` followed by
+`IDKit.proveSession` with `.preset(selfieCheck())`.
+Save the verified `session_id` against the application account
+and require that same session on later checks; enforce per-proof replay protection.
+
+For a one-time uniqueness check, use the `selfieCheck` preset. Each Selfie Check
+response includes a required integer `sybil_score`; forward the complete IDKit
+result unchanged so the Developer Portal can verify the proof and version 2
+integrity signature before the app uses the score.
+
+World ID 4.0 uniqueness proofs are one-time per action for each user. Use separate
+actions for separate one-time operations, and sessions for recurring checks.
+Migrate existing `selfieCheckLegacy` integrations to the appropriate World ID 4.0
+flow above. See `/world-id/idkit/session-proofs` for the session lifecycle and
+backend requirements.
 
 ## Phase 4 — Implement the 6 integration steps and explain the WHY
 
 The full code for each step is at [https://docs.world.org/world-id/idkit/integrate](https://docs.world.org/world-id/idkit/integrate). Don't reproduce it; link to it and adapt to the user's framework. The agent owns making sure each step is done **and understood**.
 
 **Copy this checklist into your TODO and update it as you go.** Don't move on with an unchecked step.
+
+The checklist below describes uniqueness requests. For session integrations,
+adapt it using `/world-id/idkit/session-proofs`: omit action setup and omit the
+action from RP signing,
+use `IDKitSessionWidget` or the session builders with presets, and replace
+uniqueness-nullifier storage with verified account-to-session binding and
+per-proof replay protection. Test both creation and proving the saved session.
 
 - [ ] Step 1 — Install IDKit
 - [ ] Step 2 — Create or reuse app + RP + action (store any newly generated signing key immediately)
@@ -154,7 +172,7 @@ Do not declare the integration complete from compilation or Portal configuration
 - [ ] Backend verification succeeds and the exact IDKit result reaches `/api/v4/verify/{rp_id}`.
 - [ ] The verified nullifier is persisted.
 - [ ] Replaying the same nullifier is rejected by the database uniqueness constraint.
-- [ ] Relevant failures—unavailable Selfie Check, invalid action/signature, or environment mismatch—produce an actionable user-facing error instead of an indefinite loading state.
+- [ ] Relevant failures—replayed nullifiers, invalid action/signature, or environment mismatch—produce an actionable user-facing error instead of an indefinite loading state.
 - [ ] JS/React failures retain the `debugReport` and `request_id` needed for diagnosis without logging secrets.
 
 Run automated tests for the routes and persistence behavior. Clearly identify simulator, phone, or production checks that still require the user; never imply a manual proof flow ran when it did not.
