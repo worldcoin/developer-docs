@@ -105,6 +105,10 @@ The credential decides what the user proves. Nail this down before scaffolding â
 
 Other legacy presets exist (`documentLegacy`, `deviceLegacy`); reach for them only when the user asks specifically. For sign-in / session reuse across visits, use the v4 **session** flow instead of a uniqueness preset (see the integrate doc).
 
+### National document constraints
+
+A user can enroll only one national document with World ID at a time: a passport, MNC, or eID. When composing constraints with `any()`, `all()`, or `enumerate()`, treat these document types as alternatives. Do not require multiple national documentsâ€”for example, `all(passport(), mnc())` cannot be satisfied, and `enumerate()` must not create combinations that require more than one national document.
+
 ### Selfie Check (Beta) access
 
 Before implementing or testing Selfie Check, confirm that its feature flag is
