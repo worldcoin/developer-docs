@@ -105,6 +105,10 @@ The credential decides what the user proves. Nail this down before scaffolding â
 
 Other legacy presets exist (`documentLegacy`, `deviceLegacy`); reach for them only when the user asks specifically. For sign-in / session reuse across visits, use the v4 **session** flow (see `/world-id/idkit/session-proofs`).
 
+### NFC Credential constraints
+
+A user can have only one [NFC Credential](https://docs.world.org/world-id/credentials/9303) attached to their Authenticator at a time. A passport, MNC, and eID are NFC Credential types and must be treated as alternatives when composing constraints with `any()`, `all()`, or `enumerate()`. Do not require multiple NFC Credentialsâ€”for example, `all(passport(), mnc())` cannot be satisfied, and `enumerate()` must not create combinations that require more than one NFC Credential.
+
 ### Selfie Check
 
 For repeated Selfie Check verification, use `IDKit.createSession` followed by
