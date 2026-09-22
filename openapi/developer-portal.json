@@ -718,7 +718,7 @@
     "/api/v1/jwks": {
       "get": {
         "summary": "Get JWK Keys",
-        "description": "Retrieve JWKs (public keys) used to verify JWT signatures for verification requests. Not edge-cached, and no dedicated rate limit is published; cache client-side and refetch only on a `kid` miss.",
+        "description": "Retrieve JWKs (public keys) used to verify JWT signatures for verification requests. Not edge-cached, and no dedicated rate limit is published; cache client-side, refetch on a `kid` miss, and also enforce a bounded TTL (e.g. 1 hour) so a revoked or rotated-out key isn't trusted indefinitely by a client that already has it cached — a miss alone never fires for a key that's been removed, only for one that's unknown.",
         "x-mint": {
           "href": "/api-reference/developer-portal/get-jwk-keys"
         },
@@ -1103,6 +1103,16 @@
                 },
                 "description": "Localized notification content. Include at least `en`."
               },
+              "title": {
+                "type": "string",
+                "maxLength": 30,
+                "description": "Optional legacy title, ignored when `localisations` is present. Allowed here so callers may include both without failing validation — see this schema's top-level description."
+              },
+              "message": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "Optional legacy message, ignored when `localisations` is present. Allowed here so callers may include both without failing validation — see this schema's top-level description."
+              },
               "mini_app_path": {
                 "type": "string",
                 "description": "Deeplink to open when the user taps the notification: a WorldApp/World ID mini app deeplink (`worldapp://mini-app?app_id=...` or `worldid://mini-app?app_id=...`), a Deep Face Universal Link (`https://world.org/verify?t=deepface`), or a Deep Face deeplink (`worldapp://verify?t=deepface`, `worldid://verify?t=deepface`, `worldidstg://verify?t=deepface`)."
@@ -1114,7 +1124,7 @@
             "additionalProperties": false
           }
         ],
-        "description": "Supports legacy payload (`title` + `message`) and localized payload (`localisations`). If both are provided, localized payload is used."
+        "description": "Supports legacy payload (`title` + `message`) and localized payload (`localisations`). If both are provided, localized payload is used — include `localisations` alongside `title`/`message` rather than choosing one shape, since the legacy branch's `additionalProperties: false` rejects a `localisations` field."
       },
       "SendNotificationResultItem": {
         "type": "object",
