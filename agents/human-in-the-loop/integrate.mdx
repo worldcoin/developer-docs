@@ -83,8 +83,13 @@ const approvalInputSchema = z.object({
 
 const bookingInputSchema = z.object({
   flightNumber: z.string(),
-  // World ID 4.0 proofs bind `nonce`, so it can key one-time use below.
-  approval: z.object({ protocol_version: z.literal('4.0'), action: z.string(), nonce: z.string() }).passthrough(),
+  // One credential, so its nullifier identifies the approval below.
+  approval: z
+    .object({
+      action: z.string(),
+      responses: z.array(z.object({ nullifier: z.string() }).passthrough()).length(1),
+    })
+    .passthrough(),
 })
 
 // Atomically records an approval key; returns false if it was already used.
@@ -122,14 +127,21 @@ export const tools = {
       const res = await fetch(`https://developer.world.org/api/v4/verify/${rpId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(approval),
+        // The approval is untrusted input: pin the environment so it can't
+        // select "staging" or "sandbox", which accept test proofs.
+        body: JSON.stringify({ ...approval, environment: 'production' }),
         signal: AbortSignal.timeout(10_000),
       })
       if (!res.ok) {
         throw new Error(`approval failed World ID verification (${res.status}): ${await res.text()}`)
       }
 
-      if (!(await consumeApproval(`${expectedAction}:${approval.nonce}`))) {
+      // One-time use, keyed on the proof's nullifier (bound by 3.0 and 4.0
+      // proofs). Parse it as the verifier does, so "0x01" and "0x1" share a
+      // key. Nullifiers repeat per person and action, so each person can book
+      // a flight number once; add a unique booking ID to the action to allow more.
+      const nullifier = BigInt(approval.responses[0].nullifier).toString(16)
+      if (!(await consumeApproval(`${expectedAction}:${nullifier}`))) {
         throw new Error('approval already used')
       }
 
