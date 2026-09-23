@@ -67,7 +67,7 @@ export async function chatWorkflow(messages: ModelMessage[]) {
 ## Step 2: Register the approval tool
 
 <Warning>
-World ID only protects what you bind `action` to. Left at its default (`toolCallId`), the proof binds to an opaque per-call ID, not the action itself — breaking the replay guarantee for any side-effecting tool. The tool that performs the side effect must derive its own `action` from that action's parameters and independently re-verify `IDKitResult` before trusting it — tool inputs are LLM-generated and can be tampered with. See the [flight booking example](https://github.com/worldcoin/human-in-the-loop/tree/main/examples/flight-booking) for the full pattern.
+The default `action` is the unique `toolCallId`. For a sensitive operation, your backend must bind the approval to the intended operation and its parameters, independently verify the proof, and consume the approval once before performing the side effect. A required `approval` input is not proof of authorization — tool inputs are LLM-generated. See the [flight booking example](https://github.com/worldcoin/human-in-the-loop/tree/main/examples/flight-booking) for proof verification and parameter binding.
 </Warning>
 
 ```ts
@@ -75,36 +75,44 @@ World ID only protects what you bind `action` to. Left at its default (`toolCall
 import { requestHumanAuthorization } from '@worldcoin/human-in-the-loop/workflows'
 import { z } from 'zod'
 
+const approvalInputSchema = z.object({
+  summary: z.string(),
+  flightNumber: z.string(),
+})
+
+const bookingInputSchema = z.object({
+  flightNumber: z.string(),
+  approval: z.object({ action: z.string() }).passthrough(),
+})
+
 export const tools = {
   approveAction: {
     description: 'Request human approval via World ID before a sensitive action.',
-    inputSchema: z.object({ summary: z.string(), flightNumber: z.string() }),
+    inputSchema: approvalInputSchema,
 
     // Pauses the workflow, streams approval context to the client,
     // waits for World ID proof, verifies it, then resumes.
-    // Bind `action` to the action's own parameters — never leave this
-    // at the toolCallId default for a side-effecting action:
-    execute: requestHumanAuthorization({
+    // Bind this example's approval to the flight number.
+    execute: requestHumanAuthorization<z.infer<typeof approvalInputSchema>>({
       action: ({ input }) => `booking:${input.flightNumber}`,
     }),
   },
   bookFlight: {
-    description: 'Book the flight. Requires the IDKitResult from approveAction as `approval` — the model cannot call this without it.',
-    // `approval` is required input, not something execute reads from
-    // elsewhere: a model that skips approveAction has no value to pass here.
-    inputSchema: z.object({
-      flightNumber: z.string(),
-      approval: z.object({ action: z.string() }).passthrough(),
-    }),
+    description: 'Book the flight using the IDKitResult from approveAction as `approval`.',
+    // Requiring an object does not establish that its proof is authentic.
+    inputSchema: bookingInputSchema,
     // Must independently re-verify the proof for this same `action`
     // before booking — never trust that approveAction ran just because
     // this tool was called. See the flight-booking example's bookFlight().
-    execute: async ({ flightNumber, approval }) => {
+    execute: async ({ flightNumber, approval }: z.infer<typeof bookingInputSchema>) => {
+      'use step'
+
       const expectedAction = `booking:${flightNumber}`
       if (approval.action !== expectedAction) {
         throw new Error(`approval does not match this booking (expected action: ${expectedAction})`)
       }
-      // ...re-verify `approval` against the World ID verify endpoint, then book
+      // ...verify the complete proof against the World ID verify endpoint,
+      // enforce one-time use for this pending booking, then book the flight
     },
   },
   // ...your other tools

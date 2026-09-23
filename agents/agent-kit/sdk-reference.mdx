@@ -246,8 +246,8 @@ Returns the JSON schema used in 402 challenge payloads.
 | `formatSIWEMessage`    | Reconstruct the SIWE message used for EVM signing and verification. |
 | `verifyEVMSignature`   | Verify an EVM signature for the reconstructed SIWE message. |
 | `extractEVMChainId`    | Convert a CAIP-2 `eip155:*` chain ID to its numeric chain ID. |
-| `resolveAgentkitSignatureRpcUrl` | Resolve the RPC URL to use for a given CAIP-2 chain ID from a `rpcUrl`/`rpcUrls` option pair, falling back to the chain's default public RPC. |
-| `getDefaultPublicRpcUrl` | Return the default public RPC URL for a given CAIP-2 chain ID. |
+| `resolveAgentkitSignatureRpcUrl` | Return the configured `rpcUrls[chainId]` or `rpcUrl` for a CAIP-2 chain ID, or `undefined`. The signature verifier selects the chain's default public RPC downstream. |
+| `getDefaultPublicRpcUrl` | Return the default public RPC URL for a numeric chain ID, such as `480`, or `undefined` if no default is configured. |
 
 EVM verification uses viem's `verifyMessage`, which covers EOAs and ERC-1271 smart wallets. Counterfactual wallets can still represent their signature scheme with `signatureScheme: "eip6492"` in the payload schema.
 
