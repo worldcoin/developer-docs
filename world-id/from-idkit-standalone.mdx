@@ -101,18 +101,22 @@ await fetch("/api/verify-proof", {
 
 ## Credential Mapping
 
-Standalone used `verification_level` to choose what the user proves. In `idkit-core`, use a legacy preset instead. These presets are drop-in replacements for the old verification levels.
+Standalone used `verification_level` to choose what the user proves. In `idkit-core`, use a legacy preset instead. These presets only return World ID 3.0 proofs — a compatibility step, not the final migration target.
 
 <Note type="info">
   Legacy presets return the maximum credential a user has. For example, if a user has an Orb credential but you request `documentLegacy`, they verify with their Orb credential.
 </Note>
 
-| Standalone | `idkit-core` preset |
+| Standalone | `idkit-core` preset (compatibility-only) |
 | --- | --- |
 | `verification_level: "orb"` | `orbLegacy({ signal })` |
 | `verification_level: "secure_document"` | `secureDocumentLegacy({ signal })` |
 | `verification_level: "document"` | `documentLegacy({ signal })` |
 | `verification_level: "device"` | `deviceLegacy({ signal })` |
+
+<Note>
+  For World ID 4.0, use the v4-native presets: `proofOfHuman` (replaces `orbLegacy`), `passport` (NFC passports/eIDs), or `mnc` (Japanese My Number Card). They always keep World ID 3.0 fallback on, regardless of `allow_legacy_proofs`. A single preset narrows a `document` integration, since `documentLegacy` accepted Orb, passport/eID, and MNC holders alike; to keep all of them, use `.constraints(any(CredentialRequest("proof_of_human"), CredentialRequest("passport"), CredentialRequest("mnc")))`. Constraint requests have no credential-specific 3.0 fallback (any 3.0 fallback is Device-level), so use them with `allow_legacy_proofs: false`, which is also how you drop World ID 3.0 entirely. See [Configure Credentials](/world-id/idkit/credentials).
+</Note>
 
 ```ts
 import {

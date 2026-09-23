@@ -42,6 +42,8 @@ npm i @worldcoin/idkit
 ```
 
 ```kotlin title="Kotlin (Gradle)"
+// Currently published to GitHub Packages only (not yet on Maven Central).
+// Full setup (repository + credentials): /world-id/idkit/kotlin#install
 dependencies {
     implementation("com.worldcoin:idkit:<version>")
 }
@@ -136,7 +138,7 @@ func handleRPSignature(w http.ResponseWriter, r *http.Request) {
 </Note>
 
 # Step 4: Generate the connect URL and collect proof
-To test during development, use the [simulator](https://simulator.worldcoin.org/) and set `environment` to `"staging"`.
+To test during development, use the [simulator](https://simulator.worldcoin.org/) and set `environment` to `"staging"`. To test with the sandbox build of World ID instead, see [Sandbox](/world-id/sandbox/what-is-sandbox).
 
 <CodeGroup title="Create request and collect proof">
 ```typescript title="JavaScript"
@@ -162,7 +164,7 @@ const request = await IDKit.request({
     signature: rpSig.sig,
   },
   allow_legacy_proofs: true,
-  environment: "production", // Only set this to staging for testing with the simulator
+  environment: "production", // "staging" (simulator) or "sandbox" (sandbox build of World ID)
   return_to: "myapp://verify-done", // Optional: mobile deep-link callback URL
   // Signal (optional): Bind specific context into the requested proof.
   // Examples: user ID, wallet address. Your backend should enforce the same value.
@@ -297,6 +299,8 @@ val connectorURI = request.connectorURI
 val completion = request.pollUntilCompletion()
 ```
 </CodeGroup>
+
+> Advanced (JS/React): for custom multi-credential requests (e.g. Proof of Human AND (Passport OR MNC)), use `.constraints(...)` instead of `.preset(...)` (in React, the `constraints` prop instead of `preset`), built with the `any`/`all`/`enumerate`/`CredentialRequest` helpers from `@worldcoin/idkit-core` (also exported by `@worldcoin/idkit`). A user holds at most one [NFC credential](/world-id/credentials/9303), so passport and MNC are alternatives: combine them with `any`, never `all`. The Kotlin and Swift SDKs don't expose these helpers.
 
 ### IDKit response
 

@@ -123,7 +123,7 @@ proofs. At the app's cutover, it begins accepting only v4 proofs.
 
 **Old Contract - Disable minting here:**
 
-```jsx Mint.sol
+```solidity Mint.sol
 mapping(uint256 => bool) internal oldNullifierHashes;
 mapping(address => bool) public oldHasMinted;
 
@@ -136,7 +136,7 @@ function mint(){
 
 **New Contract - Check both old and new nullifiers:**
 
-```ts Mintv4.sol
+```solidity Mintv4.sol
 mapping(uint256 => bool) internal nullifierHashes;
 mapping(address => bool) public hasMinted;
 
