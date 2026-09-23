@@ -74,7 +74,7 @@ const request = await IDKit.request({
 
 ## Constraints
 
-`.constraints(...)` builds custom World ID 4.0 credential requests, including composite trees (e.g. Orb OR (Passport AND MNC)), using `CredentialRequest`, `any`, `all`, and `enumerate`. It's the only finalizer `IDKit.createSession()`/`IDKit.proveSession()` builders accept — `.preset()` throws on a session builder.
+`.constraints(...)` builds custom World ID 4.0 credential requests, including composite trees (e.g. Proof of Human AND (Passport OR MNC)), using `CredentialRequest`, `any`, `all`, and `enumerate`. It's the only finalizer `IDKit.createSession()`/`IDKit.proveSession()` builders accept — `.preset()` throws on a session builder.
 
 ```ts
 import { IDKit, CredentialRequest, any, all } from "@worldcoin/idkit-core";
@@ -83,10 +83,11 @@ const request = await IDKit.request({
   app_id: "app_xxxxx",
   action: "my-action",
   rp_context,
+  allow_legacy_proofs: false,
 }).constraints(
-  any(
+  all(
     CredentialRequest("proof_of_human"),
-    all(CredentialRequest("passport"), CredentialRequest("mnc")),
+    any(CredentialRequest("passport"), CredentialRequest("mnc")),
   ),
 );
 ```

@@ -119,7 +119,7 @@ Hook result fields:
 - `errorCode`
 - `getDebugReport()`
 
-This is the same `IDKitHookResult<T>` shape returned by `useIDKitInviteCodeRequest` and `useIDKitSession`, and shared by the equivalent widget-based flows.
+`useIDKitRequest` and `useIDKitSession` return `IDKitHookResult<T>`. `useIDKitInviteCodeRequest` returns `IDKitInviteCodeHookResult<T>`, which includes these common fields plus `codeExpiresAt`, the invite code's expiration timestamp in Unix seconds (or `null` before a code is available).
 
 ## Invite-code mode
 

@@ -103,10 +103,10 @@ sig, err = signer.SignRequest(idkit.WithAction("my-action"))
 
 ## Other exports
 
-`@worldcoin/idkit-server` (also re-exported from `@worldcoin/idkit-core/session` and `@worldcoin/idkit/session`) exports two more functions alongside `signRequest`:
+`@worldcoin/idkit-server` exports two more functions alongside `signRequest`:
 
-- `computeRpSignatureMessage(...)` — builds the message bytes described in [`compute_rp_signature_message`](#algorithm) above, if you need the raw message instead of a full signature.
-- `getSessionCommitment(sessionId: string): bigint` — converts a session ID into the on-chain commitment value, for session-proof flows (see [Session proofs](/world-id/4-0-migration)).
+- `computeRpSignatureMessage(...)` — builds the message bytes described in [`compute_rp_signature_message`](#algorithm) above, if you need the raw message instead of a full signature. Also exported from `@worldcoin/idkit-core/signing`.
+- `getSessionCommitment(sessionId: string): bigint` — converts a session ID into the on-chain commitment value, for session-proof flows (see [Session proofs](/world-id/idkit/session-proofs)). Also exported from `@worldcoin/idkit-core/session` and `@worldcoin/idkit/session`.
 
 ## Test vectors
 
