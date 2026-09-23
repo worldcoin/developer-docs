@@ -16,11 +16,7 @@ World Chain mainnet and testnet run on the OP Stack as part of the Superchain. W
 
 ## Using `simple-worldchain-node`
 
-`simple-worldchain-node` supports World Chain Mainnet and Sepolia, full nodes and archive nodes, and two execution clients: [op-geth](https://github.com/ethereum-optimism/op-geth) and [op-reth](https://github.com/paradigmxyz/reth).
-
-<Note>
-  World Chain archive node snapshots for `op-geth` are available from Bware Labs [here](https://bwarelabs.com/snapshots/worldchain).
-</Note>
+`simple-worldchain-node` supports World Chain Mainnet and Sepolia, and archive, full, and minimal node types, running the `world-chain` client (a customized extension of [op-reth](https://github.com/paradigmxyz/reth)).
 
 ### Installation
 
@@ -46,12 +42,8 @@ Open your `.env` file in an editor of your choice. The following values must be 
   Used to select which network the node connects to, either `worldchain-mainnet` or `worldchain-sepolia`.
 </ParamField>
 
-<ParamField body="COMPOSE_PROFILES" type="geth | reth" required>
-  Used to select your execution client, either `geth` (default) or `reth` (recommended for archive nodes).
-</ParamField>
-
-<ParamField body="GETH_NODE_TYPE" type="full | archive" required>
-  When using `op-geth`, determines which type of node to run. Either `full` (less storage, but only recent history) or `archive` (more storage, all history).
+<ParamField body="NODE_TYPE" type="archive | full | minimal" required>
+  Determines which type of node to run: `archive` (more storage, all history), `full` (less storage, only recent history), or `minimal` (smallest storage footprint).
 </ParamField>
 
 <ParamField body="L1_RPC_ENDPOINT" type="URL" required>
@@ -63,15 +55,15 @@ Open your `.env` file in an editor of your choice. The following values must be 
 </ParamField>
 
 <ParamField body="L1_RPC_TYPE" type="string" required>
-  Selects which RPC provider is set in `OP_NODE__RPC_ENDPOINT`. This allows for more efficient syncing given different RPC capabilities. Choose from `alchemy`, `quicknode`, `erigon`, or `basic` for other RPC providers.
+  Selects which RPC provider is set in `L1_RPC_ENDPOINT`. This allows for more efficient syncing given different RPC capabilities. Choose from `alchemy`, `quicknode`, `erigon`, or `basic` for other RPC providers.
 </ParamField>
 
-<ParamField body="GETH_SYNCMODE" type="string">
-  Selects whether `op-geth` will use snap sync or full sync. Defaults to `snap` for non-archival nodes and `full` for archive nodes.
+<ParamField body="FLASHBLOCKS_ENABLED" type="boolean">
+  Enables Flashblocks support for faster block propagation. Defaults to `true`.
 </ParamField>
 
-<ParamField body="GETH_STATE_SCHEME" type="string" required>
-  Selects whether `op-geth` uses hash-based or path-based storage. As of `op-geth` v1.101602.0, path-based storage is supported for archive nodes and is enabled by default, leading to lower disk usage. The `eth_getProof` RPC method is not supported when using path-based storage.
+<ParamField body="DOWNLOAD_SNAPSHOT" type="boolean">
+  Downloads a snapshot to speed up initial sync when the data directory is empty. Defaults to `true`; set to `false` to sync from genesis instead (not recommended).
 </ParamField>
 
 For details on additional settings, see the `simple-worldchain-node` [README](https://github.com/worldcoin-foundation/simple-worldchain-node?tab=readme-ov-file#optional-configurations).
@@ -98,14 +90,11 @@ docker compose down
 
 ### Monitoring your node
 
-A Grafana dashboard is included to monitor your node. Access it by visiting http://localhost:3000 and logging in with these credentials:
-
-- Username: `admin`
-- Password: `worldchain`
+A Grafana dashboard is included to monitor your node. Access it by visiting http://localhost:3000 — anonymous access is enabled by default, so no login is required.
 
 ### Upgrading your Node
 
-When new versions of `op-geth`, `op-reth`, or `op-node` are released, we will update the `simple-worldchain-node` repository to use these new versions. You can then update your node to use these versions with the following commands:
+When new versions of `world-chain` or `op-node` are released, we will update the `simple-worldchain-node` repository to use these new versions. You can then update your node to use these versions with the following commands:
 
 ```bash
 git pull
