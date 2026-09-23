@@ -19,11 +19,11 @@ Built on the [Workflow SDK](https://useworkflow.dev) and the [Vercel AI SDK](htt
 ## Install
 
 ```bash
-# Server — human-in-the-loop + peer dependencies (ai@^5 is the supported major)
-npm install @worldcoin/human-in-the-loop ai@^5 workflow @workflow/ai
+# Server — human-in-the-loop + peer dependencies
+npm install @worldcoin/human-in-the-loop ai@^6 workflow @workflow/ai zod
 
 # Client — React bindings + peer dependencies
-npm install @worldcoin/human-in-the-loop-react @worldcoin/idkit ai@^5 react
+npm install @worldcoin/human-in-the-loop-react @worldcoin/idkit ai@^6 react
 ```
 
 ## Environment variables
@@ -46,6 +46,7 @@ Get these from the [World developer portal](https://developer.world.org) by crea
 import { DurableAgent } from '@workflow/ai/agent'
 import { getWritable } from 'workflow'
 import { openai } from '@workflow/ai/openai'
+import type { ModelMessage, UIMessageChunk } from 'ai'
 import { tools } from './steps/tools'
 
 export async function chatWorkflow(messages: ModelMessage[]) {
@@ -56,7 +57,7 @@ export async function chatWorkflow(messages: ModelMessage[]) {
   const agent = new DurableAgent({
     model: openai('gpt-5.4'),
     tools,
-    system:
+    instructions:
       'You are a helpful assistant. Before performing any sensitive action, call approveAction first, then pass its returned result as the `approval` argument to the action tool — never call the action tool without it.',
   })
 
@@ -82,8 +83,13 @@ const approvalInputSchema = z.object({
 
 const bookingInputSchema = z.object({
   flightNumber: z.string(),
-  approval: z.object({ action: z.string() }).passthrough(),
+  // World ID 4.0 proofs bind `nonce`, so it can key one-time use below.
+  approval: z.object({ protocol_version: z.literal('4.0'), action: z.string(), nonce: z.string() }).passthrough(),
 })
+
+// Atomically records an approval key; returns false if it was already used.
+// Back it with durable storage (e.g. a unique database key), not memory.
+declare function consumeApproval(key: string): Promise<boolean>
 
 export const tools = {
   approveAction: {
@@ -101,9 +107,8 @@ export const tools = {
     description: 'Book the flight using the IDKitResult from approveAction as `approval`.',
     // Requiring an object does not establish that its proof is authentic.
     inputSchema: bookingInputSchema,
-    // Must independently re-verify the proof for this same `action`
-    // before booking — never trust that approveAction ran just because
-    // this tool was called. See the flight-booking example's bookFlight().
+    // Never trust that approveAction ran just because this tool was called:
+    // check the binding, re-verify the proof, and consume it once.
     execute: async ({ flightNumber, approval }: z.infer<typeof bookingInputSchema>) => {
       'use step'
 
@@ -111,8 +116,24 @@ export const tools = {
       if (approval.action !== expectedAction) {
         throw new Error(`approval does not match this booking (expected action: ${expectedAction})`)
       }
-      // ...verify the complete proof against the World ID verify endpoint,
-      // enforce one-time use for this pending booking, then book the flight
+
+      const rpId = process.env.WORLD_RP_ID
+      if (!rpId) throw new Error('WORLD_RP_ID is required to verify approvals')
+      const res = await fetch(`https://developer.world.org/api/v4/verify/${rpId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(approval),
+        signal: AbortSignal.timeout(10_000),
+      })
+      if (!res.ok) {
+        throw new Error(`approval failed World ID verification (${res.status}): ${await res.text()}`)
+      }
+
+      if (!(await consumeApproval(`${expectedAction}:${approval.nonce}`))) {
+        throw new Error('approval already used')
+      }
+
+      // ...book the flight
     },
   },
   // ...your other tools

@@ -5,7 +5,7 @@ description: "Projects and services that integrate AgentKit."
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-Find places to use AgentKit in the [AgentBook registry](https://github.com/andy-t-wang/agentbook) (the agentbook.world frontend is down; query status on-chain with `npx @worldcoin/agentkit-cli status <agent-wallet-address>`).
+Find places to use AgentKit in the [AgentBook registry](https://github.com/andy-t-wang/agentbook). To check whether an agent wallet is registered, run `npx @worldcoin/agentkit-cli status <agent-wallet-address>`.
 To add your project, open a PR to the registry.
 
 If you build an agent that calls x402 APIs, use [`createAgentkitClient`](/agents/agent-kit/sdk-reference#createagentkitclientoptions) and call `agentkit.fetch` so the agent tries AgentKit verification before paying. If you cannot change the agent's HTTP client, add the `agentkit-x402` skill:

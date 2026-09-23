@@ -171,7 +171,7 @@ The returned object exposes:
 lookupHuman(address: string): Promise<string | null>
 ```
 
-`lookupHuman` returns `null` both when the wallet is unregistered and when the lookup itself fails (RPC timeout, network error, public RPC outage) — failures are swallowed internally and indistinguishable from "not registered" by return value alone. To alert on lookup failures separately, wrap `rpcUrl`/`client` with your own timeout and circuit breaker.
+`lookupHuman` returns `null` both when the wallet is unregistered and when the lookup itself fails (RPC timeout, network error, public RPC outage) — failures are swallowed internally and indistinguishable from "not registered" by return value alone. To bound lookups and surface RPC failures separately, pass a custom viem `client` with a timeout, e.g. `createPublicClient({ transport: http(rpcUrl, { timeout: 5_000 }) })`, and monitor that RPC endpoint.
 
 ## Storage and replay protection
 
