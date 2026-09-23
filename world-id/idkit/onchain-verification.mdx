@@ -177,5 +177,5 @@ Minimal mapping from IDKit result:
 - `proof` = `responses[i].proof` (`uint256[5]`)
 
 <Warning>
-  Never pass a raw, unreduced `keccak256(action)` — it exceeds the BN254 scalar field and reverts with `PublicInputNotInField`. Reduce it with `hash_to_field` (`keccak256(action) >> 8`) first.
+  Use `hash_to_field(action)` (`keccak256(action) >> 8`). An unreduced hash can exceed the BN254 scalar field and revert with `PublicInputNotInField`; even when it fits, it does not match the field-reduced action used by the proof.
 </Warning>
