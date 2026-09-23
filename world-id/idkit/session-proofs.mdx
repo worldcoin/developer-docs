@@ -38,13 +38,13 @@ each example invocation.
 ## Create a session
 
 ```typescript
-import { IDKit, selfieCheck } from "@worldcoin/idkit-core";
+import { IDKit, CredentialRequest } from "@worldcoin/idkit-core";
 
 const request = await IDKit.createSession({
   app_id,
   rp_context,
   environment: "production",
-}).preset(selfieCheck());
+}).constraints(CredentialRequest("selfie"));
 
 // Display request.connectorURI as a link or QR code, then wait for the user.
 const completion = await request.pollUntilCompletion({ timeout: 120_000 });
@@ -54,7 +54,8 @@ if (!completion.success) throw new Error(completion.error);
 // Save its session_id against the account only after verification succeeds.
 ```
 
-The `selfieCheck()` preset selects the Selfie Check credential. See
+`CredentialRequest("selfie")` selects the Selfie Check credential. Session builders
+accept `.constraints(...)`; `.preset(...)` is only supported for uniqueness requests. See
 [Configure Credentials](/world-id/idkit/credentials) for credential options.
 
 Your backend must verify the complete result before saving its `session_id`.
@@ -68,13 +69,13 @@ Load the saved session ID from your backend for the account being verified, and
 obtain a fresh RP signature. Prove that existing session:
 
 ```typescript
-import { IDKit, selfieCheck } from "@worldcoin/idkit-core";
+import { IDKit, CredentialRequest } from "@worldcoin/idkit-core";
 
 const request = await IDKit.proveSession(savedSessionId, {
   app_id,
   rp_context,
   environment: "production",
-}).preset(selfieCheck());
+}).constraints(CredentialRequest("selfie"));
 
 const completion = await request.pollUntilCompletion({ timeout: 120_000 });
 if (!completion.success) throw new Error(completion.error);
@@ -87,7 +88,7 @@ if (!completion.success) throw new Error(completion.error);
 Preserve it unchanged. Creating a new session on each visit does not establish
 continuity with the account's existing session.
 
-For React, use `IDKitSessionWidget` with
-`preset={selfieCheck()}`. Omit `existing_session_id` for
+For React, import `IDKitSessionWidget` and `CredentialRequest` from
+`@worldcoin/idkit`, then use `constraints={CredentialRequest("selfie")}`. Omit `existing_session_id` for
 creation and set it to the saved session ID for subsequent checks. The widget's
 `handleVerify` callback should call your backend before `onSuccess` grants access.
