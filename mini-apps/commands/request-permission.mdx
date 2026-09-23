@@ -81,6 +81,8 @@ Define a custom fallback in the command payload for support outside mini apps.
 
 ## Error Codes
 
+The SDK's `RequestPermissionErrorCodes` enum defines these errors:
+
 | Code | Meaning |
 | --- | --- |
 | `user_rejected` | The user rejected the request |
@@ -89,8 +91,8 @@ Define a custom fallback in the command payload for support outside mini apps.
 | `permission_disabled` | The permission is disabled |
 | `already_granted` | The permission is already granted |
 | `unsupported_permission` | The permission is not supported |
-| `world_app_permission_not_enabled` | The permission is disabled at the World App level; prompt the user to enable it in World App settings |
-| `mini_app_permission_not_enabled` | The permission is disabled at the mini app level; prompt the user to enable it in World App settings |
+
+For microphone access, the SDK also handles `world_app_permission_not_enabled` and `mini_app_permission_not_enabled` on the separate `MiniAppMicrophone` response event. These are not members of `RequestPermissionErrorCodes`; see the [microphone guide](/mini-apps/reference/microphone) for the microphone permission flow.
 
 ## Preview
 

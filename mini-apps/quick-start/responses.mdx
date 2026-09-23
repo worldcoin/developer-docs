@@ -50,10 +50,11 @@ async function signInWithWallet() {
 
 For new 2.x command integrations, prefer `await MiniKit.<command>()`; it resolves (or throws) directly, no event listener needed.
 
-MiniKit still exposes its lower-level event API for observing a response event directly (e.g. to fan the response out to multiple listeners):
+MiniKit also exposes a lower-level event API with one handler per response event. A new subscription replaces the previous handler. Use it only when managing the low-level response flow yourself:
 
 ```tsx
-import { MiniKit, ResponseEvent } from "@worldcoin/minikit-js";
+import { MiniKit } from "@worldcoin/minikit-js";
+import { ResponseEvent } from "@worldcoin/minikit-js/commands";
 
 MiniKit.subscribe(ResponseEvent.MiniAppWalletAuth, (payload) => {
   console.log(payload);
@@ -63,5 +64,6 @@ MiniKit.subscribe(ResponseEvent.MiniAppWalletAuth, (payload) => {
 MiniKit.unsubscribe(ResponseEvent.MiniAppWalletAuth);
 ```
 
-`MiniKit.trigger(event, payload)` dispatches an event to subscribers manually, mainly for testing. Prefer `await MiniKit.<command>()` in application code.
+Commands register their response handlers with the same event manager. Do not use subscriptions to observe a concurrent `MiniKit.<command>()` call: registrations can replace each other, and unsubscribing can prevent the command promise from resolving. Handle the awaited result instead.
 
+`MiniKit.trigger(event, payload)` invokes the event's current handler manually, mainly for testing.

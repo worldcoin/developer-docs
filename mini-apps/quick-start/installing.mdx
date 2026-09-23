@@ -98,12 +98,12 @@ console.log(MiniKit.isInstalled());
 ```tsx
 import { useMiniKit } from "@worldcoin/minikit-js/minikit-provider";
 
-export function AuthButton() {
-  const { isInstalled, user } = useMiniKit();
+export function MiniKitStatus() {
+  const { isInstalled } = useMiniKit();
 
   if (!isInstalled) return null;
 
-  return <span>{user?.username ?? "Not signed in"}</span>;
+  return <span>MiniKit is installed</span>;
 }
 ```
 

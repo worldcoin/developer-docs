@@ -31,10 +31,15 @@ You can also look a user up by their username with `getUserByUsername`:
 const worldIdUser = await MiniKit.getUserByUsername(username)
 ```
 
-Both methods resolve to the same shape: `{ walletAddress: string; username: string; profilePictureUrl: string; }`.
+Both methods return an object with `walletAddress`, `username`, and `profilePictureUrl` properties. The SDK type marks `username` and `profilePictureUrl` as optional; callers must also handle `null` profile values at runtime.
 
 <Note>
-Neither method throws for an unknown address or username. A 404 still resolves the promise, with `walletAddress`, `username`, and `profilePictureUrl` all `undefined`. Check for a falsy `walletAddress` before using the result.
+The two lookup methods handle unknown users differently:
+
+- `getUserByAddress(address)` preserves the supplied `walletAddress`. When the service returns no profile, `username` and `profilePictureUrl` are `null`.
+- `getUserByUsername(username)` maps the service's unknown-user 404 response to an object whose properties are `undefined`.
+
+Check for a username before using profile data; a truthy `walletAddress` alone does not mean a profile exists. These unknown-user responses resolve normally, but network or JSON parsing failures can still reject the promise.
 </Note>
 
 `MiniKit.getUserInfo` is also available as an alias of `getUserByAddress` (same signature, same behavior).
