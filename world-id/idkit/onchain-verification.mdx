@@ -167,7 +167,7 @@ contract VerifyUniquenessV4 {
 
 Minimal mapping from IDKit result:
 - `nullifier` = `responses[i].nullifier`
-- `action` = `keccak256(action)` as `uint256`
+- `action` = `hash_to_field(utf8(action))` as `uint256`, over the UTF-8 bytes of the top-level `action` string (same field-reduction as [RP signatures](/world-id/idkit/signatures#algorithm))
 - `rpId` = numeric form of your `rp_context.rp_id` (the `rp_`-prefixed string from your RP context, not the result)
 - `nonce` = top-level `nonce`
 - `signalHash` = `responses[i].signal_hash`
@@ -175,3 +175,7 @@ Minimal mapping from IDKit result:
 - `issuerSchemaId` = `responses[i].issuer_schema_id`
 - `credentialGenesisIssuedAtMin` = the request's `genesis_issued_at_min` constraint (`0` if unconstrained) — not returned in `responses[i]`
 - `proof` = `responses[i].proof` (`uint256[5]`)
+
+<Warning>
+  Use `hash_to_field(utf8(action))`, which in Solidity is `uint256(keccak256(bytes(action))) >> 8`. An unreduced hash can exceed the BN254 scalar field and revert with `PublicInputNotInField`; even when it fits, it does not match the field-reduced action used by the proof.
+</Warning>
