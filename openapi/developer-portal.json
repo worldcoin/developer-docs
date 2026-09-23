@@ -142,7 +142,10 @@
               },
               "example": {
                 "app_id": "app_id",
-                "wallet_addresses": ["0x123", "0x456"],
+                "wallet_addresses": [
+                  "0x1234567890123456789012345678901234567890",
+                  "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd"
+                ],
                 "title": "title",
                 "message": "Hello ${username}, your transaction is complete!",
                 "mini_app_path": "worldapp://mini-app?app_id=app_id"
@@ -157,6 +160,32 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/SendNotificationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, inactive API key, or the app can't send notifications (`validation_error`, `api_key_inactive`, `external_app_not_allowed`, `unverified_app_limit_reached`, `not_allowed`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "api_key_inactive": {
+                    "value": {
+                      "code": "api_key_inactive",
+                      "detail": "API key is inactive.",
+                      "attribute": "api_key"
+                    }
+                  },
+                  "unverified_app_limit_reached": {
+                    "value": {
+                      "code": "unverified_app_limit_reached",
+                      "detail": "Unverified app limit reached",
+                      "attribute": "notifications"
+                    }
+                  }
                 }
               }
             }
@@ -176,8 +205,34 @@
               }
             }
           },
+          "403": {
+            "description": "API key rejected: `invalid_app` when the key's team doesn't own `app_id`, `invalid_api_key` when the secret doesn't match.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalid_app": {
+                    "value": {
+                      "code": "invalid_app",
+                      "detail": "API key is not valid for this app.",
+                      "attribute": "api_key"
+                    }
+                  },
+                  "invalid_api_key": {
+                    "value": {
+                      "code": "invalid_api_key",
+                      "detail": "API key is not valid.",
+                      "attribute": "api_key"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "404": {
-            "description": "API key not recognized. Also returned for an unrecognized `app_id`; check `attribute` (`api_key` vs `app_id`).",
+            "description": "API key not found (`not_found`), or the app is banned or has no metadata (`app_not_found`, attribute `app`).",
             "content": {
               "application/json": {
                 "schema": {
@@ -394,6 +449,21 @@
               }
             }
           },
+          "400": {
+            "description": "Invalid `app_id` (`validation_error`) or inactive API key (`api_key_inactive`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "api_key_inactive",
+                  "detail": "API key is inactive.",
+                  "attribute": "api_key"
+                }
+              }
+            }
+          },
           "401": {
             "description": "Missing API key",
             "content": {
@@ -405,6 +475,58 @@
                   "code": "unauthorized",
                   "detail": "API key is required.",
                   "attribute": "api_key"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "API key rejected: `invalid_app` when the key's team doesn't own `app_id`, `invalid_api_key` when the secret doesn't match.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalid_app": {
+                    "value": {
+                      "code": "invalid_app",
+                      "detail": "API key is not valid for this app.",
+                      "attribute": "api_key"
+                    }
+                  },
+                  "invalid_api_key": {
+                    "value": {
+                      "code": "invalid_api_key",
+                      "detail": "API key is not valid.",
+                      "attribute": "api_key"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "API key not found (`not_found`), or no debug URL is available yet (`debug_url_not_available`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "not_found": {
+                    "value": {
+                      "code": "not_found",
+                      "detail": "API key not found.",
+                      "attribute": "api_key"
+                    }
+                  },
+                  "debug_url_not_available": {
+                    "value": {
+                      "code": "debug_url_not_available",
+                      "detail": "Debug URL is not yet available. Please try again later.",
+                      "attribute": "debug"
+                    }
+                  }
                 }
               }
             }
@@ -480,6 +602,7 @@
         "x-mint": {
           "href": "/api-reference/developer-portal/get-user-grant-cycle"
         },
+        "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
             "name": "wallet_address",
@@ -514,16 +637,83 @@
             }
           },
           "400": {
-            "description": "User not found / app not installed / no active cycles",
+            "description": "Invalid query (`validation_error`), inactive API key (`api_key_inactive`), or user not found / app not installed / no active cycles (`user_not_found_for_wallet_address`, `app_not_installed`, `no_active_grant_cycles`, attribute `user_grant_cycle`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "validation_error": {
+                    "value": {
+                      "code": "validation_error",
+                      "detail": "app_id is required",
+                      "attribute": "app_id"
+                    }
+                  },
+                  "api_key_inactive": {
+                    "value": {
+                      "code": "api_key_inactive",
+                      "detail": "API key is inactive.",
+                      "attribute": "api_key"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing API key",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
                 },
                 "example": {
-                  "code": "validation_error",
-                  "detail": "app_id is required",
-                  "attribute": "app_id"
+                  "code": "unauthorized",
+                  "detail": "API key is required.",
+                  "attribute": "api_key"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "API key rejected: `invalid_app` when the key's team doesn't own `app_id`, `invalid_api_key` when the secret doesn't match.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalid_app": {
+                    "value": {
+                      "code": "invalid_app",
+                      "detail": "API key is not valid for this app.",
+                      "attribute": "api_key"
+                    }
+                  },
+                  "invalid_api_key": {
+                    "value": {
+                      "code": "invalid_api_key",
+                      "detail": "API key is not valid.",
+                      "attribute": "api_key"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "API key not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "not_found",
+                  "detail": "API key not found.",
+                  "attribute": "api_key"
                 }
               }
             }
@@ -570,6 +760,32 @@
               }
             }
           },
+          "400": {
+            "description": "Invalid request (`validation_error`), inactive API key (`api_key_inactive`), or the action already exists (`constraint-violation`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "api_key_inactive": {
+                    "value": {
+                      "code": "api_key_inactive",
+                      "detail": "API key is inactive.",
+                      "attribute": "api_key"
+                    }
+                  },
+                  "constraint-violation": {
+                    "value": {
+                      "code": "constraint-violation",
+                      "detail": "Action already exists.",
+                      "attribute": "action"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "401": {
             "description": "Missing API key",
             "content": {
@@ -585,8 +801,34 @@
               }
             }
           },
+          "403": {
+            "description": "API key rejected: `invalid_app` when the key's team doesn't own `app_id`, `invalid_api_key` when the secret doesn't match.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalid_app": {
+                    "value": {
+                      "code": "invalid_app",
+                      "detail": "API key is not valid for this app.",
+                      "attribute": "api_key"
+                    }
+                  },
+                  "invalid_api_key": {
+                    "value": {
+                      "code": "invalid_api_key",
+                      "detail": "API key is not valid.",
+                      "attribute": "api_key"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "404": {
-            "description": "API key not recognized. Also returned for an unrecognized `app_id`; check `attribute` (`api_key` vs `app_id`).",
+            "description": "API key not found.",
             "content": {
               "application/json": {
                 "schema": {
@@ -691,7 +933,7 @@
                 },
                 "example": {
                   "code": "required",
-                  "detail": "This attribute is required.",
+                  "detail": "No action found for this app.",
                   "attribute": "action"
                 }
               }
@@ -718,7 +960,7 @@
     "/api/v1/jwks": {
       "get": {
         "summary": "Get JWK Keys",
-        "description": "Retrieve JWKs (public keys) used to verify JWT signatures for verification requests. Not edge-cached, and no dedicated rate limit is published; cache client-side, refetch on a `kid` miss, and also enforce a bounded TTL (e.g. 1 hour) so a revoked or rotated-out key isn't trusted indefinitely by a client that already has it cached — a miss alone never fires for a key that's been removed, only for one that's unknown.",
+        "description": "Retrieve JWKs (public keys) used to verify JWT signatures for verification requests. Responses aren't cached at the edge, so cache keys client-side: refetch when a token's `kid` is unknown, and expire the cache after a bounded TTL (e.g. 1 hour) so removed keys stop being trusted.",
         "x-mint": {
           "href": "/api-reference/developer-portal/get-jwk-keys"
         },
@@ -761,7 +1003,7 @@
     "/api/v1/graphql": {
       "post": {
         "summary": "GraphQL Proxy",
-        "description": "Proxy endpoint for Developer Portal GraphQL queries and mutations. Supports user JWTs and API keys. The example query requires authentication; an unauthenticated request returns HTTP 200 with a GraphQL-level error (e.g. `no_queries_available`), not a 401.",
+        "description": "Proxy endpoint for Developer Portal GraphQL queries and mutations. Supports user JWTs and API keys. The example query requires authentication; an unauthenticated request returns HTTP 200 with a GraphQL `validation-failed` error (`field 'app' not found in type: 'query_root'`), not a 401.",
         "x-mint": {
           "href": "/api-reference/developer-portal/graphql-proxy"
         },
@@ -791,22 +1033,54 @@
               }
             }
           },
-          "401": {
-            "description": "Unauthenticated request",
+          "400": {
+            "description": "Body isn't JSON: wrong `Content-Type` (`invalid_content_type`) or malformed JSON (`invalid_json`).",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalid_content_type": {
+                    "value": {
+                      "code": "invalid_content_type",
+                      "detail": "Content-Type must be application/json.",
+                      "attribute": "content-type"
+                    }
+                  },
+                  "invalid_json": {
+                    "value": {
+                      "code": "invalid_json",
+                      "detail": "Request body must be valid JSON.",
+                      "attribute": null
+                    }
+                  }
                 }
               }
             }
           },
-          "415": {
-            "description": "Invalid JSON payload",
+          "401": {
+            "description": "Rejected `api_` API key: not found, inactive, or wrong secret.",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "invalid_or_inactive": {
+                    "value": {
+                      "code": "unauthenticated",
+                      "detail": "Invalid or inactive API key.",
+                      "attribute": null
+                    }
+                  },
+                  "invalid_secret": {
+                    "value": {
+                      "code": "unauthenticated",
+                      "detail": "Invalid API key secret.",
+                      "attribute": null
+                    }
+                  }
                 }
               }
             }
@@ -1071,13 +1345,13 @@
               },
               "mini_app_path": {
                 "type": "string",
-                "description": "Deeplink to open when the user taps the notification: a WorldApp/World ID mini app deeplink (`worldapp://mini-app?app_id=...` or `worldid://mini-app?app_id=...`), a Deep Face Universal Link (`https://world.org/verify?t=deepface`), or a Deep Face deeplink (`worldapp://verify?t=deepface`, `worldid://verify?t=deepface`, `worldidstg://verify?t=deepface`)."
+                "description": "Deeplink to open when the user taps the notification: a WorldApp/World ID mini app deeplink (`worldapp://mini-app?app_id=...` or `worldid://mini-app?app_id=...`, where `app_id` must match the request's `app_id`), a Deep Face Universal Link (`https://world.org/verify?t=deepface`), or a Deep Face deeplink (`worldapp://verify?t=deepface`, `worldid://verify?t=deepface`, `worldidstg://verify?t=deepface`)."
               },
               "app_id": {
                 "type": "string"
               }
             },
-            "additionalProperties": false
+            "not": { "required": ["localisations"] }
           },
           {
             "type": "object",
@@ -1103,28 +1377,17 @@
                 },
                 "description": "Localized notification content. Include at least `en`."
               },
-              "title": {
-                "type": "string",
-                "maxLength": 30,
-                "description": "Optional legacy title, ignored when `localisations` is present. Allowed here so callers may include both without failing validation — see this schema's top-level description."
-              },
-              "message": {
-                "type": "string",
-                "maxLength": 200,
-                "description": "Optional legacy message, ignored when `localisations` is present. Allowed here so callers may include both without failing validation — see this schema's top-level description."
-              },
               "mini_app_path": {
                 "type": "string",
-                "description": "Deeplink to open when the user taps the notification: a WorldApp/World ID mini app deeplink (`worldapp://mini-app?app_id=...` or `worldid://mini-app?app_id=...`), a Deep Face Universal Link (`https://world.org/verify?t=deepface`), or a Deep Face deeplink (`worldapp://verify?t=deepface`, `worldid://verify?t=deepface`, `worldidstg://verify?t=deepface`)."
+                "description": "Deeplink to open when the user taps the notification: a WorldApp/World ID mini app deeplink (`worldapp://mini-app?app_id=...` or `worldid://mini-app?app_id=...`, where `app_id` must match the request's `app_id`), a Deep Face Universal Link (`https://world.org/verify?t=deepface`), or a Deep Face deeplink (`worldapp://verify?t=deepface`, `worldid://verify?t=deepface`, `worldidstg://verify?t=deepface`)."
               },
               "app_id": {
                 "type": "string"
               }
-            },
-            "additionalProperties": false
+            }
           }
         ],
-        "description": "Supports legacy payload (`title` + `message`) and localized payload (`localisations`). If both are provided, localized payload is used — include `localisations` alongside `title`/`message` rather than choosing one shape, since the legacy branch's `additionalProperties: false` rejects a `localisations` field."
+        "description": "Supports legacy payload (`title` + `message`) and localized payload (`localisations`). If `localisations` is present, the localized payload is used and `title`/`message` are ignored."
       },
       "SendNotificationResultItem": {
         "type": "object",
@@ -1373,6 +1636,14 @@
           "attribute": {
             "type": "string",
             "nullable": true
+          },
+          "app_id": {
+            "type": "string",
+            "description": "Included when the request identifies an app."
+          },
+          "team_id": {
+            "type": "string",
+            "description": "Included when the route has resolved the app's team."
           }
         }
       },
