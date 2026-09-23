@@ -173,6 +173,10 @@ submitted, so the first identifier you receive is `userOpHash`.
 You can either use the `@worldcoin/minikit-react` hook or poll the Developer Portal 
 to check when the user operation is mined and get the final `transaction_hash`.
 
+<Warning>
+`poll()` rejects with `Error("Transaction failed")` only when the user operation's status is `failed`. Other rejections don't mean the transaction failed: a status request failed (HTTP or network error), the receipt wait failed or timed out, or polling stopped with an `AbortError` because you called `reset()`, the component unmounted, or a new `poll()` started. Status polling has no overall timeout (an unknown hash stays `pending`); the hook's `timeout` option only bounds the receipt wait once a transaction hash exists. Call `reset()` to stop polling.
+</Warning>
+
 <CodeGroup>
 ```tsx title="React"
 import { useUserOperationReceipt } from "@worldcoin/minikit-react";
@@ -188,28 +192,63 @@ const { poll, isLoading, reset } = useUserOperationReceipt({ client });
 
 const onClick = async () => {
   const result = await MiniKit.sendTransaction({...});
-  const { receipt } = await poll(result.data.userOpHash);
-  // receipt contains the final transaction receipt
+
+  try {
+    const { receipt } = await poll(result.data.userOpHash);
+    // receipt contains the final transaction receipt
+  } catch (error) {
+    if (error instanceof Error && error.message === "Transaction failed") {
+      // Only this error means the user operation failed
+      console.error("User operation failed");
+    } else if (error instanceof Error && error.name === "AbortError") {
+      // Stopped by reset(), unmount, or a newer poll(); not a failure
+    } else {
+      // A status or receipt lookup failed; the outcome is unknown, so poll again
+      console.error("Could not confirm the user operation:", error);
+    }
+  }
 };
 ```
 
 ```ts title="API"
-type UserOperationStatusSuccess = {
-  status: "success";
-  userOpHash: string;
-  sender: string;
-  transaction_hash: string;
-  nonce: string;
-};
+type UserOperationStatus =
+  | {
+      status: "pending";
+      userOpHash: string;
+      sender: null;
+      transaction_hash: null;
+      nonce: null;
+    }
+  | {
+      status: "success";
+      userOpHash: string;
+      sender: string;
+      transaction_hash: string;
+      nonce: string;
+    }
+  | {
+      status: "failed";
+      userOpHash: string;
+      sender: string | null;
+      transaction_hash: string | null;
+      nonce: string | null;
+    };
 
 const response = await fetch(
   `https://developer.world.org/api/v2/minikit/userop/${userOpHash}`,
 );
-const status = await response.json();
+
+// The endpoint also returns 400/500 on a bad request or server error.
+if (!response.ok) {
+  throw new Error(`Failed to fetch user operation status: ${response.status}`);
+}
+
+const status: UserOperationStatus = await response.json();
 
 if (status.status === "success") {
-  const success = status as UserOperationStatusSuccess;
-  console.log(success.transaction_hash);
+  console.log(status.transaction_hash);
+} else if (status.status === "failed") {
+  console.error("User operation failed:", status.userOpHash);
 }
 ```
 </CodeGroup>
