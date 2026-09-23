@@ -61,7 +61,7 @@ type MiniKitWalletAuthOptions = {
   expirationTime?: Date;
   notBefore?: Date;
   requestId?: string;
-  fallback?: () => Promise<unknown> | unknown;
+  fallback?: () => unknown;
 };
 ```
 </CodeGroup>
@@ -92,7 +92,8 @@ type WalletAuthResponse =
   "data": {
     "address": "0x1234567890123456789012345678901234567890",
     "message": "example.com wants you to sign in with your Ethereum account",
-    "signature": "0xabcdef1234567890"
+    "signature": "0xabcdef1234567890",
+    "version": 2
   }
 }
 ```
@@ -159,7 +160,7 @@ export async function POST(req: NextRequest) {
 | `expirationTime` | `Date` | No | When the SIWE message expires |
 | `notBefore` | `Date` | No | SIWE message is not valid before this time |
 | `requestId` | `string` | No | Arbitrary ID for correlating the request on your backend |
-| `fallback` | `() => Promise<TFallback> \| TFallback` | No | Custom fallback for non-World-App environments (sync or async) |
+| `fallback` | `() => unknown` | No | Custom fallback for non-World-App environments (sync or async) |
 
 ## Notes
 

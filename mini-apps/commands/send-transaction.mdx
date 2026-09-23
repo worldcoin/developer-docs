@@ -174,7 +174,7 @@ You can either use the `@worldcoin/minikit-react` hook or poll the Developer Por
 to check when the user operation is mined and get the final `transaction_hash`.
 
 <Warning>
-`poll()` runs an unbounded loop with no built-in timeout, and it **throws** (`Error("Transaction failed")`) if the user operation's status resolves to `failed`. Call it inside a `try`/`catch`, and add your own timeout/abort logic for an upper bound on wait time.
+`poll()` rejects with `Error("Transaction failed")` only when the user operation's status is `failed`. Other rejections don't mean the transaction failed: a status request failed (HTTP or network error), the receipt wait failed or timed out, or polling stopped with an `AbortError` because you called `reset()`, the component unmounted, or a new `poll()` started. Status polling has no overall timeout (an unknown hash stays `pending`); the hook's `timeout` option only bounds the receipt wait once a transaction hash exists. Call `reset()` to stop polling.
 </Warning>
 
 <CodeGroup>
@@ -194,12 +194,18 @@ const onClick = async () => {
   const result = await MiniKit.sendTransaction({...});
 
   try {
-    // poll() has no built-in timeout — race your own if needed.
     const { receipt } = await poll(result.data.userOpHash);
     // receipt contains the final transaction receipt
   } catch (error) {
-    // poll() throws if the user operation status resolves to "failed"
-    console.error("User operation failed:", error);
+    if (error instanceof Error && error.message === "Transaction failed") {
+      // Only this error means the user operation failed
+      console.error("User operation failed");
+    } else if (error instanceof Error && error.name === "AbortError") {
+      // Stopped by reset(), unmount, or a newer poll(); not a failure
+    } else {
+      // A status or receipt lookup failed; the outcome is unknown, so poll again
+      console.error("Could not confirm the user operation:", error);
+    }
   }
 };
 ```
@@ -208,6 +214,10 @@ const onClick = async () => {
 type UserOperationStatus =
   | {
       status: "pending";
+      userOpHash: string;
+      sender: null;
+      transaction_hash: null;
+      nonce: null;
     }
   | {
       status: "success";

@@ -92,7 +92,7 @@ The SDK's `RequestPermissionErrorCodes` enum defines these errors:
 | `already_granted` | The permission is already granted |
 | `unsupported_permission` | The permission is not supported |
 
-For microphone access, the SDK also handles `world_app_permission_not_enabled` and `mini_app_permission_not_enabled` on the separate `MiniAppMicrophone` response event. These are not members of `RequestPermissionErrorCodes`; see the [microphone guide](/mini-apps/reference/microphone) for the microphone permission flow.
+For microphone access, `permission_disabled` or `world_app_permission_not_enabled` means the user must first enable the microphone for World App; see the [microphone guide](/mini-apps/reference/microphone). The SDK types `world_app_permission_not_enabled` and `mini_app_permission_not_enabled` on the separate `MiniAppMicrophone` response event, not in `RequestPermissionErrorCodes`.
 
 ## Preview
 

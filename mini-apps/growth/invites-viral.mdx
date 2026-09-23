@@ -38,7 +38,9 @@ Deep-link (opens World App directly if installed)
 
 `worldapp://mini-app?app_id={app_id}&path={path}`
 
-Note: path should be URL encoded — or use the SDK helper `MiniKit.getMiniAppUrl(appId, path)`, which builds and encodes the link for you.
+To open a link from your mini app in the device browser instead of World App, add `open_out_of_window=true` to its URL, e.g. `window.open("https://example.com/?open_out_of_window=true", "_blank")`.
+
+Note: path should be URL encoded.
 ### 2. Generate Share Links
 
 Create a shareable link that includes the referral information:
@@ -89,7 +91,7 @@ Process referral codes when new users sign up:
 // On app initialization
 function handleReferral() {
   const urlParams = new URLSearchParams(window.location.search);
-  const refCode = urlParams.get("ref");
+  const refCode = urlParams.get("code");
 
   if (refCode && !currentUser.referredBy) {
     // Credit the referrer
@@ -140,18 +142,21 @@ export async function processReferral(data: {
     return { success: false, reason: "already_referred" };
   }
 
-  // Credit both users. If a credit fails after the claim succeeds, retry the
-  // credit step alone — the unique claim already prevents a duplicate credit.
+  // Credit both users. Each credit has its own idempotency key (unique in your
+  // credits table), so if one fails you can retry the credits and only the
+  // missing one is written.
   await Promise.all([
     creditUser(referrer.id, {
       type: "referral_bonus",
       amount: 100,
       reason: "Friend joined via your invite",
+      idempotencyKey: `referral:${data.newUserId}:referrer`,
     }),
     creditUser(data.newUserId, {
       type: "signup_bonus",
       amount: 50,
       reason: "Welcome bonus for joining via invite",
+      idempotencyKey: `referral:${data.newUserId}:referee`,
     }),
   ]);
 
@@ -224,7 +229,7 @@ const events = {
 ```
 
 <Note>
-If you use the canonical [Core Event Set](/mini-apps/growth/analytics#2-%C2%B7-core-event-set-6-lines-of-code), `invite_link_created`/`invite_link_clicked` map to `invite_sent`/`invite_accepted` there. Pick one taxonomy and use it consistently.
+If you use the canonical [Core Event Set](/mini-apps/growth/analytics#2-%C2%B7-core-event-set-6-lines-of-code), `invite_link_created` maps to `invite_sent` and `signup_source_invite` maps to `invite_accepted`; `invite_link_clicked` has no equivalent there. Pick one taxonomy and use it consistently.
 </Note>
 
 ### Key Metrics Dashboard

@@ -9,7 +9,7 @@ This command is an abstraction for a simple transfer. This shouldn't be used out
 
 ## Supported Tokens
 
-Import the `Tokens` enum instead of hardcoding symbol strings. Some enum values differ from their display name (e.g. `USDC` → `"USDCE"`):
+Import the `Tokens` enum instead of hardcoding symbol strings. Only `Tokens.USDC` has a value that differs from its name (`"USDCE"`):
 
 | `Tokens` member | Enum value | Currency |
 | --- | --- | --- |
@@ -31,7 +31,6 @@ import { MiniKit } from "@worldcoin/minikit-js";
 import {
   Tokens,
   tokenToDecimals,
-  type MiniKitPayOptions,
 } from "@worldcoin/minikit-js/commands";
 
 export async function sendPayment() {
@@ -76,7 +75,7 @@ type MiniKitPayOptions = {
   }[];
   description: string;
   network?: Network; // Optional; currently only "worldchain" and defaults to World Chain
-  fallback?: () => Promise<PayResult> | PayResult;
+  fallback?: () => unknown;
 };
 ```
 </CodeGroup>

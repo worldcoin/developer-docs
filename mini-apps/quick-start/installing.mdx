@@ -10,7 +10,7 @@ description: "Create a Mini App with the official template or install MiniKit-JS
 ## Quick Start
 
 The fastest way to get started is by using our template next-15 repository.
-Run the following command and follow the instructions to create a new mini app. This installs dependencies with `npm`; if you prefer `pnpm`, see [Manual Installation](#manual-installation).
+Run the following command and follow the instructions to create a new mini app. This installs dependencies with `npm`; to use `pnpm`, add `--no-install` and run `pnpm install` in the new directory.
 
 ```bash
 npx @worldcoin/create-mini-app@latest my-first-mini-app
@@ -47,6 +47,10 @@ pnpm install @worldcoin/minikit-js
 </script>
 ```
 </CodeGroup>
+
+<Note>
+**TypeScript**: the package's type declarations reference `window.WorldApp` without declaring it, so type-checking fails with `"skipLibCheck": false`. Set `"skipLibCheck": true` in `tsconfig.json` (the Next.js default), or add the [`Window.WorldApp` declaration](/mini-apps/quick-start/init#raw-world-app-object).
+</Note>
 
 ## Usage
 
@@ -93,7 +97,7 @@ import { MiniKit } from "@worldcoin/minikit-js";
 console.log(MiniKit.isInstalled());
 ```
 
-3. Or, in a React component, read the same state reactively with the `useMiniKit()` hook, used by the official starter template:
+In a React component, you can read this reactively with the `useMiniKit()` hook, as the official starter template does:
 
 ```tsx
 import { useMiniKit } from "@worldcoin/minikit-js/minikit-provider";
@@ -116,7 +120,7 @@ The [World Docs MCP](/model-context-protocol/world-docs) lets any coding assista
     ```bash
     claude mcp add --transport http --scope project world-docs https://docs.world.org/mcp
     ```
-    `--scope project` writes a shareable `.mcp.json` to your project (recommended). Omit it to register the server only for you, in your global Claude config.
+    `--scope project` writes a shareable `.mcp.json` to your project (recommended). Without it, the server is added only for you in this project (stored in `~/.claude.json`); use `--scope user` to add it to all your projects.
   </Tab>
   <Tab title="Codex">
     ```bash
