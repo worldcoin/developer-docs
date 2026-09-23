@@ -22,8 +22,8 @@ The schema for the request is defined in the `world-id-primitives` crate as [`Pr
 {
   "id": "req_18c0f7f03e7d",
   "version": 1,
-  "created_at": "1771612953",
-  "expires_at": "1771613013",
+  "created_at": 1771612953,
+  "expires_at": 1771613013,
   "rp_id": "rp_0000000000000000000000000000000000001",
   "action": "0x0000000000000000000000000000000000000000000000000000000000000001",
   "nonce": "0x11d223ce7b91ac212f42cf50f0a3439ae3fcdba4ea32acb7f194d1051ed324c2",
@@ -33,7 +33,7 @@ The schema for the request is defined in the `world-id-primitives` crate as [`Pr
     {
       "identifier": "passport",
       "issuer_schema_id": 9303,
-      "signal": "abcd-efgh-ijkl"
+      "signal": "0xdeadbeef"
     }
   ]
 }
@@ -44,8 +44,8 @@ The schema for the request is defined in the `world-id-primitives` crate as [`Pr
     {
       "id": "req_18c0f7f03e7d",
       "version": 1,
-      "created_at": "1771612953",
-      "expires_at": "1771613013",
+      "created_at": 1771612953,
+      "expires_at": 1771613013,
       "rp_id": "rp_0000000000000000000000000000000000001",
       "action": "0x0000000000000000000000000000000000000000000000000000000000000001",
       "nonce": "0x11d223ce7b91ac212f42cf50f0a3439ae3fcdba4ea32acb7f194d1051ed324c2",
@@ -55,12 +55,12 @@ The schema for the request is defined in the `world-id-primitives` crate as [`Pr
         {
           "identifier": "passport",
           "issuer_schema_id": 9303,
-          "signal": "abcd-efgh-ijkl"
+          "signal": "0xdeadbeef"
         },
         {
           "identifier": "poh",
           "issuer_schema_id": 1,
-          "signal": "abcd-efgh-ijkl"
+          "signal": "0xdeadbeef"
         }
       ],
       "constraints": {
@@ -74,8 +74,8 @@ The schema for the request is defined in the `world-id-primitives` crate as [`Pr
     {
       "id": "req_18c0f7f03e7d",
       "version": 1,
-      "created_at": "1771612953",
-      "expires_at": "1771613013",
+      "created_at": 1771612953,
+      "expires_at": 1771613013,
       "rp_id": "rp_0000000000000000000000000000000000001",
       "action": "0x0000000000000000000000000000000000000000000000000000000000000001",
       "nonce": "0x11d223ce7b91ac212f42cf50f0a3439ae3fcdba4ea32acb7f194d1051ed324c2",
@@ -85,17 +85,17 @@ The schema for the request is defined in the `world-id-primitives` crate as [`Pr
         {
           "identifier": "passport",
           "issuer_schema_id": 9303,
-          "signal": "abcd-efgh-ijkl"
+          "signal": "0xdeadbeef"
         },
         {
           "identifier": "my-number-card",
           "issuer_schema_id": 9310,
-          "signal": "mnop-qrst-uvwx"
+          "signal": "0xfeedface"
         },
         {
           "identifier": "orb",
           "issuer_schema_id": 1,
-          "signal": "abcd-efgh-ijkl"
+          "signal": "0xdeadbeef"
         }
       ],
       "constraints": {
@@ -154,8 +154,8 @@ Each item in `responses` also includes a required `expires_at_min` field: the mi
         {
             "identifier": "orb",
             "issuer_schema_id": 1,
-            "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
-            "nullifier": "nil_00000000000000000000000000000000000000000000000001",
+            "proof": "00000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000",
+            "nullifier": "nil_0000000000000000000000000000000000000000000000000000000000000001",
             "expires_at_min": 1771613013
         }
     ]
@@ -177,12 +177,13 @@ Each item in `responses` also includes a required `expires_at_min` field: the mi
     {
     "id": "req_18c0f7f03e7d",
     "version": 1,
+    "session_id": "session_00000000000000000000000000000000000000000000000000000000000003ea0100000000000000000000000000000000000000000000000000000000000001",
     "responses": [
         {
             "identifier": "orb",
             "issuer_schema_id": 1,
-            "proof": "0x0000000000000000000000000000000000000000000000000000000000000000000000000",
-            "session_nullifier": "00000000000000000000000000000000000000000000000001",
+            "proof": "00000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000",
+            "session_nullifier": "snil_00000000000000000000000000000000000000000000000000000000000000010200000000000000000000000000000000000000000000000000000000000001",
             "expires_at_min": 1771613013
         }
     ]

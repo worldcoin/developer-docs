@@ -35,8 +35,8 @@ This page documents the IDKit SDK and bridge error codes returned during request
     </tr>
     <tr>
       <td className="p-2 align-middle whitespace-nowrap"><code>feature_unavailable</code></td>
-      <td className="p-2 align-middle">Requested feature is not enabled for the app. Not yet available on Swift.</td>
-      <td className="p-2 align-middle">Offer fallback credential policy or explain requirement, same as <code>credential_unavailable</code>.</td>
+      <td className="p-2 align-middle">Requested feature is not enabled for the app. JS/React only until the next Kotlin and Swift releases.</td>
+      <td className="p-2 align-middle">Get the feature enabled for your app, or fall back to a request that doesn't use it.</td>
     </tr>
     <tr>
       <td className="p-2 align-middle whitespace-nowrap"><code>world_id_4_not_available</code></td>
@@ -174,7 +174,7 @@ In JS and React, failed requests expose an `IDKitDebugReport` for triage. The wi
 
 Treat version availability errors such as `world_id_4_not_available` and `world_id_3_not_available` as terminal for the current user and request. Retrying the same request usually returns the same result; change the requested credential policy or show a user-facing fallback instead.
 
-In JS and React, match these with `IDKitErrorCodes`. Kotlin and Swift expose the same raw values through their `IDKitErrorCode` enums, except `invalid_rp_id_format` (JS/React-only) and `feature_unavailable` (Kotlin/JS-only until the next Swift release).
+In JS and React, match these with `IDKitErrorCodes`. Kotlin and Swift expose the same raw values through their `IDKitErrorCode` enums, except `invalid_rp_id_format` (JS/React-only) and `feature_unavailable` (JS/React only until the next Kotlin and Swift releases).
 
 ```tsx
 <IDKitRequestWidget

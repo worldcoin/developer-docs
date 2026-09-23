@@ -133,7 +133,7 @@ One World ID contract is deployed on each bridged chain, with an associated Stat
 The World ID Router will route your call to the correct Identity Manager contract (Ethereum) or World ID contract (L2 Chains) based on the `groupId` argument. This contract is proxied, so you will not need to update your code if the underlying contracts are upgraded.
 
 <Note>
-  Orb credentials use `groupId` `1`. The router does route additional groups on-chain, but they aren't RP-facing.
+  Only `groupId` `1` (Orb credentials) is supported for RPs.
 </Note>
 
 ## Usage
@@ -168,9 +168,8 @@ The `verifyProof` method of the **World ID Router** is used to verify proofs on-
         <code>uint256</code>
       </td>
       <td className="p-2 align-middle">
-        Determines which Credential Type to verify against. Orb credentials
-        are <code>1</code> — the only RP-facing group; the router does route
-        others on-chain.
+        Determines which Credential Type to verify against. Only{" "}
+        <code>1</code> (Orb credentials) is supported for RPs.
       </td>
     </tr>
     <tr>
@@ -193,9 +192,9 @@ The `verifyProof` method of the **World ID Router** is used to verify proofs on-
       </td>
       <td className="p-2 align-middle">
         The nullifier for this proof, preventing double signaling. This is
-        obtained from the IDKit widget as a hex string{" "}
-        <code>nullifier_hash</code>, and must be converted to a{" "}
-        <code>uint256</code> before passing it to the{" "}
+        obtained from IDKit as a hex string (<code>nullifier</code> in IDKit
+        4.x v3 responses, <code>nullifier_hash</code> in older versions), and
+        must be converted to a <code>uint256</code> before passing it to the{" "}
         <code>verifyProof</code> method.
       </td>
     </tr>
