@@ -28,13 +28,13 @@ Developer portal API keys start with `api_`.
 
 ## Authentication errors
 
-A missing, malformed, or invalid API key returns the same JSON-RPC error — even a well-formed `api_...` key that just isn't valid, so a missing key and a rejected key look identical:
+Authentication failures use JSON-RPC error code `-32001`. The message distinguishes missing or malformed credentials from a key that was parsed but rejected:
 
 ```json
 {"jsonrpc": "2.0", "id": 1, "error": {"code": -32001, "message": "API key is required."}}
 ```
 
-If you see this with a key you believe is correct, check the secure storage where you saved it at creation (it's shown only once and the portal can't display it again) — if it's genuinely lost, generate a new key and update every client using the old one. The endpoint only accepts `POST`; `GET` returns HTTP 405 with `allow: POST, OPTIONS`.
+For a parsed but rejected key, the message is `API key is not valid.`. Check that the client sends `Authorization: Bearer <API_KEY>` and copies the complete key from secure storage. Keys are shown only once; if yours is lost, generate a new key and update every client using the old one. The endpoint only accepts `POST`; `GET` returns HTTP 405 with `allow: POST, OPTIONS`.
 
 ## Connect your client
 
