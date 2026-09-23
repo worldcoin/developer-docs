@@ -55,15 +55,15 @@ Open your `.env` file in an editor of your choice. The following values must be 
 </ParamField>
 
 <ParamField body="L1_RPC_TYPE" type="string" required>
-  Selects which RPC provider is set in `OP_NODE__RPC_ENDPOINT`. This allows for more efficient syncing given different RPC capabilities. Choose from `alchemy`, `quicknode`, `erigon`, or `basic` for other RPC providers.
+  Selects which RPC provider is set in `L1_RPC_ENDPOINT`. This allows for more efficient syncing given different RPC capabilities. Choose from `alchemy`, `quicknode`, `erigon`, or `basic` for other RPC providers.
 </ParamField>
 
 <ParamField body="FLASHBLOCKS_ENABLED" type="boolean">
-  Enables Flashblocks support for faster block propagation.
+  Enables Flashblocks support for faster block propagation. Defaults to `true`.
 </ParamField>
 
 <ParamField body="DOWNLOAD_SNAPSHOT" type="boolean">
-  When set, downloads a snapshot to speed up initial sync instead of syncing from genesis.
+  Downloads a snapshot to speed up initial sync when the data directory is empty. Defaults to `true`; set to `false` to sync from genesis instead (not recommended).
 </ParamField>
 
 For details on additional settings, see the `simple-worldchain-node` [README](https://github.com/worldcoin-foundation/simple-worldchain-node?tab=readme-ov-file#optional-configurations).
@@ -94,7 +94,7 @@ A Grafana dashboard is included to monitor your node. Access it by visiting http
 
 ### Upgrading your Node
 
-When new versions of `op-geth`, `op-reth`, or `op-node` are released, we will update the `simple-worldchain-node` repository to use these new versions. You can then update your node to use these versions with the following commands:
+When new versions of `world-chain` or `op-node` are released, we will update the `simple-worldchain-node` repository to use these new versions. You can then update your node to use these versions with the following commands:
 
 ```bash
 git pull

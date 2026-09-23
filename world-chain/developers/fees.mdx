@@ -5,7 +5,7 @@ description: "Understand World Chain fees: L2 execution vs L1 security costs, va
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-Every World Chain transaction consists of two costs: an L2 (execution) fee and an L1 (security) fee. The L2 fee is the cost to execute your transaction on the L2, while the L1 fee covers the estimated cost of publishing the transaction on the L1. The relative size of each fee shifts over time with L1 data-posting costs and L2 usage; since the Ecotone upgrade, the L2 execution fee is typically the larger of the two.
+Every World Chain transaction consists of two costs: an L2 (execution) fee and an L1 (security) fee. The L2 fee is the cost to execute your transaction on the L2, while the L1 fee covers the estimated cost of publishing the transaction on the L1. The relative size of each fee shifts over time with L1 data-posting costs and L2 usage; on World Chain, the L2 execution fee is typically the larger of the two because the L2 base fee has a [configured minimum](/world-chain/developers/evm-equivalence).
 
 The L1 fee fluctuates depending on the volume of transactions on the L1. If your transaction timing is flexible, you can save on costs by submitting during periods of lower gas fees on the L1 (for example, weekends) or using transaction-scheduling products which submit during periods of low demand.
 
