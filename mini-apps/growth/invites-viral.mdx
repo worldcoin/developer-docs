@@ -135,16 +135,16 @@ export async function processReferral(data: {
   }
 
   // Atomically claim the referral (e.g. INSERT ... ON CONFLICT DO NOTHING on
-  // a unique referred_user_id column) before crediting anything. If two
-  // requests race, only one INSERT succeeds.
-  const claimed = await claimReferral(data.newUserId, referrer.id);
-  if (!claimed) {
+  // a unique referred_user_id column), then read back the stored referrer. If
+  // two requests race, only one INSERT succeeds.
+  const claimedBy = await claimReferral(data.newUserId, referrer.id);
+  if (claimedBy !== referrer.id) {
     return { success: false, reason: "already_referred" };
   }
 
   // Credit both users. Each credit has its own idempotency key (unique in your
-  // credits table), so if one fails you can retry the credits and only the
-  // missing one is written.
+  // credits table; treat a duplicate as success), so retrying processReferral
+  // after a partial failure writes only the missing credit.
   await Promise.all([
     creditUser(referrer.id, {
       type: "referral_bonus",
