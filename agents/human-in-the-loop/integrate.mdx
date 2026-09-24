@@ -20,10 +20,10 @@ Built on the [Workflow SDK](https://useworkflow.dev) and the [Vercel AI SDK](htt
 
 ```bash
 # Server — human-in-the-loop + peer dependencies
-npm install @worldcoin/human-in-the-loop ai workflow
+npm install @worldcoin/human-in-the-loop ai@^6 workflow @workflow/ai zod
 
 # Client — React bindings + peer dependencies
-npm install @worldcoin/human-in-the-loop-react @worldcoin/idkit ai react
+npm install @worldcoin/human-in-the-loop-react @worldcoin/idkit ai@^6 react
 ```
 
 ## Environment variables
@@ -43,9 +43,10 @@ Get these from the [World developer portal](https://developer.world.org) by crea
 
 ```ts
 // src/workflows/chat/index.ts
-import { DurableAgent } from 'workflow/ai'
+import { DurableAgent } from '@workflow/ai/agent'
 import { getWritable } from 'workflow'
 import { openai } from '@workflow/ai/openai'
+import type { ModelMessage, UIMessageChunk } from 'ai'
 import { tools } from './steps/tools'
 
 export async function chatWorkflow(messages: ModelMessage[]) {
@@ -56,8 +57,8 @@ export async function chatWorkflow(messages: ModelMessage[]) {
   const agent = new DurableAgent({
     model: openai('gpt-5.4'),
     tools,
-    system:
-      'You are a helpful assistant. Before performing any sensitive action, use the approveAction tool.',
+    instructions:
+      'You are a helpful assistant. Before performing any sensitive action, call approveAction first, then pass its returned result as the `approval` argument to the action tool — never call the action tool without it.',
   })
 
   await agent.stream({ messages, writable })
@@ -66,21 +67,90 @@ export async function chatWorkflow(messages: ModelMessage[]) {
 
 ## Step 2: Register the approval tool
 
+<Warning>
+The default `action` is the unique `toolCallId`. For a sensitive operation, your backend must bind the approval to the intended operation and its parameters, independently verify the proof, and consume the approval once before performing the side effect. A required `approval` input is not proof of authorization — tool inputs are LLM-generated. See the [flight booking example](https://github.com/worldcoin/human-in-the-loop/tree/main/examples/flight-booking) for proof verification and parameter binding.
+</Warning>
+
 ```ts
 // src/workflows/chat/steps/tools.ts
 import { requestHumanAuthorization } from '@worldcoin/human-in-the-loop/workflows'
 import { z } from 'zod'
 
+const approvalInputSchema = z.object({
+  summary: z.string(),
+  flightNumber: z.string(),
+})
+
+const bookingInputSchema = z.object({
+  flightNumber: z.string(),
+  // One credential, so its nullifier identifies the approval below. Cap it at
+  // 32 bytes: the 3.0 verifier reads only the first 32, so a longer encoding
+  // would still verify but produce a new key.
+  approval: z
+    .object({
+      action: z.string(),
+      responses: z
+        .array(z.object({ nullifier: z.string().regex(/^0x[0-9a-fA-F]{1,64}$/) }).passthrough())
+        .length(1),
+    })
+    .passthrough(),
+})
+
+// Atomically records an approval key; returns false if it was already used.
+// Back it with durable storage (e.g. a unique database key), not memory.
+declare function consumeApproval(key: string): Promise<boolean>
+
 export const tools = {
   approveAction: {
     description: 'Request human approval via World ID before a sensitive action.',
-    inputSchema: z.object({ summary: z.string() }),
+    inputSchema: approvalInputSchema,
 
     // Pauses the workflow, streams approval context to the client,
     // waits for World ID proof, verifies it, then resumes.
-    // Action defaults to toolCallId; pass a function to bind to input fields:
-    //   action: ({ input }) => `booking:${input.flightNumber}`
-    execute: requestHumanAuthorization(),
+    // Bind this example's approval to the flight number.
+    execute: requestHumanAuthorization<z.infer<typeof approvalInputSchema>>({
+      action: ({ input }) => `booking:${input.flightNumber}`,
+    }),
+  },
+  bookFlight: {
+    description: 'Book the flight using the IDKitResult from approveAction as `approval`.',
+    // Requiring an object does not establish that its proof is authentic.
+    inputSchema: bookingInputSchema,
+    // Never trust that approveAction ran just because this tool was called:
+    // check the binding, re-verify the proof, and consume it once.
+    execute: async ({ flightNumber, approval }: z.infer<typeof bookingInputSchema>) => {
+      'use step'
+
+      const expectedAction = `booking:${flightNumber}`
+      if (approval.action !== expectedAction) {
+        throw new Error(`approval does not match this booking (expected action: ${expectedAction})`)
+      }
+
+      const rpId = process.env.WORLD_RP_ID
+      if (!rpId) throw new Error('WORLD_RP_ID is required to verify approvals')
+      const res = await fetch(`https://developer.world.org/api/v4/verify/${rpId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        // The approval is untrusted input: pin the environment so it can't
+        // select "staging" or "sandbox", which accept test proofs.
+        body: JSON.stringify({ ...approval, environment: 'production' }),
+        signal: AbortSignal.timeout(10_000),
+      })
+      if (!res.ok) {
+        throw new Error(`approval failed World ID verification (${res.status}): ${await res.text()}`)
+      }
+
+      // One-time use, keyed on the proof's nullifier (bound by 3.0 and 4.0
+      // proofs). Parse it as the verifier does, so "0x01" and "0x1" share a
+      // key. Nullifiers repeat per person and action, so each person can book
+      // a flight number once; add a unique booking ID to the action to allow more.
+      const nullifier = BigInt(approval.responses[0].nullifier).toString(16)
+      if (!(await consumeApproval(`${expectedAction}:${nullifier}`))) {
+        throw new Error('approval already used')
+      }
+
+      // ...book the flight
+    },
   },
   // ...your other tools
 }
