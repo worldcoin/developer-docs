@@ -336,6 +336,22 @@ export async function POST(request: Request): Promise<Response> {
     return NextResponse.json({ error: "Verification failed" }, { status: 400 });
   }
 
+  const verification = await response.json();
+
+  /*
+   * Set the expected environment on your backend. Accept a proof only if the
+   * verification response reports that environment. Production backends must
+   * reject staging and sandbox proofs.
+   */
+  const expectedEnvironment = "production";
+
+  if (
+    verification?.success !== true ||
+    verification?.environment !== expectedEnvironment
+  ) {
+    return NextResponse.json({ error: "Verification failed" }, { status: 400 });
+  }
+
   // Uniqueness: store the nullifier (Step 6).
   // Sessions: validate and store the session result (see the session guide).
   return NextResponse.json({ success: true });
