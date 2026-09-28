@@ -21,7 +21,7 @@ import type {
 
 async function signInWithWallet() {
   const input = {
-    nonce: "random-nonce-123",
+    nonce: "exampleNonce123",
   } satisfies MiniKitWalletAuthOptions;
 
   try {
@@ -48,5 +48,22 @@ async function signInWithWallet() {
 
 ## Event Subscriptions
 
-For new 2.x command integrations, prefer `await MiniKit.<command>()`.
+For new 2.x command integrations, prefer `await MiniKit.<command>()`; it resolves (or throws) directly, no event listener needed.
 
+MiniKit also exposes a lower-level event API with one handler per response event. A new subscription replaces the previous handler. Use it only when managing the low-level response flow yourself:
+
+```tsx
+import { MiniKit } from "@worldcoin/minikit-js";
+import { ResponseEvent } from "@worldcoin/minikit-js/commands";
+
+MiniKit.subscribe(ResponseEvent.MiniAppWalletAuth, (payload) => {
+  console.log(payload);
+});
+
+// Later, to stop listening:
+MiniKit.unsubscribe(ResponseEvent.MiniAppWalletAuth);
+```
+
+Commands register their response handlers with the same event manager. Do not use subscriptions to observe a concurrent `MiniKit.<command>()` call: registrations can replace each other, and unsubscribing can prevent the command promise from resolving. Handle the awaited result instead.
+
+`MiniKit.trigger(event, payload)` invokes the event's current handler manually, mainly for testing.

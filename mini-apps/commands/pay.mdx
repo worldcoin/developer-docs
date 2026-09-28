@@ -7,6 +7,22 @@ description: "Request a payment from the user"
 
 This command is an abstraction for a simple transfer. This shouldn't be used outside of World App. Pay supports WLD and all local stablecoins.
 
+## Supported Tokens
+
+Import the `Tokens` enum instead of hardcoding symbol strings. Only `Tokens.USDC` has a value that differs from its name (`"USDCE"`):
+
+| `Tokens` member | Enum value | Currency |
+| --- | --- | --- |
+| `Tokens.WLD` | `"WLD"` | Worldcoin |
+| `Tokens.USDC` | `"USDCE"` | USD Coin |
+| `Tokens.EURC` | `"EURC"` | Euro Coin |
+| `Tokens.WARS` | `"WARS"` | Argentine Peso stablecoin |
+| `Tokens.WCOP` | `"WCOP"` | Colombian Peso stablecoin |
+| `Tokens.WMXN` | `"WMXN"` | Mexican Peso stablecoin |
+| `Tokens.WBRL` | `"WBRL"` | Brazilian Real stablecoin |
+| `Tokens.WPEN` | `"WPEN"` | Peruvian Sol stablecoin |
+| `Tokens.WCLP` | `"WCLP"` | Chilean Peso stablecoin |
+
 ## Basic Usage
 
 <CodeGroup>
@@ -15,9 +31,6 @@ import { MiniKit } from "@worldcoin/minikit-js";
 import {
   Tokens,
   tokenToDecimals,
-  type CommandResultByVia,
-  type MiniKitPayOptions,
-  type PayResult,
 } from "@worldcoin/minikit-js/commands";
 
 export async function sendPayment() {
@@ -40,8 +53,7 @@ export async function sendPayment() {
     },
   };
 
-  const result: CommandResultByVia<PayResult, PayResult, "minikit"> =
-    await MiniKit.pay(input);
+  const result = await MiniKit.pay(input);
 
   await fetch("/api/confirm-payment", {
     method: "POST",
@@ -62,6 +74,7 @@ type MiniKitPayOptions = {
     token_amount: string;
   }[];
   description: string;
+  network?: Network; // Optional; currently only "worldchain" and defaults to World Chain
   fallback?: () => unknown;
 };
 ```
