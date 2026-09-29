@@ -17,6 +17,8 @@ ensuring a flexible yet consistent environment for developers and users alike.
 Though the EVM remains unchanged across OP Stack (Superchain) chains compared to the Ethereum layer 1, there are some configurations of the execution clients that
 do differ.
 
+<Note type="info">Values below were checked on September 22, 2026 and can change. For current OP Stack parameters, read the latest block's `gasLimit` and decode its `extraData` using the [block header specification](https://specs.optimism.io/protocol/jovian/exec-engine.html). The Superchain Registry records genesis and fork settings, which may differ from the current configuration.</Note>
+
 <table>
   <thead>
     <tr>
@@ -35,45 +37,47 @@ do differ.
     </tr>
     <tr>
       <td className="p-2 align-middle">Block gas limit</td>
-      <td className="p-2 align-middle">30,000,000</td>
-      <td className="p-2 align-middle">30,000,000</td>
-      <td className="p-2 align-middle">30,000,000</td>
+      <td className="p-2 align-middle">280,000,000</td>
+      <td className="p-2 align-middle">40,000,000</td>
+      <td className="p-2 align-middle">~60,000,000</td>
     </tr>
     <tr>
       <td className="p-2 align-middle">Block gas target</td>
-      <td className="p-2 align-middle">10,000,000</td>
-      <td className="p-2 align-middle">5,000,000</td>
-      <td className="p-2 align-middle">15,000,000</td>
+      <td className="p-2 align-middle">12,727,272 (280,000,000 / 22, rounded down)</td>
+      <td className="p-2 align-middle">20,000,000</td>
+      <td className="p-2 align-middle">~30,000,000</td>
     </tr>
     <tr>
       <td className="p-2 align-middle">EIP-1559 elasticity multiplier</td>
-      <td className="p-2 align-middle">6</td>
-      <td className="p-2 align-middle">6</td>
+      <td className="p-2 align-middle">22</td>
+      <td className="p-2 align-middle">2</td>
       <td className="p-2 align-middle">2</td>
     </tr>
     <tr>
       <td className="p-2 align-middle">EIP-1559 denominator</td>
-      <td className="p-2 align-middle">250</td>
+      <td className="p-2 align-middle">100</td>
       <td className="p-2 align-middle">250</td>
       <td className="p-2 align-middle">8</td>
     </tr>
     <tr>
       <td className="p-2 align-middle">
-        Maximum base fee increase (per block)
+        Nominal maximum base fee increase (per block)
       </td>
-      <td className="p-2 align-middle">0.8%</td>
-      <td className="p-2 align-middle">2%</td>
+      <td className="p-2 align-middle">~21%</td>
+      <td className="p-2 align-middle">~0.4%</td>
       <td className="p-2 align-middle">12.5%</td>
     </tr>
     <tr>
       <td className="p-2 align-middle">
-        Maximum base fee decrease (per block)
+        Nominal maximum base fee decrease (per block)
       </td>
-      <td className="p-2 align-middle">0.4%</td>
-      <td className="p-2 align-middle">0.4%</td>
+      <td className="p-2 align-middle">~1%</td>
+      <td className="p-2 align-middle">~0.4%</td>
       <td className="p-2 align-middle">12.5%</td>
     </tr>
   </tbody>
 </table>
+
+Fee changes are subject to integer rounding and the configured minimum base fee. World Chain's current minimum is 500,000 wei; the base fee cannot decrease below it.
 
 For more information check out the [OP Stack docs](https://docs.optimism.io/stack/getting-started).

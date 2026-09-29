@@ -47,6 +47,8 @@
     "ethersproject",
     "fdir",
     "fintech",
+    "FLASHBLOCKS",
+    "Flashblocks",
     "gatekept",
     "getenv",
     "gigagas",
