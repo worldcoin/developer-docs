@@ -323,16 +323,38 @@ export async function POST(request: Request): Promise<Response> {
     idkitResponse: IDKitResult;
   };
 
+  /*
+   * Set the expected environment on your backend. Reject proofs from other
+   * environments before verification, including staging and sandbox in production.
+   */
+  const expectedEnvironment = "production";
+
+  if (idkitResponse?.environment !== expectedEnvironment) {
+    return NextResponse.json({ error: "Verification failed" }, { status: 400 });
+  }
+
   const response = await fetch(
     `https://developer.world.org/api/v4/verify/${rp_id}`,
     {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify(idkitResponse),
+      body: JSON.stringify({
+        ...idkitResponse,
+        environment: expectedEnvironment,
+      }),
     },
   );
 
   if (!response.ok) {
+    return NextResponse.json({ error: "Verification failed" }, { status: 400 });
+  }
+
+  const verification = await response.json();
+
+  if (
+    verification?.success !== true ||
+    verification?.environment !== expectedEnvironment
+  ) {
     return NextResponse.json({ error: "Verification failed" }, { status: 400 });
   }
 
