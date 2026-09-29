@@ -28,10 +28,11 @@ yarn add @worldcoin/idkit-core
 
 - `IDKit.request(config)` for uniqueness proofs
 - `IDKit.requestWithInviteCode(config)` for invite-code mode
-- `proofOfHuman`, `passport`, `selfieCheck`, and `identityCheck` for current presets
+- `IDKit.createSession(config)` and `IDKit.proveSession(sessionId, config)` for [session proofs](/world-id/idkit/session-proofs)
+- `proofOfHuman`, `passport`, `mnc`, `selfieCheck`, and `identityCheck` for current presets
 - `orbLegacy`, `secureDocumentLegacy`, `documentLegacy`, and `deviceLegacy` for legacy presets
 
-Each entry point returns a builder. Finalize it with `.preset(...)`.
+Each entry point returns a builder. Finalize it with `.preset(...)` for single-credential requests, or `.constraints(...)` for multi-credential and session requests — see [Constraints](#constraints).
 
 ## Request config
 
@@ -49,7 +50,7 @@ const builder = IDKit.request({
     signature: "0x...",
   },
   allow_legacy_proofs: true,
-  environment: "production", // Only set this to staging for testing with the simulator
+  environment: "production", // "production" | "staging" (simulator) | "sandbox" (sandbox build of World ID, for integration testing)
   return_to: "myapp://verify-done", // Optional: mobile deep-link callback URL
   bridge_url: undefined, // Optional: custom bridge URL
 });
@@ -72,9 +73,29 @@ const request = await IDKit.request({
 }).preset(orbLegacy({ signal: "user-123" }));
 ```
 
+## Constraints
+
+`.constraints(...)` builds custom World ID 4.0 credential requests, including composite trees (e.g. Proof of Human AND (Passport OR MNC)), using `CredentialRequest`, `any`, `all`, and `enumerate`. It's the only finalizer `IDKit.createSession()`/`IDKit.proveSession()` builders accept — `.preset()` throws on a session builder.
+
+```ts
+import { IDKit, CredentialRequest, any, all } from "@worldcoin/idkit-core";
+
+const request = await IDKit.request({
+  app_id: "app_xxxxx",
+  action: "my-action",
+  rp_context,
+  allow_legacy_proofs: false,
+}).constraints(
+  all(
+    CredentialRequest("proof_of_human"),
+    any(CredentialRequest("passport"), CredentialRequest("mnc")),
+  ),
+);
+```
+
 ## Polling and status
 
-After `.preset(...)`, you get an `IDKitRequest` object:
+After `.preset(...)` or `.constraints(...)`, you get an `IDKitRequest` object:
 
 - `connectorURI`
 - `requestId`

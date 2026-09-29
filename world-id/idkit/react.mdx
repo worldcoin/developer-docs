@@ -108,14 +108,18 @@ Hook result fields:
 
 - `open()`
 - `reset()`
+- `isOpen`
 - `isAwaitingUserConnection`
 - `isAwaitingUserConfirmation`
 - `isSuccess`
 - `isError`
+- `isInWorldApp` — true when running inside the World App (mini app context)
 - `connectorURI`
 - `result`
 - `errorCode`
 - `getDebugReport()`
+
+`useIDKitRequest` and `useIDKitSession` return `IDKitHookResult<T>`. `useIDKitInviteCodeRequest` returns `IDKitInviteCodeHookResult<T>`, which includes these common fields plus `codeExpiresAt`, the invite code's expiration timestamp in Unix seconds (or `null` before a code is available).
 
 ## Invite-code mode
 
@@ -141,10 +145,12 @@ import { IDKitInviteCodeRequestWidget, proofOfHuman } from "@worldcoin/idkit";
 
 - `open()`
 - `reset()`
+- `isOpen`
 - `isAwaitingUserConnection`
 - `isAwaitingUserConfirmation`
 - `isSuccess`
 - `isError`
+- `isInWorldApp`
 - `connectorURI`
 - `codeExpiresAt`
 - `result`
@@ -195,7 +201,7 @@ Session verification uses `IDKitSessionWidget` (controlled) or `useIDKitSession`
 
 ## Presets
 
-React hooks/widgets take `preset` directly in config.
+React hooks/widgets take `preset` or `constraints` in config — never both — for single- or multi-credential requests respectively. Session hooks/widgets (`useIDKitSession`, `IDKitSessionWidget`) require `constraints`; they have no `preset` option.
 
 ## Localization and UX notes
 
