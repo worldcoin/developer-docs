@@ -179,7 +179,7 @@ The `credential` response field is a base64-encoded JSON representation of the W
 
 - The user first obtains an Orb credential (currently a PCP in v2.3 format).
 - For a PCP-backed credential, `claims[0]` is
-  `hash_bytes_to_field_element("CLAIMS_HASH_V1", raw_hashes_json_bytes)`: the
+  `hash_bytes_to_field_element(ds::CLAIMS_HASH_V1, raw_hashes_json_bytes)`: the
   domain-separated Poseidon2 sponge hash of the exact raw PCP `hashes.json` bytes.
   The Orb's signature authenticates those same bytes.
 - When refreshing without a PCP, no claim is supplied and `claims[0]` remains the
