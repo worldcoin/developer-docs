@@ -178,8 +178,12 @@ The `credential` response field is a base64-encoded JSON representation of the W
 ### PoH credential semantics
 
 - The user first obtains an Orb credential (currently a PCP in v2.3 format).
-- `claim[0]` is a commitment to the Orb credential, currently `H(hashes.json)`.
-- When refreshing without a PCP, `claims[0]` is derived from issuer-defined refresh data (a hash of `idCommitment`, `sub`, and a timestamp).
+- For a PCP-backed credential, `claims[0]` is
+  `hash_bytes_to_field_element(ds::CLAIMS_HASH_V1, raw_hashes_json_bytes)`: the
+  domain-separated Poseidon2 sponge hash of the exact raw PCP `hashes.json` bytes.
+  The Orb's signature authenticates those same bytes.
+- When refreshing without a PCP, no claim is supplied and `claims[0]` remains the
+  zero field element.
 - The PoH credential has no associated data, so `associated_data_hash` is the zero field element.
 - The PoH credential subject is blinded and differs from the Orb credential subject.
 - The issuer may require a proof for the requested `sub` to prevent bricking an identity.
