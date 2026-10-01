@@ -203,6 +203,54 @@ const signalHash = hashSignal("user-123");
 
 `signRequest` should only run in trusted server environments. See [RP Signatures](/world-id/idkit/signatures) for the full algorithm and test vectors.
 
+## Nullifier
+
+`Nullifier` converts hex nullifiers to exact numbers for comparisons and storage.
+Result fields remain strings. Parsing does not verify a proof.
+
+```ts
+import { Nullifier } from "@worldcoin/idkit-core/nullifier";
+
+const first = Nullifier.fromHex("0x01a");
+const second = Nullifier.fromHex("0x1A");
+first.toBigInt() === second.toBigInt(); // true: both are 26n
+first === second; // false: objects are compared by reference
+
+const json = JSON.stringify({ nullifier: first }); // hex string in JSON
+const received = JSON.parse(json);
+const restored = Nullifier.fromHex(received.nullifier);
+restored.toBigInt() === first.toBigInt(); // true
+```
+
+### Imports
+
+The helper is exported from `@worldcoin/idkit-server`, `@worldcoin/idkit-core`
+and `@worldcoin/idkit`. Their `/nullifier` entry points load it without WASM,
+React or signing code. In the browser bundle, use `IDKit.Nullifier`.
+
+### Methods
+
+| Method | Result |
+| --- | --- |
+| `Nullifier.fromHex(value: string)` | A checked object. Throws for invalid input. |
+| `toBigInt(): bigint` | The exact number. Do not convert it to JavaScript `number`, which can lose precision. |
+| `toHex(): string` | `0x` followed by exactly 64 lowercase hex digits. |
+| `toJSON(): string` | The same hex string as `toHex()`. Used by `JSON.stringify()`. |
+
+The internal value cannot be changed.
+
+### Input validation
+
+`fromHex()` accepts 1–64 hex digits, with an optional `0x` or `0X` prefix,
+any letter case and leading zeroes. `"10"` means hex 16, not decimal 10.
+Empty values, whitespace, signs, invalid characters and values outside the
+World ID field are rejected without modular reduction.
+Non-string inputs throw `TypeError`; invalid values throw `RangeError`.
+
+Use the confirmed nullifier after proof verification; keep the original proof
+unchanged. Session nullifier tuples are outside this API.
+See [Store the nullifier](/world-id/idkit/integrate#step-6-store-the-nullifier).
+
 ## Related pages
 
 - [Getting started](/world-id/idkit/integrate)

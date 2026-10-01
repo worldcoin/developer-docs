@@ -154,6 +154,10 @@ per-proof replay protection. Test both creation and proving the saved session.
 5. **Verify the proof in your backend** by POSTing it **as-is** to `https://developer.world.org/api/v4/verify/{rp_id}`. *Why backend?* A client can return any JSON it wants. Only the World verifier — called from a trusted server — confirms the proof is real and tied to a unique credential. Verifying client-side defeats the entire point. **DO NOT mutate, re-encode, or trim the proof JSON before forwarding** — pass exactly what IDKit returned. For Selfie Check, IDKit returns `responses[].identifier: "selfie"`. Do not turn it into a hand-built `verification_level`; `face` is only a backward-compatible alias for legacy integrations.
 6. **Store the nullifier.** Every successful proof returns a `nullifier` — an RP-scoped, action-scoped, non-reversible identifier for that user. *Why store it?* Without uniqueness storage, a user can verify the same proof twice and double-claim a reward, vote, etc. Persist `(action, nullifier)` with a `UNIQUE` constraint and reject duplicates on insert. Column type: **`NUMERIC(78, 0)`** (256-bit field elements). The nullifier reveals nothing about the user — safe to store, but it's the *only* anti-replay mechanism, so it's required.
 
+   Use the SDK's [Nullifier helper](https://docs.world.org/world-id/idkit/javascript#nullifier)
+   for exact numeric conversion after verification. In JavaScript:
+   `Nullifier.fromHex(verification.nullifier).toBigInt()`. Never use JavaScript `number`.
+
 ## Phase 5 — Match environments end-to-end
 
 - The **production** World ID app only signs **production** proofs.
@@ -172,6 +176,7 @@ Do not declare the integration complete from compilation or Portal configuration
 - [ ] Backend verification succeeds and the exact IDKit result reaches `/api/v4/verify/{rp_id}`.
 - [ ] The verified nullifier is persisted.
 - [ ] Replaying the same nullifier is rejected by the database uniqueness constraint.
+- [ ] Equivalent hex spellings such as `0x01a` and `0x1A` produce the same numeric storage key.
 - [ ] Relevant failures—replayed nullifiers, invalid action/signature, or environment mismatch—produce an actionable user-facing error instead of an indefinite loading state.
 - [ ] JS/React failures retain the `debugReport` and `request_id` needed for diagnosis without logging secrets.
 

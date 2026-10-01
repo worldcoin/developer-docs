@@ -5,7 +5,7 @@ description: "Lightweight Go module for generating RP signatures."
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-The Go module is a **backend signing utility only**. It is used to generate `rp_context` signatures for IDKit requests, and does not
+The Go module is a **backend signing utility**. It is used to generate `rp_context` signatures for IDKit requests, and does not
 run client-side IDKit request flows.
 
 ## Install
@@ -67,6 +67,7 @@ sig, err := signer.SignRequest(
 | `SignRequest(signingKeyHex, opts...)` | One-shot signing with options |
 | `SignRequestWithTTL(signingKeyHex, ttl)` | Convenience wrapper with custom TTL |
 | `NewSigner(signingKeyHex)` | Creates a reusable `Signer` from a hex key |
+| `NullifierFromHex(value)` | Creates a checked nullifier from hex; see [Nullifier](#nullifier) |
 
 ### Options
 
@@ -85,6 +86,29 @@ type RpSignature struct {
 	ExpiresAt uint64 `json:"expires_at"` // Unix seconds
 }
 ```
+
+## Nullifier
+
+```go
+nullifier, err := idkit.NullifierFromHex("0x01a")
+if err != nil {
+	log.Fatal(err)
+}
+number := nullifier.BigInt() // *big.Int with value 26
+```
+
+| API | Result |
+| --- | --- |
+| `NullifierFromHex(value string) (Nullifier, error)` | A checked value, or an error for invalid input. |
+| `BigInt() *big.Int` | A new copy of the exact number. Changing it does not change the nullifier. |
+| `ToHex() string` | `0x` followed by exactly 64 lowercase hex digits. |
+| `MarshalJSON()` / `UnmarshalJSON()` | Standard JSON encoding and decoding as a hex string. |
+
+Use `Cmp()` to compare the returned numbers. The zero value represents zero.
+Declare JSON fields as `idkit.Nullifier` to validate them when decoding;
+invalid input leaves the previous value unchanged. Parsing does not verify a proof.
+See the shared [input rules](/world-id/idkit/javascript#input-validation) and
+[storage example](/world-id/idkit/integrate#step-6-store-the-nullifier).
 
 ## Related pages
 
