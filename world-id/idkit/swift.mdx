@@ -143,8 +143,10 @@ let sameNumber = first.toDecimalString() == second.toDecimalString() // true
 | Method | Result |
 | --- | --- |
 | `Nullifier.fromHex(hex:)` | A checked object. Throws for invalid input. |
+| `Nullifier.fromCanonicalString(canonicalString:)` | A checked object from the protocol's `nil_` format. Throws for invalid input. |
 | `toDecimalString()` | The exact decimal value without leading zeroes. |
 | `toHex()` | `0x` followed by exactly 64 lowercase hex digits. |
+| `toCanonicalString()` | `nil_` followed by exactly 64 lowercase hex digits. |
 
 Swift has no built-in BigInt; compare the normalized decimal strings.
 Result fields remain strings. Parsing does not verify a proof.

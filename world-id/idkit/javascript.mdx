@@ -205,7 +205,7 @@ const signalHash = hashSignal("user-123");
 
 ## Nullifier
 
-`Nullifier` converts hex nullifiers to exact numbers for comparisons and storage.
+`Nullifier` converts nullifiers to exact numbers for comparisons and storage.
 Result fields remain strings. Parsing does not verify a proof.
 
 ```ts
@@ -215,6 +215,10 @@ const first = Nullifier.fromHex("0x01a");
 const second = Nullifier.fromHex("0x1A");
 first.toBigInt() === second.toBigInt(); // true: both are 26n
 first === second; // false: objects are compared by reference
+
+const canonical = first.toCanonicalString();
+const fromProtocol = Nullifier.fromCanonicalString(canonical);
+fromProtocol.toBigInt() === first.toBigInt(); // true
 
 const json = JSON.stringify({ nullifier: first }); // hex string in JSON
 const received = JSON.parse(json);
@@ -233,8 +237,10 @@ React or signing code. In the browser bundle, use `IDKit.Nullifier`.
 | Method | Result |
 | --- | --- |
 | `Nullifier.fromHex(value: string)` | A checked object. Throws for invalid input. |
+| `Nullifier.fromCanonicalString(value: string)` | A checked object from the protocol's `nil_` format. Throws for invalid input. |
 | `toBigInt(): bigint` | The exact number. Do not convert it to JavaScript `number`, which can lose precision. |
 | `toHex(): string` | `0x` followed by exactly 64 lowercase hex digits. |
+| `toCanonicalString(): string` | `nil_` followed by exactly 64 lowercase hex digits. |
 | `toJSON(): string` | The same hex string as `toHex()`. Used by `JSON.stringify()`. |
 
 The internal value cannot be changed.
@@ -246,6 +252,10 @@ any letter case and leading zeroes. `"10"` means hex 16, not decimal 10.
 Empty values, whitespace, signs, invalid characters and values outside the
 World ID field are rejected without modular reduction.
 Non-string inputs throw `TypeError`; invalid values throw `RangeError`.
+
+`fromCanonicalString()` requires `nil_` followed by exactly 64 lowercase hex
+digits. The same field limits apply. SDK result fields and JSON serialization
+still use hex.
 
 Use the confirmed nullifier after proof verification; keep the original proof
 unchanged. Session nullifier tuples are outside this API.

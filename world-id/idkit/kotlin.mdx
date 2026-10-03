@@ -125,9 +125,11 @@ val number = nullifier.toBigInteger() // BigInteger with value 26
 | Method | Result |
 | --- | --- |
 | `Nullifier.fromHex(value)` | A checked object. Throws for invalid input. |
+| `Nullifier.fromCanonicalString(canonicalString)` | A checked object from the protocol's `nil_` format. Throws for invalid input. |
 | `toBigInteger()` | The exact `java.math.BigInteger` value. Import this extension separately. |
 | `toDecimalString()` | The exact decimal value without leading zeroes. |
 | `toHex()` | `0x` followed by exactly 64 lowercase hex digits. |
+| `toCanonicalString()` | `nil_` followed by exactly 64 lowercase hex digits. |
 
 Compare `BigInteger` values without converting to `Long` or `Double`.
 Result fields remain strings. Parsing does not verify a proof.
