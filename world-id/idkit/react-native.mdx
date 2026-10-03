@@ -29,4 +29,59 @@ The `/expo` entry configures secure randomness automatically. No global polyfill
 
 `@worldcoin/idkit/hooks` exports the same hooks without loading browser widgets or configuring Expo Crypto. The `/expo` entry adds that automatic configuration, so Expo apps only need the `/expo` import above.
 
-See the [headless hooks reference](/world-id/idkit/react#headless-hooks) for hook options and result fields. Render your own native UI and open `connectorURI` with your app's linking API; IDKit's web widgets are for browser integrations.
+### Verification screen
+
+Fetch a fresh, signed `rpContext` from your backend before showing this screen. Replace the app ID and action with your application's values.
+
+```tsx
+import { Alert, Button, Linking, Text, View } from "react-native";
+import {
+  useIDKitRequest,
+  proofOfHuman,
+  type RpContext,
+} from "@worldcoin/idkit/expo";
+
+export function VerificationScreen({ rpContext }: { rpContext: RpContext }) {
+  const flow = useIDKitRequest({
+    app_id: "app_your_app_id",
+    action: "verify-human",
+    rp_context: rpContext,
+    preset: proofOfHuman(),
+    allow_legacy_proofs: false,
+    return_to: "myapp://verified",
+  });
+
+  return (
+    <View>
+      <Button
+        title="Start verification"
+        onPress={flow.open}
+        disabled={flow.isOpen}
+      />
+
+      {flow.connectorURI && !flow.result && !flow.isError && (
+        <Button
+          title="Open World App"
+          onPress={() => {
+            Linking.openURL(flow.connectorURI!).catch(() => {
+              Alert.alert("Could not open World App", "Please try again.");
+            });
+          }}
+        />
+      )}
+
+      {flow.isAwaitingUserConfirmation && <Text>Waiting for approval…</Text>}
+      {flow.isError && <Text>Verification failed: {flow.errorCode}</Text>}
+      {flow.result && (
+        <Text>Proof received — ready for backend verification.</Text>
+      )}
+    </View>
+  );
+}
+```
+
+`flow.open()` creates the request and starts polling. Your app opens World App using `Linking.openURL`; the hook does not render a screen or open World App automatically.
+
+Configure the `myapp://` callback scheme in your app to match `return_to`. Send `flow.result` to your backend for verification before granting access. Keep RP signing keys on your backend.
+
+See the [headless hooks reference](/world-id/idkit/react#headless-hooks) for hook options and result fields. IDKit's web widgets are for browser integrations.
