@@ -84,6 +84,7 @@
                 "pages": [
                   "world-id/idkit/javascript",
                   "world-id/idkit/react",
+                  "world-id/idkit/react-native",
                   "world-id/idkit/swift",
                   "world-id/idkit/kotlin",
                   "world-id/idkit/go",
