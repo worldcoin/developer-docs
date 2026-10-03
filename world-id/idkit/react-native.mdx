@@ -1,0 +1,32 @@
+---
+title: "React Native"
+description: "Install IDKit in React Native apps with Expo and use the headless hooks."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+Use IDKit's hooks to manage verification requests and read their status and results while rendering your own native UI. The integration below supports Expo SDK 57.
+
+## Expo
+
+### Install
+
+Install IDKit and Expo Crypto:
+
+```bash
+npx expo install @worldcoin/idkit expo-crypto
+```
+
+### Import
+
+Import hooks and presets from `@worldcoin/idkit/expo`:
+
+```tsx
+import { useIDKitRequest, proofOfHuman } from "@worldcoin/idkit/expo";
+```
+
+The `/expo` entry configures secure randomness automatically. No global polyfill or runtime configuration is required.
+
+`@worldcoin/idkit/hooks` exports the same hooks without loading browser widgets or configuring Expo Crypto. The `/expo` entry adds that automatic configuration, so Expo apps only need the `/expo` import above.
+
+See the [headless hooks reference](/world-id/idkit/react#headless-hooks) for hook options and result fields. Render your own native UI and open `connectorURI` with your app's linking API; IDKit's web widgets are for browser integrations.
