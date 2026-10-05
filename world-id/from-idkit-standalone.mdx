@@ -174,3 +174,6 @@ export async function POST(request: Request): Promise<Response> {
 ## Store the Nullifier
 
 After `/api/v4/verify/{rp_id}` succeeds, store the verified `nullifier` for the action and reject duplicates. During migration, keep checking any old `nullifier_hash` records if the same user could have verified before the upgrade.
+
+For numeric conversion with `Nullifier`, see
+[Store the nullifier](/world-id/idkit/integrate#step-6-store-the-nullifier).

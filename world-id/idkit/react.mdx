@@ -211,3 +211,14 @@ import { signRequest } from "@worldcoin/idkit/signing";
 ```
 
 See [RP Signatures](/world-id/idkit/signatures) for the full algorithm and test vectors.
+
+## Nullifier
+
+`@worldcoin/idkit` re-exports the [Nullifier API](/world-id/idkit/javascript#nullifier):
+
+```ts
+import { Nullifier } from "@worldcoin/idkit/nullifier";
+```
+
+Result fields remain strings. Use the helper in your backend after verification;
+see [Store the nullifier](/world-id/idkit/integrate#step-6-store-the-nullifier).
