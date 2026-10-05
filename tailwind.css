@@ -22,8 +22,7 @@
 
 @layer components {
   /* Sidebar — selected item is a neutral pill per Docs 3.0 (bg gray/a9, ink
-     text), replacing the theme-default blue tint. The Proof of Human badge
-     keeps its gray artwork in both states for the same reason. */
+     text), replacing the theme-default blue tint. */
   #sidebar-content li[data-active="true"] > a {
     background-color: #F3F2F0 !important;
     color: #181818 !important;
@@ -33,6 +32,12 @@
   .dark #sidebar-content li[data-active="true"] > a {
     background-color: rgba(255, 255, 255, 0.08) !important;
     color: #F3F2F0 !important;
+  }
+
+  /* The supplied human emblem has a fixed ink fill. Invert it in dark mode
+     so it stays visible on both selected and unselected menu items. */
+  .dark #sidebar-content img[src*="/icons/credentials/human-emblem.svg"] {
+    filter: invert(1);
   }
 
   /* Page content text links only (anchors without custom classes) */
