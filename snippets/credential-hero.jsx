@@ -10,7 +10,6 @@
  *  - title: string              — credential display name
  *  - description: string        — one-sentence summary
  *  - image: string              — path to thumbnail image
- *  - bgColor: string            — hex color for the banner background
  *  - issuerName: string         — who issues this credential
  *  - issuerHref: string         — link to issuer (optional)
  *  - issuerVerified: boolean    — show verified badge (optional)
@@ -25,7 +24,6 @@ export const CredentialHero = ({
   title,
   description,
   image,
-  bgColor = "#1a1a2e",
   issuerName,
   issuerHref,
   issuerVerified,
@@ -41,24 +39,25 @@ export const CredentialHero = ({
       {/* Banner */}
       <div
         className="relative overflow-hidden rounded-t-3xl px-6 py-8 md:px-8 md:py-10"
-        style={{ backgroundColor: bgColor }}
+        style={{ backgroundColor: "#F5F5F5" }}
       >
-        <div className="flex items-center justify-between gap-6">
+        <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
           <div className="min-w-0">
-            <h2 className="m-0 text-2xl font-semibold text-white sm:text-3xl">
+            <h2 className="m-0 text-2xl font-semibold text-zinc-900 sm:text-3xl">
               {title}
             </h2>
             {description && (
-              <p className="m-0 mt-2 max-w-[420px] text-[15px] leading-relaxed text-white/75">
+              <p className="m-0 mt-2 max-w-[420px] text-[15px] leading-relaxed text-zinc-600">
                 {description}
               </p>
             )}
           </div>
           {image && (
             <img
+              noZoom
               src={image}
               alt={title}
-              className="hidden h-28 w-auto rounded-xl object-contain shadow-lg shadow-black/30 sm:block"
+              className="h-auto w-44 shrink-0 object-contain"
             />
           )}
         </div>

@@ -13,7 +13,7 @@ World ID is a privacy-preserving protocol that lets people prove they are real a
 
 It gives developers a high-assurance trust layer to stop bots, duplicate accounts, and abuse — while keeping onboarding fast and user data off your servers.
 
-Through credentials like Proof of Human, Document, and Selfie Check, World ID extends that trust layer with additional proofs without exposing underlying user data.
+Through credentials like Proof of Human, Proof of Attributes, and Proof of Presence, World ID extends that trust layer with additional proofs without exposing underlying user data.
 
 {/* cspell:ignore worldcoin idkit orblegacy rp_context app_id rp_id selfie-check sybil PoH CAPTCHAs NFC unlinkable nullifier */}
 
@@ -78,19 +78,19 @@ Through credentials like Proof of Human, Document, and Selfie Check, World ID ex
   <div className="not-prose mt-5">
     <div className="grid gap-10 md:grid-cols-3">
       <a href="/world-id/credentials/1" className="block no-underline transition-transform duration-200 hover:-translate-y-0.5">
-        <img noZoom src="/images/docs/credential-card-human.png" alt="Proof of Human credential card" className="w-full h-auto" />
+        <img noZoom src="/images/docs/credentials/proof-of-human.png" alt="Proof of Human credential card" className="w-full h-auto rounded-xl p-3" style={{ backgroundColor: "#F5F5F5" }} />
         <h3 className="mt-5 mb-0 text-xl font-medium text-zinc-900 dark:text-zinc-100">Proof of Human</h3>
         <p className="mt-2 text-base text-zinc-800 dark:text-zinc-300">Highest-assurance uniqueness signal from Orb verification. Best for one-person-one-action flows and strong Sybil resistance.</p>
       </a>
       <a href="/world-id/credentials/9303" className="block no-underline transition-transform duration-200 hover:-translate-y-0.5">
-        <img noZoom src="/images/docs/credential-card-document.png" alt="Document credential card" className="w-full h-auto" />
-        <h3 className="mt-5 mb-0 text-xl font-medium text-zinc-900 dark:text-zinc-100">Document</h3>
+        <img noZoom src="/images/docs/credentials/proof-of-attributes.png" alt="Proof of Attributes credential card" className="w-full h-auto rounded-xl p-3" style={{ backgroundColor: "#F5F5F5" }} />
+        <h3 className="mt-5 mb-0 text-xl font-medium text-zinc-900 dark:text-zinc-100">Proof of Attributes</h3>
         <p className="mt-2 text-base text-zinc-800 dark:text-zinc-300">Proves possession of a unique government document through NFC checks. Useful for proof of age and document-backed access flows.</p>
       </a>
       <a href="/world-id/credentials/11" className="block no-underline transition-transform duration-200 hover:-translate-y-0.5">
-        <img noZoom src="/images/docs/credential-card-face.png" alt="Selfie Check credential card" className="w-full h-auto" />
-        <h3 className="mt-5 mb-0 text-xl font-medium text-zinc-900 dark:text-zinc-100">Selfie Check</h3>
-        <p className="mt-2 text-base text-zinc-800 dark:text-zinc-300">Low-friction liveness and uniqueness signal from a selfie flow. Best for sign-up and bot defense where speed matters most.</p>
+        <img noZoom src="/images/docs/credentials/proof-of-presence.png" alt="Proof of Presence credential card" className="w-full h-auto rounded-xl p-3" style={{ backgroundColor: "#F5F5F5" }} />
+        <h3 className="mt-5 mb-0 text-xl font-medium text-zinc-900 dark:text-zinc-100">Proof of Presence</h3>
+        <p className="mt-2 text-base text-zinc-800 dark:text-zinc-300">Low-friction liveness and facial similarity checks from a selfie flow. Best for sign-up and bot defense where speed matters most.</p>
       </a>
     </div>
   </div>
@@ -98,8 +98,8 @@ Through credentials like Proof of Human, Document, and Selfie Check, World ID ex
 
 <Visibility for="agents">
   - [Proof of Human](/world-id/credentials/1) — Highest-assurance uniqueness signal from Orb verification. Best for one-person-one-action flows and strong Sybil resistance.
-  - [Document](/world-id/credentials/9303) — Proves possession of a unique government document through NFC checks. Useful for proof of age and document-backed access flows.
-  - [Selfie Check](/world-id/credentials/11) — Low-friction liveness and uniqueness signal from a selfie flow. Best for sign-up and bot defense where speed matters most.
+  - [Proof of Attributes](/world-id/credentials/9303) — Proves possession of a unique government document through NFC checks. Useful for proof of age and document-backed access flows.
+  - [Proof of Presence](/world-id/credentials/11) — Low-friction liveness and facial similarity checks from a selfie flow. Best for sign-up and bot defense where speed matters most.
 </Visibility>
 
 ## Start building
