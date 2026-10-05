@@ -1,7 +1,7 @@
 ---
 name: world-id-integration
 description: |
-  Use this skill when adding, upgrading, debugging, or testing World ID verification with IDKit in a new or existing web or mobile app. Covers Proof of Human, Proof of Attributes (passport/document), Proof of Presence, and session/sign-in flows; Developer Portal app, RP, and action setup; server-side signing and proof verification; environment matching; nullifier replay protection; and launch testing. Trigger when the user asks to add World ID, verify humans, stop bots or multi-accounting, add Sybil resistance, or mentions IDKit, Orb, World ID proof flows, World App proof flows, @worldcoin/idkit, signing keys, rp_id, or app_id.
+  Use this skill when adding, upgrading, debugging, or testing World ID verification with IDKit in a new or existing web or mobile app. Covers Proof of Human, passport/document, Selfie Check, and session/sign-in flows; Developer Portal app, RP, and action setup; server-side signing and proof verification; environment matching; nullifier replay protection; and launch testing. Trigger when the user asks to add World ID, verify humans, stop bots or multi-accounting, add Sybil resistance, or mentions IDKit, Orb, World ID proof flows, World App proof flows, @worldcoin/idkit, signing keys, rp_id, or app_id.
 version: 0.1.0
 metadata:
   author: worldcoin
@@ -98,25 +98,25 @@ The credential decides what the user proves. Nail this down before scaffolding �
 | Preset | What it proves | Use it for |
 |---|---|---|
 | **`proofOfHuman`** — Proof of Human (flagship) | The user is a unique person, biometrically verified at an Orb | Sybil resistance, airdrops, one-vote-per-human, gated signups. **The default if the user said "proof of human" or "verify a real human."** |
-| **`passport`** — Proof of Attributes (Passport) | The user holds a valid government passport (NFC-verified) | Higher-assurance flows where you need document-grade identity (regulated apps, age-gating, KYC-adjacent). |
-| **`selfieCheck`** — Proof of Presence | A liveness and facial-similarity credential backed by a World ID 4.0 proof | Medium-assurance friction and bot deterrence without the full Orb requirement. Returns a verified `sybil_score` risk signal. |
+| **`passport`** — Passport | The user holds a valid government passport (NFC-verified) | Higher-assurance flows where you need document-grade identity (regulated apps, age-gating, KYC-adjacent). |
+| **`selfieCheck`** — Selfie Check | A liveness and facial-similarity credential backed by a World ID 4.0 proof | Medium-assurance friction and bot deterrence without the full Orb requirement. Returns a verified `sybil_score` risk signal. |
 
 **DO NOT default to `proofOfHuman` if the user said "passport" or "verify their ID"** — that's `passport`. **DO NOT default to `proofOfHuman` if the user said "selfie" or "liveness"** — that's `selfieCheck`. When in doubt, ask one question.
 
 Other legacy presets exist (`documentLegacy`, `deviceLegacy`); reach for them only when the user asks specifically. For sign-in / session reuse across visits, use the v4 **session** flow (see `/world-id/idkit/session-proofs`).
 
-### Proof of Attributes (NFC) constraints
+### NFC Credential constraints
 
-A user can have only one NFC credential for [Proof of Attributes](https://docs.world.org/world-id/credentials/9303) attached to their Authenticator at a time. A passport, MNC, and eID are NFC Credential types and must be treated as alternatives when composing constraints with `any()`, `all()`, or `enumerate()`. Do not require multiple NFC Credentials—for example, `all(passport(), mnc())` cannot be satisfied, and `enumerate()` must not create combinations that require more than one NFC Credential.
+A user can have only one [NFC Credential](https://docs.world.org/world-id/credentials/9303) attached to their Authenticator at a time. A passport, MNC, and eID are NFC Credential types and must be treated as alternatives when composing constraints with `any()`, `all()`, or `enumerate()`. Do not require multiple NFC Credentials—for example, `all(passport(), mnc())` cannot be satisfied, and `enumerate()` must not create combinations that require more than one NFC Credential.
 
-### Proof of Presence
+### Selfie Check
 
-For repeated Proof of Presence verification, use `IDKit.createSession` followed by
+For repeated Selfie Check verification, use `IDKit.createSession` followed by
 `IDKit.proveSession` with `.preset(selfieCheck())`.
 Save the verified `session_id` against the application account
 and require that same session on later checks; enforce per-proof replay protection.
 
-For a one-time uniqueness check, use the `selfieCheck` preset. Each Proof of Presence
+For a one-time uniqueness check, use the `selfieCheck` preset. Each Selfie Check
 response includes a required integer `sybil_score`; forward the complete IDKit
 result unchanged so the Developer Portal can verify the proof and version 2
 integrity signature before the app uses the score.
@@ -151,7 +151,7 @@ per-proof replay protection. Test both creation and proving the saved session.
 2. **Create or reuse the Portal resources.** Use the MCP when available. Reuse an existing app, RP, and action when they match the requested integration. For a new RP, capture `app_id`, `rp_id`, and `signing_key.private_key` from `configure_world_id`, create the action in the intended environment, and write the signing key to the prepared server-only secret store in the same step. The portal returns it exactly once. **Do not print, log, or return the private key to chat.** If the key is lost, explain that `get_world_id_signing_key` cannot recover it; rotation creates a new key and invalidates the old signer.
 3. **Generate the RP signature in your backend.** *Why backend?* The signing key authenticates your app to the protocol. Leaking it lets anyone impersonate your app and forge proof requests. **CRITICAL: never sign on the client. Never expose `RP_SIGNING_KEY` as a `NEXT_PUBLIC_*` var. Never log it.**
 4. **Open the IDKit widget on the client** with the signature your backend returned. The widget hands off to World ID, which produces a zero-knowledge proof.
-5. **Verify the proof in your backend** by POSTing it **as-is** to `https://developer.world.org/api/v4/verify/{rp_id}`. *Why backend?* A client can return any JSON it wants. Only the World verifier — called from a trusted server — confirms the proof is real and tied to a unique credential. Verifying client-side defeats the entire point. **DO NOT mutate, re-encode, or trim the proof JSON before forwarding** — pass exactly what IDKit returned. For Proof of Presence, IDKit returns `responses[].identifier: "selfie"`. Do not turn it into a hand-built `verification_level`; `face` is only a backward-compatible alias for legacy integrations.
+5. **Verify the proof in your backend** by POSTing it **as-is** to `https://developer.world.org/api/v4/verify/{rp_id}`. *Why backend?* A client can return any JSON it wants. Only the World verifier — called from a trusted server — confirms the proof is real and tied to a unique credential. Verifying client-side defeats the entire point. **DO NOT mutate, re-encode, or trim the proof JSON before forwarding** — pass exactly what IDKit returned. For Selfie Check, IDKit returns `responses[].identifier: "selfie"`. Do not turn it into a hand-built `verification_level`; `face` is only a backward-compatible alias for legacy integrations.
 6. **Store the nullifier.** Every successful proof returns a `nullifier` — an RP-scoped, action-scoped, non-reversible identifier for that user. *Why store it?* Without uniqueness storage, a user can verify the same proof twice and double-claim a reward, vote, etc. Persist `(action, nullifier)` with a `UNIQUE` constraint and reject duplicates on insert. Column type: **`NUMERIC(78, 0)`** (256-bit field elements). The nullifier reveals nothing about the user — safe to store, but it's the *only* anti-replay mechanism, so it's required.
 
 ## Phase 5 — Match environments end-to-end

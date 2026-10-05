@@ -1152,7 +1152,7 @@
                   }
                 },
                 "selfie_check_v4": {
-                  "summary": "Proof of Presence",
+                  "summary": "Selfie Check",
                   "value": {
                     "protocol_version": "4.0",
                     "nonce": "0xabc123",
@@ -1297,7 +1297,7 @@
               "face",
               "selfie"
             ],
-            "description": "The legacy verification level. Use `selfie` for Proof of Presence. The historical `face` value remains accepted for backward compatibility and behaves the same as `selfie`."
+            "description": "The legacy verification level. Use `selfie` for Selfie Check. The historical `face` value remains accepted for backward compatibility and behaves the same as `selfie`."
           },
           "action": {
             "type": "string",
@@ -1674,7 +1674,7 @@
       "IntegrityBundle": {
         "type": "object",
         "required": ["version", "signature_format", "timestamp", "signature", "jwt"],
-        "description": "World ID App integrity attestation. Proof of Presence responses with `issuer_schema_id: 11` require version 2, which covers the disclosed `sybil_score`.",
+        "description": "World ID App integrity attestation. Selfie Check responses with `issuer_schema_id: 11` require version 2, which covers the disclosed `sybil_score`.",
         "properties": {
           "version": {
             "type": "integer",
@@ -1792,7 +1792,7 @@
             "default": "production"
           },
           "integrity_bundle": {
-            "description": "Required with version 2 when any response item is a Proof of Presence credential (`issuer_schema_id: 11`).",
+            "description": "Required with version 2 when any response item is a Selfie Check credential (`issuer_schema_id: 11`).",
             "allOf": [
               {
                 "$ref": "#/components/schemas/IntegrityBundle"
@@ -1836,7 +1836,7 @@
             "default": "production"
           },
           "integrity_bundle": {
-            "description": "Required with version 2 when any response item is a Proof of Presence credential (`issuer_schema_id: 11`).",
+            "description": "Required with version 2 when any response item is a Selfie Check credential (`issuer_schema_id: 11`).",
             "allOf": [
               {
                 "$ref": "#/components/schemas/IntegrityBundle"
@@ -1862,7 +1862,7 @@
         "properties": {
           "identifier": {
             "type": "string",
-            "description": "Credential identifier returned by IDKit (for example, `orb` or `selfie`). Use `selfie` for Proof of Presence; the historical `face` value remains accepted as a backward-compatible alias."
+            "description": "Credential identifier returned by IDKit (for example, `orb` or `selfie`). Use `selfie` for Selfie Check; the historical `face` value remains accepted as a backward-compatible alias."
           },
           "signal_hash": {
             "type": "string",
@@ -1922,7 +1922,7 @@
           "sybil_score": {
             "type": "integer",
             "minimum": 0,
-            "description": "Versioned Proof of Presence risk signal represented as an integer. Required only when `issuer_schema_id` is 11."
+            "description": "Versioned Selfie Check risk signal represented as an integer. Required only when `issuer_schema_id` is 11."
           }
         }
       },
@@ -1969,7 +1969,7 @@
           "sybil_score": {
             "type": "integer",
             "minimum": 0,
-            "description": "Versioned Proof of Presence risk signal represented as an integer. Required only when `issuer_schema_id` is 11."
+            "description": "Versioned Selfie Check risk signal represented as an integer. Required only when `issuer_schema_id` is 11."
           }
         }
       },

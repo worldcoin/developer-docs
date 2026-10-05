@@ -6,7 +6,7 @@ title: "Mini Apps"
 
 {/* cspell:ignore idkit minikit rp_context app_id rp_id selfie sybil nullifier */}
 
-IDKit is the verification layer for Mini Apps. MiniKit handles native Mini App commands such as wallet auth, payments, transactions, sharing, and permissions. World ID verification, including Proof of Presence, is implemented with `@worldcoin/idkit`.
+IDKit is the verification layer for Mini Apps. MiniKit handles native Mini App commands such as wallet auth, payments, transactions, sharing, and permissions. World ID verification, including Selfie Check, is implemented with `@worldcoin/idkit`.
 
 Inside World App, IDKit uses the native World App transport — no QR code is shown. The same widget also works outside World App, where it falls back to the normal connect URL and QR experience. Your backend responsibilities do not change: sign each request server-side, verify the proof server-side, and store nullifiers for replay protection.
 
@@ -40,7 +40,7 @@ The Mini-App-specific details:
 | Lower-friction liveness or bot deterrence | `selfieCheck` |
 | Passport-backed checks | `passport` |
 
-For repeated Proof of Presence verification of returning users, use
+For repeated Selfie Check verification of returning users, use
 [session proofs](/world-id/idkit/session-proofs) with the `selfieCheck()` preset.
 
 Check out this [page](/world-id/idkit/credentials) to learn about the different World ID credentials and which preset to use for each.
