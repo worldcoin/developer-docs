@@ -1,13 +1,13 @@
 ---
-title: "Testing Selfie Check in Sandbox"
-description: "Coverage, critical user journeys, and known limitations for testing your Selfie Check integration in Sandbox."
+title: "Testing Proof of Presence in Sandbox"
+description: "Coverage, critical user journeys, and known limitations for testing your Proof of Presence integration in Sandbox."
 "og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
 {/* cspell:ignore idkit DoB reinstalls */}
 
-Sandbox lets you run the full [Selfie Check](/world-id/credentials/11) relying-party
+Sandbox lets you run the full [Proof of Presence](/world-id/credentials/11) relying-party
 journey end-to-end — from your surface, through IDKit, into the sandbox World ID app,
 and back — without touching production identities or real proofs.
 
@@ -28,21 +28,21 @@ guide.
 Testing is organized by entry surface and user state, using the same [Hot, Cold, and
 Semi-cold states](/world-id/idkit/verification-flows) as the rest of World ID:
 
-- **Hot** — the user already has World ID installed. If they're already Selfie Check
-  enrolled, they go straight to face match; if not, World ID walks them through
-  enrollment first, then match. (Selfie Check has no distinct Warm flow — enrollment
+- **Hot** — the user already has World ID installed. If they've already enrolled
+  for Proof of Presence, they go straight to face match; if not, World ID walks them through
+  enrollment first, then match. (Proof of Presence has no distinct Warm flow — enrollment
   happens inline within Hot, same as [Verification Flows](/world-id/idkit/verification-flows)
   describes.)
 - **Cold** — a new user with no World ID app: the full funnel, including install,
-  account creation, date of birth, invite code (iOS), enrollment, and Selfie Check.
+  account creation, date of birth, invite code (iOS), enrollment, and Proof of Presence.
 - **Semi-cold** — an existing user without World ID on this device: reinstall and
-  account recovery, then Selfie Check.
+  account recovery, then Proof of Presence.
 
 | Entry surface | State | What it exercises |
 | --- | --- | --- |
-| Native app | Hot | Same-device: validated user presents a face credential; deep link into World ID and back. |
-| Native app | Cold | Install → create account → add date of birth → redeem invite code → enroll → complete Selfie Check. |
-| Native app | Semi-cold | Existing user reinstalls and recovers their account on a fresh device, then completes Selfie Check. |
+| Native app | Hot | Same-device: validated user presents a Proof of Presence credential; deep link into World ID and back. |
+| Native app | Cold | Install → create account → add date of birth → redeem invite code → enroll → complete Proof of Presence. |
+| Native app | Semi-cold | Existing user reinstalls and recovers their account on a fresh device, then completes Proof of Presence. |
 | Web app | Hot | Cross-device: start on web, complete on phone via QR scan, proof returns to the web session. |
 | Web app | Cold | Same cold funnel, cross-device via QR; proof returns to the originating web session. |
 | Web app | Semi-cold | Same semi-cold recovery, cross-device via QR. |

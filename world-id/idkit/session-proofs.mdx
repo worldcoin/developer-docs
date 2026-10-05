@@ -1,13 +1,13 @@
 ---
 title: "Session proofs"
-description: "Verify returning users with World ID, including repeated Selfie Check verification."
+description: "Verify returning users with World ID, including repeated Proof of Presence verification."
 "og:image": "https://docs.world.org/images/docs/docs-meta.png"
 "twitter:image": "https://docs.world.org/images/docs/docs-meta.png"
 ---
 
 Use session proofs when the same user needs to verify again, such as when returning
 to your app or confirming a sensitive action. This is the recommended flow for
-[Selfie Check](/world-id/credentials/11) integrations that need repeated verification.
+[Proof of Presence](/world-id/credentials/11) integrations that need repeated verification.
 
 A uniqueness request allows each user to complete a particular action once. A
 session lets the user prove continuity across multiple checks: create it once,
@@ -54,7 +54,7 @@ if (!completion.success) throw new Error(completion.error);
 // Save its session_id against the account only after verification succeeds.
 ```
 
-The `selfieCheck()` preset selects the Selfie Check credential. See
+The `selfieCheck()` preset selects the Proof of Presence credential. See
 [Configure Credentials](/world-id/idkit/credentials) for credential options.
 
 Your backend must verify the complete result before saving its `session_id`.
