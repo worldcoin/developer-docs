@@ -36,7 +36,7 @@
 
   /* The supplied human emblem has a fixed ink fill. Invert it in dark mode
      so it stays visible on both selected and unselected menu items. */
-  .dark #sidebar-content img[src*="/icons/credentials/human-emblem.svg"] {
+  .dark img[src*="/icons/credentials/human-emblem.svg"] {
     filter: invert(1);
   }
 
