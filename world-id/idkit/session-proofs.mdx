@@ -32,7 +32,7 @@ each subsequent check. Call `signRequest({ signingKeyHex })` without an `action`
 session requests do not take an action or support legacy proofs.
 
 <Note>
-  In IDKit 4.4.0, session proofs require `.constraints(...)`. Presets, including
+  Session proofs currently require `.constraints(...)`. Presets, including
   `selfieCheck()`, are not supported by `IDKit.createSession` or
   `IDKit.proveSession`. For Selfie Check, use
   `.constraints(CredentialRequest("selfie"))`. React session widgets and hooks
