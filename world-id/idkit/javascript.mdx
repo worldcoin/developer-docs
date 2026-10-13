@@ -28,10 +28,13 @@ yarn add @worldcoin/idkit-core
 
 - `IDKit.request(config)` for uniqueness proofs
 - `IDKit.requestWithInviteCode(config)` for invite-code mode
+- `IDKit.createSession(config)` and `IDKit.proveSession(sessionId, config)` for session proofs
 - `proofOfHuman`, `passport`, `selfieCheck`, and `identityCheck` for current presets
 - `orbLegacy`, `secureDocumentLegacy`, `documentLegacy`, and `deviceLegacy` for legacy presets
 
-Each entry point returns a builder. Finalize it with `.preset(...)`.
+Request builders accept `.preset(...)` or `.constraints(...)`. In IDKit 4.4.0,
+session builders require `.constraints(...)` and do not support presets. See
+[Session proofs](/world-id/idkit/session-proofs) for examples.
 
 ## Request config
 

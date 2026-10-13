@@ -193,9 +193,16 @@ Swap the component and preset. Props, callbacks, and backend verification stay t
 
 Session verification uses `IDKitSessionWidget` (controlled) or `useIDKitSession` (headless); `onSuccess` returns an `IDKitResultSession`. Both share the request flows' widget callbacks and hook-result fields — including `onError(errorCode, debugReport?)` and `getDebugReport()`.
 
+In IDKit 4.4.0, both require `constraints` and do not support `preset`. For Selfie
+Check, import `CredentialRequest` from `@worldcoin/idkit` and pass
+`constraints={CredentialRequest("selfie")}` to the widget, or
+`constraints: CredentialRequest("selfie")` to the hook. See
+[Session proofs](/world-id/idkit/session-proofs) for creation and returning-user checks.
+
 ## Presets
 
-React hooks/widgets take `preset` directly in config.
+Request hooks/widgets take `preset` directly in config. Session hooks/widgets
+require `constraints` as described above.
 
 ## Localization and UX notes
 

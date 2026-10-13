@@ -112,7 +112,11 @@ A user can have only one [NFC Credential](https://docs.world.org/world-id/creden
 ### Selfie Check
 
 For repeated Selfie Check verification, use `IDKit.createSession` followed by
-`IDKit.proveSession` with `.preset(selfieCheck())`.
+`IDKit.proveSession` with `.constraints(CredentialRequest("selfie"))`.
+In IDKit 4.4.0, session proofs require constraints; presets, including
+`selfieCheck()`, are not supported. For React, use
+`constraints={CredentialRequest("selfie")}` on `IDKitSessionWidget` or
+`constraints: CredentialRequest("selfie")` in `useIDKitSession`.
 Save the verified `session_id` against the application account
 and require that same session on later checks; enforce per-proof replay protection.
 
@@ -136,7 +140,7 @@ The full code for each step is at [https://docs.world.org/world-id/idkit/integra
 The checklist below describes uniqueness requests. For session integrations,
 adapt it using `/world-id/idkit/session-proofs`: omit action setup and omit the
 action from RP signing,
-use `IDKitSessionWidget` or the session builders with presets, and replace
+use `IDKitSessionWidget` or the session builders with constraints, and replace
 uniqueness-nullifier storage with verified account-to-session binding and
 per-proof replay protection. Test both creation and proving the saved session.
 
