@@ -32,11 +32,8 @@ each subsequent check. Call `signRequest({ signingKeyHex })` without an `action`
 session requests do not take an action or support legacy proofs.
 
 <Note>
-  Session proofs currently require `.constraints(...)`. Presets, including
-  `selfieCheck()`, are not supported by `IDKit.createSession` or
-  `IDKit.proveSession`. For Selfie Check, use
-  `.constraints(CredentialRequest("selfie"))`. React session widgets and hooks
-  likewise require `constraints` instead of `preset`.
+  In IDKit 4.4.0, session builders require `.constraints(...)`; `.preset(...)`
+  throws an error. React session widgets and hooks also require `constraints`.
 </Note>
 
 The examples assume `app_id` comes from your Portal configuration and `rp_context`
@@ -97,6 +94,6 @@ continuity with the account's existing session.
 
 For React, use `IDKitSessionWidget` with
 `constraints={CredentialRequest("selfie")}`; import both from `@worldcoin/idkit`.
-Omit `existing_session_id` for
-creation and set it to the saved session ID for subsequent checks. The widget's
+Omit `existing_session_id` for creation and set it to the saved session ID for
+subsequent checks. The widget's
 `handleVerify` callback should call your backend before `onSuccess` grants access.
