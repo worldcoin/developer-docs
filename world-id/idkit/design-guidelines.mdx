@@ -4,76 +4,30 @@ title: "Design Guidelines"
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
+import { IDKitPreview } from "/snippets/idkit-preview.jsx";
+
 ## Figma Library
 
 <a
   href="https://www.figma.com/design/XmNRhspQ3Gfsze5WRjV1PB/ID-Kit-Library?node-id=1-213&t=73AKSDqCV4ZXrGRH-1"
   target="_blank"
   rel="noopener noreferrer"
-  className="group flex items-center justify-between p-4 mt-4 mb-6 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200 hover:border-gray-300 transition-all hover:shadow-lg no-underline"
+  className="not-prose group my-6 flex items-center justify-between gap-4 rounded-3xl border border-[#f1f1f1] bg-white p-6 no-underline transition-colors hover:bg-[#f7f7f7] dark:border-[#333333] dark:bg-[#1f1f1f] dark:hover:bg-[#2b2b2b]"
 >
   <div className="flex items-center gap-4">
-    <div className="w-12 h-12 bg-black rounded-lg flex items-center justify-center">
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M12 2L2 7L2 17L12 22L22 17V7L12 2Z"
-          stroke="white"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M12 12V22"
-          stroke="white"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M12 12L22 7"
-          stroke="white"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M12 12L2 7"
-          stroke="white"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
+    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#f7f7f7] dark:bg-[#2b2b2b]">
+      <img noZoom src="/icons/ui/cube.svg" alt="" width="24" height="24" className="block shrink-0 dark:brightness-0 dark:invert" />
     </div>
     <div>
-      <h3 className="m-0 text-lg font-semibold text-gray-900">
+      <h3 className="m-0 text-[19px] font-[450] leading-[1.2] text-[#1f1f1f] dark:text-white">
         IDKit Figma Library
       </h3>
-      <p className="m-0 text-sm text-gray-600">
+      <p className="m-0 mt-3 text-[15px] font-[350] leading-[1.3] text-[#7d7d7d] dark:text-[#b8b8b8]">
         Design components and templates for World ID integration
       </p>
     </div>
   </div>
-  <svg
-    className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors"
-    fill="none"
-    viewBox="0 0 20 20"
-  >
-    <path
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="1.5"
-      d="M6 10l4 4 4-4"
-      transform="rotate(-90 10 10)"
-    />
-  </svg>
+  <img noZoom src="/icons/ui/nav-arrow-right.svg" alt="" width="24" height="24" className="block shrink-0 dark:brightness-0 dark:invert" />
 </a>
 
 ## **Core structure:**
@@ -156,64 +110,34 @@ title: "Design Guidelines"
 
 ## States
 
+The previews below illustrate IDKit's visual states. The example QR code opens [the documentation homepage](https://docs.world.org/) and does not start a verification request. Typography and spacing follow the [World ID App Handoff](https://www.figma.com/design/SQ3CglyxErQLwQA8kmgPBs/World-ID-App---Handoff?node-id=2961-16617).
+
 **Default** Waiting for user to scan the QR code
 
-<img
-  src="/images/docs/id/design-guidelines/main.png"
-  alt="Default state - Waiting for user to scan the QR code"
-  width="600"
-  height="400"
-  className="w-full h-auto max-w-[600px]"
-/>
+<IDKitPreview state="default" />
 
 **Success** - Successful connection
 
-<img
-  src="/images/docs/id/design-guidelines/success.png"
-  alt="Success - Successful connection"
-  width="600"
-  height="400"
-  className="w-full h-auto max-w-[600px]"
-/>
+<IDKitPreview state="success" />
 
 **Request canceled** - User manually canceled request in World ID
 
-<img
-  src="/images/docs/id/design-guidelines/cancel.png"
-  alt="Request canceled - User manually canceled request in World ID"
-  width="600"
-  height="400"
-  className="w-full h-auto max-w-[600px]"
-/>
+<IDKitPreview state="cancelled" />
 
 **Connection lost** - Lost connection to server or user offline
 
-<img
-  src="/images/docs/id/design-guidelines/lost.png"
-  alt="Connection lost - Lost connection to server or user offline"
-  width="600"
-  height="400"
-  className="w-full h-auto max-w-[600px]"
-/>
+<IDKitPreview state="connection" />
 
 **Error** - Generic technical error or proof failure
 
-<img
-  src="/images/docs/id/design-guidelines/error.png"
-  alt="Error - Generic technical error or proof failure"
-  width="600"
-  height="400"
-  className="w-full h-auto max-w-[600px]"
-/>
+<IDKitPreview state="error" />
 
 ### Partnership example
 
-<img
-  src="/images/docs/id/design-guidelines/partner.png"
-  alt="Partnership example"
-  width="600"
-  height="400"
-  className="w-full h-auto max-w-[600px]"
+<IDKitPreview
+  state="default"
+  partnerName="Partner app"
+  partnerLogo="/images/docs/id/design-guidelines/partner-app.svg"
 />
 
 ## Verified Human Badge
@@ -221,42 +145,30 @@ title: "Design Guidelines"
 The **Human Badge** signals that an account or user is verified as a unique human via **World ID**. It builds trust, improves authenticity, and embeds into products across industries (social, gaming, commerce, identity, etc.).
 
 <a
-  href="https://www.figma.com/design/XmNRhspQ3Gfsze5WRjV1PB/ID-Kit-Library?node-id=1-216"
+  href="https://www.figma.com/design/SQ3CglyxErQLwQA8kmgPBs/World-ID-App---Handoff?node-id=6275-72033"
   target="_blank"
   rel="noopener noreferrer"
-  className="group block max-w-sm mt-6 mb-3 mx-auto bg-white rounded-2xl border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-xl transition-all overflow-hidden no-underline"
+  className="not-prose group mx-auto mb-3 mt-6 block max-w-sm overflow-hidden rounded-3xl border border-[#f1f1f1] bg-white no-underline transition-colors hover:bg-[#f7f7f7] dark:border-[#333333] dark:bg-[#1f1f1f]"
 >
-  <div className="p-4 bg-gradient-to-br from-gray-50 to-gray-100">
+  <div className="bg-[#f7f7f7] p-6 dark:bg-[#2b2b2b]">
     <img
-      src="/images/docs/id/design-guidelines/human-verified-badge.svg"
+      src="/images/docs/id/design-guidelines/human-badge.svg"
       alt="Human badge"
       width="24"
       height="24"
       className="mx-auto h-12 w-12"
     />
   </div>
-  <div className="p-4">
-    <h3 className="m-0 text-lg p-0 font-bold text-gray-900 group-hover:text-black transition-colors">
+  <div className="p-6">
+    <h3 className="m-0 text-[19px] font-[450] leading-[1.2] text-[#1f1f1f] dark:text-white">
       Human Badge Figma Assets
     </h3>
-    <p className="m-0 text-sm text-gray-600">
+    <p className="m-0 mt-3 text-[15px] font-[350] leading-[1.3] text-[#7d7d7d] dark:text-[#b8b8b8]">
       Download the human badge asset.
     </p>
-    <div className="flex items-center text-sm font-medium text-primary">
+    <div className="mt-4 flex items-center gap-2 text-[15px] font-[500] text-[#1f1f1f] dark:text-white">
       Open in Figma
-      <svg
-        className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform"
-        fill="none"
-        viewBox="0 0 20 20"
-      >
-        <path
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          d="M3 10h14m-4-4l4 4-4 4"
-        />
-      </svg>
+      <img noZoom src="/icons/ui/arrow-right.svg" alt="" width="24" height="24" className="block dark:brightness-0 dark:invert" />
     </div>
   </div>
 </a>

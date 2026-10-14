@@ -23,24 +23,22 @@ export const DeveloperStories = ({ title, subtitle, items = [] }) => {
   };
 
   const arrow = (direction) => (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" style={{ transform: direction < 0 ? "rotate(180deg)" : "none" }}>
-      <path d="M8.5 2.8L13.2 7.5H2V8.5H13.2L8.5 13.2L9.2 13.9L15.1 8L9.2 2.1L8.5 2.8Z" fill="currentColor" />
-    </svg>
+    <img noZoom src="/icons/ui/arrow-right.svg" alt="" width="24" height="24" className="block dark:brightness-0 dark:invert" style={{ transform: direction < 0 ? "rotate(180deg)" : "none" }} />
   );
 
   return (
     <div className="not-prose" data-developer-stories>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <div className="landing-section-title">{title}</div>
-          {subtitle ? <div className="landing-section-sub">{subtitle}</div> : null}
+          <div className="text-[48px] font-[400] leading-[1.15] tracking-[-0.015em] text-[#1f1f1f] dark:text-white max-[600px]:text-[32px]">{title}</div>
+          {subtitle ? <div className="mt-3 text-[18px] font-[350] leading-[1.4] text-[#7d7d7d] dark:text-[#b8b8b8]">{subtitle}</div> : null}
         </div>
         <div className="flex gap-2">
           <button
             type="button"
             aria-label="Previous story"
             onClick={scrollByCard(-1)}
-            className="landing-carousel-arrow flex h-10 w-10 cursor-pointer items-center justify-center rounded-full"
+            className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-[#f7f7f7] transition-colors hover:bg-[#f1f1f1] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#007cfb] dark:bg-[#2b2b2b] dark:hover:bg-[#333333]"
           >
             {arrow(-1)}
           </button>
@@ -48,7 +46,7 @@ export const DeveloperStories = ({ title, subtitle, items = [] }) => {
             type="button"
             aria-label="Next story"
             onClick={scrollByCard(1)}
-            className="landing-carousel-arrow flex h-10 w-10 cursor-pointer items-center justify-center rounded-full"
+            className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-[#f7f7f7] transition-colors hover:bg-[#f1f1f1] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#007cfb] dark:bg-[#2b2b2b] dark:hover:bg-[#333333]"
           >
             {arrow(1)}
           </button>
@@ -59,7 +57,7 @@ export const DeveloperStories = ({ title, subtitle, items = [] }) => {
         {items.map((story, index) => (
           <div
             key={story.name}
-            className="landing-story-card relative shrink-0 snap-start overflow-hidden rounded-2xl bg-zinc-900"
+            className="landing-story-card relative shrink-0 snap-start overflow-hidden rounded-3xl bg-[#1f1f1f]"
           >
             {playing === index ? (
               <iframe
@@ -87,7 +85,7 @@ export const DeveloperStories = ({ title, subtitle, items = [] }) => {
                     <path d="M8 5v14l11-7z" />
                   </svg>
                 </span>
-                <span className="absolute rounded-[10px] bg-black text-[17px] leading-snug text-white md:text-[20px]" style={{ left: "24px", bottom: "24px", padding: "14px 16px" }}>
+                <span className="absolute bottom-4 left-4 right-4 rounded-3xl bg-[#1f1f1f] px-4 py-2 text-[15px] font-[500] leading-[1.3] text-white">
                   {story.name} / {story.role} / {story.company}
                 </span>
               </button>
