@@ -26,9 +26,19 @@ https://developer.world.org/api/mcp
 
 Developer portal API keys start with `api_`.
 
+## Authentication errors
+
+Every method, including `initialize`, requires the API key. Authentication failures return HTTP 200 with JSON-RPC error code `-32001`, not an HTTP 401. The message distinguishes missing or malformed credentials from a key that was parsed but rejected:
+
+```json
+{"jsonrpc": "2.0", "id": 1, "error": {"code": -32001, "message": "API key is required."}}
+```
+
+For a parsed but rejected key, the message is `API key is not valid.` Check that the client sends `Authorization: Bearer <API_KEY>` and copies the complete key from secure storage. Keys are shown only once; if yours is lost, generate a new key and update every client using the old one. The endpoint only accepts `POST`; `GET` returns HTTP 405 with `allow: POST, OPTIONS`.
+
 ## Connect your client
 
-Replace `api_...` with the API key you copied from the Developer Portal.
+Replace `api_...` with the API key you copied from the Developer Portal. Codex and Cursor read the key from the `WORLD_DEVELOPER_API_KEY` environment variable at startup, so set it persistently (for example, in your shell profile, loaded from a secrets manager) rather than with a one-off `export`. VS Code prompts for the key once and stores it securely.
 
 <Tabs>
   <Tab title="Claude Code">
@@ -36,17 +46,15 @@ Replace `api_...` with the API key you copied from the Developer Portal.
     claude mcp add world-developer-portal \
       https://developer.world.org/api/mcp \
       --transport http \
-      --scope project \
+      --scope local \
       --header "Authorization: Bearer api_..."
     ```
   </Tab>
   <Tab title="Codex">
     ```bash
     codex mcp add world-developer-portal \
-      --env WORLD_DEVELOPER_API_KEY=api_... \
-      -- npx -y mcp-remote https://developer.world.org/api/mcp \
-        --transport http-only \
-        --header 'Authorization:Bearer ${WORLD_DEVELOPER_API_KEY}'
+      --url https://developer.world.org/api/mcp \
+      --bearer-token-env-var WORLD_DEVELOPER_API_KEY
     ```
   </Tab>
   <Tab title="Cursor">
@@ -58,7 +66,7 @@ Replace `api_...` with the API key you copied from the Developer Portal.
         "world-developer-portal": {
           "url": "https://developer.world.org/api/mcp",
           "headers": {
-            "Authorization": "Bearer api_..."
+            "Authorization": "Bearer ${env:WORLD_DEVELOPER_API_KEY}"
           }
         }
       }
@@ -70,12 +78,20 @@ Replace `api_...` with the API key you copied from the Developer Portal.
 
     ```json
     {
+      "inputs": [
+        {
+          "type": "promptString",
+          "id": "world-developer-api-key",
+          "description": "World Developer Portal API key",
+          "password": true
+        }
+      ],
       "servers": {
         "world-developer-portal": {
           "type": "http",
           "url": "https://developer.world.org/api/mcp",
           "headers": {
-            "Authorization": "Bearer api_..."
+            "Authorization": "Bearer ${input:world-developer-api-key}"
           }
         }
       }
@@ -139,9 +155,18 @@ upload_app_image { app_id, image_type: "content_card", image_base64 | source_url
 upload_app_image { app_id, image_type: "showcase_1", image_base64 | source_url }
 ```
 
+## Timeouts and retries
+
+A timeout or dropped connection doesn't tell you whether a call went through, and these tools don't replay the original result. Re-read state (`get_world_id_signing_key`, `get_world_id_registration_status`, `get_app_config`) before you retry:
+
+- `configure_world_id` and `rotate_world_id_signing_key`: the private key is only in the original response. If that response is lost, the key is unrecoverable, but the portal still applies its signer address. Retrying `configure_world_id` returns the existing registration with `signing_key: null`. Retrying `rotate_world_id_signing_key` fails with `-32004` (`rotation_in_progress`) until the registration status is `registered` again. If `get_world_id_signing_key` shows a signer address you don't hold, wait until `get_world_id_registration_status` reports `registered`, then rotate again from a trusted channel (see [Security notes](#security-notes)).
+- `submit_app_for_review`: if the first call went through, a retry fails with `-32004` `Only unverified apps can be submitted.` Check `get_app_config` for the review status instead.
+
 ## Security notes
 
 - Store generated World ID private keys immediately. They are returned once and are not recoverable from the portal.
+- `configure_world_id` and `rotate_world_id_signing_key` return the private key as a tool call result, not a one-time dialog — it passes through the assistant's model context and, depending on the client, may be persisted in session transcripts or debug logs. Treat it as sensitive. If it was generated through a client whose logs aren't under your team's control, don't just rotate again from that same client — the replacement key would leak through the identical path. Rotate from the Developer Portal dashboard instead: it generates the new key in your browser and sends only the signer address.
+- Keep API keys out of files you commit. Claude Code's `--scope project` writes the header to `.mcp.json`, which is meant to be committed; the examples above use local scope, an environment variable, or an input prompt instead.
 - Use a separate API key per local agent or project when possible.
 - Delete or rotate API keys that are no longer needed.
 - Confirm destructive actions before asking the assistant to rotate a signer key or submit an app for review.
