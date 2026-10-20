@@ -26,58 +26,58 @@ import { DeveloperStories } from "/snippets/developer-stories.jsx";
 <Visibility for="humans">
 <div className="landing-container">
 
-<div style={{ marginBottom: "160px" }}>
-  <h1 className="landing-hero-title" style={{ margin: 0 }}>World Developer Docs</h1>
-  <div className="landing-hero-sub">
+<div className="mb-[160px] flex flex-col gap-6">
+  <h1 className="m-0 text-[64px] font-[400] leading-[1.1] tracking-[-0.015em] text-[#1f1f1f] dark:text-white max-[600px]:text-[40px]">World Developer Docs</h1>
+  <div className="max-w-[487px] text-[24px] font-[350] leading-[1.35] text-[#7d7d7d] dark:text-[#b8b8b8] max-[600px]:text-[18px]">
     Integrate World ID and deploy on World Chain with official developer documentation.
   </div>
 </div>
 
-<div className="landing-card-grid" style={{ marginBottom: "240px" }}>
+<div className="landing-card-grid mb-[240px]">
 
   <a href="/world-id/overview" className="product-card">
     <div className="product-card-tile">
-      <img src="/icons/landing/world-id.svg" alt="" className="product-card-icon" style={{ width: "32px", height: "32px", display: "block" }} />
+      <img noZoom src="/icons/credentials/human-emblem.svg" alt="" className="product-card-icon" style={{ width: "32px", height: "32px", display: "block" }} />
     </div>
     <div>
-      <div className="product-card-title" style={{ fontSize: "32px", lineHeight: 1.2, letterSpacing: "-0.32px", fontWeight: 300 }}>Integrate World ID</div>
-      <div className="product-card-desc" style={{ fontSize: "16px", lineHeight: 1.4, fontWeight: 300, marginTop: "10px", maxWidth: "280px" }}>Anonymous Proof of Human for your website or app</div>
+      <div className="product-card-title text-[32px] font-[400] leading-[1.2] tracking-[-0.015em] max-[900px]:text-[24px]">Integrate World ID</div>
+      <div className="product-card-desc mt-[10px] max-w-[280px] text-[16px] font-[350] leading-[1.4]">Anonymous Proof of Human for your website or app</div>
     </div>
   </a>
 
   <a href="/mini-apps" className="product-card">
     <div className="product-card-tile">
-      <img src="/icons/landing/mini-app.svg" alt="" className="product-card-icon" style={{ width: "32px", height: "32px", display: "block" }} />
+      <img noZoom src="/icons/landing/mini-app.svg" alt="" className="product-card-icon" style={{ width: "32px", height: "32px", display: "block" }} />
     </div>
     <div>
-      <div className="product-card-title" style={{ fontSize: "32px", lineHeight: 1.2, letterSpacing: "-0.32px", fontWeight: 300 }}>Create a Mini App</div>
-      <div className="product-card-desc" style={{ fontSize: "16px", lineHeight: 1.4, fontWeight: 300, marginTop: "10px", maxWidth: "280px" }}>Mini applications distributed in World App</div>
+      <div className="product-card-title text-[32px] font-[400] leading-[1.2] tracking-[-0.015em] max-[900px]:text-[24px]">Create a Mini App</div>
+      <div className="product-card-desc mt-[10px] max-w-[280px] text-[16px] font-[350] leading-[1.4]">Mini applications distributed in World App</div>
     </div>
   </a>
 
   <a href="/agents/agent-kit/integrate" className="product-card">
     <div className="product-card-tile">
-      <img src="/icons/landing/agentkit.svg" alt="" className="product-card-icon" style={{ width: "32px", height: "32px", display: "block" }} />
+      <img noZoom src="/icons/landing/agentkit.svg" alt="" className="product-card-icon" style={{ width: "32px", height: "32px", display: "block" }} />
     </div>
     <div>
-      <div className="product-card-title" style={{ fontSize: "32px", lineHeight: 1.2, letterSpacing: "-0.32px", fontWeight: 300 }}>AgentKit</div>
-      <div className="product-card-desc" style={{ fontSize: "16px", lineHeight: 1.4, fontWeight: 300, marginTop: "10px", maxWidth: "280px" }}>Distinguish human-backed agents from bots and scripts</div>
+      <div className="product-card-title text-[32px] font-[400] leading-[1.2] tracking-[-0.015em] max-[900px]:text-[24px]">AgentKit</div>
+      <div className="product-card-desc mt-[10px] max-w-[280px] text-[16px] font-[350] leading-[1.4]">Distinguish human-backed agents from bots and scripts</div>
     </div>
   </a>
 
   <a href="/world-chain" className="product-card">
     <div className="product-card-tile">
-      <img src="/icons/landing/world-chain.svg" alt="" className="product-card-icon" style={{ width: "32px", height: "32px", display: "block" }} />
+      <img noZoom src="/icons/landing/world-chain.svg" alt="" className="product-card-icon" style={{ width: "32px", height: "32px", display: "block" }} />
     </div>
     <div>
-      <div className="product-card-title" style={{ fontSize: "32px", lineHeight: 1.2, letterSpacing: "-0.32px", fontWeight: 300 }}>World Chain</div>
-      <div className="product-card-desc" style={{ fontSize: "16px", lineHeight: 1.4, fontWeight: 300, marginTop: "10px", maxWidth: "280px" }}>Build directly on World’s blockchain infrastructure</div>
+      <div className="product-card-title text-[32px] font-[400] leading-[1.2] tracking-[-0.015em] max-[900px]:text-[24px]">World Chain</div>
+      <div className="product-card-desc mt-[10px] max-w-[280px] text-[16px] font-[350] leading-[1.4]">Build directly on World’s blockchain infrastructure</div>
     </div>
   </a>
 
 </div>
 
-<div style={{ marginBottom: "240px" }}>
+<div className="mb-[240px]">
   <DeveloperStories
     title="Developer stories"
     subtitle="See how developers build trusted, human-centered apps with World."
@@ -107,8 +107,8 @@ import { DeveloperStories } from "/snippets/developer-stories.jsx";
   />
 </div>
 
-<div style={{ marginBottom: "240px" }}>
-  <div className="landing-section-title" style={{ marginBottom: "40px" }}>World Tech Updates</div>
+<div className="mb-[240px]">
+  <div className="mb-10 text-[48px] font-[400] leading-[1.15] tracking-[-0.015em] text-[#1f1f1f] dark:text-white max-[600px]:text-[32px]">World Tech Updates</div>
   <div className="landing-updates">
     <a className="landing-update" href="https://world.org/blog/engineering/world-chain-full-block-access-lists" target="_blank" rel="noopener noreferrer">
       <div className="landing-update-title">World Chain launches full block access lists</div>
@@ -123,7 +123,7 @@ import { DeveloperStories } from "/snippets/developer-stories.jsx";
       <p className="landing-update-desc">The new World ID 4.0 upgrade introduces account abstraction with multi-key support, transforming a World ID from a single secret into an abstract record in a public registry. This increases protocol resilience by allowing the introduction of multiple key support, portability, recovery and improved privacy.</p>
     </a>
   </div>
-  <a href="https://world.org/blog?blog_type=world-tech" target="_blank" rel="noopener noreferrer" className="landing-link" style={{ display: "inline-block", fontSize: "16px", marginTop: "48px", textDecoration: "underline", textUnderlineOffset: "4px" }}>
+  <a href="https://world.org/blog?blog_type=world-tech" target="_blank" rel="noopener noreferrer" className="mt-8 inline-flex min-h-12 items-center rounded-3xl bg-[#f7f7f7] px-6 py-3 text-[17px] font-[500] leading-[1.2] text-[#1f1f1f] no-underline hover:bg-[#f1f1f1] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#007cfb] dark:bg-[#2b2b2b] dark:text-white dark:hover:bg-[#333333]">
     Go to World Tech
   </a>
 </div>
@@ -165,9 +165,9 @@ import { DeveloperStories } from "/snippets/developer-stories.jsx";
     */}
 
     {/* Footer links — single row per Docs 3.0: trademark left, links right */}
-    <div className="landing-footer-links" style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: "24px 48px", fontSize: "16px", lineHeight: 1.4, fontWeight: 300 }}>
+    <div className="landing-footer-links flex flex-wrap items-baseline justify-between gap-x-12 gap-y-6 text-[15px] font-[350] leading-[1.3]">
       <span>™ 2026 World</span>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "16px 40px" }}>
+      <div className="flex flex-wrap gap-x-10 gap-y-4">
         <a href="https://world.org" className="landing-footer-link">About World</a>
         <a href="https://world.org/developers" className="landing-footer-link">Developers</a>
         <a href="https://whitepaper.world.org" className="landing-footer-link">Whitepaper</a>

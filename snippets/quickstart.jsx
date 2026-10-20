@@ -23,12 +23,8 @@ export const Quickstart = ({
     ? `Read ${promptCfg.skillUrl} and add ${promptCfg.productName} to my app`
     : null;
 
-  // Mintlify-style copy icon (matches the fenced code-block copy button).
   const copyIcon = (
-    <svg width="16" height="16" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M14.25 5.25H7.25C6.14543 5.25 5.25 6.14543 5.25 7.25V14.25C5.25 15.3546 6.14543 16.25 7.25 16.25H14.25C15.3546 16.25 16.25 15.3546 16.25 14.25V7.25C16.25 6.14543 15.3546 5.25 14.25 5.25Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-      <path d="M2.80103 11.998L1.77203 5.07397C1.61003 3.98097 2.36403 2.96397 3.45603 2.80197L10.38 1.77297C11.313 1.63397 12.19 2.16297 12.528 3.00097" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-    </svg>
+    <img noZoom src="/icons/ui/copy.svg" alt="" width="16" height="16" className="block h-4 w-4 dark:brightness-0 dark:invert" />
   );
 
   const onCopy = (text) => (e) => {
@@ -46,66 +42,61 @@ export const Quickstart = ({
   };
 
   return (
-    <div className="not-prose rounded-3xl border border-[#E1DFDA] bg-white p-6 md:p-8 dark:border-zinc-800 dark:bg-zinc-900">
-      <div>
-        <h3 className="m-0 text-2xl leading-tight font-semibold text-zinc-900 dark:text-zinc-100">
-          {title}
-        </h3>
-        <p className="mt-3 text-[16px] leading-7 text-zinc-800 dark:text-zinc-200">
-          {description}
-        </p>
-        <div className="quickstart-code mt-6 min-w-0">{children}</div>
+    <div className="not-prose flex flex-col gap-8 rounded-3xl border border-[#f1f1f1] bg-white p-6 md:p-8 dark:border-[#333333] dark:bg-black">
+      <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-3">
+          <h3 className="m-0 font-sans text-2xl font-[450] leading-[1.2] tracking-[-0.015em] text-[#1f1f1f] dark:text-white">{title}</h3>
+          <p className="m-0 font-sans text-[17px] font-[350] leading-[1.3] tracking-[-0.005em] text-[#7d7d7d] dark:text-[#b8b8b8]">{description}</p>
+        </div>
+        <div className="quickstart-code min-w-0">{children}</div>
       </div>
 
       {promptText ? (
-        <div className="mt-6">
-          <div className="my-4 flex items-center gap-3">
+        <div className="flex flex-col gap-6">
+          <div className="flex items-center gap-3">
             <div className="h-px flex-1 bg-zinc-200 dark:bg-white/10"></div>
-            <span className="font-mono text-xs text-zinc-500 dark:text-zinc-400">OR</span>
+            <span className="font-mono text-xs text-[#7d7d7d] dark:text-[#b8b8b8]">OR</span>
             <div className="h-px flex-1 bg-zinc-200 dark:bg-white/10"></div>
           </div>
-          <p className="m-0 mb-2 text-[16px] text-zinc-800 dark:text-zinc-200">
-            Tell your coding agent to:
-          </p>
-          <div
-            className="group relative overflow-hidden rounded-xl border border-zinc-200 dark:border-white/10"
-            style={{ backgroundColor: "#FAFAFA" }}
-          >
-            <div className="dark-bg pointer-events-none absolute inset-0 hidden dark:block" style={{ backgroundColor: "#0B0C0E" }} />
-            <pre
-              className="relative m-0 overflow-x-auto bg-transparent px-4 py-3 font-mono text-sm leading-6"
-              style={{ color: "#1F2328" }}
-            >
-              <code className="bg-transparent p-0 text-inherit dark:!text-[#D4D4D4]">
-                <span>Read </span>
-                <a
-                  href={`https://${promptCfg.skillUrl}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-inherit underline decoration-zinc-400 underline-offset-2 hover:decoration-zinc-700 dark:decoration-zinc-500 dark:hover:decoration-zinc-200"
-                >
-                  {promptCfg.skillUrl}
-                </a>
-                <span>{` and add ${promptCfg.productName} to my app`}</span>
-              </code>
-            </pre>
-            <button
-              type="button"
-              aria-label="Copy"
-              onClick={onCopy(promptText)}
-              className="absolute right-2 top-2 inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-gray-600/5 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-gray-200/5 dark:hover:text-zinc-200"
-            >
-              <span data-copy-icon className="inline-flex">{copyIcon}</span>
-              <span data-copy-tick style={{ display: "none" }} className="text-emerald-600 dark:text-emerald-400">✓</span>
-            </button>
+          <div className="flex flex-col gap-3">
+            <p className="m-0 font-sans text-[17px] font-[350] leading-[1.3] tracking-[-0.005em] text-[#7d7d7d] dark:text-[#b8b8b8]">
+              Tell your coding agent to:
+            </p>
+            <div className="border-[#f1f1f1] bg-[#f5f5f5] text-[#1f1f1f] dark:text-white dark:border-[#333333] dark:bg-[#1f1f1f] group relative overflow-hidden rounded-xl border">
+              <pre className="relative m-0 overflow-x-auto bg-transparent py-3 pl-4 pr-14 font-mono text-sm leading-6 text-[#1f1f1f] dark:text-white">
+                <code className="bg-transparent p-0 text-inherit">
+                  <span>Read </span>
+                  <a
+                    href={`https://${promptCfg.skillUrl}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-inherit underline decoration-zinc-400 underline-offset-2 hover:decoration-zinc-700 dark:decoration-zinc-500 dark:hover:decoration-zinc-200"
+                  >
+                    {promptCfg.skillUrl}
+                  </a>
+                  <span>{` and add ${promptCfg.productName} to my app`}</span>
+                </code>
+              </pre>
+              <button
+                type="button"
+                aria-label="Copy"
+                onClick={onCopy(promptText)}
+                className="text-[#1f1f1f] dark:text-white hover:bg-[#f1f1f1] dark:hover:bg-[#2b2b2b] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#007cfb] absolute right-2 top-2 inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-md transition-colors"
+              >
+                <span data-copy-icon className="inline-flex">{copyIcon}</span>
+                <span data-copy-tick style={{ display: "none" }}>
+                  <img noZoom src="/icons/ui/check.svg" alt="" width="16" height="16" className="block h-4 w-4 dark:brightness-0 dark:invert" />
+                </span>
+              </button>
+            </div>
           </div>
         </div>
       ) : null}
 
-      <div className="mt-6 md:mt-4">
+      <div>
         <a
           href={buttonHref}
-          className="inline-flex items-center justify-center rounded-full border border-transparent bg-zinc-950 px-6 py-3 text-[16px] font-medium !text-white no-underline transition-colors hover:bg-black dark:border-zinc-700 dark:bg-zinc-800 dark:!text-zinc-100 dark:hover:bg-zinc-700"
+          className="box-border inline-flex h-12 min-h-12 w-full items-center justify-center gap-2 rounded-3xl border-0 px-6 py-3 text-center font-sans text-[17px] font-[500] leading-[1.2] tracking-[-0.01em] no-underline md:w-auto focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#007cfb] bg-[#1f1f1f] !text-white dark:bg-white dark:!text-[#1f1f1f] transition-opacity hover:opacity-[0.85]"
         >
           {buttonLabel}
         </a>
