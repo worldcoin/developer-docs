@@ -110,8 +110,11 @@ nullifier to enforce uniqueness:
    backend verification endpoint. Require the expected enrollment action.
 2. Reject a nullifier already used for enrollment under this app and action.
 3. Save the verified nullifier and session ID against the account only after both
-   checks succeed. Enforce nullifier uniqueness in your database to prevent
-   concurrent requests from enrolling the same person twice.
+   checks succeed. [Enforce nullifier uniqueness in your database](/world-id/idkit/integrate#step-6-store-the-nullifier)
+   to prevent concurrent requests from enrolling the same World ID twice.
+
+Uniqueness assurance depends on the selected credential.
+[Selfie Check](/world-id/credentials/11) remains a medium-assurance credential.
 
 For later checks, [prove the saved session](#verify-a-returning-user) with a fresh
 RP signature without an action. Keep the original enrollment nullifier; subsequent
