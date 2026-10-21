@@ -76,8 +76,9 @@ the saved value whenever the client submits a new session.
 ## Create a session with a uniqueness proof
 
 During enrollment, use `IDKit.request` with an `action` and
-`session_id: "create"`. This produces one uniqueness proof that also binds a new
+`create_session: true`. This produces one uniqueness proof that also binds a new
 session, so the user can enroll and establish continuity in the same request.
+The older `session_id: "create"` option remains supported but is deprecated.
 
 Use the same enrollment action for all users, such as `"signup"`. On your backend,
 generate the RP signature with `signRequest({ signingKeyHex, action: "signup" })`
@@ -89,7 +90,7 @@ import { IDKit, CredentialRequest } from "@worldcoin/idkit-core";
 const request = await IDKit.request({
   app_id,
   action: "signup",
-  session_id: "create",
+  create_session: true,
   rp_context,
   allow_legacy_proofs: false,
   environment: "production",
