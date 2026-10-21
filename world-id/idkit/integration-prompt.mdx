@@ -33,7 +33,7 @@ Integrate World ID into my project using IDKit. Here are my app details:
 
 4. On success, send the IDKit result to my backend.
    The backend should forward the payload as-is to: POST https://developer.world.org/api/v4/verify/{rp_id}
-   No field remapping is needed.
+   No field remapping is needed. Include a descriptive User-Agent header (for example, my-world-id-backend/1.0); requests without one may be rejected by bot protection.
 
 ## Reference
 - Full docs: https://docs.world.org/llms.txt
