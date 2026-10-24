@@ -165,6 +165,15 @@ contract VerifyUniquenessV4 {
 }
 ```
 
+Use the [Nullifier helper](/world-id/idkit/javascript#nullifier) to convert the
+hex value before passing it to the contract:
+
+```ts
+import { Nullifier } from "@worldcoin/idkit-core/nullifier";
+
+const nullifier = Nullifier.fromHex(result.responses[i].nullifier).toBigInt();
+```
+
 Minimal mapping from IDKit result:
 - `nullifier` = `responses[i].nullifier`
 - `action` = `hash_to_field(utf8(action))` as `uint256`, over the UTF-8 bytes of the top-level `action` string (same field-reduction as [RP signatures](/world-id/idkit/signatures#algorithm))
