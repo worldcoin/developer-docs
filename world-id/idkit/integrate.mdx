@@ -310,7 +310,9 @@ After completion, send the returned payload to your backend and
 forward it directly to `POST https://developer.world.org/api/v4/verify/{rp_id}`. Check that the verify response’s `environment` matches your backend’s expected environment (assert `"production"` for production integrations).
 
 <Note>
-  Forward the IDKit result payload as-is. No field remapping is required.
+  Forward the IDKit result payload as-is. No field remapping is required. Include
+  a descriptive `User-Agent` header; requests without one may be rejected with a
+  `403` by bot protection.
 </Note>
 
 ```typescript title="app/api/verify-proof/route.ts"
@@ -337,7 +339,10 @@ export async function POST(request: Request): Promise<Response> {
     `https://developer.world.org/api/v4/verify/${rp_id}`,
     {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: {
+        "content-type": "application/json",
+        "user-agent": "my-world-id-backend/1.0",
+      },
       body: JSON.stringify({
         ...idkitResponse,
         environment: expectedEnvironment,
