@@ -14,12 +14,16 @@ Referral programs are proven growth drivers because they leverage trust. People 
 
 Create server-side invite pages that work across all platforms:
 
-```typescript
+```tsx
 // pages/invite.tsx
+import { useEffect } from "react";
+
+const appId = process.env.NEXT_PUBLIC_APP_ID;
+
 export default function InvitePage({ code }: { code: string }) {
 	useEffect(() => {
 		// Redirect to mini app
-		window.location.href = `https://world.org/mini-app?app_id=${YOUR_APP_ID}&path=/invite?code=${code}`
+		window.location.href = `https://world.org/mini-app?app_id=${appId}&path=${encodeURIComponent(`/invite?code=${code}`)}`
 	}, [code])
 
 	return <div>Redirecting to mini app...</div>
@@ -34,7 +38,7 @@ Deep-link (opens World App directly if installed)
 
 `worldapp://mini-app?app_id={app_id}&path={path}`
 
-To force opening in the device browser instead of the native webview, append `open_out_of_window=true` to the URL (works for both universal and deep links).
+To open a link from your mini app in the device browser instead of World App, add `open_out_of_window=true` to its URL, e.g. `window.open("https://example.com/?open_out_of_window=true", "_blank")`.
 
 Note: path should be URL encoded.
 ### 2. Generate Share Links
@@ -53,7 +57,7 @@ function generateInviteLink(userId: string): string {
 
 ### 3. Implement Share Functionality
 
-Add share buttons at key moments in your user journey:
+Add share buttons at key moments in your user journey. `trackEvent` below is a placeholder for your own analytics tool (Segment, PostHog, etc.), not a MiniKit command.
 
 ```typescript
 import { MiniKit } from "@worldcoin/minikit-js";
@@ -87,7 +91,7 @@ Process referral codes when new users sign up:
 // On app initialization
 function handleReferral() {
   const urlParams = new URLSearchParams(window.location.search);
-  const refCode = urlParams.get("ref");
+  const refCode = urlParams.get("code");
 
   if (refCode && !currentUser.referredBy) {
     // Credit the referrer
@@ -107,28 +111,52 @@ function handleReferral() {
 
 Implement two-sided rewards that benefit both parties:
 
+Requires a World-ID-verified user (an [IDKit](/world-id/idkit/integrate) proof, not [Wallet Auth](/mini-apps/commands/wallet-auth) — SIWE only proves wallet control, not personhood, so gating on it alone lets one person collect the bonus from many wallets). Never trust `newUserId`/`referrerCode` from an unauthenticated request, and claim the referral atomically so concurrent requests can't double-credit it:
+
 ```typescript
 // api/process-referral.ts
 export async function processReferral(data: {
   newUserId: string;
   referrerCode: string;
 }) {
+  // Require a stored World ID nullifier for newUserId, set when they verified
+  // with IDKit — not a Wallet Auth session, which only proves wallet control.
+  if (!(await hasVerifiedWorldId(data.newUserId))) {
+    return { success: false, reason: "unverified_user" };
+  }
+
   const referrer = await getUserByCode(data.referrerCode);
   if (!referrer) {
     return { success: false, reason: "invalid_referrer" };
   }
 
-  // Credit both users
+  if (referrer.id === data.newUserId) {
+    return { success: false, reason: "self_referral" };
+  }
+
+  // Atomically claim the referral (e.g. INSERT ... ON CONFLICT DO NOTHING on
+  // a unique referred_user_id column), then read back the stored referrer. If
+  // two requests race, only one INSERT succeeds.
+  const claimedBy = await claimReferral(data.newUserId, referrer.id);
+  if (claimedBy !== referrer.id) {
+    return { success: false, reason: "already_referred" };
+  }
+
+  // Credit both users. Each credit has its own idempotency key (unique in your
+  // credits table; treat a duplicate as success), so retrying processReferral
+  // after a partial failure writes only the missing credit.
   await Promise.all([
     creditUser(referrer.id, {
       type: "referral_bonus",
       amount: 100,
       reason: "Friend joined via your invite",
+      idempotencyKey: `referral:${data.newUserId}:referrer`,
     }),
     creditUser(data.newUserId, {
       type: "signup_bonus",
       amount: 50,
       reason: "Welcome bonus for joining via invite",
+      idempotencyKey: `referral:${data.newUserId}:referee`,
     }),
   ]);
 
@@ -200,6 +228,10 @@ const events = {
 };
 ```
 
+<Note>
+If you use the canonical [Core Event Set](/mini-apps/growth/analytics#2-%C2%B7-core-event-set-6-lines-of-code), `invite_link_created` maps to `invite_sent` and `signup_source_invite` maps to `invite_accepted`; `invite_link_clicked` has no equivalent there. Pick one taxonomy and use it consistently.
+</Note>
+
 ### Key Metrics Dashboard
 
 - **Invite Conversion Rate**: (Signups from invites) / (Total invite links clicked)
@@ -225,6 +257,6 @@ Test these variables to optimize your viral loop:
 
 1. Implement universal links for your invite flow
 2. Add share buttons after key user achievements
-3. Set up two-sided rewards with World ID verification
+3. Set up two-sided rewards with World ID verification, self-referral, and idempotency checks
 4. Track invite metrics and run small A/B tests
 5. Scale successful invite mechanics across more touchpoints
