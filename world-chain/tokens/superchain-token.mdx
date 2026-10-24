@@ -10,12 +10,12 @@ title: "Superchain Token Bridging (Coming Soon)"
 </Note>
 
 The [Superchain token bridging standard](https://github.com/ethereum-optimism/specs/blob/main/specs/interop/token-bridging.md) (`SuperchainERC20`) is a set of properties and an interface designed to enable ERC20 tokens
-to be fungible across the Superchain using the official `SuperchainERC20Bridge`. This standard builds
-upon the existing [ERC20 token standard](https://docs.openzeppelin.com/contracts/4.x/erc20) and implements the `ICrosschainERC20` interface, which includes
-two key properties: only allowing the `SuperchainERC20Bridge` to call `crosschainMint` and `crosschainBurn` functions,
+to be fungible across the Superchain using the official `SuperchainTokenBridge`. This standard builds
+upon the existing [ERC20 token standard](https://docs.openzeppelin.com/contracts/4.x/erc20) and implements the `IERC7802` interface, which includes
+two key properties: allowing the `SuperchainTokenBridge` to call `crosschainMint` and `crosschainBurn` functions (other callers may also be allowed),
 and ensuring the token is deployed at the same address on every chain in the Superchain.
 
-The `SuperchainERC20Bridge` is a predeploy that works as an abstraction on top of the `L2ToL2CrossDomainMessenger` for token bridging.
+The `SuperchainTokenBridge` is a predeploy that works as an abstraction on top of the `L2ToL2CrossDomainMessenger` for token bridging.
 It includes two main functions: `sendERC20`, which initiates a cross-chain transfer by burning tokens locally and sending a message
 to the target chain, and `relayERC20`, which processes incoming messages and mints the corresponding amount of tokens on the destination
 chain. This bridge utilizes the `L2ToL2CrossDomainMessenger` for replay protection, domain binding, and access to additional message information.
