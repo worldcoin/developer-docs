@@ -25,6 +25,24 @@ Blast API offers standardized blockchain API services for Web3 development, allo
 
 - World Chain
 
+## eRPC
+
+[eRPC](https://github.com/erpc/erpc) is an open-source, self-hosted RPC proxy. It sits in front of several World Chain endpoints, fails over between them, retries failed requests, and caches responses.
+
+```yaml erpc.yaml
+projects:
+  - id: main
+    upstreams:
+      - endpoint: https://worldchain-mainnet.g.alchemy.com/public
+      - endpoint: https://worldchain.drpc.org
+```
+
+Run `docker run -p 4000:4000 -v $(pwd)/erpc.yaml:/erpc.yaml ghcr.io/erpc/erpc:latest`, then send requests to `http://localhost:4000/main/evm/480`.
+
+### Supported networks
+
+- World Chain
+
 ## QuickNode
 
 Enterprise-grade infrastructure for World Chain development with global edge delivery. Build with high-performance RPC APIs, real-time data streaming/ETL capabilities, decentralized storage via IPFS, and extensive developer tools through our marketplace. Ideal for teams building production-grade applications on World Chain.
