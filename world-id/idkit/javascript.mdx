@@ -97,8 +97,13 @@ if (!completion.success) {
   if (completion.error === IDKitErrorCodes.Cancelled) {
     // User/app cancellation handling
   }
+  if (completion.error === IDKitErrorCodes.ChallengeFailed) {
+    console.error("Challenge failed", completion.reason);
+  }
 }
 ```
+
+Failed `pollOnce()` statuses and unsuccessful `pollUntilCompletion()` results include an optional `reason?: ErrorReason`. Missing or `null` bridge reasons are omitted from the returned object; unrecognized reason strings become `"unknown"`. This also applies to native mini-app errors. See [Error codes and reasons](/world-id/idkit/error-codes#optional-error-reasons) for the parsing rules and recognized values.
 
 <Note>
   When running inside World App, native transport is used and `connectorURI` may be empty.
