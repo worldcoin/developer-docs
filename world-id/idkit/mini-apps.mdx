@@ -63,14 +63,16 @@ This is the same widget from [Step 4 of the integration guide](/world-id/idkit/i
   onSuccess={() => {
     // Unlock the protected Mini App experience here.
   }}
-  onError={(errorCode, debugReport) => {
+  onError={(errorCode, debugReport, reason) => {
     // Inside World App, debugReport?.transport is "mini_app".
-    console.error("IDKit error", errorCode, debugReport);
+    console.error("IDKit error", errorCode, reason, debugReport);
   }}
 />
 ```
 
 Use a stable `signal` (user ID, wallet address, claim ID) to bind the proof to app-specific context, and [store the nullifier](/world-id/idkit/integrate#step-6-store-the-nullifier) in your backend to enforce uniqueness.
+
+The optional third `onError` argument contains a typed `ErrorReason` when the app provides one. Missing or `null` reasons are absent; unrecognized strings become `"unknown"`. The same [error parsing rules](/world-id/idkit/error-codes#optional-error-reasons) apply inside and outside World App.
 
 ## Related pages
 

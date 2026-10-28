@@ -67,8 +67,8 @@ const rpContext: RpContext = {
     // Called after `handleVerify` resolves (or immediately if omitted).
     // Update your app state/UI here.
   }}
-  onError={(errorCode, debugReport) => {
-    console.error("IDKit error", errorCode, debugReport);
+  onError={(errorCode, debugReport, reason) => {
+    console.error("IDKit error", errorCode, reason, debugReport);
   }}
 />;
 ```
@@ -78,7 +78,7 @@ const rpContext: RpContext = {
 - `onSuccess` is required for `IDKitRequestWidget` and `IDKitSessionWidget`.
 - `handleVerify` is optional and only available on widgets. Use it to verify the proof in your backend before success is emitted.
 - If `handleVerify` throws/rejects, the widget enters an error state, emits `onError("failed_by_host_app")`, and does not call `onSuccess`. This means World App already returned a proof, but your callback or backend did not accept it.
-- `onError` is optional.
+- `onError` is optional. Its signature is `onError(errorCode, debugReport?, reason?)`; `reason` is an optional `ErrorReason` and does not change the position of `debugReport`.
 
 ## Headless hooks
 
@@ -115,7 +115,10 @@ Hook result fields:
 - `connectorURI`
 - `result`
 - `errorCode`
+- `errorReason: ErrorReason | null`
 - `getDebugReport()`
+
+`errorReason` is `null` when the app did not provide a reason or there is no current failure. Unrecognized reason strings become `"unknown"`. Resetting the hook clears the reason. See [Error codes and reasons](/world-id/idkit/error-codes#optional-error-reasons) for recognized values and parsing examples.
 
 ## Invite-code mode
 
@@ -149,6 +152,7 @@ import { IDKitInviteCodeRequestWidget, proofOfHuman } from "@worldcoin/idkit";
 - `codeExpiresAt`
 - `result`
 - `errorCode`
+- `errorReason: ErrorReason | null`
 - `getDebugReport()`
 
 ### Migrating from QR / connect-URL
@@ -191,7 +195,7 @@ Swap the component and preset. Props, callbacks, and backend verification stay t
 
 ## Session flows
 
-Session verification uses `IDKitSessionWidget` (controlled) or `useIDKitSession` (headless); `onSuccess` returns an `IDKitResultSession`. Both share the request flows' widget callbacks and hook-result fields — including `onError(errorCode, debugReport?)` and `getDebugReport()`.
+Session verification uses `IDKitSessionWidget` (controlled) or `useIDKitSession` (headless); `onSuccess` returns an `IDKitResultSession`. Both share the request flows' widget callbacks and hook-result fields — including `onError(errorCode, debugReport?, reason?)`, nullable `errorReason`, and `getDebugReport()`.
 
 ## Presets
 
