@@ -14,7 +14,7 @@ A user's self-custodial identity which lives in their Authenticator. When referr
 A third-party application that wants to verify a user's credential. This is probably you.
 
 ## Credential
-A signed attestation about a subject used to generate proofs. It includes issuer, subject, validity window, and claim commitments as defined in the [Credential's World ID 4.0 specs](https://docs.rs/world-id-primitives/latest/world_id_primitives/credential/struct.Credential.html)
+A signed attestation about a subject used to generate proofs. It includes issuer, subject, validity window, and claim commitments as defined in the [Credential's World ID 4.0 specs](https://docs.rs/world-id-primitives/latest/world_id_primitives/credential/struct.Credential.html).
 
 ## Issuer
 An entity that issues credentials to users. In World ID, issuers are responsible for verifying a user's identity and signing their credential. Issuers must be registered in the `CredentialSchemaIssuerRegistry` to be recognized by the protocol.
@@ -33,4 +33,4 @@ An entity that issues credentials to users. In World ID, issuers are responsible
 
 - **Identity Commitment**: A hash of a user's secret identity nullifier and trapdoor, which is inserted into the Merkle Tree. This is no longer used in World ID 4.0, but you may see it referenced in older documentation.
 - **App ID**: The ID of your app that is assigned in our [Developer Portal](https://developer.worldcoin.org/). In World ID 4.0, this is now referred to as **RP ID**.
-- **Merkle Root**: A component of the World ID ZKP; The root of the [Merkle Tree](https://en.wikipedia.org/wiki/Merkle_tree) that identity commitments are inserted to. While 4.0 still uses Merkle Trees, the root is now encoded within the received ZKP, so you don't need to worry about handling it.
+- **Merkle Root**: A component of the World ID ZKP; the root of the [Merkle Tree](https://en.wikipedia.org/wiki/Merkle_tree) that identity commitments are inserted to. While 4.0 still uses Merkle Trees, the root is now encoded within the received ZKP, so you don't need to worry about handling it.
