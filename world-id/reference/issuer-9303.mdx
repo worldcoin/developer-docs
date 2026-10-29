@@ -1,11 +1,11 @@
 ---
-title: "NFC Issuer"
-description: "NFC issuer endpoints, including migration for World ID v3 NFC credentials."
+title: "Unique Document Issuer"
+description: "Unique Document Issuer endpoints and internal documentation."
 "og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-The NFC issuer exposes endpoints for issuing and migrating NFC credentials. For product-level credential semantics, Sybil-resistance guarantees, and validity details, see [Proof of Attributes](/world-id/credentials/9303).
+The Unique Document issuer exposes endpoints for issuing and migrating credentials. For product-level credential semantics, Sybil-resistance guarantees, and validity details, see [Proof of Attributes](/world-id/credentials/9303).
 
 <Note>
   The base URL is environment-specific. Contact your World ID point of contact for
@@ -15,8 +15,7 @@ The NFC issuer exposes endpoints for issuing and migrating NFC credentials. For 
 ## Migration
 
 <Warning>
-  This endpoint is intended for World ID v3 holders to obtain v4 NFC
-  credentials. It is not a general re-issuance endpoint for v4 holders.
+  This endpoint is intended for World ID v3 holders to obtain v4 credentials. It is not a general re-issuance endpoint for v4 holders.
 </Warning>
 
 <ParamField path="method" type="POST">
@@ -228,8 +227,7 @@ Details coming soon.
 ## Implementation Notes
 
 <Note>
-  This is advanced documentation about the internal workings of the NFC
-  Credential and is not relevant for RP integration.
+  This is advanced documentation about the internal workings of the credential and is not relevant for RP integration.
 </Note>
 
 ### Associated Data
