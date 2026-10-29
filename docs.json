@@ -365,8 +365,8 @@
           {
             "group": "World ID Issuers",
             "pages": [
-              "world-id/reference/poh-issuer",
-              "world-id/reference/nfc-issuer"
+              "world-id/reference/issuer-1",
+              "world-id/reference/issuer-9303"
             ]
           }
         ]
