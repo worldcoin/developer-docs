@@ -121,47 +121,6 @@
             "pages": [
               "world-id/concepts",
               "world-id/reference/authenticator",
-              {
-                "group": "API References",
-                "pages": [
-                  {
-                    "group": "Indexer",
-                    "openapi": "https://indexer.us.id-infra.worldcoin.dev/openapi.json",
-                    "pages": [
-                      "POST /inclusion-proof",
-                      "POST /packed-account",
-                      "POST /signature-nonce",
-                      "POST /authenticator-pubkeys",
-                      "POST /pending-recovery-agent",
-                      "POST /recovery-agent"
-                    ]
-                  },
-                  {
-                    "group": "Gateway",
-                    "openapi": "https://gateway.id-infra.worldcoin.dev/openapi.json",
-                    "pages": [
-                      "POST /create-account",
-                      "POST /insert-authenticator",
-                      "POST /update-authenticator",
-                      "POST /remove-authenticator",
-                      "POST /recover-account",
-                      "GET /is-valid-root",
-                      "GET /status/{id}",
-                      "GET /health",
-                      "POST /initiate-recovery-agent-update",
-                      "POST /execute-recovery-agent-update",
-                      "POST /cancel-recovery-agent-update"
-                    ]
-                  },
-                  {
-                    "group": "Issuers",
-                    "pages": [
-                      "world-id/reference/poh-issuer",
-                      "world-id/reference/nfc-issuer"
-                    ]
-                  }
-                ]
-              },
               "world-id/reference/contracts"
             ]
           }
@@ -372,6 +331,42 @@
               "POST /api/v1/precheck/{app_id}",
               "GET /api/v1/jwks",
               "POST /api/v1/graphql"
+            ]
+          },
+          {
+            "group": "World ID Indexer",
+            "openapi": "https://indexer.us.id-infra.worldcoin.dev/openapi.json",
+            "pages": [
+              "POST /inclusion-proof",
+              "POST /packed-account",
+              "POST /signature-nonce",
+              "POST /authenticator-pubkeys",
+              "POST /pending-recovery-agent",
+              "POST /recovery-agent"
+            ]
+          },
+          {
+            "group": "World ID Gateway",
+            "openapi": "https://gateway.id-infra.worldcoin.dev/openapi.json",
+            "pages": [
+              "POST /create-account",
+              "POST /insert-authenticator",
+              "POST /update-authenticator",
+              "POST /remove-authenticator",
+              "POST /recover-account",
+              "GET /is-valid-root",
+              "GET /status/{id}",
+              "GET /health",
+              "POST /initiate-recovery-agent-update",
+              "POST /execute-recovery-agent-update",
+              "POST /cancel-recovery-agent-update"
+            ]
+          },
+          {
+            "group": "World ID Issuers",
+            "pages": [
+              "world-id/reference/poh-issuer",
+              "world-id/reference/nfc-issuer"
             ]
           }
         ]
