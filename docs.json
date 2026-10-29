@@ -679,11 +679,7 @@
     },
     {
       "source": "/poh-issuer",
-      "destination": "/world-id/reference/poh-issuer"
-    },
-    {
-      "source": "/poh-issuer/index",
-      "destination": "/world-id/reference/poh-issuer"
+      "destination": "/world-id/reference/issuer-1"
     },
     {
       "source": "/reference/world-id-2-migration-guide",
