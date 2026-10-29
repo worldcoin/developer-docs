@@ -265,27 +265,6 @@
         ]
       },
       {
-        "tab": "Agents",
-        "groups": [
-          {
-            "group": "AgentKit",
-            "pages": [
-              "agents/agent-kit/integrate",
-              "agents/agent-kit/sdk-reference",
-              "agents/agent-kit/ecosystem",
-              "agents/hats/index"
-            ]
-          },
-          {
-            "group": "Human in the Loop",
-            "pages": [
-              "agents/human-in-the-loop/integrate",
-              "agents/human-in-the-loop/sdk-reference"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "World Chain",
         "groups": [
           {

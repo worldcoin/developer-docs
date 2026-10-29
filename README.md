@@ -7,7 +7,6 @@ Source for the official World developer documentation, published at **[docs.worl
 - **World ID** (`world-id/`) — IDKit SDKs (JS, React, Swift, Kotlin, Go), Credentials, Selfie Check, on-chain verification, API reference.
 - **Mini Apps** (`mini-apps/`) — building applications that run inside World App, including commands, sharing, growth, and the MiniKit reference.
 - **World Chain** (`world-chain/`) — quick start, provider integrations, tokens, and developer reference for the chain.
-- **AgentKit and agents** (`agents/`) — distinguishing human-backed agents from bots, plus Hats and human-in-the-loop flows.
 - **MCP servers** (`mcp/`) — World's Model Context Protocol integrations (developer portal, world-docs).
 - **OpenAPI specs** (`openapi/`) — machine-readable specs for the World ID and Developer Portal APIs.
 
