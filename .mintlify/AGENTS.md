@@ -3,11 +3,11 @@
 - Write all published pages, maintenance notes, commit messages, and PR descriptions in English.
 - Follow the existing MDX, navigation, branding, and terminology conventions. Register pages in `docs.json`; reuse existing snippets and components when they fit.
 - Document durable product behavior, public contracts, and necessary integration setup. Keep implementation walkthroughs, operational runbooks, and PR history out of published pages.
-- Keep changes focused. Preserve coverage of the rest of the site when extending maintenance to World ID Auth. Explain any necessary edits outside the affected product area.
+- Keep changes focused. Preserve coverage of the rest of the site when extending maintenance to IDP. Explain any necessary edits outside the affected product area.
 - Keep commit subjects and PR titles short. Follow the repository's PR template. If there is no template, use `Summary` with one to three bullets and `Testing` with commands and outcomes or `Not run`.
 - Respect the task's validation limits. State which checks passed, failed, or were skipped; never claim an unrun check passed. Do not publish or merge automatically.
 
-## World ID Auth
+## IDP
 
 The new tab has twelve pages under `world-id-auth/`. Read [the source and cutover map](world-id-auth-migration.md) before updating them.
 

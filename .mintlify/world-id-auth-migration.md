@@ -1,6 +1,6 @@
-# World ID Auth source and cutover map
+# IDP source and cutover map
 
-This maintenance note records the twelve-page migration into the `World ID Auth` tab. It is not a public integration guide or evidence of a deployed cutover.
+This maintenance note records the twelve-page migration into the `IDP` tab. It is not a public integration guide or evidence of a deployed cutover.
 
 ## Source snapshot
 
@@ -74,7 +74,7 @@ Preserve existing section fragments at their mapped destinations. In particular,
 
 ## Maintenance handoff
 
-Reuse the existing Mintlify Autopilot setup. The owner must grant its GitHub App access to `worldcoin/temporal-apps`, select it as additional source context, and apply the World ID Auth instructions in [AGENTS.md](AGENTS.md). Do not describe Auth maintenance as active until that connection and its behavior are confirmed. This PR does not add a custom synchronization workflow.
+Reuse the existing Mintlify Autopilot setup. The owner must grant its GitHub App access to `worldcoin/temporal-apps`, select it as additional source context, and apply the IDP instructions in [AGENTS.md](AGENTS.md). Do not describe Auth maintenance as active until that connection and its behavior are confirmed. This PR does not add a custom synchronization workflow.
 
 Review source changes against both the canonical guides and the implementation. Include the source PR and affected files in documentation PRs. Flag missing release evidence and source conflicts. Preserve maintenance of the rest of the site.
 

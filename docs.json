@@ -127,7 +127,7 @@
         ]
       },
       {
-        "tab": "World ID Auth",
+        "tab": "IDP",
         "groups": [
           {
             "group": "Get started",
