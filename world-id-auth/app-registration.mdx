@@ -6,6 +6,8 @@ description: "Register and manage your World ID OIDC application, credentials, c
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
+{/* Generated from worldcoin/temporal-apps/apps/idpapi/mcp/guides/app-registration.md. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}
+
 Sign in to the [developer portal](https://auth.world.org/portal) with Google to register an
 OIDC client for your application or auth server. This registration supports
 step-up, human-in-the-loop workflows, and primary sign-in.
@@ -90,6 +92,16 @@ browser-bound World ID linking attempt for the new client. Confirm the intended
 account with the user, then store the new validated `(iss, sub)` only after
 linking succeeds. Never guess which subjects correspond across sectors or link
 an account using an unvalidated subject.
+
+## Get help from a coding agent {#get-help-from-a-coding-agent}
+
+Your coding agent can [read the public integration guides](/world-id-auth/build-with-a-coding-agent#give-your-coding-agent-the-guide)
+without a plugin or MCP connection. Optionally
+[connect developer MCP tools](/world-id-auth/build-with-a-coding-agent#connect-your-coding-agent)
+to register and manage the application. Portal tools use Google authorization, and registration
+and credential changes require your approval in the portal. Keep client secrets
+and private keys outside agent conversations. The
+[agent instructions](/world-id-auth/build-with-a-coding-agent.md) cover portal tool use.
 
 ## Publish a benefit listing {#publish-a-benefit-listing}
 

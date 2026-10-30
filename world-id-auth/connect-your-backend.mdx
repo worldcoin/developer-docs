@@ -6,6 +6,8 @@ description: "Connect your backend to the World ID issuer with OpenID Connect (O
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
+{/* Generated from worldcoin/temporal-apps/apps/idpapi/mcp/guides/oidc.md. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}
+
 Connect your backend to the World ID issuer with OpenID Connect (OIDC). Your backend receives
 a signed ID token and validates it before using the account identifier and
 authentication time. Step-up, human checkpoints, and primary sign-in all use this
@@ -35,9 +37,9 @@ Turn off library defaults that add `profile`, `offline_access`,
 `prompt=consent`, or `prompt=select_account`. Use registration, discovery, and
 credentials from the same environment.
 
-<a id="authenticate-through-the-browser" />
+<span id="sign-in-through-the-browser" />
 
-## Authenticate through the browser {#sign-in-through-the-browser}
+## Authenticate through the browser {#authenticate-through-the-browser}
 
 1. **Start authorization.** Redirect the browser to the discovered authorization
    endpoint with `client_id`, the exact registered `redirect_uri`,
@@ -60,7 +62,7 @@ credentials from the same environment.
 The authorization request has these decoded query parameters. URL-encode them
 with your library and generate fresh random values for each attempt:
 
-```http
+```text
 GET https://auth.world.org/api/v1/authorize
 client_id=<portal-client-id>
 redirect_uri=https://app.example/auth/world/callback
@@ -76,7 +78,7 @@ The PKCE verifier is a cryptographically random value of 43–128 characters; ke
 it private until the code exchange. The token request is a form body, not JSON.
 For a client registered with `client_secret_post`, its decoded fields are:
 
-```http
+```text
 POST https://auth.world.org/api/v1/token
 Content-Type: application/x-www-form-urlencoded
 
@@ -146,9 +148,9 @@ Use a fresh assertion for every request, retry, and device poll, including after
 `authorization_pending`. Assertions are single-use across endpoints. A rejected
 assertion returns HTTP 400 `invalid_client`.
 
-<a id="connect-a-headless-agent-device-flow" />
+<span id="sign-in-a-headless-agent-device-flow" />
 
-## Connect a headless agent (device flow) {#sign-in-a-headless-agent-device-flow}
+## Connect a headless agent (device flow) {#connect-a-headless-agent-device-flow}
 
 Use the device authorization grant when an agent or CLI cannot receive a browser
 callback. Run it from your backend. The service running your agent can act as this
@@ -236,7 +238,7 @@ after a failed attempt.
 
 For `client_secret_post`, the decoded start form is:
 
-```http
+```text
 POST https://auth.world.org/api/v1/device_authorization
 Content-Type: application/x-www-form-urlencoded
 
@@ -247,7 +249,7 @@ scope=openid
 
 After waiting the returned `interval`, the decoded poll form is:
 
-```http
+```text
 POST https://auth.world.org/api/v1/token
 Content-Type: application/x-www-form-urlencoded
 

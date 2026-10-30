@@ -1,0 +1,73 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="480"
+  height="760"
+  viewBox="0 0 480 760"
+  role="img"
+  aria-labelledby="title description"
+>
+  <title id="title">Token handoff for your MCP server</title>
+  <desc id="description">
+    The World ID issuer sends an ID token to your auth server. Your auth server validates it, maps the subject to your
+    application's account, and issues an access token for your MCP to the MCP client. The client sends that access token
+    to your MCP server, which validates it before running a tool. Browser redirects and code exchanges are omitted.
+  </desc>
+  <defs>
+    <marker
+      id="blue-arrow"
+      viewBox="0 0 10 10"
+      refX="8"
+      refY="5"
+      markerWidth="8"
+      markerHeight="8"
+      orient="auto-start-reverse"
+    >
+      <path d="M0 0L10 5L0 10Z" fill="#005cff" />
+    </marker>
+    <marker
+      id="dark-arrow"
+      viewBox="0 0 10 10"
+      refX="8"
+      refY="5"
+      markerWidth="8"
+      markerHeight="8"
+      orient="auto-start-reverse"
+    >
+      <path d="M0 0L10 5L0 10Z" fill="#343a40" />
+    </marker>
+  </defs>
+  <rect width="480" height="760" rx="16" fill="#fafafa" />
+  <g font-family="Arial, Helvetica, sans-serif" fill="#202428">
+    <text x="24" y="36" font-size="20" font-weight="700">Token handoff</text>
+    <text x="24" y="65" font-size="17" fill="#555e66">After browser sign-in and code exchange</text>
+
+    <rect x="24" y="88" width="432" height="96" rx="12" fill="#eef4ff" stroke="#a9c8ff" />
+    <text x="48" y="126" font-size="24" font-weight="700">World ID issuer</text>
+    <text x="48" y="158" font-size="20">Authenticates the user</text>
+
+    <path d="M56 192V258" fill="none" stroke="#005cff" stroke-width="3" marker-end="url(#blue-arrow)" />
+    <text x="84" y="222" font-size="22" font-weight="700" fill="#005cff">ID token</text>
+    <text x="84" y="248" font-size="18" fill="#555e66">Subject and authentication claims</text>
+
+    <rect x="24" y="274" width="432" height="120" rx="12" fill="#ffffff" stroke="#ccd2d8" />
+    <text x="48" y="312" font-size="24" font-weight="700">Your auth server</text>
+    <text x="48" y="344" font-size="20">Maps the validated World ID subject</text>
+    <text x="48" y="373" font-size="20">to your application's account</text>
+
+    <path d="M56 402V468" fill="none" stroke="#343a40" stroke-width="3" marker-end="url(#dark-arrow)" />
+    <text x="84" y="432" font-size="22" font-weight="700">Access token for your MCP</text>
+    <text x="84" y="458" font-size="18" fill="#555e66">Issued by your auth server</text>
+
+    <rect x="24" y="484" width="432" height="96" rx="12" fill="#ffffff" stroke="#ccd2d8" />
+    <text x="48" y="522" font-size="24" font-weight="700">MCP client</text>
+    <text x="48" y="554" font-size="20">Connects the agent to your server</text>
+
+    <path d="M56 588V654" fill="none" stroke="#343a40" stroke-width="3" marker-end="url(#dark-arrow)" />
+    <text x="84" y="618" font-size="22" font-weight="700">MCP request + access token</text>
+    <text x="84" y="644" font-size="18" fill="#555e66">The token from your auth server</text>
+
+    <rect x="24" y="670" width="432" height="72" rx="12" fill="#ffffff" stroke="#ccd2d8" />
+    <text x="48" y="700" font-size="24" font-weight="700">Your MCP server</text>
+    <text x="48" y="728" font-size="20">Validates access before running tools</text>
+  </g>
+</svg>

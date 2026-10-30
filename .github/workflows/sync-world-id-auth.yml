@@ -1,0 +1,124 @@
+name: Sync IDP docs
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: "temporal-apps branch, tag, or commit to publish for review"
+        required: true
+        default: main
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-world-id-auth
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.repository == 'worldcoin/developer-docs' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: developer-docs
+    steps:
+      - name: Check publishing credentials
+        working-directory: ${{ github.workspace }}
+        env:
+          APP_ID: ${{ vars.IDP_DOCS_APP_ID }}
+          APP_PRIVATE_KEY: ${{ secrets.IDP_DOCS_APP_PRIVATE_KEY }}
+        run: |
+          if [ -z "$APP_ID" ] || [ -z "$APP_PRIVATE_KEY" ]; then
+            echo "::error::Configure IDP_DOCS_APP_ID and IDP_DOCS_APP_PRIVATE_KEY before running IDP publishing."
+            exit 1
+          fi
+
+      - name: Check out publishing code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: developer-docs
+          persist-credentials: false
+
+      - name: Create read-only source token
+        id: source-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.IDP_DOCS_APP_ID }}
+          private-key: ${{ secrets.IDP_DOCS_APP_PRIVATE_KEY }}
+          owner: worldcoin
+          repositories: temporal-apps
+          permission-contents: read
+
+      - name: Check out canonical guides
+        uses: actions/checkout@v4
+        with:
+          repository: worldcoin/temporal-apps
+          ref: ${{ inputs.source_ref || 'main' }}
+          token: ${{ steps.source-token.outputs.token }}
+          path: _source/temporal-apps
+          persist-credentials: false
+          sparse-checkout: |
+            apps/idpapi/mcp/guides
+            apps/idpportal/public/assets
+
+      - name: Record source commit
+        id: source
+        run: |
+          source_sha=$(git -C ../_source/temporal-apps rev-parse HEAD)
+          echo "sha=$source_sha" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.22.1
+
+      - name: Generate pages
+        env:
+          SOURCE_COMMIT: ${{ steps.source.outputs.sha }}
+        run: node scripts/sync-world-id-auth.mjs --source-dir ../_source/temporal-apps --source-commit "$SOURCE_COMMIT"
+
+      - name: Check generated output
+        env:
+          SOURCE_COMMIT: ${{ steps.source.outputs.sha }}
+        run: |
+          node scripts/sync-world-id-auth.mjs --source-dir ../_source/temporal-apps --source-commit "$SOURCE_COMMIT" --check
+          git diff --check -- world-id-auth images/world-id-auth .mintlify/world-id-auth-source.json
+
+      - name: Create publishing token
+        id: docs-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.IDP_DOCS_APP_ID }}
+          private-key: ${{ secrets.IDP_DOCS_APP_PRIVATE_KEY }}
+          owner: worldcoin
+          repositories: developer-docs
+          permission-contents: write
+          permission-pull-requests: write
+
+      - name: Open or update publishing PR
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ steps.docs-token.outputs.token }}
+          path: developer-docs
+          base: main
+          branch: codex/sync-world-id-auth
+          commit-message: sync IDP docs
+          title: sync IDP docs
+          draft: true
+          add-paths: |
+            world-id-auth/*.mdx
+            images/world-id-auth/mcp-federation.svg
+            .mintlify/world-id-auth-source.json
+          body: |
+            ## Summary
+            - Publish canonical guides from [temporal-apps](https://github.com/worldcoin/temporal-apps/tree/${{ steps.source.outputs.sha }}/apps/idpapi/mcp/guides).
+            - Review content and release status before merging. This PR does not deploy Auth or change MCP access controls.
+
+            ## Testing
+            - Passed: deterministic regeneration check and `git diff --check`.
+            - Not run: full Mintlify build.

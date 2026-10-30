@@ -1,6 +1,6 @@
 # IDP source and cutover map
 
-This maintenance note records the eleven-page migration into the `IDP` tab, starting with Quickstart. It is not a public integration guide or evidence of a deployed cutover.
+This maintenance note records the eleven-page migration into the `IDP` tab, starting with Quickstart. The pages are generated from the canonical Markdown in `temporal-apps`. This note is not a public integration guide or evidence of a deployed cutover.
 
 ## Source snapshot
 
@@ -8,7 +8,8 @@ This maintenance note records the eleven-page migration into the `IDP` tab, star
 - Reviewed commit: [`9eedf2dee3a8fb1d864e02c59a98982a2c811e61`](https://github.com/worldcoin/temporal-apps/tree/9eedf2dee3a8fb1d864e02c59a98982a2c811e61).
 - The full overview and eleven guide sources were reviewed before migration. The scope includes all ten existing public integration guides and the approved public adaptation of `world-id-users.md`.
 - The [Auth landing page][overview-source] is excluded from the migration. Do not recreate an Overview page in the IDP tab.
-- Keep the source Markdown canonical until the shared browser/MCP publication contract is explicitly changed. The migrated MDX is an adaptation of that text, not an independent API contract.
+- Keep the source Markdown canonical. The generated MDX is a publishing adaptation of that text. Content changes belong in `temporal-apps`; generated pages are not edited independently.
+- The initial generated pages use the reviewed commit above. `.mintlify/world-id-auth-source.json` records the commit used by each regeneration; the historical review links below remain pinned to the original migration snapshot.
 
 The publication contract is documented in the [IdP API README](https://github.com/worldcoin/temporal-apps/blob/9eedf2dee3a8fb1d864e02c59a98982a2c811e61/apps/idpapi/README.md#developer-integration-guides). The [portal renderer](https://github.com/worldcoin/temporal-apps/blob/9eedf2dee3a8fb1d864e02c59a98982a2c811e61/apps/idpportal/vite.config.ts) reads the guide Markdown, substitutes the environment issuer, and publishes browser pages. MCP embeds the guide sources in the API binary. Publishing here does not update either deployment.
 
@@ -30,11 +31,11 @@ Destination paths below are relative to the repository root and resolve under `h
 | [coding-agent-setup.md][coding-source] | `world-id-auth/build-with-a-coding-agent.mdx` | Prompts; connection instructions; CLI examples; connection checks; complete agent instructions; portal permission; app registration and configuration; benefit listing publication. |
 | [testing.md][testing-source] | `world-id-auth/testing.mdx` | Sandbox and playground; app setup; sandbox identity creation; a complete real flow; failure paths. |
 
-The federation illustration adapts the source guide's `/portal/assets/mcp-federation.svg` into an inline Mermaid sequence diagram in `world-id-auth/connect-your-auth-server.mdx`, following the site's existing diagram conventions. Preserve the token handoffs, account mapping, access checks, and explanation of the two browser code exchanges.
+The publisher copies the canonical federation illustration from `apps/idpportal/public/assets/mcp-federation.svg` to `images/world-id-auth/mcp-federation.svg` and rewrites the guide's image URL. The manifest records that asset mapping and the source lock tracks its source. Keep diagram changes in `temporal-apps` so the Auth guide and Mintlify page use the same illustration.
 
 ## Adaptation rules
 
-Preserve content rather than summarizing guide bodies. Titles, frontmatter, MDX syntax, documentation links, and page layout may change to fit Mintlify. Preserve examples, tables, link destinations, and section meaning. Keep every subsection, including those not named in the sidebar.
+Preserve content rather than summarizing guide bodies. The deterministic converter in `scripts/sync-world-id-auth.mjs` applies the metadata and route mapping in `.mintlify/world-id-auth-pages.json`. Titles, frontmatter, MDX syntax, documentation links, and page layout may change to fit Mintlify. Preserve examples, tables, link destinations, and section meaning. Keep every subsection, including those not named in the sidebar. Fix content in the source Markdown and publishing adaptations in the manifest or converter, then regenerate.
 
 Use the complete Markdown for `coding-agent-setup`. The current Auth browser renderer cuts its content at `## Agent instructions`, hiding that section and everything after it. The raw Markdown and MCP guide include the complete content. Keep the agent instructions and later app-management sections available in the migrated page and its machine-readable form; update prompts to point to the complete migrated Markdown.
 
@@ -74,11 +75,13 @@ Preserve existing guide section fragments at their mapped destinations. In parti
 
 ## Maintenance handoff
 
-Reuse the existing Mintlify Autopilot setup. The owner must grant its GitHub App access to `worldcoin/temporal-apps`, select it as additional source context, and apply the IDP instructions in [AGENTS.md](AGENTS.md). Do not describe Auth maintenance as active until that connection and its behavior are confirmed. This PR does not add a custom synchronization workflow.
+Use the one-way publisher in `.github/workflows/sync-world-id-auth.yml` and follow [the publishing runbook](world-id-auth-publishing.md). Canonical Markdown remains in `temporal-apps`. The workflow polls hourly or runs on manual dispatch, converts the allowlisted guides, and opens or updates a PR on `codex/sync-world-id-auth` with the source commit. Review is required before merging. The job does not rewrite global `docs.json` or deploy Auth and MCP services.
+
+Activation requires merging the workflow to `main`, granting a scoped GitHub App the required repository access, and setting its app ID and private-key secret. The presence of these files does not prove that synchronization is active. Existing Mintlify Autopilot maintenance may continue for other products, but must not independently edit these generated IDP pages.
 
 Review source changes against both the canonical guides and the implementation. Include the source PR and affected files in documentation PRs. Flag missing release evidence and source conflicts. Preserve maintenance of the rest of the site.
 
-Before retiring Auth's existing browser documentation, agree on the shared source/publishing contract with its owner, deploy the legacy URL handling, and confirm that public Markdown, existing guide anchors, and MCP resources still resolve as intended. These are cutover tasks, not claims made by this migration.
+Before retiring Auth's existing browser documentation, deploy the legacy URL handling and confirm that public Markdown, existing guide anchors, and MCP resources still resolve as intended. Keep the canonical `.md` files and the MCP's source consumption in place. These are cutover tasks, not claims made by this migration.
 
 [overview-source]: https://github.com/worldcoin/temporal-apps/blob/9eedf2dee3a8fb1d864e02c59a98982a2c811e61/apps/idpportal/docs.html
 [quickstart-source]: https://github.com/worldcoin/temporal-apps/blob/9eedf2dee3a8fb1d864e02c59a98982a2c811e61/apps/idpapi/mcp/guides/getting-started.md
