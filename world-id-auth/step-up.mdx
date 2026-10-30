@@ -6,10 +6,6 @@ description: "Require recent World ID authentication before sensitive actions."
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-import AuthEnvironment from "/snippets/world-id-auth-environment.mdx";
-
-<AuthEnvironment />
-
 Require recent World ID authentication before a sensitive action in your
 application.
 Your backend validates recent authentication, links or matches the returned
@@ -48,7 +44,7 @@ authorization.
    maximum authentication age. For example, these additional decoded query
    fields request a supported class and a new proof:
 
-   ```text
+   ```ini
    max_age=0
    acr_values=https://world.org/oidc/acr/orb
    ```

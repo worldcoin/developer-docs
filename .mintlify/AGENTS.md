@@ -9,9 +9,9 @@
 
 ## IDP
 
-The new tab has twelve pages under `world-id-auth/`. Read [the source and cutover map](world-id-auth-migration.md) before updating them.
+The new tab has eleven pages under `world-id-auth/`, starting with Quickstart. Read [the source and cutover map](world-id-auth-migration.md) before updating them.
 
-- Treat `worldcoin/temporal-apps` as the implementation source. Until its publishing contract changes, `apps/idpapi/mcp/guides/*.md` remain the canonical guide text shared by the Auth browser documentation and MCP. The overview comes from `apps/idpportal/docs.html`.
+- Treat `worldcoin/temporal-apps` as the implementation source. Until its publishing contract changes, `apps/idpapi/mcp/guides/*.md` remain the canonical guide text shared by the Auth browser documentation and MCP. The landing page in `apps/idpportal/docs.html` is excluded from this migration.
 - Read relevant source diffs and the complete canonical guides. Preserve all sections, tables, examples, limitations, errors, and instructions when adapting them to MDX. If code, canonical text, and migrated pages disagree, identify the conflict for review rather than silently choosing a new contract.
 - Keep the complete `coding-agent-setup.md` content, including `Agent instructions` and all sections after it. The Auth HTML renderer hides those sections; copying only rendered HTML loses content.
 - Public adaptation of `world-id-users.md` as `use-world-id-with-your-agent.mdx` is approved for this migration. Adapt its authenticated-reader introduction for public readers. Keep the original MCP guide's access controls and the authentication requirements of account tools unchanged.

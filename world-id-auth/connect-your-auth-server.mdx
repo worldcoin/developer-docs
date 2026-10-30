@@ -6,10 +6,6 @@ description: "Use the World ID issuer as an upstream provider for your auth serv
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-import AuthEnvironment from "/snippets/world-id-auth-environment.mdx";
-
-<AuthEnvironment />
-
 Use the World ID issuer as an upstream OpenID Connect provider when your
 application already has an auth server, such as a login backend or OAuth
 authorization server. Your auth server is the confidential OIDC client
@@ -71,10 +67,26 @@ sessions. Your auth server issues access tokens, and your MCP server controls
 access to its tools. The MCP client is the software connecting the agent to your
 server.
 
-![The World ID issuer returns an ID token to your auth server. Your auth server maps the subject to your application's account and issues an access token to the MCP client, which uses it to call your MCP server.](/images/docs/world-id-auth/mcp-federation.svg)
+The diagram shows token handoffs and validation. Browser redirects and
+code-exchange requests are omitted.
 
-The diagram shows which service issues and receives each token. Browser
-authorization uses two code exchanges:
+```mermaid
+sequenceDiagram
+    participant Issuer as World ID issuer
+    participant Auth as Your auth server
+    participant Client as MCP client
+    participant MCP as Your MCP server
+
+    Issuer-->>Auth: ID token
+    Auth->>Auth: Validate ID token<br/>Map (iss, sub) to account
+    Auth-->>Client: Access token for your MCP
+
+    Client->>MCP: Tool request + access token
+    MCP->>MCP: Validate access token<br/>Check tool permissions
+    MCP-->>Client: Tool result
+```
+
+Browser authorization uses two code exchanges:
 
 - **World ID issuer → your auth server:** the issuer redirects the user's browser
   to your auth server's callback with a code. Your auth server exchanges it for

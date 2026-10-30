@@ -132,7 +132,6 @@
           {
             "group": "Get started",
             "pages": [
-              "world-id-auth/overview",
               "world-id-auth/quickstart",
               "world-id-auth/app-registration"
             ]

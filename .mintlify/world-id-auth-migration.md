@@ -1,25 +1,25 @@
 # IDP source and cutover map
 
-This maintenance note records the twelve-page migration into the `IDP` tab. It is not a public integration guide or evidence of a deployed cutover.
+This maintenance note records the eleven-page migration into the `IDP` tab, starting with Quickstart. It is not a public integration guide or evidence of a deployed cutover.
 
 ## Source snapshot
 
 - Repository: `worldcoin/temporal-apps`.
 - Reviewed commit: [`9eedf2dee3a8fb1d864e02c59a98982a2c811e61`](https://github.com/worldcoin/temporal-apps/tree/9eedf2dee3a8fb1d864e02c59a98982a2c811e61).
 - The full overview and eleven guide sources were reviewed before migration. The scope includes all ten existing public integration guides and the approved public adaptation of `world-id-users.md`.
+- The [Auth landing page][overview-source] is excluded from the migration. Do not recreate an Overview page in the IDP tab.
 - Keep the source Markdown canonical until the shared browser/MCP publication contract is explicitly changed. The migrated MDX is an adaptation of that text, not an independent API contract.
 
 The publication contract is documented in the [IdP API README](https://github.com/worldcoin/temporal-apps/blob/9eedf2dee3a8fb1d864e02c59a98982a2c811e61/apps/idpapi/README.md#developer-integration-guides). The [portal renderer](https://github.com/worldcoin/temporal-apps/blob/9eedf2dee3a8fb1d864e02c59a98982a2c811e61/apps/idpportal/vite.config.ts) reads the guide Markdown, substitutes the environment issuer, and publishes browser pages. MCP embeds the guide sources in the API binary. Publishing here does not update either deployment.
 
-## Twelve-page coverage
+## Eleven-page coverage
 
 Destination paths below are relative to the repository root and resolve under `https://docs.world.org/` without the `.mdx` extension.
 
 | Canonical source | Destination | Required coverage |
 | --- | --- | --- |
-| [docs.html][overview-source] | `world-id-auth/overview.mdx` | Human continuity; all five use cases; private recognition and sectors; fresh authentication; World ID and OIDC explanation; integration paths; standards; portal, playground, and legal links. |
 | [getting-started.md][quickstart-source] | `world-id-auth/quickstart.mdx` | How it works; four integration steps; device freshness and XAA consent distinction; environment values; IDKit differences; legacy sign-in deprecation; coding-agent entry point. |
-| [app-registration.md][registration-source] | `world-id-auth/app-registration.mdx` | Eligibility; exact callbacks; client authentication; credentials and rotation; managed and legacy sectors; sharing and account linking; coding-agent setup; benefit listing publication. |
+| [app-registration.md][registration-source] | `world-id-auth/app-registration.mdx` | Eligibility; exact callbacks; client authentication; credentials and rotation; managed and legacy sectors; sharing and account linking; benefit listing publication. |
 | [oidc.md][oidc-source] | `world-id-auth/connect-your-backend.mdx` | OIDC configuration; browser flow; token validation; client authentication; complete device profile and examples; expiry and rate limits; XAA; recovery; primary sign-in; limitations; troubleshooting. |
 | [federation.md][federation-source] | `world-id-auth/connect-your-auth-server.mdx` | Auth-server configuration; MCP federation and diagram; identity mapping; recent authentication; verification and revocation boundaries. |
 | [id-token.md][token-source] | `world-id-auth/id-tokens-and-identity.mdx` | Token response; decoded JWT; complete claims table; inbox email behavior; UserInfo; expiry and revocation limitations; safe subject storage and matching. |
@@ -30,7 +30,7 @@ Destination paths below are relative to the repository root and resolve under `h
 | [coding-agent-setup.md][coding-source] | `world-id-auth/build-with-a-coding-agent.mdx` | Prompts; connection instructions; CLI examples; connection checks; complete agent instructions; portal permission; app registration and configuration; benefit listing publication. |
 | [testing.md][testing-source] | `world-id-auth/testing.mdx` | Sandbox and playground; app setup; sandbox identity creation; a complete real flow; failure paths. |
 
-The federation illustration moves from the source guide's `/portal/assets/mcp-federation.svg` reference to `images/docs/world-id-auth/mcp-federation.svg`. Keep the image and its explanatory alt text with the federation guide.
+The federation illustration adapts the source guide's `/portal/assets/mcp-federation.svg` into an inline Mermaid sequence diagram in `world-id-auth/connect-your-auth-server.mdx`, following the site's existing diagram conventions. Preserve the token handoffs, account mapping, access checks, and explanation of the two browser code exchanges.
 
 ## Adaptation rules
 
@@ -54,7 +54,7 @@ This is a mapping for a later Auth deployment. This migration does not install r
 
 | Existing Auth path | Proposed official docs destination |
 | --- | --- |
-| `/docs` and `/docs/` | `/world-id-auth/overview` |
+| `/docs` and `/docs/` | `/world-id-auth/quickstart` |
 | `/docs/guides` and `/docs/guides/` | `/world-id-auth/quickstart` |
 | `/docs/guides/getting-started` | `/world-id-auth/quickstart` |
 | `/docs/guides/app-registration` | `/world-id-auth/app-registration` |
@@ -70,7 +70,7 @@ This is a mapping for a later Auth deployment. This migration does not install r
 
 `world-id-users` has no existing public Auth page to redirect. Its new public destination is `/world-id-auth/use-world-id-with-your-agent`; the protected MCP resource remains separate.
 
-Preserve existing section fragments at their mapped destinations. In particular, Auth has legacy OIDC fragment aliases `sign-in-through-the-browser` and `sign-in-a-headless-agent-device-flow` in addition to links using the current heading slugs. Preserve those aliases alongside `authenticate-through-the-browser` and `connect-a-headless-agent-device-flow`. Keep overview anchors such as `human-continuity`, `use-cases`, `pairwise-subjects`, `verification`, `powered-by-world-id`, `start-building`, and `standards` available.
+Preserve existing guide section fragments at their mapped destinations. In particular, Auth has legacy OIDC fragment aliases `sign-in-through-the-browser` and `sign-in-a-headless-agent-device-flow` in addition to links using the current heading slugs. Preserve those aliases alongside `authenticate-through-the-browser` and `connect-a-headless-agent-device-flow`. The excluded Auth landing page's section fragments have no migrated equivalent.
 
 ## Maintenance handoff
 

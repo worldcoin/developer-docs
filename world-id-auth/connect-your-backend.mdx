@@ -6,10 +6,6 @@ description: "Connect your backend to the World ID issuer with OpenID Connect (O
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-import AuthEnvironment from "/snippets/world-id-auth-environment.mdx";
-
-<AuthEnvironment />
-
 Connect your backend to the World ID issuer with OpenID Connect (OIDC). Your backend receives
 a signed ID token and validates it before using the account identifier and
 authentication time. Step-up, human checkpoints, and primary sign-in all use this
@@ -64,7 +60,7 @@ credentials from the same environment.
 The authorization request has these decoded query parameters. URL-encode them
 with your library and generate fresh random values for each attempt:
 
-```text
+```http
 GET https://auth.world.org/api/v1/authorize
 client_id=<portal-client-id>
 redirect_uri=https://app.example/auth/world/callback
@@ -80,7 +76,7 @@ The PKCE verifier is a cryptographically random value of 43–128 characters; ke
 it private until the code exchange. The token request is a form body, not JSON.
 For a client registered with `client_secret_post`, its decoded fields are:
 
-```text
+```http
 POST https://auth.world.org/api/v1/token
 Content-Type: application/x-www-form-urlencoded
 
@@ -240,7 +236,7 @@ after a failed attempt.
 
 For `client_secret_post`, the decoded start form is:
 
-```text
+```http
 POST https://auth.world.org/api/v1/device_authorization
 Content-Type: application/x-www-form-urlencoded
 
@@ -251,7 +247,7 @@ scope=openid
 
 After waiting the returned `interval`, the decoded poll form is:
 
-```text
+```http
 POST https://auth.world.org/api/v1/token
 Content-Type: application/x-www-form-urlencoded
 
