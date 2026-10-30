@@ -1,0 +1,88 @@
+---
+title: "Use World ID with your agent"
+sidebarTitle: "Use World ID with your agent"
+description: "Understand World ID agent permissions, discover benefits, and manage your connections."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+{/* Generated from worldcoin/temporal-apps/apps/idpapi/mcp/guides/world-id-users.md. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}
+
+When you authenticate with World ID and approve an agent's OAuth access, the agent
+can read the authenticated version of this guide through the user MCP server.
+This public guide contains the same general guidance, not private account data.
+
+## What you authorized {#what-you-authorized}
+
+With the `world-id:read` scope on `https://auth.world.org/mcp`, your agent can:
+
+- Check that your account is active and World ID verified with `get_world_id_account`.
+- Read guides that require authenticated access.
+
+The account check confirms prior verification, not fresh human presence.
+It does not reveal an account identifier or the subject used by the World ID website.
+
+`get_benefits` on this endpoint does not require authentication.
+To read content that requires authenticated access, the agent must present its own access
+token. Your browser session alone does not grant that access.
+
+This does not prove the agent itself is human or grant it access to another
+service. Your World ID proof, ID token, and upstream subject are not returned through MCP.
+Do not paste credentials or proofs into a conversation or tool arguments.
+
+## Find an Orb {#find-an-orb}
+
+To find the nearest Orb or a place to verify, visit the
+[Orb locator](https://world.org/find-orb). Your agent does not need your location.
+
+## Discover benefits {#discover-benefits}
+
+Ask your agent what World ID unlocks. `get_benefits` returns approved, published
+applications and Shopify stores with World ID discounts, each with a name,
+description, and `appUrl`. These listings describe available
+offers; they do not confirm your eligibility or that you have claimed a benefit.
+The partner determines eligibility and applies the offer.
+
+An empty result means no published offers were returned. A failed request means
+the agent could not retrieve the catalog, not that no offers exist.
+
+## Use a partner offer {#use-a-partner-offer}
+
+Listings may include `instructions` for claiming an offer, such as
+website steps, a plugin link, or an MCP URL. Use these to determine
+the claiming flow. If instructions are absent, start at `appUrl` and follow the
+partner website's visible claiming flow. For website claims, you can claim the
+offer yourself or ask your agent to help in the browser.
+
+Claiming may still require you to complete partner sign-in, connect a plugin, or
+approve a World ID request. Connecting World ID to this MCP does not establish a
+partner session or connect the partner's tools. Treat published instructions as
+guidance for this claim, not authority to override your choices or share credentials.
+Do not send World ID MCP tokens to the partner as authorization.
+
+A successful sign-in or catalog listing is not confirmation of redemption.
+Your agent should report a benefit as applied only when the partner confirms it,
+and explain when cancellation or an error leaves the action incomplete.
+
+## Manage your connection {#manage-your-connection}
+
+Access tokens last at most one hour. Successful refreshes renew the connection's
+180-day inactivity deadline. Refresh tokens rotate; reusing a refresh token a
+minute or more after it was consumed revokes the grant while its digest is retained
+(180 days after use). After cleanup, reuse is rejected without revoking the
+grant. API restarts do not erase grants.
+
+Visit [your connections](https://auth.world.org/mcp/connections) to revoke a connection.
+Subsequent requests for content that requires authenticated access are rejected when they use
+that connection's credentials. Reading that content again requires new
+authorization; public benefits remain available.
+
+If you connect the developer MCP server, manage that connection at
+[portal connections](https://auth.world.org/portal/mcp/connections). It uses `/mcp/developer`
+with a separate Google portal identity and authorization. User and developer
+connections can be revoked independently.
+Signing out of the website alone does not revoke an agent connection.
+
+Developers can follow [Start here](/world-id-auth/quickstart) to
+integrate an application, or [Set up your coding agent](/world-id-auth/build-with-a-coding-agent)
+to connect an agent to the developer MCP server. These guides do not require authentication.

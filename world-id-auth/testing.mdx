@@ -1,0 +1,107 @@
+---
+title: "Test your integration"
+sidebarTitle: "Test your integration"
+description: "Test World ID integration in the sandbox, complete real flows, and check failure paths."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+{/* Generated from worldcoin/temporal-apps/apps/idpapi/mcp/guides/testing.md. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}
+
+Use the checks that apply to your integration and authorization policy.
+
+## Test in the sandbox {#test-in-the-sandbox}
+
+The sandbox lets you test the OIDC flow with a sandbox World ID that has an
+Orb-level test credential, without visiting an Orb. Sandbox authentication does
+not establish that a real person is Orb-verified.
+
+To try World ID flows before you register an application, use the
+[OAuth Playground](https://oauth-playground.toolsforhumanity.dev/) with a
+[sandbox World ID](/world-id-auth/testing#create-a-sandbox-world-id).
+The playground runs authentication, step-up, device, XAA, and MCP flows against
+the sandbox issuer and shows what a relying party should validate.
+
+### Set up your application {#set-up-your-application}
+
+Use the sandbox environment for registration and authentication:
+
+| Setting          | Sandbox value                                                     |
+| ---------------- | ----------------------------------------------------------------- |
+| Issuer           | `https://sandbox.auth.world.org`                                  |
+| Discovery        | `https://sandbox.auth.world.org/.well-known/openid-configuration` |
+| Developer portal | [Sandbox portal](https://sandbox.auth.world.org/portal)           |
+
+Sign in to the sandbox portal with Google and
+[register your application](/world-id-auth/app-registration).
+Configure your application with the registration's credentials and the sandbox
+discovery document. Production registrations, credentials, and World IDs are
+separate. Keep sandbox account mappings separate from production, and store
+validated
+identities as `(iss, sub)`.
+
+### Create a sandbox World ID {#create-a-sandbox-world-id}
+
+1. **Get access to the sandbox World ID app.** Ask your World ID integration
+   contact for access. On iOS, install the sandbox app from the TestFlight
+   invitation. Confirm that it is the sandbox build.
+2. **Create the test identity.** In the sandbox app, open the middle World ID
+   tab, choose **Add proof of human**, then **Manual verify**. Take a selfie or
+   upload one from your camera roll and complete the prompted flow. The exact
+   labels may vary by app version. This creates a sandbox World ID; you do not
+   need an Orb appointment.
+3. **Allow about one hour for issuance.** The **Human** card can appear before
+   the identity is ready. Authentication can fail during this wait, even though
+   setup looks complete in the app.
+4. **Authenticate through your application.** Start a new authentication attempt
+   using the sandbox issuer and approve it with the sandbox app. Use the
+   end-to-end checks below to validate the result in your backend.
+
+If scanning a QR code or opening an authentication link fails, check that both
+your application and the World ID app use the sandbox environment, and that
+about an hour has passed since identity setup. If it still fails, share the
+error and the time you completed setup with your integration contact.
+
+Before launch, also complete the production flow with the production World ID
+app and a real World ID. Sandbox results do not demonstrate production identity
+verification.
+
+## Complete a real flow {#complete-a-real-flow}
+
+1. **Use your registered application.** Use the issuer, discovery, and credentials from
+   the same environment. Check your [registration](/world-id-auth/app-registration)
+   before starting.
+2. **Authenticate and validate.** Connect your World ID through your
+   browser or device flow. Confirm that your backend or auth server
+   [validates the ID token](/world-id-auth/connect-your-backend#validate-the-id-token).
+3. **Use the result in your application.** For primary sign-in, create the application session and
+   make an authenticated request as the expected account. For step-up or a human
+   checkpoint, confirm that the protected operation stays blocked until your
+   backend accepts the authentication and any permissions or action approval
+   your policy requires. Then perform the operation.
+4. **Check the final outcome.** If the operation calls another service, confirm
+   its result there. A queued request or an application receipt alone does not establish
+   that a payment settled or another external action completed.
+
+Exercise each browser, device, or auth-server path you intend to support. For step-up through your auth server, include the [existing-session acceptance test](/world-id-auth/step-up#through-your-auth-server).
+For separate action approval, test the [application-owned approval flow](/world-id-auth/human-in-the-loop#optional-collect-action-approval-in-your-application).
+
+## Check failure paths {#check-failure-paths}
+
+Check both the response shown to the user and your backend's session, permission,
+or operation state. Use the existing [OIDC validation rules](/world-id-auth/connect-your-backend#validate-the-id-token)
+and [step-up procedure](/world-id-auth/step-up#implement-step-up) as the
+source of expected behavior.
+
+| Check                                                           | Expected outcome                                                                                                                                                                                 |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Cancel or expire a pending attempt before it authorizes access. | The attempt grants no new access and does not execute the protected operation.                                                                                                                   |
+| Present an invalid token or a result bound to another attempt.  | Validation fails; no new session or permission is created from that result.                                                                                                                      |
+| Authenticate with a different account.                          | Existing-owner step-up does not satisfy the original account's requirement. For other policies, test acceptance and rejection according to the account or role your application requires.        |
+| Retry a consumed code or repeat a one-use operation.            | The code cannot be redeemed again. Where your application promises one-use execution, retries and concurrent requests do not execute it twice. Repeated World ID authentication remains allowed. |
+| Interrupt a dependency call or lose its response.               | The application does not treat an error or unknown outcome as success. An uncertain external action is reconciled before a retry could duplicate it.                                             |
+
+Use local signed fixtures to exercise validation failures and application policy without
+requiring a person for every test. Keep them isolated from live credentials and
+execution. Fixture tests do not demonstrate a real World ID proof or a complete
+issuer-backed flow.

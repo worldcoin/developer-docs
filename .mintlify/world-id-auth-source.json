@@ -1,0 +1,34 @@
+{
+  "repository": "worldcoin/temporal-apps",
+  "sourceDirectory": "apps/idpapi/mcp/guides",
+  "configSha256": "71269061412f47a44c05097e62d21a49da47ebd35f1598c30bb4aee51d15fe03",
+  "sources": {
+    "apps/idpapi/mcp/guides/getting-started.md": "862ca6a6480fc8913321c46f4917131d48cc0f580cc3519568942315679912b2",
+    "apps/idpapi/mcp/guides/app-registration.md": "673e024239af407990e6f506307ae0d99b17ea8b89bf77ceb885e591585ac950",
+    "apps/idpapi/mcp/guides/oidc.md": "d857a800225e5c8314a5be36572c70c33fdbf24bb93bbaede2771d5a5a8a0e1c",
+    "apps/idpapi/mcp/guides/federation.md": "b6fcd29bad8ee213172b7648dbc0de87e807a4aa179dc3045838346aa5d58484",
+    "apps/idpapi/mcp/guides/id-token.md": "b65dc36cccecb1c1c71c4569eb413c70fb2e310e22382dc15fa3f56d3027e170",
+    "apps/idpapi/mcp/guides/step-up.md": "296958836f9ee967eab43a89c6d4d832338510a2eca78aaaf229424a1784c8f3",
+    "apps/idpapi/mcp/guides/human-in-the-loop.md": "1f84197deb081a6f22cda2e18bb34f959ff141825d711443f91cfcc57047a089",
+    "apps/idpapi/mcp/guides/xaa.md": "86e2567e430541a8d5237b7dad38eb84c1f972df692db83a5f90380a2869ed39",
+    "apps/idpapi/mcp/guides/world-id-users.md": "f2da89302b0cfcead0c8a20fef15a9a1477b45439b21660fc96f01b59eb7ed04",
+    "apps/idpapi/mcp/guides/coding-agent-setup.md": "7c2b4d14807b9b4fd64aec0dc672ce525f1da0bfb3c1ae582650996555ac6883",
+    "apps/idpapi/mcp/guides/testing.md": "b2c969f812a09d8951bc4178fcc92539580cfd9b926d13e17bad1c8c01a91adc",
+    "apps/idpportal/public/assets/mcp-federation.svg": "824e2df51c3333b8142fa72d6752340b1a5668c03bd3ebca3d3b2401d05257bc"
+  },
+  "outputs": {
+    "world-id-auth/quickstart.mdx": "7e8dc53230bbed1279745f7f1e7718239823832ced3502ce3ff1a19c5ea67343",
+    "world-id-auth/app-registration.mdx": "bbdc9cdef72e0a657d95d6b8fbb9f0d1652c80de604496af4a597b019a4d4edc",
+    "world-id-auth/connect-your-backend.mdx": "7dd257bc70cdfe8a48a77595c2a26fd09ce0a51e39641077c980b8f7562b32fd",
+    "world-id-auth/connect-your-auth-server.mdx": "b17705ee9c7924d4b8129a72e0814e51086f28c881a899860135aa04287a1a95",
+    "world-id-auth/id-tokens-and-identity.mdx": "8a658155795a9a777feec44e7f889c6726395ec22a35f761c515814316394673",
+    "world-id-auth/step-up.mdx": "a6e7b90035b23ff8c146cae91b200c23e2f348b5f3ce26364683369d003a5e28",
+    "world-id-auth/human-in-the-loop.mdx": "65f6e7b7199d7f402052f19f5ca6aa7742f42ec3fa9f01bd222906228b06b9b2",
+    "world-id-auth/xaa.mdx": "f5edc53cc6d7adeae7aed05b28edaf19f6604a2cf4ebf1765acc2cc5a35551ad",
+    "world-id-auth/use-world-id-with-your-agent.mdx": "0853e0d8429e40fe783ce5ea596bedd86fd26fb8c9468cace0b18465dc3873ab",
+    "world-id-auth/build-with-a-coding-agent.mdx": "2cecc36b3ecca422a52b8a3ad7ab9b8b49e98134b9e8c0b11d024e577c9d71fe",
+    "world-id-auth/testing.mdx": "a08ed44d703fd918c19174fc8736d1d86433297d74430f73528ec35faa82883e",
+    "images/world-id-auth/mcp-federation.svg": "824e2df51c3333b8142fa72d6752340b1a5668c03bd3ebca3d3b2401d05257bc"
+  },
+  "sourceCommit": "9eedf2dee3a8fb1d864e02c59a98982a2c811e61"
+}

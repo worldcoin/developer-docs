@@ -127,6 +127,42 @@
         ]
       },
       {
+        "tab": "IDP",
+        "groups": [
+          {
+            "group": "Get started",
+            "pages": [
+              "world-id-auth/quickstart",
+              "world-id-auth/app-registration"
+            ]
+          },
+          {
+            "group": "Authentication",
+            "pages": [
+              "world-id-auth/connect-your-backend",
+              "world-id-auth/connect-your-auth-server",
+              "world-id-auth/id-tokens-and-identity",
+              "world-id-auth/step-up"
+            ]
+          },
+          {
+            "group": "Agents",
+            "pages": [
+              "world-id-auth/human-in-the-loop",
+              "world-id-auth/xaa",
+              "world-id-auth/use-world-id-with-your-agent"
+            ]
+          },
+          {
+            "group": "Development",
+            "pages": [
+              "world-id-auth/build-with-a-coding-agent",
+              "world-id-auth/testing"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "Mini Apps",
         "groups": [
           {

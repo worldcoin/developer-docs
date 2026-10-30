@@ -1,0 +1,132 @@
+---
+title: "Cross App Access (XAA)"
+sidebarTitle: "Cross App Access (XAA)"
+description: "Connect agent hosts to reviewed apps with World ID identity delegation and user-controlled permissions."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+{/* Generated from worldcoin/temporal-apps/apps/idpapi/mcp/guides/xaa.md. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}
+
+World IdP supports consumer-controlled identity delegation using
+[ID-JAG](https://www.ietf.org/archive/id/draft-ietf-oauth-identity-assertion-authz-grant-04.html).
+A user connects an agent host and chooses the apps it may access. The host can
+then obtain credentials for those apps without separate World ID authentication
+for each app. Each app's authorization server issues its own access tokens and
+controls API permissions. The app does not need OIDC sign-in federation.
+
+This guide covers app integration and user permissions. The host's MCP
+authentication layer handles World sign-in, ID-JAG exchange, token renewal,
+and credential storage. The model calls MCP tools and can help developers
+implement the integration. Credentials stay outside model context, tool results,
+and conversations.
+
+## Requirements {#requirements}
+
+The agent host must support XAA and allow World to be configured as its identity
+provider. A plugin cannot supply missing host authentication support.
+
+Check the issuer's [discovery document](https://auth.world.org/.well-known/openid-configuration)
+for XAA availability. It advertises `offline_access`, refresh, and ID-JAG exchange
+only while XAA is enabled. When disabled, requests for `offline_access` receive
+`invalid_scope`; refresh and ID-JAG exchange return HTTP 400
+`unsupported_grant_type`. These errors do not include `Retry-After`. Saved
+permissions remain intact, and users can still remove access or disconnect.
+
+Your app's authorization server must accept World-issued ID-JAGs and issue access
+tokens for your MCP server. A remote MCP server is sufficient; a local MCP server
+or a World proxy is not required.
+
+World's own MCP tools use separate connections. Connecting to those tools does
+not authorize the host to access other apps through XAA.
+
+## Configure your authorization server {#configure-your-authorization-server}
+
+Configure your authorization server to trust the World issuer, `https://auth.world.org`.
+Use its [discovery document](https://auth.world.org/.well-known/openid-configuration) to find
+the signing keys through `jwks_uri`.
+
+Accept the ID-JAG JWT bearer grant. Validate issuer, audience, signature, expiry,
+replay, and resource restrictions, and bind its `client_id` to the authenticated
+host. Hosts and authorization servers must agree on the client identifier;
+for a host using a Client ID Metadata Document (CIMD), this is the exact HTTPS
+metadata URL. Client credentials used by the host at your authorization server
+must be separate from its World credentials.
+
+Keep the metadata URL stable. New CIMD URLs receive separate host identities,
+even on the same hostname; existing OIDC clients retain their stored identities.
+
+The ID-JAG carries the app's existing World pairwise `sub`. Its authentication
+time and assurance describe the original World authentication. Match accounts
+using the [World issuer and subject](/world-id-auth/id-tokens-and-identity#store-and-match-sub).
+Your authorization server applies its own scope policy and issues the access
+token used to call your MCP server.
+
+Publish standard RFC 8414 metadata at your authorization server's well-known
+location, advertising ID-JAG support:
+
+```json
+{
+  "issuer": "https://app.example",
+  "grant_types_supported": ["urn:ietf:params:oauth:grant-type:jwt-bearer"],
+  "authorization_grant_profiles_supported": ["urn:ietf:params:oauth:grant-profile:id-jag"]
+}
+```
+
+## Enroll your app {#enroll-your-app}
+
+Register your app in the [developer portal](https://auth.world.org/portal). As its owner, use
+the active app's client settings to submit your authorization-server issuer and
+the resource URLs of your MCP servers. The issuer identifies the server that
+issues access tokens; it is distinct from the app's World identity sector.
+
+World reviews your app's authority over its identity sector, issuer, and resources
+before users can select it. Enrollment uses the standard metadata above; no
+additional verification document or custom metadata field is required. XAA review
+is independent of catalog publication, and the app picker uses the name recorded
+at approval.
+
+Several apps can share an authorization server, with separate resources and
+permissions. A resource URL may be approved for only one app; pending or rejected
+submissions do not reserve it. World IdP's own authorization server cannot enroll
+as an app's target authorization server.
+
+Changing the issuer or resources requires a new review. Resource changes preserve
+saved app permissions; changing the issuer requires renewed user permission.
+Disabling the app or withdrawing approval stops new ID-JAGs immediately.
+Rejected enrollments can request review again without changing the binding or
+requiring users to repeat app selection.
+
+## Connect the agent {#connect-the-agent}
+
+The host opens World sign-in and consent. The user reviews the agent and selects
+which apps it may access. On the first connection, no apps are selected. New apps
+require explicit selection. Users can connect without selecting apps and choose them
+later at [Cross-app connections](https://auth.world.org/xaa/connections).
+
+The connection approval link can be opened on the user's own device. Only the
+browser that started the connection can claim its callback. Account sign-in must
+complete in the browser that started that sign-in; use the host's connection
+approval link for a handoff to another device.
+
+Authorization expires after **180 days without a successful token refresh or
+ID-JAG exchange**.
+The host reconnects interactively after expiry or revocation. Device consent
+requires an account session authenticated at or after the device request began.
+
+Permissions belong to the exact host client ID. Sessions using that client ID share
+app permissions, and reconnecting preserves saved choices. Temporarily unavailable
+apps retain those choices while their authorization-server issuer stays unchanged.
+
+## Manage access {#manage-access}
+
+Users can remove individual app permissions or disconnect the host at
+[Agents](https://auth.world.org/xaa/connections). Removing app access ends all of
+that user's World grants for the host and removes its app approval and related
+agent permissions. Users can save new app choices before reconnecting.
+Browser logout does not disconnect the host.
+
+Removing an app permission immediately stops new ID-JAGs for that app.
+Disconnecting stops them for every app. Already-issued ID-JAGs expire within five
+minutes; access tokens issued by your authorization server follow your own expiry
+and revocation policy.

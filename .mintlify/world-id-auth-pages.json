@@ -1,0 +1,101 @@
+{
+  "repository": "worldcoin/temporal-apps",
+  "sourceDirectory": "apps/idpapi/mcp/guides",
+  "issuer": "https://auth.world.org",
+  "pages": [
+    {
+      "source": "getting-started.md",
+      "destination": "world-id-auth/quickstart.mdx",
+      "title": "Quickstart",
+      "sidebarTitle": "Quickstart",
+      "description": "Register an application, connect to the World ID issuer, and add step-up authentication.",
+      "environmentNote": true
+    },
+    {
+      "source": "app-registration.md",
+      "destination": "world-id-auth/app-registration.mdx",
+      "title": "Register your application",
+      "sidebarTitle": "Register your application",
+      "description": "Register and manage your World ID OIDC application, credentials, callbacks, and benefit listing."
+    },
+    {
+      "source": "oidc.md",
+      "destination": "world-id-auth/connect-your-backend.mdx",
+      "title": "Connect your backend",
+      "sidebarTitle": "Connect your backend",
+      "description": "Connect your backend to the World ID issuer with OpenID Connect (OIDC).",
+      "anchorAliases": {
+        "authenticate-through-the-browser": [
+          "sign-in-through-the-browser"
+        ],
+        "connect-a-headless-agent-device-flow": [
+          "sign-in-a-headless-agent-device-flow"
+        ]
+      }
+    },
+    {
+      "source": "federation.md",
+      "destination": "world-id-auth/connect-your-auth-server.mdx",
+      "title": "Connect your auth server",
+      "sidebarTitle": "Connect your auth server",
+      "description": "Use the World ID issuer as an upstream provider for your auth server or MCP server."
+    },
+    {
+      "source": "id-token.md",
+      "destination": "world-id-auth/id-tokens-and-identity.mdx",
+      "title": "ID tokens and identity",
+      "sidebarTitle": "ID tokens and identity",
+      "description": "Validate token claims, read UserInfo, and recognize accounts using the issuer and pairwise subject."
+    },
+    {
+      "source": "step-up.md",
+      "destination": "world-id-auth/step-up.mdx",
+      "title": "Step-up authentication",
+      "sidebarTitle": "Step-up authentication",
+      "description": "Require recent World ID authentication before sensitive actions."
+    },
+    {
+      "source": "human-in-the-loop.md",
+      "destination": "world-id-auth/human-in-the-loop.mdx",
+      "title": "Human in the loop",
+      "sidebarTitle": "Human in the loop",
+      "description": "Pause an agent workflow and require fresh World ID authentication before continuing."
+    },
+    {
+      "source": "xaa.md",
+      "destination": "world-id-auth/xaa.mdx",
+      "title": "Cross App Access (XAA)",
+      "sidebarTitle": "Cross App Access (XAA)",
+      "description": "Connect agent hosts to reviewed apps with World ID identity delegation and user-controlled permissions."
+    },
+    {
+      "source": "world-id-users.md",
+      "destination": "world-id-auth/use-world-id-with-your-agent.mdx",
+      "title": "Use World ID with your agent",
+      "sidebarTitle": "Use World ID with your agent",
+      "description": "Understand World ID agent permissions, discover benefits, and manage your connections.",
+      "publicUserGuide": true
+    },
+    {
+      "source": "coding-agent-setup.md",
+      "destination": "world-id-auth/build-with-a-coding-agent.mdx",
+      "title": "Build with a coding agent",
+      "sidebarTitle": "Build with a coding agent",
+      "description": "Give your coding agent complete integration instructions and connect developer MCP tools."
+    },
+    {
+      "source": "testing.md",
+      "destination": "world-id-auth/testing.mdx",
+      "title": "Test your integration",
+      "sidebarTitle": "Test your integration",
+      "description": "Test World ID integration in the sandbox, complete real flows, and check failure paths."
+    }
+  ],
+  "assets": [
+    {
+      "source": "apps/idpportal/public/assets/mcp-federation.svg",
+      "destination": "images/world-id-auth/mcp-federation.svg",
+      "url": "{{issuer}}/portal/assets/mcp-federation.svg"
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+---
+title: "Human in the loop"
+sidebarTitle: "Human in the loop"
+description: "Pause an agent workflow and require fresh World ID authentication before continuing."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+{/* Generated from worldcoin/temporal-apps/apps/idpapi/mcp/guides/human-in-the-loop.md. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}
+
+Pause an agent workflow and require fresh World ID authentication before it
+continues. Your application stores the pending work, validates the authentication result,
+and decides whether the workflow may resume.
+
+The World ID issuer does not receive, display, or approve the pending business action. If
+your application also requires approval of that action, implement the approval UI and
+record the decision in your application.
+
+## Require fresh authentication {#require-fresh-authentication}
+
+[Register your application](/world-id-auth/app-registration) and implement either
+[direct OIDC](/world-id-auth/connect-your-backend) or
+[federation through your auth server](/world-id-auth/connect-your-auth-server).
+This works whether your application uses World ID alongside an existing sign-in or as its
+primary sign-in. When adding World ID to an existing account, explicitly link it
+while the user is signed in to that account. Complete this link before relying
+on World ID for later checkpoints.
+
+For a browser flow, follow the
+[step-up procedure](/world-id-auth/step-up#implement-step-up). Use
+`max_age=0` or `prompt=login` to require a new World proof for each attempt. A
+positive `max_age`, such as `300`, permits recent authentication to be reused and
+does not require a new interaction for every action.
+
+If you use an auth server, ensure it
+[passes the freshness requirement to the World ID issuer and preserves the validated result](/world-id-auth/step-up#through-your-auth-server).
+
+## Optional: collect action approval in your application {#optional-collect-action-approval-in-your-application}
+
+Your application implements this approval flow. For example, it may require the user to
+review a draft before an agent publishes it:
+
+1. **Store the pending action.** Your backend stores the pending publication,
+   exact draft version, destination, owning account, and expiry, and binds it to
+   the authentication attempt as in step-up. Keep publication blocked.
+2. **Authenticate.** Request `max_age=0` or `prompt=login` and validate the result
+   [as in step-up](/world-id-auth/step-up#implement-step-up): the returned
+   `(iss, sub)` must match the account awaiting approval. Check `auth_time` for
+   the required freshness and `acr` and `amr` for the required assurance.
+3. **Ask for approval.** Show the authenticated user the stored draft and
+   destination in your application, and ask them to approve or deny publication. Record
+   approval against that account and exact action. The World ID issuer provides the
+   authentication result; your application captures approval of what will be published.
+4. **Publish once.** Recheck permissions, freshness, expiry, and approval before
+   publishing only the approved version. Prevent retries from publishing twice. A
+   changed draft or destination requires new approval. Denial, cancellation,
+   failed validation, or expiry leaves publication blocked.
+
+With `max_age=0`, authentication must belong to the newly initiated attempt, but
+its age need not remain zero while the user reviews the draft. Enforce your application's
+allowed freshness window at execution time.
+
+## Headless agents {#headless-agents}
+
+The [device flow](/world-id-auth/connect-your-backend#sign-in-a-headless-agent-device-flow)
+already requires fresh authentication and explicit authentication approval; it does not
+implement `max_age` or `prompt`. The user approves authentication for the requesting
+client, and that approval does not cover a business action such as publishing a
+draft. Collect separate action approval in your application only if your policy requires it.
+
+For an agent calling your API or MCP server, your backend issues and validates
+its own access credentials. Where supported, use the
+[authentication challenge and retry flow](/world-id-auth/step-up#challenge-an-agent-or-api-client-rfc-9470)
+to request a fresh checkpoint. Keep the operation blocked until your backend
+validates authentication, checks permissions, and confirms any action approval
+required by your application.
