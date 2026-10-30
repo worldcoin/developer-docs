@@ -1,0 +1,234 @@
+---
+title: "Build with a coding agent"
+sidebarTitle: "Build with a coding agent"
+description: "Give your coding agent complete integration instructions and connect developer MCP tools."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+import AuthEnvironment from "/snippets/world-id-auth-environment.mdx";
+
+<AuthEnvironment />
+
+Connect a coding agent to the World ID developer tools. No plugin is required.
+The public integration guides are available without sign-in or an MCP connection.
+Add the developer MCP server only when you want the agent to register or manage
+your application through tools.
+
+## Give your coding agent the guide {#give-your-coding-agent-the-guide}
+
+Copy this prompt into your coding agent:
+
+```prompt
+Read https://docs.world.org/world-id-auth/build-with-a-coding-agent.md and follow its instructions to integrate World ID into this project.
+```
+
+## Connect your coding agent {#connect-your-coding-agent}
+
+For optional app management through tools, add `https://auth.world.org/mcp/developer` in
+Codex, Claude Code, or another coding agent's MCP settings as a Streamable HTTP
+server with OAuth. The consumer World ID plugin does not bundle this server.
+Use a separate connection name for each environment:
+
+| Environment | Server name                  | MCP URL                                        |
+| ----------- | ---------------------------- | ---------------------------------------------- |
+| Production  | `world-id-developer`         | `https://auth.world.org/mcp/developer`         |
+| Sandbox     | `world-id-developer-sandbox` | `https://sandbox.auth.world.org/mcp/developer` |
+
+The coding agent must support Client ID Metadata Documents (CIMD): it publishes
+and supplies its own metadata URL. Connecting the coding agent requires no portal
+OIDC registration or client secret. Dynamic client registration (DCR) is not
+implemented. If your host does not support this connection, use the public guides
+and portal directly.
+
+Keep the connection, guides, app registration, and credentials in the same
+production or sandbox environment. Before authorizing, confirm that the current
+session lists the developer MCP server at `https://auth.world.org/mcp/developer`.
+Call `list_idp_guides` to check the connection; it requires no authorization.
+
+The commands below use this page's environment. For sandbox, replace
+`world-id-developer` with `world-id-developer-sandbox` in every command. When
+switching environments, use both the matching name and URL from the table.
+
+### Codex CLI {#codex-cli}
+
+Run `codex mcp list` in the environment where your coding session runs. If the
+developer endpoint is already configured, use its existing name. Otherwise add it:
+
+```sh
+codex mcp add world-id-developer --url https://auth.world.org/mcp/developer
+```
+
+For app management, authorize only the developer scope:
+
+```sh
+codex mcp login world-id-developer --scopes developer-portal:manage
+```
+
+### Claude Code {#claude-code}
+
+Run `claude mcp list` to check for an existing connection. If it is missing, add it:
+
+```sh
+claude mcp add --transport http --scope user world-id-developer https://auth.world.org/mcp/developer
+```
+
+For app management, start Claude Code and run `/mcp`. Select the configured
+server and follow the browser sign-in flow. The `--scope user` option controls
+where Claude Code stores the configuration; portal access uses the separate
+OAuth permission `developer-portal:manage`.
+
+### Check the connection {#check-the-connection}
+
+Complete Google sign-in and consent in the browser when authorizing portal access.
+
+If the tools are unavailable, first check whether the developer server is listed
+and enabled in the active host. Add it only if it is missing; otherwise use the
+host's refresh controls. Start a new coding session if the host needs one to load
+new tools. A desktop or workspace host manages its own connection; configuring a
+separate CLI does not establish that the active chat can use it.
+
+Ask the agent to list the World ID integration guides to confirm the connection.
+Reading guides requires no authorization. For app management, ask the agent to
+check developer access and follow the Google sign-in and portal consent prompt.
+
+## Agent instructions {#agent-instructions}
+
+Read [Start here](/world-id-auth/quickstart) and inspect the project's
+existing authentication setup. Use the
+[OIDC guide](/world-id-auth/connect-your-backend) to connect a backend directly, or the
+[federation guide](/world-id-auth/connect-your-auth-server) for an existing auth server.
+Follow the [testing guide](/world-id-auth/testing) to verify the integration.
+Use this environment's issuer and portal throughout, and ask for missing deployment
+URLs. Keep client secrets and private keys out of chat and frontend code.
+
+To verify the MCP connection, call `list_idp_guides`; it requires no authorization.
+Call `get_idp_guide` with an ID from that list to read a guide. The same content is
+available through `resources/read` at each guide's `worldid://guides/<id>` URI.
+These are MCP resource identifiers; browser readers use
+[Integration guides](/world-id-auth/quickstart).
+A missing tool alone does not prove that the server is unconfigured or authorization
+expired. Check the host's connection status before changing its configuration.
+
+To register or manage an application, call `get_portal_account` to check developer
+access, then follow the host's Google sign-in and portal consent prompt if needed.
+After authorization, retry `get_portal_account` in the same session before
+continuing. If tools or authorization remain unavailable, use the host's connection
+status and refresh controls. Stop on cancelled or failed sign-in and explain the
+failure; do not repeatedly restart authorization. Confirm a successful tool result
+before reporting that the connection works.
+
+## Developer-portal permission {#developer-portal-permission}
+
+To register an application, call `request_oidc_client_registration`. For other client
+management tasks, call the appropriate portal tool. The MCP client follows the
+server's OAuth challenge for
+`developer-portal:manage`, obtains consent using Google portal sign-in, and
+retries the call. Developer authorization requires no World ID verification.
+World ID account authorization does not grant developer access. Request only
+`developer-portal:manage` on `/mcp/developer`; do not combine it with `world-id:read`.
+The server rejects mixed scopes. Account and benefit tools use a separate MCP
+connection and plugin. If your coding agent cannot authorize developer access,
+[register directly in the portal](https://auth.world.org/portal).
+Keep browser cookies, tokens, client secrets, and private keys out of agent messages.
+
+Portal tools respect the user's memberships and owner permissions. Registration,
+secret creation, secret revocation, and public JWKS replacement each create a
+request for the user to approve in the portal.
+
+1. Supply a UUID `requestId`. Reuse it with identical inputs on retries. If a
+   response is lost, check `get_portal_credential_request` with that ID before retrying.
+2. Show the user the returned `portalUrl` unchanged so they can review the request.
+   Do not approve it or retrieve secrets through browser automation.
+3. Poll `get_portal_credential_request` sparingly with bounded requests. Continue only
+   while `status` is `pending` and `expiresAt` is in the future.
+4. Stop on `completed`, `denied`, `expired`, or `revoked`, or when the deadline
+   passes. Surface tool errors and terminal failures; do not silently start a new
+   request. Only `completed` confirms success.
+
+Approval requests last 20 minutes. The API reports `expired` or `revoked` for
+pending requests whose deadline has passed or whose authorizing grant is no
+longer valid.
+Secrets appear once to the user in the portal, never in MCP results. If the
+approval response containing a new secret is lost, create another secret in
+the portal; rereading the completed request cannot recover it.
+
+Before configuring the application, check that the completed registration's
+`request.result.client` matches the intended application. It includes the public client
+ID, callbacks, sector, and authentication method.
+
+Follow [Connect your backend to the World ID issuer (OIDC)](/world-id-auth/connect-your-backend)
+to use the approved client.
+
+## Register an application with your agent {#register-an-application-with-your-agent}
+
+Registration requires a confidential backend that keeps credentials out of frontend
+code and distributed CLIs. Collect the app name, callback URLs, authentication
+method, and any optional public logo URL before requesting registration.
+Use the project's existing configuration and ask for missing deployment URLs
+rather than inventing them.
+
+- **Callbacks:** use exact HTTPS URLs, including the path, query, and port.
+  HTTP localhost, wildcard callbacks, and variable ports are not supported.
+  Use Punycode for internationalized callback hostnames. A device-only client
+  still needs a registered redirect URI.
+- **Client authentication:** use `client_secret_basic` when the developer has
+  no preference and their backend supports it. `client_secret_post` and
+  `private_key_jwt` are also supported. For `private_key_jwt`, generate the key
+  pair in the backend's secure environment and register only the public JWKS.
+- **Sector:** new clients receive a unique provider-managed sector by default;
+  callbacks may use different hostnames. To share identifiers, use an
+  owner-enabled `sectorSourceClientId` and confirm the developer owns every
+  client in that sector. Membership alone is insufficient. Hosted sector
+  documents are not supported. The sector and authentication method cannot change
+  after registration. See [Manage credentials and callbacks](/world-id-auth/app-registration#manage-credentials-and-callbacks).
+
+1. Call `list_oidc_clients` before creating a client. Reuse the intended app's
+   `clientId` if it already exists; ask which app when the match is ambiguous.
+2. Confirm the registration details above with the developer. For protocol details,
+   see the [client-authentication reference](/world-id-auth/connect-your-backend#client-authentication).
+3. Call `request_oidc_client_registration` with a fresh UUID `requestId`, `name`,
+   `redirectUris`, and `tokenEndpointAuthMethod`. Include `logoUri`, an approved
+   `sectorSourceClientId`, or public `jwks` when needed. Never send private keys.
+4. Follow the **Developer-portal permission** workflow above.
+   The app does not exist until approval. The developer saves any generated client
+   secret directly from the portal into backend configuration. For `private_key_jwt`,
+   no secret is generated; the developer retains the private key that matches the
+   registered public JWKS. Never ask them to paste a secret or private key into chat.
+5. After completion, return the public client ID, issuer `https://auth.world.org`, registered
+   callbacks, authentication method, and portal link using the approved
+   `request.result.client`.
+
+## Configure an existing application with your agent {#configure-an-existing-application-with-your-agent}
+
+Read `get_oidc_client` before updating. `update_oidc_client` replaces the
+configuration: send `clientId`, `name`, `redirectUris`, `status`, and `logoUri`,
+preserving values the developer did not ask to change.
+Use `null` to preserve the logo, or an empty string only when asked to remove it.
+Omit `sectorIdentifierUri` or echo its existing value; historical document URIs
+cannot be cleared or replaced. Existing host-based callbacks can be retained,
+reordered, or removed; only newly added callbacks must use the stored sector
+hostname. Managed clients can change callback hostnames freely.
+Preserve the immutable sector and authentication method. Report changes only
+after the tool succeeds; reads may briefly lag successful changes.
+
+## Publish a benefit listing {#publish-a-benefit-listing}
+
+Registration does not publish a benefit. There is no catalog submission MCP tool.
+
+1. Direct the developer to `https://auth.world.org/portal/clients/{clientId}?tab=catalog`,
+   replacing `{clientId}` with the actual client ID, to open the app's **Catalog** tab.
+2. Save a listing with a name, description, and HTTPS **Website URL** (`appUrl`).
+   This is where users claim the benefit; it is separate from the OIDC callback.
+3. Optionally add **Instructions** (`instructions`) describing prerequisites,
+   human or browser steps, any partner plugin link or MCP URL, and how to confirm
+   success. These instructions become public after approval; never include
+   credentials or tokens. If omitted, agents start at the website URL.
+4. The owner of the active app submits the saved listing for review. A separate
+   authorized reviewer who is not an app member must approve it. Approval publishes
+   the listing; changes to instructions require a new review.
+
+Only an approved, published listing for an active client appears in `get_benefits`.
+Do not report a pending submission as approved or published. Publication changes
+can take up to a minute to appear. The application enforces eligibility,
+authorization, and redemption.

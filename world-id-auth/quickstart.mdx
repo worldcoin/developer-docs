@@ -1,0 +1,106 @@
+---
+title: "Quickstart"
+sidebarTitle: "Quickstart"
+description: "Register an application, connect to the World ID issuer, and add step-up authentication."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+import AuthEnvironment from "/snippets/world-id-auth-environment.mdx";
+
+<AuthEnvironment />
+
+A person uses the World ID app to authenticate with their World ID. The World ID
+issuer verifies that authentication and issues a signed ID token to your backend.
+Your application uses the token to recognize the same World ID and determine when the person last
+authenticated. Your application keeps its own accounts, sessions, permissions,
+and actions.
+
+## How it works {#how-it-works}
+
+Your backend connects to the World ID issuer with OpenID Connect (OIDC). After
+the person authenticates in the World ID app, your backend validates the returned
+ID token and reads two claims:
+
+- **`sub`:** a stable identifier for the person's World ID account, private to your
+  application's sector. Store it with the issuer as `(iss, sub)` to recognize the account.
+- **`auth_time`:** when the person authenticated. Use it to require recent
+  authentication before sensitive actions.
+
+See [ID token and sub](/world-id-auth/id-tokens-and-identity) for the full claim reference.
+
+## Integrate in four steps {#integrate-in-four-steps}
+
+The recommended integration keeps your existing sign-in and adds a World ID check
+before sensitive actions:
+
+1. **[Register your application](/world-id-auth/app-registration)** and save its
+   credentials in your backend.
+2. **Connect to the World ID issuer** through [your backend](/world-id-auth/connect-your-backend) or
+   [your auth server](/world-id-auth/connect-your-auth-server).
+3. **Add [step-up authentication](/world-id-auth/step-up)** to require a
+   recent World ID check before an action.
+4. **For agent workflows, add a [human checkpoint](/world-id-auth/human-in-the-loop).**
+   Pause the workflow and validate fresh World ID authentication before resuming.
+
+Step-up checks authentication freshness. A human checkpoint uses that check to
+pause and resume an agent workflow. Both work with your existing sign-in or,
+optionally, with [World ID as your primary sign-in](/world-id-auth/connect-your-backend#primary-sign-in).
+
+**Device authentication with `openid` always requires fresh authentication.** The person
+uses an enrolled passkey or approves a proof request in the World ID app, according
+to the requested authentication class. Device grants with `openid` never reuse a browser session.
+[XAA device consent](/world-id-auth/xaa#connect-the-agent) can use an
+account session authenticated after the device request began. See
+[freshness and assurance](/world-id-auth/step-up#assurance-values) for what
+the returned authentication claims mean and how to validate them.
+
+Before calling the integration complete, [test it end to end](/world-id-auth/testing).
+To test without visiting an Orb, use the
+[sandbox setup](/world-id-auth/testing#test-in-the-sandbox).
+
+## Environment values {#environment-values}
+
+| Setting          | Value                                                                                       |
+| ---------------- | ------------------------------------------------------------------------------------------- |
+| Issuer           | `https://auth.world.org`                                                                                |
+| Discovery        | `https://auth.world.org/.well-known/openid-configuration`                                               |
+| Developer portal | `https://auth.world.org/portal`                                                                         |
+| Scope            | `openid`; `openid offline_access` for XAA; optional `email`                                 |
+| Grants           | Authorization code with S256 PKCE; device authorization; refresh and token exchange for XAA |
+| ID token signing | RS256                                                                                       |
+
+## Other World ID integrations {#other-world-id-integrations}
+
+These guides cover the World ID issuer's OIDC integration. IDKit proof applications use
+different registrations, credentials, and identifiers; do not mix
+them with this issuer's discovery-based flow.
+
+- **IDKit uniqueness:** use a nullifier scoped to the application and action for one-use eligibility,
+  not an OIDC `sub`. Verify the proof on your backend and atomically reject a
+  previously consumed nullifier. A stored uniqueness result does not establish
+  fresh authentication. Follow the
+  [IDKit setup and verification guide](https://docs.world.org/world-id/idkit/integrate).
+- **IDKit sessions:** use repeated proofs of the saved `session_id` for account
+  continuity. Each check still requires user interaction and a fresh proof.
+  `session_nullifier` identifies a proof for replay checks; it is not an account
+  ID. A proof session is not an application login cookie or an issuer browser session. Follow
+  the [session-proof guide](https://docs.world.org/world-id/idkit/session-proofs)
+  for registration, signed requests, verification, and replay checks.
+
+**Legacy Sign In with World ID is deprecated.** Use the World ID issuer's OIDC flow for
+new sign-in integrations; legacy credentials and identities are not interchangeable
+with the World ID issuer's.
+
+Use the selected product's credential, environment, request-expiry, and replay
+rules; its name alone does not establish assurance or business permission.
+OIDC authentication remains repeatable. For one-use benefits, enforce your own rule with
+atomic consumption in the
+[appropriate identity scope](/world-id-auth/id-tokens-and-identity#store-and-match-sub).
+
+## Get help from a coding agent {#get-help-from-a-coding-agent}
+
+Give your coding agent the public guides to help implement your integration.
+No plugin or MCP connection is required to read them. For optional app registration
+and management through tools, connect the developer MCP server. See
+[Set up your coding agent](/world-id-auth/build-with-a-coding-agent).

@@ -1,0 +1,139 @@
+---
+title: "ID tokens and identity"
+sidebarTitle: "ID tokens and identity"
+description: "Validate token claims, read UserInfo, and recognize accounts using the issuer and pairwise subject."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+import AuthEnvironment from "/snippets/world-id-auth-environment.mdx";
+
+<AuthEnvironment />
+
+This guide describes the OIDC token response, the ID token's claims, and how to
+store and compare the subject (`sub`).
+
+## Token response {#token-response}
+
+Browser and device flows both return `id_token`, `access_token`, `token_type`, and
+`expires_in`:
+
+- **`id_token`:** the signed authentication result described below.
+  [Validate it](/world-id-auth/connect-your-backend#validate-the-id-token) before using
+  any claim.
+- **`access_token`:** an opaque credential for the [UserInfo endpoint](#userinfo).
+  It does not authorize calls to the World ID MCP server or your application's APIs.
+- **`token_type`:** `Bearer`.
+- **`expires_in`:** the access token's lifetime in seconds. Read the returned
+  value. The ID token has its own expiration, given by `exp`.
+
+World ID authentication with `openid` does not issue refresh tokens. The
+[XAA profile](/world-id-auth/xaa) returns a rotating refresh token for
+`openid offline_access`.
+
+After validation, your backend creates its own application sessions and API or
+MCP credentials. Keep the ID token and subject in your backend, outside model
+messages and tool results.
+
+## Decoded ID token {#decoded-id-token}
+
+The `id_token` is a signed JWT with three parts: `header.payload.signature`. Its
+header identifies the RS256 signing algorithm and the signing key by its `kid`.
+Use an OIDC library to verify the signature with the keys advertised by the
+[discovery document](https://auth.world.org/.well-known/openid-configuration). Decoding the
+payload alone does not validate it.
+
+This example shows a decoded payload for a browser authorization request that
+included a nonce. Identifiers and timestamps are illustrative; validate the
+returned `exp` rather than assuming a fixed lifetime.
+
+```json
+{
+  "iss": "https://auth.world.org",
+  "sub": "<opaque-subject>",
+  "aud": "<registered-client-id>",
+  "exp": 1790000420,
+  "iat": 1790000120,
+  "jti": "<token-identifier>",
+  "auth_time": 1790000000,
+  "acr": "https://world.org/oidc/acr/orb",
+  "amr": ["pop"],
+  "nonce": "<nonce-from-your-request>"
+}
+```
+
+## Claim reference {#claim-reference}
+
+| Claim       | Meaning and use                                                                                                                                                                                                |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `iss`       | Issuer. Require an exact match to your configured World ID issuer and store it with `sub`.                                                                                                                     |
+| `sub`       | The World ID account's stable identifier within your registered sector. Use it for account recognition after token validation.                                                                                 |
+| `aud`       | Intended client. Require your registered client ID as the audience. Sharing a sector does not make another client's token valid for yours.                                                                     |
+| `exp`       | Token expiration, as Unix time in seconds. Reject expired tokens.                                                                                                                                              |
+| `iat`       | Token issuance time, as Unix time in seconds. A new token can reuse an older authentication.                                                                                                                   |
+| `jti`       | Token identifier. Use `sub` to recognize the account; `jti` does not identify the user or approve a business action.                                                                                           |
+| `auth_time` | Authentication time, as Unix time in seconds. Use this to enforce your freshness requirement.                                                                                                                  |
+| `acr`       | Achieved authentication class: `https://world.org/oidc/acr/orb`, `https://world.org/oidc/acr/orb-face`, or, only when you request it, `https://world.org/oidc/acr/selfie`. Check it against your requirements. |
+| `amr`       | `["pop"]` for a World ID proof, `["pop", "face"]` for Face Auth or Selfie Check, or `["pop", "user", "mfa"]` for a user-verified passkey. Only the passkey value asserts MFA.                                  |
+| `nonce`     | Matches the nonce your backend sent in the browser authorization request. Present only when supplied; omitted in device grants.                                                                                |
+
+For example, if a user authenticates at 10:00 and their existing session produces
+a token at 11:00, `auth_time` still represents 10:00 while `iat` represents 11:00.
+Use `auth_time` for authentication freshness, as described in
+[Step-up authentication](/world-id-auth/step-up).
+
+For accounts with an enabled inbox, newly issued ID tokens and ID-JAGs also
+include `email` and `email_verified: true`. Clients may request the `email` scope;
+enabled aliases are included whether or not it is requested. The immutable address is
+`<sub>@<receiving-domain>`, using the subject for the receiving application's
+sector. Clients sharing a sector share an address; different sectors receive
+different addresses. An ID-JAG uses the target app's subject and address. The
+email claim may support partner account provisioning, but does not authorize
+reading the inbox or connecting an app.
+Deleting an account permanently retires its aliases. If an account's subject
+matches a retired alias, authentication still works but its email claim is omitted.
+Keep `(iss, sub)` as the account identity and require explicit account linking.
+
+Name, raw World identifiers, and World proofs are not included. See the
+[OIDC claim definitions](https://openid.net/specs/openid-connect-core-1_0.html#IDToken)
+and [identity stability rules](https://openid.net/specs/openid-connect-core-1_0.html#ClaimStability).
+
+## UserInfo {#userinfo}
+
+Send `GET` or `POST` to the discovery document's `userinfo_endpoint` with
+`Authorization: Bearer <access_token>`. UserInfo returns `sub` and, when the
+account's inbox is enabled, `email` and `email_verified`. Require its `sub` to
+match the validated ID token before using the claims. Cookies, ID tokens, and
+query-string credentials do not authenticate this endpoint.
+
+Access tokens expire within five minutes. UserInfo reads from a database follower,
+so revocation and account, client, consent, or XAA grant changes take effect after
+replication. A stale follower can accept a revoked token until replication catches
+up or the token expires. Reauthorizing a revoked connection does not revive its
+old tokens after replication. The authenticated issuing client can revoke a token
+at the discovery document's `revocation_endpoint`.
+Revoking an XAA access token revokes its delegation family.
+
+## Store and match sub {#store-and-match-sub}
+
+After validating the ID token, store **`(iss, sub)`** as the external identity
+linked to your application's account. Link World ID through an explicit action while
+the user is signed in to that account. For later step-up, require the returned
+issuer and subject to match the stored pair before updating the session's assurance.
+
+Treat `sub` as an opaque, case-sensitive string. Compare the complete value;
+do not decode it or derive your own replacement. A subject supplied by a
+browser or agent is not proof of authentication.
+
+For the same issuer and registered sector, the same World ID account receives
+the same `sub` across browser sign-ins, devices, and agent authentication flows.
+
+A **sector** is the registered scope in which applications share subject identifiers.
+The subject is **pairwise**: different sectors receive different values for the
+same account. Clients deliberately registered in the same sector receive the
+same value. Rotating a client secret or using a new client ID within that sector
+does not change the subject. Choose your sector before integrating; see
+[Manage credentials and callbacks](/world-id-auth/app-registration#manage-credentials-and-callbacks).
+
+A new World identity can produce a new subject. Do not automatically merge
+accounts with different subjects or infer a mapping between sectors.

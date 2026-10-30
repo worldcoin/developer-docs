@@ -1,0 +1,123 @@
+---
+title: "Register your application"
+sidebarTitle: "Register your application"
+description: "Register and manage your World ID OIDC application, credentials, callbacks, and benefit listing."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+import AuthEnvironment from "/snippets/world-id-auth-environment.mdx";
+
+<AuthEnvironment />
+
+Sign in to the [developer portal](https://auth.world.org/portal) with Google to register an
+OIDC client for your application or auth server. This registration supports
+step-up, human-in-the-loop workflows, and primary sign-in.
+
+Check that your Google account is eligible in the target environment before
+relying on self-service registration. Registration may be disabled, or you may
+have reached the limit on clients you can own. If you receive
+`account_not_eligible`, you may need help from the environment's operator.
+
+## Register your application {#register-your-application}
+
+1. **Register your callback URL.** Use HTTPS callback URLs.
+   Callback hosts must be ASCII; use Punycode for an internationalized domain.
+   Match the scheme, path, query, and port exactly; wildcards and
+   variable ports are not supported. Device-only clients also need a registered
+   redirect URI, although the device grant does not use it.
+2. **Choose client authentication.** Register `client_secret_basic`,
+   `client_secret_post`, or `private_key_jwt`. You cannot change the method
+   after registration; switching methods requires a new client registration.
+   You can still rotate the existing client's secret or signing keys.
+   For `private_key_jwt`, generate the key pair in your backend's secure
+   environment and register only its public JWKS.
+3. **Save the credentials in your backend.** Save the client ID and, when using
+   a shared secret, the secret shown once by the portal. Never ship a shared
+   secret or private key in frontend code or a CLI distributed to users.
+   Client secrets start with `worldidp_client_secret_`, so secret scanners can
+   flag leaked ones.
+
+World ID authentication with `openid` requires a client registered through the portal.
+[XAA hosts](/world-id-auth/xaa) may instead use public or confidential CIMD
+registration. OIDC dynamic client registration (DCR) is not supported.
+
+Developers sign in to the portal with Google to manage clients. Your users
+authenticate with World ID in your application.
+
+Once registered, [connect your backend](/world-id-auth/connect-your-backend) or
+[configure your auth server](/world-id-auth/connect-your-auth-server).
+You can also [set a default verification preference](/world-id-auth/step-up#default-verification-preference)
+for requests that omit both `acr_values` and an `acr` claim request.
+
+## Manage credentials and callbacks {#manage-credentials-and-callbacks}
+
+When rotating credentials, keep the old secret or key active until the new one works;
+changes can take a short time to propagate.
+
+New portal applications receive a unique, permanent identity sector by default.
+Callbacks can use different hostnames without a hosted sector document.
+Applications in different sectors receive different pairwise `sub` values and
+relay aliases, even when their callbacks use the same hostname. Existing
+applications keep their current sectors and account identifiers.
+
+To share identifiers, enable identity sharing in a managed-sector application's
+settings, then select it when registering another application. You must own every
+application in that sector; being a member is not enough. Shared-sector
+applications cannot transfer ownership individually. Deleting an application
+does not make its sector available for reuse. Disabling sharing prevents new
+applications from joining through that source; existing applications and
+credentials remain unchanged.
+
+New portal registrations cannot choose a host-based sector. Hosted sector documents
+are no longer fetched or editable. Existing host-based applications keep their
+sectors and registered callbacks. A new client
+cannot join a legacy host-based sector. Keep using the existing client to preserve those identifiers, or link
+accounts explicitly when moving to a new managed sector.
+
+- **Change callbacks:** register each new exact URI before using it. Managed
+  sectors stay unchanged across hostname changes. For an existing host-based
+  client, only newly added callbacks must use the stored sector hostname; existing
+  callbacks can be retained, reordered, or removed.
+  Hostname comparison ignores case and a trailing dot; subdomains are distinct.
+- **Move to another sector:** create a separate client. An existing client's
+  sector cannot change, and deleting and recreating a client does not migrate
+  your application's account mappings or permissions.
+
+Rotating credentials does not change subjects. Registering a new application
+changes subjects unless you explicitly share its sector. Changing the issuer
+changes the identity namespace.
+
+When migrating to a new sector, retain the old account mapping during the transition.
+Require an authenticated session for the existing application account and a fresh,
+browser-bound World ID linking attempt for the new client. Confirm the intended
+account with the user, then store the new validated `(iss, sub)` only after
+linking succeeds. Never guess which subjects correspond across sectors or link
+an account using an unvalidated subject.
+
+## Get help from a coding agent {#get-help-from-a-coding-agent}
+
+Your coding agent can [read the public integration guides](/world-id-auth/build-with-a-coding-agent#give-your-coding-agent-the-guide)
+without a plugin or MCP connection. Optionally
+[connect developer MCP tools](/world-id-auth/build-with-a-coding-agent#connect-your-coding-agent)
+to register and manage the application. Portal tools use Google authorization, and registration
+and credential changes require your approval in the portal. Keep client secrets
+and private keys outside agent conversations. The
+[agent instructions](/world-id-auth/build-with-a-coding-agent.md) cover portal tool use.
+
+## Publish a benefit listing {#publish-a-benefit-listing}
+
+If your application offers a World ID benefit, save a Catalog listing for its OIDC client
+in the developer portal: name, description, and HTTPS application URL. Optionally
+fill in **Instructions** (`instructions`) with steps
+to claim the benefit, a plugin link, or an MCP URL. Include any prerequisites and
+how to recognize success. These instructions are public;
+do not include credentials or tokens. The owner submits the listing for review. Only an approved, published
+listing for an active client appears in `get_benefits`; registration and successful
+authentication do not publish it. Changes to instructions require a new review.
+Publication changes can take up to a minute to appear.
+
+Agents use the instructions to understand the partner's preferred claiming
+flow, or start at the app URL if no instructions are supplied. Your application
+enforces eligibility, authorization, and redemption. The application URL is
+separate from the OIDC callback.
