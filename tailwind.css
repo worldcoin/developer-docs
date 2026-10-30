@@ -157,13 +157,14 @@
   }
 
   /* ------------------------------------------------------------------ */
-  /* Floating pill header (Docs 3.0, desktop ≥1440px) — collapse the     */
+  /* Floating pill header (Docs 3.0, desktop ≥1600px) — collapse the     */
   /* theme's two-row header into the design's single 84px rounded bar.   */
   /* The theme's row scaffolding is flattened with display:contents so   */
   /* the logo, the tab row, and the search/assistant cluster lay out on  */
   /* ONE flex line — no absolute positioning, so the variable-width      */
   /* hosted cluster (Search + Ask Assistant) can never overlap the tabs. */
-  /* Below 1440px — including when the hosted assistant panel narrows    */
+  /* Leave room for all tabs plus Search and Ask Assistant.             */
+  /* Below 1600px — including when the hosted assistant panel narrows    */
   /* the page without changing the window width — the two-row layout     */
   /* above remains: the pill activates on the header's own width via a   */
   /* container query, not a viewport media query.                        */
@@ -175,12 +176,12 @@
     container-type: inline-size;
   }
   /* #navbar can't query its own width, so its parent — which the navbar
-     fills edge to edge, so both cross 1440px together — is the query
+     fills edge to edge, so both cross 1600px together — is the query
      container for the one rule below that styles #navbar itself. */
   div:has(> #navbar) {
     container-type: inline-size;
   }
-  @container (min-width: 1440px) {
+  @container (min-width: 1600px) {
     /* No full-width backdrop: the pill floats on the page background. */
     #navbar #navbar-transition {
       display: none;
