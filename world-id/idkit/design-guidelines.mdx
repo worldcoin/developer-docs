@@ -218,7 +218,13 @@ title: "Design Guidelines"
 
 ## Verified Human Badge
 
-The **Human Badge** signals that an account or user is verified as a unique human via **World ID**. It builds trust, improves authenticity, and embeds into products across industries (social, gaming, commerce, identity, etc.).
+The **Human Badge** signals that an account or user is verified as a unique human via **World ID**.
+
+In documentation navigation, use the badge beside human-related topics such as Human in the Loop and Proof of Human. Here it identifies the topic; it does not indicate that a reader, author, or page has been verified.
+
+<a href="/images/docs/human-badge-blue.svg" download="human-badge.svg">
+  Download the Human Badge SVG
+</a>
 
 <a
   href="https://www.figma.com/design/XmNRhspQ3Gfsze5WRjV1PB/ID-Kit-Library?node-id=1-216"
@@ -228,7 +234,7 @@ The **Human Badge** signals that an account or user is verified as a unique huma
 >
   <div className="p-4 bg-gradient-to-br from-gray-50 to-gray-100">
     <img
-      src="/images/docs/id/design-guidelines/human-verified-badge.svg"
+      src="/images/docs/human-badge-blue.svg"
       alt="Human badge"
       width="24"
       height="24"
@@ -240,7 +246,7 @@ The **Human Badge** signals that an account or user is verified as a unique huma
       Human Badge Figma Assets
     </h3>
     <p className="m-0 text-sm text-gray-600">
-      Download the human badge asset.
+      Open the badge design assets.
     </p>
     <div className="flex items-center text-sm font-medium text-primary">
       Open in Figma
@@ -265,7 +271,7 @@ The **Human Badge** signals that an account or user is verified as a unique huma
 
 ## Badge design
 
-- Symbol: World icon
+- Symbol: the Human Badge mark from the supplied SVG
 - Label: human in lowercase, optionally styled in pill or badge form
 
 ### **Variants:**
@@ -276,7 +282,8 @@ The **Human Badge** signals that an account or user is verified as a unique huma
 ### Do:
 
 - Keep badge **small, clear, unobtrusive**
-- Always pair with or near a user identity (e.g. username, avatar)
+- When indicating account verification, pair with the user's name or avatar
+- In documentation navigation, pair with the relevant topic label
 - Use consistent shape and padding
 
 ### Don't:
@@ -298,6 +305,11 @@ The **Human Badge** signals that an account or user is verified as a unique huma
     </tr>
   </thead>
   <tbody>
+    <tr>
+      <td className="p-2 align-middle">Documentation navigation</td>
+      <td className="p-2 align-middle">Beside a human-related topic label</td>
+      <td className="p-2 align-middle">Icon + topic label</td>
+    </tr>
     <tr>
       <td className="p-2 align-middle">Social profiles</td>
       <td className="p-2 align-middle">Below or beside username / bio</td>
@@ -332,13 +344,13 @@ The **Human Badge** signals that an account or user is verified as a unique huma
 
 **✅ Partners may:**
 
-- Adapt badge color to suit **light/dark mode**
+- Adjust the surrounding surface for **light/dark mode**, keeping the badge blue (`#007CFB`)
 
 **❌ Partners must not:**
 
-- Remove or replace the word human
+- Replace the lowercase human verification label with alternative wording
 - Make it look like a World ID badge gives higher permissions than intended
-- Change the logo shape
+- Recolor the badge or change its shape
 
 ## Rules checklist
 
@@ -350,6 +362,7 @@ The **Human Badge** signals that an account or user is verified as a unique huma
 
 ### Placement
 
-- Placed directly next to or below user, display name, or avatar
+- For account verification, placed directly next to or below the user's name or avatar
+- In documentation navigation, placed beside the relevant topic label
 - Badge is not visually grouped with unrelated badges
 - Badge does not imply special privileges unless defined
