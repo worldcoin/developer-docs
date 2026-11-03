@@ -1,7 +1,7 @@
 {
   "repository": "worldcoin/temporal-apps",
   "sourceDirectory": "apps/idpapi/mcp/guides",
-  "configSha256": "71269061412f47a44c05097e62d21a49da47ebd35f1598c30bb4aee51d15fe03",
+  "configSha256": "310b8d726fa46f97fef0d38613a6cf7a7ff6c807e4e1d37a80cc878ab0c427c3",
   "sources": {
     "apps/idpapi/mcp/guides/getting-started.md": "862ca6a6480fc8913321c46f4917131d48cc0f580cc3519568942315679912b2",
     "apps/idpapi/mcp/guides/app-registration.md": "673e024239af407990e6f506307ae0d99b17ea8b89bf77ceb885e591585ac950",
@@ -23,7 +23,7 @@
     "world-id-auth/connect-your-auth-server.mdx": "b17705ee9c7924d4b8129a72e0814e51086f28c881a899860135aa04287a1a95",
     "world-id-auth/id-tokens-and-identity.mdx": "8a658155795a9a777feec44e7f889c6726395ec22a35f761c515814316394673",
     "world-id-auth/step-up.mdx": "a6e7b90035b23ff8c146cae91b200c23e2f348b5f3ce26364683369d003a5e28",
-    "world-id-auth/human-in-the-loop.mdx": "65f6e7b7199d7f402052f19f5ca6aa7742f42ec3fa9f01bd222906228b06b9b2",
+    "world-id-auth/human-in-the-loop.mdx": "1d876938eae7dc015033b38dae5d15b864748a027d7ca68712f8a52fe5c20169",
     "world-id-auth/xaa.mdx": "f5edc53cc6d7adeae7aed05b28edaf19f6604a2cf4ebf1765acc2cc5a35551ad",
     "world-id-auth/use-world-id-with-your-agent.mdx": "0853e0d8429e40fe783ce5ea596bedd86fd26fb8c9468cace0b18465dc3873ab",
     "world-id-auth/build-with-a-coding-agent.mdx": "2cecc36b3ecca422a52b8a3ad7ab9b8b49e98134b9e8c0b11d024e577c9d71fe",

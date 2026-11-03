@@ -59,6 +59,7 @@
       "destination": "world-id-auth/human-in-the-loop.mdx",
       "title": "Human in the loop",
       "sidebarTitle": "Human in the loop",
+      "icon": "/images/docs/human-badge-blue.svg",
       "description": "Pause an agent workflow and require fresh World ID authentication before continuing."
     },
     {

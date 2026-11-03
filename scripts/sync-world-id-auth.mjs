@@ -110,6 +110,7 @@ export function renderGuide(markdown, page, config) {
     "---",
     `title: ${JSON.stringify(page.title)}`,
     `sidebarTitle: ${JSON.stringify(page.sidebarTitle ?? page.title)}`,
+    ...(page.icon ? [`icon: ${JSON.stringify(page.icon)}`] : []),
     `description: ${JSON.stringify(page.description)}`,
     '"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"',
     '"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"',
