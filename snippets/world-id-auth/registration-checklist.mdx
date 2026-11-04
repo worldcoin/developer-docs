@@ -4,10 +4,8 @@
 | --- | --- |
 | Environment | Choose production or sandbox. Use that environment's portal, issuer, and credentials throughout. |
 | Backend | Keep client secrets or private keys in a confidential backend, including for a CLI or native app. |
-| Callback | Register the exact HTTPS scheme, host, path, query, and port. Wildcards and variable ports are not supported. Device-only clients still register a redirect URI. |
-| Client authentication | Use a method your backend supports: `client_secret_basic`, `client_secret_post`, or `private_key_jwt`. The method cannot change after registration. |
 | Identity sharing | New clients receive a unique permanent sector. To share identifiers, use an owner-enabled sector and confirm you own every application in it. A client's sector cannot change later. |
 
-After registration, save the credentials in your backend. A new client can receive
-different account identifiers; follow the account-linking guidance before
-replacing an existing integration.
+The steps below cover the exact callback and authentication settings. Before
+replacing an existing integration, follow the account-linking guidance: a new
+client can receive different account identifiers.

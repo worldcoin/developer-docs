@@ -144,6 +144,24 @@ test("guides without a presentation preset keep the legacy body and produce no d
   }
 });
 
+test("the registration view adds portal screenshots beside their instructions and keeps the original text", () => {
+  const original = "Sign in to the developer portal.\n\nCheck that your Google account is eligible in the target environment.\n\n## Register your application {#register-your-application}\n\nUse exact HTTPS callbacks and keep credentials in your backend.\n\nWorld ID authentication with `openid` requires a client registered through the portal.\n\n## Manage credentials and callbacks {#manage-credentials-and-callbacks}\n\nSave new secrets directly in backend configuration.\n\nWhen migrating to a new sector, retain the old account mapping during the transition.\n";
+  const { content, imports } = presentGuide(original, { presentation: "registration" });
+  assert.ok(imports.includes('import AuthPortalSignIn from "/snippets/world-id-auth/portal-sign-in.mdx";'));
+  assert.ok(imports.includes('import AuthPortalRegistration from "/snippets/world-id-auth/portal-registration.mdx";'));
+  assert.ok(imports.includes('import AuthApplicationSettings from "/snippets/world-id-auth/application-settings.mdx";'));
+  assert.ok(content.indexOf("<AuthPortalSignIn />") < content.indexOf("<AuthRegistrationChecklist />"));
+  assert.ok(content.indexOf("<AuthRegistrationChecklist />") < content.indexOf("## Register your application"));
+  assert.ok(content.includes("<AuthPortalSignIn />\n\nCheck that your Google account is eligible"));
+  assert.ok(content.includes("Use exact HTTPS callbacks and keep credentials in your backend.\n\n<AuthPortalRegistration />"));
+  assert.ok(content.includes("Save new secrets directly in backend configuration.\n\n<AuthApplicationSettings />"));
+  let withoutSnippets = content;
+  for (const name of ["AuthPortalSignIn", "AuthRegistrationChecklist", "AuthPortalRegistration", "AuthApplicationSettings"]) {
+    withoutSnippets = withoutSnippets.replace(`<${name} />\n\n`, "");
+  }
+  assert.equal(withoutSnippets, original);
+});
+
 test("the derived device guide preserves the entire device contract and code", () => {
   const derived = deriveGuides(browserMarkdown, browserPage);
   assert.equal(derived.length, 1);
@@ -191,6 +209,9 @@ test("the human agent setup view retains connection steps and useful links at al
   assert.ok(content.includes("claude mcp list"));
   assert.ok(content.indexOf("Check that the current chat can list the guides.") > content.indexOf("</Tabs>"));
   assert.ok(imports.some((value) => value.includes("/snippets/world-id-auth/agent-connection-checks.mdx")));
+  assert.ok(imports.includes('import AuthDeveloperConnections from "/snippets/world-id-auth/developer-connections.mdx";'));
+  assert.ok(content.indexOf("<AuthDeveloperConnections />") > content.indexOf("Check that the current chat can list the guides."));
+  assert.ok(content.includes("<AuthDeveloperConnections />\n\n## Complete instructions for agents"));
 });
 
 test("the complete agent reference has no human-view truncation", () => {

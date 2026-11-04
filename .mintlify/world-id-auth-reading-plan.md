@@ -10,7 +10,7 @@ Prepare a draft follow-up to #225. Ship the faithful migration first; review the
 - Reuse native cards, code groups, tabs, notes, local images and Mermaid sequence diagrams. Keep site styles unchanged.
 - Separate the device tutorial from the browser page, leaving the old device anchors as links. Publish complete coding-agent instructions on a reference route and point the agent Markdown prompt there.
 - Add task-specific snippets for route selection, registration prerequisites, worked browser integration, freshness, HITL, XAA, testing and connection management.
-- Capture real portal screenshots only if the existing interface is accessible without creating credentials, signing in or modifying an application. Do not publish invented screenshots. Mobile sandbox capture requires the actual app.
+- Use the four real portal screenshots recorded in `.mintlify/world-id-auth-screenshots.json`. Keep instructions before the form and settings images, use short captions and native image markup, and distinguish the empty developer-connections state from a successful connection. Never publish credentials, account identity or submitted example settings. Mobile sandbox capture requires the actual app.
 - Document the source/presentation boundary and follow-up release order.
 
 ## Verification

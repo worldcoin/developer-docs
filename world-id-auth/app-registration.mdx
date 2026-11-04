@@ -8,11 +8,16 @@ description: "Register and manage your World ID OIDC application, credentials, c
 
 {/* Generated from worldcoin/temporal-apps/apps/idpapi/mcp/guides/app-registration.md. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}
 
+import AuthPortalSignIn from "/snippets/world-id-auth/portal-sign-in.mdx";
 import AuthRegistrationChecklist from "/snippets/world-id-auth/registration-checklist.mdx";
+import AuthPortalRegistration from "/snippets/world-id-auth/portal-registration.mdx";
+import AuthApplicationSettings from "/snippets/world-id-auth/application-settings.mdx";
 
 Sign in to the [developer portal](https://auth.world.org/portal) with Google to register an
 OIDC client for your application or auth server. This registration supports
 step-up, human-in-the-loop workflows, and primary sign-in.
+
+<AuthPortalSignIn />
 
 Check that your Google account is eligible in the target environment before
 relying on self-service registration. Registration may be disabled, or you may
@@ -39,6 +44,8 @@ have reached the limit on clients you can own. If you receive
    secret or private key in frontend code or a CLI distributed to users.
    Client secrets start with `worldidp_client_secret_`, so secret scanners can
    flag leaked ones.
+
+<AuthPortalRegistration />
 
 World ID authentication with `openid` requires a client registered through the portal.
 [XAA hosts](/world-id-auth/xaa) may instead use public or confidential CIMD
@@ -89,6 +96,8 @@ accounts explicitly when moving to a new managed sector.
 Rotating credentials does not change subjects. Registering a new application
 changes subjects unless you explicitly share its sector. Changing the issuer
 changes the identity namespace.
+
+<AuthApplicationSettings />
 
 When migrating to a new sector, retain the old account mapping during the transition.
 Require an authenticated session for the existing application account and a fresh,

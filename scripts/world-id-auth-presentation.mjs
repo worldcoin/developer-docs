@@ -66,6 +66,11 @@ export function presentGuide(original, page) {
   const afterHeading = (heading, addition) => {
     content = replaceSection(content, heading, (block) => block.replace(/\n/, `\n\n${addition}\n`));
   };
+  const beforeText = (marker, addition) => {
+    const start = content.indexOf(marker);
+    if (start < 0) throw new Error(`Screenshot placement requires the source text: ${marker}`);
+    content = content.slice(0, start) + addition + "\n\n" + content.slice(start);
+  };
   switch (page.presentation) {
     case "overview": {
       const cards = use("AuthIntegrationPaths", "integration-paths");
@@ -77,7 +82,10 @@ export function presentGuide(original, page) {
       break;
     }
     case "registration":
+      beforeText("Check that your Google account is eligible", use("AuthPortalSignIn", "portal-sign-in"));
       before("## Register your application", use("AuthRegistrationChecklist", "registration-checklist"));
+      beforeText("World ID authentication with `openid` requires a client registered through the portal.", use("AuthPortalRegistration", "portal-registration"));
+      beforeText("When migrating to a new sector, retain the old account mapping during the transition.", use("AuthApplicationSettings", "application-settings"));
       break;
     case "browser": {
       const found = deviceSection(content);
@@ -132,6 +140,7 @@ export function presentGuide(original, page) {
       const claudeBody = content.slice(claude.start, check.start).trim();
       content = content.slice(0, codex.start) + `<Tabs>\n  <Tab title="Codex">\n\n${codexBody}\n\n  </Tab>\n  <Tab title="Claude Code">\n\n${claudeBody}\n\n  </Tab>\n</Tabs>\n\n` + content.slice(check.start);
       before("### Check the connection", use("AuthAgentConnectionChecks", "agent-connection-checks"));
+      before("## Complete instructions for agents", use("AuthDeveloperConnections", "developer-connections"));
       break;
     }
     case "testing":

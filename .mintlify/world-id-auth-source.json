@@ -18,7 +18,7 @@
   },
   "outputs": {
     "world-id-auth/quickstart.mdx": "451750b27067f72c052f83e795e52842068d6a46f80e75d396dc2e4fb164c426",
-    "world-id-auth/app-registration.mdx": "adead0fcc35d3717e0bf90f9b76ec8e7e2e62aea2a119950c146ffe9c5501436",
+    "world-id-auth/app-registration.mdx": "a46cab879a90bef41ee5543d9b14afce77378bc17576216c9843f969243d9459",
     "world-id-auth/connect-your-backend.mdx": "77a82af4c35d2d138ea7ebc1d04513beb385191a56c08b6b29512829eeada1e1",
     "world-id-auth/device-flow.mdx": "638a15c7b10a8339c63528daeb97af1dca93c26873bdae63780df5d5d5ca9d28",
     "world-id-auth/connect-your-auth-server.mdx": "bb5886f60a6cd93e38738079de274fb0c71899b2670351c89e4f8f50736a7d0a",
@@ -27,7 +27,7 @@
     "world-id-auth/human-in-the-loop.mdx": "e5e3fed6684c8b64bd2daf24ecc649a2dae72067a6563908a008319780077e22",
     "world-id-auth/xaa.mdx": "4042fbd72a74217e851b6346e3abc32fef992a380325aab80a981e516ffa3926",
     "world-id-auth/use-world-id-with-your-agent.mdx": "bf5d09989162f7c7d303f6e09ab55a30a64a59ca85e01bf1e9b42327810269c8",
-    "world-id-auth/build-with-a-coding-agent.mdx": "f8aa02fc3ddbdd82303dd280a1108de4288a161df6759600d041a2719c819cbc",
+    "world-id-auth/build-with-a-coding-agent.mdx": "f125e63e27b6736831efc6fcaa684bbce80b898fd06747497bd973ef67c88478",
     "world-id-auth/coding-agent-reference.mdx": "68cdcab69c225696724c77b0e28ddd659d4ce1c0af6f291956f0ee521f45a739",
     "world-id-auth/testing.mdx": "538a7005d8473a96a56490f71091e0281853d3badd72570223118e46d28c02dd",
     "images/world-id-auth/mcp-federation.svg": "824e2df51c3333b8142fa72d6752340b1a5668c03bd3ebca3d3b2401d05257bc"
