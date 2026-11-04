@@ -237,6 +237,7 @@
           },
           {
             "group": "Human in the Loop",
+            "icon": "/images/docs/human-badge-blue.svg",
             "pages": [
               "agents/human-in-the-loop/integrate",
               "agents/human-in-the-loop/sdk-reference"
