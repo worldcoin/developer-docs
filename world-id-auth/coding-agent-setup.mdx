@@ -1,0 +1,104 @@
+---
+title: "Coding-agent setup"
+description: "Give Codex, Claude Code, or another coding agent the World ID Auth guides, and connect it to the World IdP developer MCP server to register and manage OIDC clients."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+{/* cspell:ignore IdP OIDC CIMD JWKS idp codex */}
+
+Give your coding agent the public World ID Auth integration guides to help implement your integration. The guides are available directly, without sign-in, a plugin, or an MCP connection. Add the developer MCP server when you want the agent to register or manage your application through tools.
+
+## Give your coding agent the guide
+
+Copy this prompt into your coding agent:
+
+```text
+Read https://auth.world.org/docs/guides/coding-agent-setup.md and follow its instructions to integrate World ID into this project.
+```
+
+For sandbox, replace `https://auth.world.org` with `https://sandbox.auth.world.org`.
+
+## Connect your coding agent
+
+For optional app management through tools, add the developer MCP server in Codex, Claude Code, or another coding agent's MCP settings as a Streamable HTTP server with OAuth. Configure this developer connection separately from the consumer World ID plugin. Use a separate connection name for each environment:
+
+| Environment | Server name | MCP URL |
+| --- | --- | --- |
+| Production | `world-id-developer` | `https://auth.world.org/mcp/developer` |
+| Sandbox | `world-id-developer-sandbox` | `https://sandbox.auth.world.org/mcp/developer` |
+
+Your coding agent must support Client ID Metadata Documents (CIMD). The agent publishes and supplies its own metadata URL, so connecting it requires no portal OIDC registration or client secret. Dynamic client registration (DCR) is not supported. If your agent does not support this connection, use the public guides and the [developer portal](https://auth.world.org/portal) directly.
+
+Keep the connection, guides, app registration, and credentials in the same production or sandbox environment.
+
+The commands below use production. For sandbox, use both the sandbox server name and URL from the table.
+
+<Tabs>
+  <Tab title="Codex CLI">
+    Run `codex mcp list` in the environment where your coding session runs. If the developer endpoint is already configured, use its existing name. Otherwise, add it:
+
+    ```bash
+    codex mcp add world-id-developer --url https://auth.world.org/mcp/developer
+    ```
+
+    For app management, authorize only the developer scope:
+
+    ```bash
+    codex mcp login world-id-developer --scopes developer-portal:manage
+    ```
+  </Tab>
+  <Tab title="Claude Code">
+    Run `claude mcp list` to check for an existing connection. If it is missing, add it:
+
+    ```bash
+    claude mcp add --transport http --scope user world-id-developer https://auth.world.org/mcp/developer
+    ```
+
+    For app management, start Claude Code and run `/mcp`. Select the configured server and follow the browser sign-in flow. The `--scope user` option controls where Claude Code stores the configuration. Portal access uses the separate OAuth permission `developer-portal:manage`.
+  </Tab>
+</Tabs>
+
+### Check the connection
+
+Ask the agent to list the World ID integration guides. The agent calls `list_idp_guides`, which requires no authorization. For app management, ask the agent to check developer access, then complete the Google sign-in and portal consent prompt in your browser.
+
+If the tools are unavailable:
+
+1. Check whether the developer server is listed and enabled in the active agent host.
+2. Add the server only if it is missing. Otherwise, use the host's refresh controls.
+3. Start a new coding session if the host needs one to load new tools.
+
+A desktop or workspace host manages its own connection. Configuring a separate CLI does not give the active chat access to the server.
+
+## Developer-portal permission
+
+The developer MCP server requests the OAuth scope `developer-portal:manage`. Your agent obtains consent through Google portal sign-in. Developer authorization requires no World ID verification, and World ID account authorization does not grant developer access.
+
+Request only `developer-portal:manage` on `/mcp/developer`. World IdP rejects requests that combine it with `world-id:read`. If your coding agent cannot authorize developer access, [register directly in the portal](/world-id-auth/client-setup).
+
+Portal tools respect your memberships and owner permissions. Registration, secret creation, secret revocation, and public JWKS replacement each create a request that you approve in the portal:
+
+1. The agent shows you a `portalUrl` for the request.
+2. You review and approve the request in the portal. Approval requests expire after 20 minutes.
+3. The agent polls the request status and continues only after it reaches `completed`.
+
+New client secrets appear once in the portal, never in MCP results. If you lose the approval response that contained a new secret, create another secret in the portal. Keep browser cookies, tokens, client secrets, and private keys out of agent messages.
+
+## Register an application with your agent
+
+Before asking your agent to register an application, collect:
+
+- The app name.
+- Exact HTTPS callback URLs, including path, query, and port. HTTP localhost, wildcard callbacks, and variable ports are not supported.
+- The client authentication method. Use `client_secret_basic` if you have no preference. `client_secret_post` and `private_key_jwt` are also supported.
+- An optional public logo URL.
+
+The agent checks for an existing client, confirms the details with you, and submits a registration request for your approval. The app does not exist until you approve it. Save any generated client secret directly from the portal into your backend configuration. Never paste a secret or private key into chat.
+
+The sector and authentication method cannot change after registration. See [Manage credentials and callbacks](/world-id-auth/client-setup#manage-credentials-and-callbacks).
+
+## Next steps
+
+- Follow the [OIDC guide](https://auth.world.org/docs/guides/oidc) to connect your backend or auth server.
+- Verify the integration with [Sandbox and testing](/world-id-auth/testing).

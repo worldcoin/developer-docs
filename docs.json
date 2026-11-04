@@ -94,6 +94,15 @@
             ]
           },
           {
+            "group": "World ID Auth",
+            "pages": [
+              "world-id-auth/overview",
+              "world-id-auth/client-setup",
+              "world-id-auth/coding-agent-setup",
+              "world-id-auth/testing"
+            ]
+          },
+          {
             "group": "Sandbox",
             "pages": [
               "world-id/sandbox/what-is-sandbox",

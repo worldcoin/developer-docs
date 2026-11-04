@@ -15,7 +15,7 @@ It gives developers a high-assurance trust layer to stop bots, duplicate account
 
 Through credentials like Proof of Human, Proof of Attributes, and Proof of Presence, World ID extends that trust layer with additional proofs without exposing underlying user data.
 
-{/* cspell:ignore worldcoin idkit orblegacy rp_context app_id rp_id selfie-check sybil PoH CAPTCHAs NFC unlinkable nullifier */}
+{/* cspell:ignore worldcoin idkit IdP orblegacy rp_context app_id rp_id selfie-check sybil PoH CAPTCHAs NFC unlinkable nullifier */}
 
 {/*
   Each visual section below is wrapped in <Visibility for="humans"> (rendered on
@@ -125,6 +125,10 @@ Through credentials like Proof of Human, Proof of Attributes, and Proof of Prese
   - **Stop bots and duplicate accounts** — Use proof of human to enforce one human per account and reduce Sybil abuse in rewards, referrals, governance, and account creation.
   - **Protect conversion and user privacy** — Replace CAPTCHA-heavy or document-heavy gating with reusable proof flows. Relying parties receive proofs, not personal data.
 </Visibility>
+
+## Sign in with World ID
+
+To use World ID for sign-in or step-up authentication through standard OpenID Connect, use [World ID Auth](/world-id-auth/overview). World IdP returns a signed authentication result and a sector-scoped account identifier, and your application keeps ownership of its accounts and sessions. Legacy Sign in with World ID is deprecated.
 
 ## Privacy by architecture
 
