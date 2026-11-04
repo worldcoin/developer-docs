@@ -117,6 +117,13 @@
             ]
           },
           {
+            "group": "World ID Auth",
+            "pages": [
+              "world-id-auth/mcp-authorization",
+              "world-id-auth/xaa"
+            ]
+          },
+          {
             "group": "Technical Reference",
             "pages": [
               "world-id/concepts",

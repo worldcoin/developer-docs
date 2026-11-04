@@ -1,0 +1,148 @@
+---
+title: "Cross App Access (XAA)"
+sidebarTitle: "Cross App Access (XAA)"
+description: "Let agent hosts access your app with World ID identity delegation, ID-JAG, and user-controlled permissions."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+World IdP supports consumer-controlled identity delegation through its Cross App Access (XAA) profile of the [Identity Assertion JWT Authorization Grant (ID-JAG) draft, revision 06](https://www.ietf.org/archive/id/draft-ietf-oauth-identity-assertion-authz-grant-06.html). The draft is a work in progress.
+
+With XAA:
+
+1. A user connects an agent host, such as an AI assistant, to World IdP.
+2. The user chooses the apps the host may access.
+3. The host obtains credentials for those apps without a separate World ID authentication for each app.
+
+Each app's authorization server issues its own access tokens and controls its API permissions. You can adopt XAA alongside your existing sign-in.
+
+Use XAA when you want agents to call your [MCP server](/world-id-auth/mcp-authorization) on behalf of World ID users who have already connected their agent host.
+
+<Note>
+  Examples use the production issuer `https://auth.world.org`.
+</Note>
+
+## Requirements
+
+- **Agent host support.** The agent host must support XAA with World IdP as its identity provider. Check this before you integrate.
+- **Refresh tokens.** Agent hosts request `openid offline_access` and receive a refresh token. Each refresh replaces the refresh token.
+- **Client registration.** Hosts can register through Client ID Metadata Documents (CIMD) as public clients or with `private_key_jwt` client authentication.
+- **Device authorization.** A host that uses device authorization must be confidential. A CIMD host that starts device authorization needs `private_key_jwt` and the device-code grant in its metadata.
+- **Your authorization server.** Your app's authorization server must accept ID-JAGs issued by World IdP and issue access tokens for your MCP server.
+
+A host's login accepts any World ID account, unless its metadata lists `default_acr_values` with classes from [Accepted accounts](https://auth.world.org/docs/guides/step-up#accepted-accounts).
+
+### Differences from revision 06
+
+World IdP's profile differs from revision 06 in two ways:
+
+- World IdP accepts public hosts at the token exchange ([Section 4.3.3](https://www.ietf.org/archive/id/draft-ietf-oauth-identity-assertion-authz-grant-06.html#section-4.3.3)).
+- World IdP returns `invalid_grant` when the subject token fails validation. Revision 06 uses `invalid_request` ([Section 4.3.4.3](https://www.ietf.org/archive/id/draft-ietf-oauth-identity-assertion-authz-grant-06.html#section-4.3.4.3)).
+
+### Check XAA availability
+
+Check World IdP's [discovery document](https://auth.world.org/.well-known/openid-configuration). It advertises `offline_access`, refresh, and ID-JAG exchange only while XAA is enabled.
+
+When XAA is disabled:
+
+- Requests for `offline_access` receive `invalid_scope`.
+- Refresh and ID-JAG exchange requests return HTTP 400 with `unsupported_grant_type`.
+
+## Configure your authorization server
+
+Configure your authorization server to trust World IdP, `https://auth.world.org`.
+
+Accept the ID-JAG JWT bearer grant and apply the [draft's processing rules](https://www.ietf.org/archive/id/draft-ietf-oauth-identity-assertion-authz-grant-06.html#section-4.4.1):
+
+- The audience is your authorization server's issuer.
+- Verify RS256 signatures with keys from the `jwks_uri` in World IdP's [discovery document](https://auth.world.org/.well-known/openid-configuration).
+
+### Identify the host
+
+When a host authenticates, bind `client_id` to the authenticated host.
+
+Public hosts send the ID-JAG without client authentication or key binding, which revision 06 does not allow ([Section 4.4](https://www.ietf.org/archive/id/draft-ietf-oauth-identity-assertion-authz-grant-06.html#section-4.4)). To serve public hosts, identify the host by the ID-JAG's `client_id` claim. To serve only confidential hosts, require client authentication.
+
+Hosts and authorization servers must agree on the client identifier. For a CIMD host, the client identifier is the exact HTTPS metadata URL. Register the host at your authorization server with its own credentials. Never accept a client secret that World IdP issued to the host.
+
+### Match the user
+
+The ID-JAG's `sub` is the same pairwise subject that World IdP issues to your app in ID tokens. Match accounts by [`(iss, sub)`](https://auth.world.org/docs/guides/id-token#store-and-match-sub), as you do for ID tokens.
+
+The `auth_time`, `acr`, and `amr` claims describe the user's original World ID authentication. They don't indicate a fresh authentication.
+
+Your authorization server applies its own scope policy and issues the access token that the host uses to call your MCP server.
+
+### Publish metadata
+
+Publish RFC 8414 metadata at your authorization server's well-known location. Include the ID-JAG draft's `authorization_grant_profiles_supported` extension:
+
+```json
+{
+  "issuer": "https://app.example",
+  "grant_types_supported": ["urn:ietf:params:oauth:grant-type:jwt-bearer"],
+  "authorization_grant_profiles_supported": ["urn:ietf:params:oauth:grant-profile:id-jag"]
+}
+```
+
+## Enroll your app
+
+1. Register your app in the [World IdP developer portal](https://auth.world.org/portal).
+2. As the app's owner, open the active app's client settings.
+3. Submit your authorization server's issuer and the resource URLs of your MCP servers.
+
+The issuer identifies the server that issues your access tokens. It is separate from your app's identity sector at World IdP.
+
+World IdP reviews your app's authority over its identity sector, issuer, and resources before users can select it. Enrollment uses the metadata above. You don't need an additional verification document or custom metadata field. XAA review is independent of catalog publication. The app picker uses the app name recorded at approval.
+
+### Enrollment rules
+
+- Several apps can share an authorization server, with separate resources and permissions.
+- A resource URL can be approved for only one app. Pending or rejected submissions don't reserve it.
+- World IdP can't be enrolled as an app's target authorization server.
+- Changing the issuer or resources requires a new review. Resource changes preserve saved user permissions. Issuer changes require users to grant permission again.
+- Disabling the app or withdrawing approval stops new ID-JAG exchanges. An exchange already in progress may complete.
+- After a rejection, you can request review again without changing the issuer or resources. Users keep their app selections.
+
+## Connect the agent host
+
+The host opens World ID authentication and consent. On the consent screen, the user selects the apps the host may access. New apps start unselected. Users can change their selection later.
+
+### Accepted accounts
+
+A host can connect any World ID account. Your app's [accepted accounts](https://auth.world.org/docs/guides/step-up#accepted-accounts) setting decides which accounts the host can get ID-JAGs for:
+
+| Accepted accounts | Admits |
+| --- | --- |
+| **Orb** | Orb accounts |
+| **Selfie Check** | Orb and Selfie Check accounts |
+| **Any account** | Every account |
+
+The consent screen marks apps that don't accept the user's account. ID-JAG requests for an app that the user hasn't permitted, or that doesn't accept the user's account, return `access_denied`:
+
+```json
+{
+  "error": "access_denied"
+}
+```
+
+### Connection lifetime
+
+A host's connection expires after **180 days without a successful refresh or ID-JAG exchange**. Each successful refresh or exchange renews that deadline and keeps the original authentication context.
+
+After expiry or revocation, the host reconnects interactively. Device consent requires an account session authenticated at or after the start of the device request.
+
+### Host identity and permissions
+
+Permissions belong to the exact host client ID. For a CIMD host, the client ID is its metadata URL. A new URL is a new host, even on the same hostname, so hosts should keep their metadata URL stable.
+
+Sessions that use the same client ID share app permissions. Reconnecting preserves saved choices. Temporarily unavailable apps keep those choices while their authorization server issuer stays unchanged.
+
+## Manage access
+
+Users can remove an app's permission or disconnect the host at any time:
+
+- Removing a permission stops new ID-JAG exchanges for that app.
+- Disconnecting the host stops new ID-JAG exchanges for every app.
+
+An exchange already in progress may complete. Issued ID-JAGs expire within five minutes. Your access tokens follow your own expiry and revocation policy.
