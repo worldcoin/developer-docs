@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { lstat, mkdir, readFile, realpath, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { deriveGuides, presentGuide } from "./world-id-auth-presentation.mjs";
 
 const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
 const manifestPath = new URL("../.mintlify/world-id-auth-pages.json", import.meta.url);
@@ -45,7 +46,11 @@ function rewriteLinks(markdown, config) {
   const routes = new Map(config.pages.map((page) => [page.source.replace(/\.md$/, ""), `/${page.destination.replace(/\.mdx$/, "")}`]));
   let result = markdown.replace(/(?:\{\{issuer\}\}|https:\/\/(?:sandbox\.)?auth\.world\.org)\/docs\/guides\/([a-z0-9-]+)(\.md)?/g, (_, id, extension = "") => {
     if (!routes.has(id)) throw new Error(`Unmapped guide link: ${id}`);
-    return `https://docs.world.org${routes.get(id)}${extension}`;
+    const sourcePage = config.pages.find((candidate) => candidate.source === `${id}.md`);
+    const route = extension && sourcePage?.presentation === "agent-setup"
+      ? "/world-id-auth/coding-agent-reference"
+      : routes.get(id);
+    return `https://docs.world.org${route}${extension}`;
   });
   result = result.replace(/\]\((?:\.\/)?([a-z0-9-]+)\.md(#[^)\s]+)?\)/g, (_, id, fragment = "") => {
     if (!routes.has(id)) throw new Error(`Unmapped relative guide link: ${id}`);
@@ -106,6 +111,7 @@ export function renderGuide(markdown, page, config) {
     return `${aliases}${heading[1]} ${escapeProse(heading[2])} {#${id}}`;
   });
   if (fence) throw new Error(`Unclosed code fence: ${page.source}`);
+  const presentation = presentGuide(lines.join("\n").trimEnd(), page);
   const metadata = [
     "---",
     `title: ${JSON.stringify(page.title)}`,
@@ -120,7 +126,8 @@ export function renderGuide(markdown, page, config) {
     "",
   ];
   if (page.environmentNote) metadata.push('import AuthEnvironment from "/snippets/world-id-auth-environment.mdx";', "", "<AuthEnvironment />", "");
-  return `${metadata.join("\n")}\n${lines.join("\n").trimEnd()}\n`;
+  metadata.push(...presentation.imports, ...(presentation.imports.length ? [""] : []));
+  return `${metadata.join("\n")}\n${presentation.content.trimEnd()}\n`;
 }
 
 async function readOptional(filename) {
@@ -149,6 +156,12 @@ export async function syncGuides({ sourceDir, sourceCommit, outputDir = reposito
     const markdown = await readSource(sourceDir, source);
     sources[source] = hash(markdown);
     outputs.set(page.destination, renderGuide(markdown, page, config));
+    for (const derived of deriveGuides(markdown, page)) {
+      if (outputs.has(derived.page.destination) || config.pages.some((entry) => entry.destination === derived.page.destination)) {
+        throw new Error(`Duplicate derived guide destination: ${derived.page.destination}`);
+      }
+      outputs.set(derived.page.destination, renderGuide(derived.markdown, derived.page, config));
+    }
   }
   for (const asset of config.assets ?? []) {
     const svg = await readSource(sourceDir, asset.source);

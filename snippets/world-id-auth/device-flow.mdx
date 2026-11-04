@@ -1,0 +1,36 @@
+Keep the private `device_code` in your backend.
+
+```mermaid
+sequenceDiagram
+    accTitle: Device authentication and polling
+    accDescr: A confidential backend starts device authorization and shows the user code and returned connection link. It polls after the required interval, waits on authorization_pending, increases the interval on slow_down, and validates and binds a successful result. Terminal failures and expiry stop the attempt.
+    participant Person
+    participant Backend as Your backend
+    participant Issuer as World ID issuer
+
+    Backend->>Issuer: Start device authorization with client authentication
+    Issuer-->>Backend: Codes, connection link, expiry, and interval
+    Backend->>Person: Show user code and returned connection link
+    Person->>Issuer: Check requester and authenticate
+    Backend->>Backend: Wait at least the returned interval
+    Backend->>Issuer: Poll with private device_code and client authentication
+    alt authorization_pending
+        Issuer-->>Backend: Authentication is still pending
+        Backend->>Backend: Wait the interval before polling again
+    else slow_down
+        Issuer-->>Backend: Increase the polling interval
+        Backend->>Backend: Add five seconds to all later intervals
+    else Success
+        Issuer-->>Backend: ID token and access token
+        Backend->>Backend: Validate token and atomically bind the intended grant
+        Backend->>Backend: After successful validation and binding, issue an agent credential
+    else Terminal OAuth error or HTTP 503
+        Issuer-->>Backend: Attempt cannot continue
+        Backend->>Backend: Stop this attempt
+    end
+    Note over Backend,Issuer: Stop at expiry; never extend the attempt by polling
+```
+
+Follow the polling and stop rules in the procedure below; do not restart
+authorization in a loop after failure. Device tokens omit `nonce`. Browser
+`prompt` and `max_age` controls do not apply to this grant.

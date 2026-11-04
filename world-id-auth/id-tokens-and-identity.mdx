@@ -8,6 +8,8 @@ description: "Validate token claims, read UserInfo, and recognize accounts using
 
 {/* Generated from worldcoin/temporal-apps/apps/idpapi/mcp/guides/id-token.md. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}
 
+import AuthFreshness from "/snippets/world-id-auth/freshness.mdx";
+
 This guide describes the OIDC token response, the ID token's claims, and how to
 store and compare the subject (`sub`).
 
@@ -60,6 +62,10 @@ returned `exp` rather than assuming a fixed lifetime.
 }
 ```
 
+## Authentication time and token time {#freshness-example}
+
+<AuthFreshness />
+
 ## Claim reference {#claim-reference}
 
 | Claim       | Meaning and use                                                                                                                                                                                                |
@@ -74,11 +80,6 @@ returned `exp` rather than assuming a fixed lifetime.
 | `acr`       | Achieved authentication class: `https://world.org/oidc/acr/orb`, `https://world.org/oidc/acr/orb-face`, or, only when you request it, `https://world.org/oidc/acr/selfie`. Check it against your requirements. |
 | `amr`       | `["pop"]` for a World ID proof, `["pop", "face"]` for Face Auth or Selfie Check, or `["pop", "user", "mfa"]` for a user-verified passkey. Only the passkey value asserts MFA.                                  |
 | `nonce`     | Matches the nonce your backend sent in the browser authorization request. Present only when supplied; omitted in device grants.                                                                                |
-
-For example, if a user authenticates at 10:00 and their existing session produces
-a token at 11:00, `auth_time` still represents 10:00 while `iat` represents 11:00.
-Use `auth_time` for authentication freshness, as described in
-[Step-up authentication](/world-id-auth/step-up).
 
 For accounts with an enabled inbox, newly issued ID tokens and ID-JAGs also
 include `email` and `email_verified: true`. Clients may request the `email` scope;

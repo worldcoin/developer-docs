@@ -1,0 +1,7 @@
+| Scenario | Evidence to inspect |
+| --- | --- |
+| Primary sign-in | An authenticated application request resolves to the intended account. |
+| Step-up | The saved attempt matches the account and operation; execution follows all required checks. |
+| Human checkpoint with action approval | The exact stored action has the required approval and executes at most once. |
+| Auth server with existing sessions | Upstream request parameters and retained claims demonstrate the required fresh authentication. |
+| Headless agent | An authenticated backend read using its issued credential resolves to the intended grant. |

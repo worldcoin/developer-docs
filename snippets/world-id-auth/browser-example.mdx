@@ -1,0 +1,192 @@
+Run one browser authentication attempt with `openid-client` 6.8.1 and
+`client_secret_basic`.
+
+### 1. Prepare the backend
+
+Use Node.js 22 or later. Register a client with `client_secret_basic` and an
+exact HTTPS callback, such as `https://app.example:8443/auth/world/callback`.
+Use a hostname you control and a certificate trusted by your browser. HTTP
+localhost callbacks are not supported.
+
+```sh
+npm install openid-client@6.8.1
+```
+
+Set these values in a backend-only `.env` file excluded from Git. Replace
+every placeholder. Use sandbox registration and credentials with the sandbox
+issuer, or production registration and credentials with the production issuer.
+
+```dotenv
+WORLD_ID_ISSUER=https://sandbox.auth.world.org
+WORLD_ID_CLIENT_ID=your-registered-client-id
+WORLD_ID_CLIENT_SECRET=your-backend-client-secret
+WORLD_ID_CALLBACK=https://app.example:8443/auth/world/callback
+TLS_KEY_FILE=/absolute/path/to/server-key.pem
+TLS_CERT_FILE=/absolute/path/to/server-certificate.pem
+PORT=8443
+```
+
+### 2. Run one browser flow
+
+Save the server below as `server.mjs` and run `node --env-file=.env server.mjs`.
+Open `/login` on your configured HTTPS origin.
+
+### Complete learning server
+
+The in-memory store is for a single-process demonstration. Restarting loses
+attempts and demo sessions. Before using this pattern in a deployed app,
+use your application's shared session store with expiry and atomic attempt
+consumption, plus request limits. The demo records a validated external
+identity; it does not create or link an application account or authorize a
+business action.
+
+```js title="server.mjs"
+import { createServer } from 'node:https';
+import { readFileSync } from 'node:fs';
+import { randomBytes } from 'node:crypto';
+import * as oidc from 'openid-client';
+
+function required(name) {
+  const value = process.env[name];
+  if (!value) throw new Error(`Missing ${name}`);
+  return value;
+}
+
+const issuer = required('WORLD_ID_ISSUER');
+if (!['https://auth.world.org', 'https://sandbox.auth.world.org'].includes(issuer)) {
+  throw new Error('Choose the production or sandbox issuer');
+}
+const callback = new URL(required('WORLD_ID_CALLBACK'));
+if (callback.protocol !== 'https:' || callback.username || callback.password ||
+    callback.search || callback.hash || callback.pathname !== '/auth/world/callback') {
+  throw new Error('Configure the exact HTTPS /auth/world/callback URL');
+}
+const port = Number(process.env.PORT || callback.port || 443);
+if (port !== Number(callback.port || 443)) {
+  throw new Error('PORT must match the registered callback port');
+}
+const config = await oidc.discovery(
+  new URL(issuer),
+  required('WORLD_ID_CLIENT_ID'),
+  { id_token_signed_response_alg: 'RS256' },
+  oidc.ClientSecretBasic(required('WORLD_ID_CLIENT_SECRET')),
+);
+// Also verify the ID token's signature with the discovered signing keys.
+oidc.enableNonRepudiationChecks(config);
+
+const sessions = new Map();
+const cookieName = '__Host-world-id-demo';
+const newId = () => randomBytes(32).toString('base64url');
+const setCookie = (res, id) => res.setHeader('Set-Cookie',
+  `${cookieName}=${id}; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=900`);
+const reply = (res, status, body) => {
+  res.writeHead(status, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify(body));
+};
+setInterval(() => {
+  for (const [id, entry] of sessions) {
+    if (entry.expiresAt <= Date.now()) sessions.delete(id);
+  }
+}, 60_000).unref();
+
+async function handle(req, res) {
+  res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('Referrer-Policy', 'no-referrer');
+  const url = new URL(req.url, callback.origin);
+  if (req.method !== 'GET' || url.origin !== callback.origin) {
+    return reply(res, 400, { error: 'Unsupported request' });
+  }
+  const sessionId = (req.headers.cookie ?? '').split(';')
+    .map(value => value.trim()).find(value => value.startsWith(`${cookieName}=`))
+    ?.slice(cookieName.length + 1);
+  const saved = sessions.get(sessionId);
+
+  if (url.pathname === '/login') {
+    sessions.delete(sessionId);
+    const id = newId();
+    const attempt = {
+      state: oidc.randomState(), nonce: oidc.randomNonce(),
+      verifier: oidc.randomPKCECodeVerifier(),
+      expiresAt: Date.now() + 10 * 60_000,
+    };
+    const destination = oidc.buildAuthorizationUrl(config, {
+      redirect_uri: callback.href, scope: 'openid', response_mode: 'query',
+      state: attempt.state, nonce: attempt.nonce,
+      code_challenge: await oidc.calculatePKCECodeChallenge(attempt.verifier),
+      code_challenge_method: 'S256',
+    });
+    sessions.set(id, attempt);
+    setCookie(res, id);
+    res.writeHead(302, { Location: destination.href });
+    return res.end();
+  }
+
+  if (url.pathname === callback.pathname) {
+    // Consume before asynchronous work. A callback cannot reuse this attempt.
+    sessions.delete(sessionId);
+    if (!saved?.verifier || saved.expiresAt <= Date.now() ||
+        url.searchParams.getAll('iss').length !== 1 ||
+        url.searchParams.get('iss') !== issuer) {
+      return reply(res, 400, { error: 'Missing, expired, or mismatched attempt' });
+    }
+    const tokens = await oidc.authorizationCodeGrant(config, url, {
+      pkceCodeVerifier: saved.verifier,
+      expectedState: saved.state,
+      expectedNonce: saved.nonce,
+      idTokenExpected: true,
+    });
+    // The library checks issuer, audience, expiry, nonce, and signature.
+    const claims = tokens.claims();
+    if (claims?.iss !== issuer || typeof claims.sub !== 'string' || !claims.sub) {
+      return reply(res, 400, { error: 'No validated identity' });
+    }
+    const id = newId();
+    sessions.set(id, {
+      identity: { iss: claims.iss, sub: claims.sub },
+      expiresAt: Date.now() + 15 * 60_000,
+    });
+    setCookie(res, id);
+    res.writeHead(303, { Location: '/session' });
+    return res.end();
+  }
+
+  if (url.pathname === '/session') {
+    return reply(res, 200, {
+      authenticated: Boolean(saved?.identity && saved.expiresAt > Date.now()),
+    });
+  }
+  reply(res, 404, { error: 'Open /login to start' });
+}
+
+createServer({
+  key: readFileSync(required('TLS_KEY_FILE')),
+  cert: readFileSync(required('TLS_CERT_FILE')),
+}, (req, res) => {
+  handle(req, res).catch(() => {
+    // No tokens, callback parameters, credentials, or identity in logs.
+    reply(res, 502, { error: 'Authentication could not complete. Start a new attempt.' });
+  });
+}).listen(port);
+```
+
+### 3. Compare the outcome
+
+After successful authentication, `/session` returns:
+
+```json
+{ "authenticated": true }
+```
+
+Without the demo cookie, `/session` returns `false`. Expired attempts and failed
+validation cannot create a session. Issuer unavailability also leaves the attempt
+unsuccessful; it does not establish an invalid identity.
+
+Link an existing account only while its user is signed in. Add
+[step-up checks](/world-id-auth/step-up#implement-step-up) for sensitive actions;
+this example does not enforce freshness or action approval.
+
+The library API calls follow the official
+[discovery and client-authentication documentation](https://github.com/panva/openid-client/blob/v6.8.1/docs/functions/discovery.md),
+[authorization checks](https://github.com/panva/openid-client/blob/v6.8.1/docs/interfaces/AuthorizationCodeGrantChecks.md),
+and [signature verification option](https://github.com/panva/openid-client/blob/v6.8.1/docs/functions/enableNonRepudiationChecks.md).
+This example has not been executed against a World ID issuer.

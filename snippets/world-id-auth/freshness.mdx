@@ -1,0 +1,22 @@
+```mermaid
+sequenceDiagram
+    accTitle: A new token does not mean new authentication
+    accDescr: A person authenticates at 10:00. An eligible browser session produces another token at 11:00, retaining auth_time of 10:00 while iat changes to 11:00. The application checks authentication age against its policy.
+    participant Person
+    participant Issuer as World ID issuer
+    participant App as Your backend
+
+    Person->>Issuer: Authenticate at 10:00
+    Issuer-->>App: ID token with auth_time 10:00
+    Note over Issuer,App: At 11:00, an eligible browser session is reused
+    Issuer-->>App: New token with iat 11:00 and auth_time 10:00
+    App->>App: Compare auth_time with the action's freshness policy
+```
+
+| Policy or result | What your application checks |
+| --- | --- |
+| Maximum age of 300 seconds | Reject that one-hour-old authentication for this action. Check age again when executing the action. |
+| `max_age=0` for a browser attempt | Require authentication belonging to the new attempt. Bind it to the attempt and enforce a bounded lifetime; its age need not stay literally zero during the browser round trip. |
+
+Also validate the token, match the required account, check `acr` and `amr`
+against your policy, and enforce application permissions.

@@ -8,14 +8,22 @@ description: "Register and manage your World ID OIDC application, credentials, c
 
 {/* Generated from worldcoin/temporal-apps/apps/idpapi/mcp/guides/app-registration.md. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}
 
-Sign in to the [developer portal](https://auth.world.org/portal) with Google to register an
-OIDC client for your application or auth server. This registration supports
-step-up, human-in-the-loop workflows, and primary sign-in.
+import AuthPortalSignIn from "/snippets/world-id-auth/portal-sign-in.mdx";
+import AuthRegistrationChecklist from "/snippets/world-id-auth/registration-checklist.mdx";
+import AuthPortalRegistration from "/snippets/world-id-auth/portal-registration.mdx";
+import AuthApplicationSettings from "/snippets/world-id-auth/application-settings.mdx";
+
+Register an OIDC client for your application or auth server in the
+[developer portal](https://auth.world.org/portal).
+
+<AuthPortalSignIn />
 
 Check that your Google account is eligible in the target environment before
 relying on self-service registration. Registration may be disabled, or you may
 have reached the limit on clients you can own. If you receive
 `account_not_eligible`, you may need help from the environment's operator.
+
+<AuthRegistrationChecklist />
 
 ## Register your application {#register-your-application}
 
@@ -36,12 +44,11 @@ have reached the limit on clients you can own. If you receive
    Client secrets start with `worldidp_client_secret_`, so secret scanners can
    flag leaked ones.
 
+<AuthPortalRegistration />
+
 World ID authentication with `openid` requires a client registered through the portal.
 [XAA hosts](/world-id-auth/xaa) may instead use public or confidential CIMD
 registration. OIDC dynamic client registration (DCR) is not supported.
-
-Developers sign in to the portal with Google to manage clients. Your users
-authenticate with World ID in your application.
 
 Once registered, [connect your backend](/world-id-auth/connect-your-backend) or
 [configure your auth server](/world-id-auth/connect-your-auth-server).
@@ -86,6 +93,8 @@ Rotating credentials does not change subjects. Registering a new application
 changes subjects unless you explicitly share its sector. Changing the issuer
 changes the identity namespace.
 
+<AuthApplicationSettings />
+
 When migrating to a new sector, retain the old account mapping during the transition.
 Require an authenticated session for the existing application account and a fresh,
 browser-bound World ID linking attempt for the new client. Confirm the intended
@@ -95,13 +104,7 @@ an account using an unvalidated subject.
 
 ## Get help from a coding agent {#get-help-from-a-coding-agent}
 
-Your coding agent can [read the public integration guides](/world-id-auth/build-with-a-coding-agent#give-your-coding-agent-the-guide)
-without a plugin or MCP connection. Optionally
-[connect developer MCP tools](/world-id-auth/build-with-a-coding-agent#connect-your-coding-agent)
-to register and manage the application. Portal tools use Google authorization, and registration
-and credential changes require your approval in the portal. Keep client secrets
-and private keys outside agent conversations. The
-[agent instructions](/world-id-auth/build-with-a-coding-agent.md) cover portal tool use.
+For optional registration and app management, [connect your coding agent](/world-id-auth/build-with-a-coding-agent). Registration and credential changes require your approval in the portal.
 
 ## Publish a benefit listing {#publish-a-benefit-listing}
 

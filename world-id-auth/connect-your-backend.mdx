@@ -8,10 +8,10 @@ description: "Connect your backend to the World ID issuer with OpenID Connect (O
 
 {/* Generated from worldcoin/temporal-apps/apps/idpapi/mcp/guides/oidc.md. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}
 
-Connect your backend to the World ID issuer with OpenID Connect (OIDC). Your backend receives
-a signed ID token and validates it before using the account identifier and
-authentication time. Step-up, human checkpoints, and primary sign-in all use this
-connection.
+import AuthBrowserFlow from "/snippets/world-id-auth/browser-flow.mdx";
+import AuthBrowserExample from "/snippets/world-id-auth/browser-example.mdx";
+
+Connect your backend to the World ID issuer with OpenID Connect (OIDC).
 
 Your backend is a confidential OIDC client that keeps its
 credentials private. Browser-only, native, and CLI applications also need a backend for
@@ -20,6 +20,8 @@ follow [Connect the World ID issuer to your auth server](/world-id-auth/connect-
 
 Before you start, [register your application](/world-id-auth/app-registration) to
 configure its callback URLs and client authentication and get its credentials.
+
+<AuthBrowserFlow />
 
 ## Configure your OIDC library {#configure-your-oidc-library}
 
@@ -41,23 +43,13 @@ credentials from the same environment.
 
 ## Authenticate through the browser {#authenticate-through-the-browser}
 
-1. **Start authorization.** Redirect the browser to the discovered authorization
-   endpoint with `client_id`, the exact registered `redirect_uri`,
-   `response_type=code`, `scope=openid`, a fresh `state`, an optional fresh
-   `nonce`, and an S256 PKCE challenge. Keep the PKCE verifier in your server-side
-   state for this attempt.
-2. **Handle the callback.** The World ID issuer handles passkey or World ID proof authentication and
-   browser-session eligibility, then redirects to your callback. Validate the
-   returned `state` and require the response's `iss` parameter to match the
-   discovered issuer exactly before redeeming the code. Success and error
-   responses both include `iss`. Treat an authorization error as a failure,
-   never as success.
-3. **Exchange the code.** POST the code to the discovered token endpoint,
-   authenticated with your [registered method](/world-id-auth/connect-your-backend#client-authentication).
-   Each code can be used once and expires after five minutes.
-4. **Validate the ID token** as described in
-   [Validate the ID token](/world-id-auth/connect-your-backend#validate-the-id-token),
-   then find the account by `(iss, sub)`.
+Save fresh `state`, an optional fresh `nonce`, and the S256 PKCE verifier in
+server-side state for each attempt. On success and error callbacks, validate
+`state` and require `iss` to match the discovered issuer before redeeming the code.
+Treat authorization errors as failure. Exchange the code with your registered
+client-authentication method; each code expires after five minutes and can be
+used once. [Validate the ID token](/world-id-auth/connect-your-backend#validate-the-id-token)
+before finding the account by `(iss, sub)`.
 
 The authorization request has these decoded query parameters. URL-encode them
 with your library and generate fresh random values for each attempt:
@@ -122,6 +114,21 @@ sessions expire after 180 days without authenticated browser activity; activity
 renews that deadline, while `prompt=login` and `max_age` still require fresh
 authentication when requested.
 
+## Worked browser example {#worked-browser-example}
+
+<AuthBrowserExample />
+
+## Primary sign-in {#primary-sign-in}
+
+To use World ID as your application's primary or only sign-in, use the browser or device
+flow in this guide. After validating the ID token, find or create your application's
+account using `(iss, sub)` and issue your own session. See the
+[claim reference](/world-id-auth/id-tokens-and-identity#claim-reference) for optional inbox email claims.
+
+You can then add [step-up authentication](/world-id-auth/step-up) for
+sensitive actions or [human checkpoints](/world-id-auth/human-in-the-loop)
+for agent workflows. Both use the same OIDC connection.
+
 ## Client authentication {#client-authentication}
 
 Authenticate at the token and device authorization endpoints with the client's
@@ -152,135 +159,19 @@ assertion returns HTTP 400 `invalid_client`.
 
 ## Connect a headless agent (device flow) {#connect-a-headless-agent-device-flow}
 
-Use the device authorization grant when an agent or CLI cannot receive a browser
-callback. Run it from your backend. The service running your agent can act as this
-backend if it securely stores the client secret or private key and validates the
-returned ID token. It authenticates to the World ID issuer as a
-[confidential OAuth client](https://www.rfc-editor.org/rfc/rfc6749.html#section-2.1).
-Keep client secrets, private keys, device codes, and tokens in server-side
-credential storage, outside model messages.
+Follow [Connect an agent or CLI](/world-id-auth/device-flow) for the supported device profile, polling, expiry, and stop rules.
 
-### Supported device profile {#supported-device-profile}
+<span id="supported-device-profile" />
 
-Device authorization is available to active confidential clients regardless of
-their sector.
+[Supported device profile](/world-id-auth/device-flow#supported-device-profile)
 
-Configure the client for the device grant separately from browser authorization:
+<span id="device-flow" />
 
-| Input or result                   | Device grant contract                                                                                                                                                            |
-| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Initiation                        | `scope=openid` for World ID authentication or `scope=openid offline_access` for XAA delegation, form-encoded, with confidential client authentication.                           |
-| Polling                           | Form-encoded `grant_type=urn:ietf:params:oauth:grant-type:device_code`, `device_code`, and the same client's authentication.                                                     |
-| Browser parameters                | No callback, PKCE, or `state` exchange. `nonce`, `prompt`, and `max_age` do not provide request controls for this grant. Fresh authentication is required regardless.            |
-| Authentication class              | Supports `acr_values` preferences and essential ID-token `acr` requests through `claims`; see [Face Auth](/world-id-auth/step-up#require-face-auth).                     |
-| Unknown parameters                | Ignored when supplied once. A successful initiation does not mean an extension was understood or enforced.                                                                       |
-| Malformed or repeated fields      | Malformed form encoding and repeated fields, including unknown parameters and identical repeated values, return `invalid_request`.                                               |
-| ID token                          | Validate signature, issuer, audience, expiry, and required `auth_time`, `acr`, and `amr`. Device tokens omit `nonce`, even if one was sent; accept its absence for this profile. |
-| `binding_message` or action terms | Unsupported. They are not displayed on the approval page or signed into the ID token. The human sees the requester and user code.                                                |
+[Device flow](/world-id-auth/device-flow#device-flow)
 
-Remove unsupported device options from client configuration and diagnose them
-locally; do not probe support by checking for HTTP success. Unknown parameters
-remain compatible with extensions under
-[RFC 8628 §3.1](https://www.rfc-editor.org/rfc/rfc8628.html#section-3.1).
-Browser authorization still validates a nonce when one was requested.
+<span id="expiry-and-rate-limits" />
 
-This profile returns authentication, not a signed action-approval receipt. If
-your application requires such a receipt, reject its absence and leave the
-operation unauthorized. A future receipt profile would need advertised support
-and validation of its returned result; an ordinary ID token cannot satisfy that
-requirement. Business-action display, consent, and authorization remain your
-application's responsibility.
-
-### Device flow {#device-flow}
-
-1. **Start.** POST form-encoded `scope=openid` to the discovered
-   `device_authorization_endpoint` (`https://auth.world.org/api/v1/device_authorization`),
-   authenticated with your registered method. Bind this attempt to the requesting
-   agent's private session in your backend.
-2. **Show the code.** The response contains `device_code`, `user_code`,
-   `verification_uri`, `verification_uri_complete`, `expires_in`, and `interval`.
-   Both `expires_in` and `interval` are measured in seconds. Show `user_code` and
-   a connection link using `verification_uri_complete`, or show `verification_uri` with instructions to
-   enter the code there. Never build the approval link yourself. See
-   [device flow user interaction](https://www.rfc-editor.org/rfc/rfc8628.html#section-3.3).
-3. **Keep the device code private.** Your backend uses `device_code` with its
-   client credentials to retrieve tokens after approval. Keep it out of UI output,
-   logs, and model messages.
-4. **Poll.** Wait at least `interval` seconds, then POST
-   `grant_type=urn:ietf:params:oauth:grant-type:device_code` and `device_code` to
-   the discovered token endpoint with the same client authentication. This grant
-   uses no callback, PKCE verifier, browser cookie, `state`, or `nonce`. Handle
-   each response as shown in the table below.
-5. **The user approves.** The human checks the requester and user code, then
-   authenticates with an enrolled passkey or approves a proof request in the World ID app,
-   according to the requested authentication class. The issuer verifies the fresh assertion
-   or proof before approving this attempt. Denial ends the attempt. The device flow creates
-   no browser session, and an existing browser cookie cannot replace fresh authentication.
-6. **Validate and bind.** Success returns the same token response as browser
-   authentication. [Validate the ID token](/world-id-auth/connect-your-backend#validate-the-id-token);
-   it has no `nonce`. Bind `(iss, sub)` atomically to the intended grant in your
-   backend, then give the agent client an access credential issued by your
-   backend. Confirm that an authenticated read of your backend resolves to that
-   grant.
-
-| Poll response                                                        | What to do                                                                                                                                                                   |
-| -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| HTTP 400 `authorization_pending`                                     | Keep waiting and poll again after the interval.                                                                                                                              |
-| HTTP 400 `slow_down`                                                 | Add five seconds to all later intervals. An early poll can return this before the grant is checked; it never extends the attempt's expiry.                                   |
-| `access_denied`, `expired_token`, `invalid_grant`, other OAuth error | Stop polling.                                                                                                                                                                |
-| HTTP 503                                                             | Temporary unavailability, never approval. End this attempt.                                                                                                                  |
-| HTTP 429                                                             | Per-network-address flood protection on back-channel endpoints, separate from the per-client limits. It can end the attempt; `Retry-After` does not override the stop rules. |
-| Connection timeout                                                   | Back off before polling again.                                                                                                                                               |
-
-Set each request's timeout within the attempt's remaining lifetime, and stop
-when the attempt expires. Do not automatically restart authorization in a loop
-after a failed attempt.
-
-For `client_secret_post`, the decoded start form is:
-
-```text
-POST https://auth.world.org/api/v1/device_authorization
-Content-Type: application/x-www-form-urlencoded
-
-client_id=<portal-client-id>
-client_secret=<backend-secret>
-scope=openid
-```
-
-After waiting the returned `interval`, the decoded poll form is:
-
-```text
-POST https://auth.world.org/api/v1/token
-Content-Type: application/x-www-form-urlencoded
-
-grant_type=urn:ietf:params:oauth:grant-type:device_code
-client_id=<same-portal-client-id>
-client_secret=<backend-secret>
-device_code=<private-device-code>
-```
-
-Use your form encoder. For other methods, change the authentication fields or
-header exactly as for the browser code exchange.
-
-### Expiry and rate limits {#expiry-and-rate-limits}
-
-- The device code expires 20 minutes after creation, even if approval occurs near
-  expiry, and can be redeemed once. See
-  [recovery after interrupted requests](/world-id-auth/connect-your-backend#recovery-after-interrupted-requests)
-  for when to retry or start again.
-- If you cannot tell whether a start request succeeded, it may leave an unused
-  attempt until expiry. Do not retry it in a tight loop.
-- Starts and polls share a per-client request limit, and starts also have a
-  per-client initiation limit. A limited start returns HTTP 429 with
-  `Retry-After: 60`; a limited poll returns HTTP 400 `slow_down`, so polling can
-  continue at the increased interval.
-- Manual user-code lookup is rate-limited per network address and returns HTTP 429
-  with `Retry-After` when limited. Complete approval links do not use that lookup.
-- The code-entry page retries a not-found code once before showing an error. If a
-  newly issued code is still not found, wait briefly and try again.
-
-Your backend or agent client must support the device flow; OIDC or MCP library
-support alone does not guarantee it.
+[Expiry and rate limits](/world-id-auth/device-flow#expiry-and-rate-limits)
 
 ## Cross-App Access for agent hosts {#cross-app-access-for-agent-hosts}
 
@@ -314,16 +205,6 @@ Keep codes, assertions, tokens, PKCE verifiers, and client credentials out of lo
 Before retrying a payment or another external action, check your application's saved
 status and use its idempotency controls.
 
-## Primary sign-in {#primary-sign-in}
-
-To use World ID as your application's primary or only sign-in, use the browser or device
-flow in this guide. After validating the ID token, find or create your application's
-account using `(iss, sub)` and issue your own session. See the
-[claim reference](/world-id-auth/id-tokens-and-identity#claim-reference) for optional inbox email claims.
-
-You can then add [step-up authentication](/world-id-auth/step-up) for
-sensitive actions or [human checkpoints](/world-id-auth/human-in-the-loop)
-for agent workflows. Both use the same OIDC connection.
 
 ## Limitations {#limitations}
 

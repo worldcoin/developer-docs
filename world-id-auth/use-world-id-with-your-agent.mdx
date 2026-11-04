@@ -8,6 +8,8 @@ description: "Understand World ID agent permissions, discover benefits, and mana
 
 {/* Generated from worldcoin/temporal-apps/apps/idpapi/mcp/guides/world-id-users.md. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}
 
+import AuthUserConnections from "/snippets/world-id-auth/user-connections.mdx";
+
 When you authenticate with World ID and approve an agent's OAuth access, the agent
 can read the authenticated version of this guide through the user MCP server.
 This public guide contains the same general guidance, not private account data.
@@ -66,23 +68,8 @@ and explain when cancellation or an error leaves the action incomplete.
 
 ## Manage your connection {#manage-your-connection}
 
-Access tokens last at most one hour. Successful refreshes renew the connection's
-180-day inactivity deadline. Refresh tokens rotate; reusing a refresh token a
-minute or more after it was consumed revokes the grant while its digest is retained
-(180 days after use). After cleanup, reuse is rejected without revoking the
-grant. API restarts do not erase grants.
+Access tokens last at most one hour. Successful refreshes renew the connection's 180-day inactivity deadline.
 
-Visit [your connections](https://auth.world.org/mcp/connections) to revoke a connection.
-Subsequent requests for content that requires authenticated access are rejected when they use
-that connection's credentials. Reading that content again requires new
-authorization; public benefits remain available.
+<AuthUserConnections />
 
-If you connect the developer MCP server, manage that connection at
-[portal connections](https://auth.world.org/portal/mcp/connections). It uses `/mcp/developer`
-with a separate Google portal identity and authorization. User and developer
-connections can be revoked independently.
-Signing out of the website alone does not revoke an agent connection.
-
-Developers can follow [Start here](/world-id-auth/quickstart) to
-integrate an application, or [Set up your coding agent](/world-id-auth/build-with-a-coding-agent)
-to connect an agent to the developer MCP server. These guides do not require authentication.
+Developers can [start an integration](/world-id-auth/quickstart) or [connect coding tools](/world-id-auth/build-with-a-coding-agent).

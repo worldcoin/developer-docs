@@ -9,6 +9,8 @@ description: "Pause an agent workflow and require fresh World ID authentication 
 
 {/* Generated from worldcoin/temporal-apps/apps/idpapi/mcp/guides/human-in-the-loop.md. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}
 
+import AuthHumanCheckpoint from "/snippets/world-id-auth/human-checkpoint.mdx";
+
 Pause an agent workflow and require fresh World ID authentication before it
 continues. Your application stores the pending work, validates the authentication result,
 and decides whether the workflow may resume.
@@ -29,7 +31,7 @@ on World ID for later checkpoints.
 
 For a browser flow, follow the
 [step-up procedure](/world-id-auth/step-up#implement-step-up). Use
-`max_age=0` or `prompt=login` to require a new World proof for each attempt. A
+`max_age=0` or `prompt=login` to require fresh authentication for each attempt. A
 positive `max_age`, such as `300`, permits recent authentication to be reused and
 does not require a new interaction for every action.
 
@@ -38,8 +40,7 @@ If you use an auth server, ensure it
 
 ## Optional: collect action approval in your application {#optional-collect-action-approval-in-your-application}
 
-Your application implements this approval flow. For example, it may require the user to
-review a draft before an agent publishes it:
+<AuthHumanCheckpoint />
 
 1. **Store the pending action.** Your backend stores the pending publication,
    exact draft version, destination, owning account, and expiry, and binds it to
@@ -50,8 +51,7 @@ review a draft before an agent publishes it:
    the required freshness and `acr` and `amr` for the required assurance.
 3. **Ask for approval.** Show the authenticated user the stored draft and
    destination in your application, and ask them to approve or deny publication. Record
-   approval against that account and exact action. The World ID issuer provides the
-   authentication result; your application captures approval of what will be published.
+   approval against that account and exact action.
 4. **Publish once.** Recheck permissions, freshness, expiry, and approval before
    publishing only the approved version. Prevent retries from publishing twice. A
    changed draft or destination requires new approval. Denial, cancellation,

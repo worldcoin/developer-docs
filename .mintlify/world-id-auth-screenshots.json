@@ -1,0 +1,58 @@
+{
+  "captured": [
+    {
+      "asset": "images/world-id-auth/portal/sign-in.jpg",
+      "snippet": "snippets/world-id-auth/portal-sign-in.mdx",
+      "page": "world-id-auth/app-registration.mdx",
+      "sourceUrl": "https://auth.world.org/portal",
+      "environment": "production",
+      "capturedOn": "2026-11-04",
+      "state": "Signed out",
+      "purpose": "Recognize the developer portal sign-in screen. This is an access illustration, not an application registration screenshot.",
+      "processing": "Browser screenshot cropped to the sign-in panel. No UI or field values were altered."
+    },
+    {
+      "asset": "images/world-id-auth/portal/app-registration.jpg",
+      "snippet": "snippets/world-id-auth/portal-registration.mdx",
+      "page": "world-id-auth/app-registration.mdx",
+      "sourceUrl": "https://auth.world.org/portal",
+      "environment": "production",
+      "capturedOn": "2026-11-04",
+      "state": "Register an application",
+      "section": "Register your application",
+      "purpose": "Recognize the application name, exact callback URL and client authentication fields.",
+      "processing": "Browser screenshot cropped to the real Create an app dialog. Example app and example.com values were entered in the form. The form was cancelled without submission."
+    },
+    {
+      "asset": "images/world-id-auth/portal/application-settings.jpg",
+      "snippet": "snippets/world-id-auth/application-settings.mdx",
+      "page": "world-id-auth/app-registration.mdx",
+      "sourceRoute": "https://auth.world.org/portal/clients/:clientId",
+      "environment": "production",
+      "capturedOn": "2026-11-04",
+      "state": "Application settings",
+      "section": "Manage credentials and callbacks",
+      "purpose": "Locate callback configuration under Settings and Authenticate. The image does not show credentials.",
+      "processing": "Browser screenshot cropped to Authenticate, excluding account identity and application identifiers. The example callback URL was not saved. Discard controls restored the original appearance and redirect URI values before leaving the page."
+    },
+    {
+      "asset": "images/world-id-auth/portal/developer-connections.jpg",
+      "snippet": "snippets/world-id-auth/developer-connections.mdx",
+      "page": "world-id-auth/build-with-a-coding-agent.mdx",
+      "sourceUrl": "https://auth.world.org/portal/mcp/connections",
+      "environment": "production",
+      "capturedOn": "2026-11-04",
+      "state": "No active developer connections",
+      "section": "Check the connection",
+      "purpose": "Recognize the empty Agents view before connecting a developer tool. This is separate from World ID user-account connections.",
+      "processing": "Browser screenshot cropped to the explanatory text and actual empty state. No connection or approval was created."
+    }
+  ],
+  "pending": [],
+  "notCaptured": [
+    {
+      "state": "Pending developer approval",
+      "reason": "No suitable existing request was available. Do not create credentials or approval requests only to capture a screenshot."
+    }
+  ]
+}

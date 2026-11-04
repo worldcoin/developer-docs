@@ -44,7 +44,7 @@ authorization.
    usual [browser authentication](/world-id-auth/connect-your-backend#sign-in-through-the-browser)
    parameters plus `max_age=0` for fresh authentication, or a positive `max_age` for a
    maximum authentication age. For example, these additional decoded query
-   fields request a supported class and a new proof:
+   fields request a preferred class and fresh authentication:
 
    ```text
    max_age=0
@@ -77,6 +77,8 @@ authorization.
 Authentication alone does not authorize a payment, redemption, or account change.
 For an agent workflow that also requires approval of the action, follow the
 [Human in the loop guide](/world-id-auth/human-in-the-loop).
+
+See [Authentication time and token time](/world-id-auth/id-tokens-and-identity#freshness-example) for an example of enforcing an authentication-age policy. A new token does not by itself refresh authentication.
 
 ## Request parameters {#request-parameters}
 
@@ -247,7 +249,7 @@ auth server → your protected operation. Each layer must preserve the requireme
 See [Connect the World ID issuer to your auth server](/world-id-auth/connect-your-auth-server)
 for configuration. A useful acceptance test starts with an old issuer browser
 session and a live session on your auth server: the sensitive operation must cause a
-fresh upstream proof, produce a newer `auth_time`, and remain blocked when the
+fresh upstream authentication, produce a newer `auth_time`, and remain blocked when the
 human cancels or uses the wrong account.
 
 ## Challenge an agent or API client (RFC 9470) {#challenge-an-agent-or-api-client-rfc-9470}

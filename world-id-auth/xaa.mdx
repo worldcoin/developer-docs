@@ -8,18 +8,11 @@ description: "Connect agent hosts to reviewed apps with World ID identity delega
 
 {/* Generated from worldcoin/temporal-apps/apps/idpapi/mcp/guides/xaa.md. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}
 
-World IdP supports consumer-controlled identity delegation using
-[ID-JAG](https://www.ietf.org/archive/id/draft-ietf-oauth-identity-assertion-authz-grant-04.html).
-A user connects an agent host and chooses the apps it may access. The host can
-then obtain credentials for those apps without separate World ID authentication
-for each app. Each app's authorization server issues its own access tokens and
-controls API permissions. The app does not need OIDC sign-in federation.
+import AuthXaaFlow from "/snippets/world-id-auth/xaa-flow.mdx";
 
-This guide covers app integration and user permissions. The host's MCP
-authentication layer handles World sign-in, ID-JAG exchange, token renewal,
-and credential storage. The model calls MCP tools and can help developers
-implement the integration. Credentials stay outside model context, tool results,
-and conversations.
+Use [ID-JAG](https://www.ietf.org/archive/id/draft-ietf-oauth-identity-assertion-authz-grant-04.html)
+for user-controlled access from an agent host to your application's MCP server.
+The app does not need OIDC sign-in federation.
 
 ## Requirements {#requirements}
 
@@ -39,6 +32,8 @@ or a World proxy is not required.
 
 World's own MCP tools use separate connections. Connecting to those tools does
 not authorize the host to access other apps through XAA.
+
+<AuthXaaFlow />
 
 ## Configure your authorization server {#configure-your-authorization-server}
 

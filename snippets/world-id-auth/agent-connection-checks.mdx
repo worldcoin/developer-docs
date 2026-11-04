@@ -1,0 +1,12 @@
+| Check | Expected result |
+| --- | --- |
+| Read public guides | No plugin, MCP connection, or sign-in is required. |
+| Inspect the active host | The developer server is listed and enabled in this session. Configuring a separate CLI does not connect the active chat. |
+| List integration guides | `list_idp_guides` succeeds without authorization. Guide access does not grant app management. |
+| Check developer access | `get_portal_account` succeeds after Google sign-in and portal consent, when required. World ID account authorization does not grant developer access. |
+
+For app management, request only `developer-portal:manage` on `/mcp/developer`.
+Keep that connection separate from the user MCP's `world-id:read` permission.
+If tools are missing, refresh the existing connection before adding one. Start a
+new session if the host requires it. Stop after cancelled or failed sign-in and
+report the result.

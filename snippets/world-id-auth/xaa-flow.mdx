@@ -1,0 +1,27 @@
+```mermaid
+sequenceDiagram
+    accTitle: XAA delegation and application access tokens
+    accDescr: A user selects the apps an agent host may access. The host obtains a World-issued ID-JAG for an approved app and presents it to that app's authorization server. The app's server validates the grant and host, applies its scope policy, and issues an access token for its MCP resource.
+    participant Person
+    participant Host as Agent host
+    participant World as World issuer
+    participant Auth as Your app's auth server
+    participant MCP as Your MCP server
+
+    Host->>World: Start World sign-in and consent
+    Person->>World: Authenticate and select the apps this host may access
+    Host->>World: Request an ID-JAG for an approved app
+    World->>World: Check the user's saved app permission
+    World-->>Host: ID-JAG for the app
+    Host->>Auth: Present ID-JAG with host authentication
+    Auth->>Auth: Validate grant, host binding, and resource restrictions
+    Auth->>Auth: Apply application scope policy
+    Auth-->>Host: Access token for your MCP resource
+    Host->>MCP: Call a tool with the application's access token
+    MCP->>MCP: Validate access before running the tool
+```
+
+Keep exchange, refresh, and credentials in the host's authentication layer,
+outside model messages and tool results. Revoking World app permission stops new
+ID-JAGs; your authorization server controls existing access tokens' expiry and
+revocation.

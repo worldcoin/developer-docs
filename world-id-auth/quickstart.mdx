@@ -1,7 +1,7 @@
 ---
-title: "Quickstart"
-sidebarTitle: "Quickstart"
-description: "Register an application, connect to the World ID issuer, and add step-up authentication."
+title: "Start here"
+sidebarTitle: "Start here"
+description: "Choose your World ID integration, prepare your environment, and connect your application."
 "og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
@@ -12,17 +12,16 @@ import AuthEnvironment from "/snippets/world-id-auth-environment.mdx";
 
 <AuthEnvironment />
 
-A person uses the World ID app to authenticate with their World ID. The World ID
-issuer verifies that authentication and issues a signed ID token to your backend.
-Your application uses the token to recognize the same World ID and determine when the person last
-authenticated. Your application keeps its own accounts, sessions, permissions,
-and actions.
+import AuthIntegrationPaths from "/snippets/world-id-auth/integration-paths.mdx";
+
+<Note>For sandbox testing, request access to the sandbox World ID app before starting. Test identity issuance can take about one hour. [Set up the sandbox](/world-id-auth/testing#test-in-the-sandbox).</Note>
+
+The World ID issuer returns a signed ID token through OpenID Connect (OIDC).
+Your application controls its accounts, sessions, permissions, and actions.
 
 ## How it works {#how-it-works}
 
-Your backend connects to the World ID issuer with OpenID Connect (OIDC). After
-the person authenticates in the World ID app, your backend validates the returned
-ID token and reads two claims:
+After validating the ID token, read:
 
 - **`sub`:** a stable identifier for the person's World ID account, private to your
   application's sector. Store it with the issuer as `(iss, sub)` to recognize the account.
@@ -31,35 +30,13 @@ ID token and reads two claims:
 
 See [ID token and sub](/world-id-auth/id-tokens-and-identity) for the full claim reference.
 
-## Integrate in four steps {#integrate-in-four-steps}
+## Choose your integration {#integrate-in-four-steps}
 
-The recommended integration keeps your existing sign-in and adds a World ID check
-before sensitive actions:
+[Register your application](/world-id-auth/app-registration) before connecting it.
 
-1. **[Register your application](/world-id-auth/app-registration)** and save its
-   credentials in your backend.
-2. **Connect to the World ID issuer** through [your backend](/world-id-auth/connect-your-backend) or
-   [your auth server](/world-id-auth/connect-your-auth-server).
-3. **Add [step-up authentication](/world-id-auth/step-up)** to require a
-   recent World ID check before an action.
-4. **For agent workflows, add a [human checkpoint](/world-id-auth/human-in-the-loop).**
-   Pause the workflow and validate fresh World ID authentication before resuming.
+<AuthIntegrationPaths />
 
-Step-up checks authentication freshness. A human checkpoint uses that check to
-pause and resume an agent workflow. Both work with your existing sign-in or,
-optionally, with [World ID as your primary sign-in](/world-id-auth/connect-your-backend#primary-sign-in).
-
-**Device authentication with `openid` always requires fresh authentication.** The person
-uses an enrolled passkey or approves a proof request in the World ID app, according
-to the requested authentication class. Device grants with `openid` never reuse a browser session.
-[XAA device consent](/world-id-auth/xaa#connect-the-agent) can use an
-account session authenticated after the device request began. See
-[freshness and assurance](/world-id-auth/step-up#assurance-values) for what
-the returned authentication claims mean and how to validate them.
-
-Before calling the integration complete, [test it end to end](/world-id-auth/testing).
-To test without visiting an Orb, use the
-[sandbox setup](/world-id-auth/testing#test-in-the-sandbox).
+[Test the complete integration](/world-id-auth/testing), including the protected action your application uses.
 
 ## Environment values {#environment-values}
 
@@ -102,7 +79,4 @@ atomic consumption in the
 
 ## Get help from a coding agent {#get-help-from-a-coding-agent}
 
-Give your coding agent the public guides to help implement your integration.
-No plugin or MCP connection is required to read them. For optional app registration
-and management through tools, connect the developer MCP server. See
-[Set up your coding agent](/world-id-auth/build-with-a-coding-agent).
+[Build with a coding agent](/world-id-auth/build-with-a-coding-agent) using the public guides or optional developer MCP tools.
