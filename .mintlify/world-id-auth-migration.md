@@ -1,6 +1,6 @@
 # IDP source and cutover map
 
-This maintenance note records the eleven-page migration into the `IDP` tab, starting with Quickstart. The pages are generated from the canonical Markdown in `temporal-apps`. This note is not a public integration guide or evidence of a deployed cutover.
+This maintenance note records eleven canonical sources for the `IDP` tab. The separate reading follow-up starts with Start here and derives device and coding-agent reference pages. Ship the faithful migration in #225 before considering this follow-up. The pages are generated from the canonical Markdown in `temporal-apps`. This note is not a public integration guide or evidence of a deployed cutover.
 
 ## Source snapshot
 
@@ -13,7 +13,7 @@ This maintenance note records the eleven-page migration into the `IDP` tab, star
 
 The publication contract is documented in the [IdP API README](https://github.com/worldcoin/temporal-apps/blob/9eedf2dee3a8fb1d864e02c59a98982a2c811e61/apps/idpapi/README.md#developer-integration-guides). The [portal renderer](https://github.com/worldcoin/temporal-apps/blob/9eedf2dee3a8fb1d864e02c59a98982a2c811e61/apps/idpportal/vite.config.ts) reads the guide Markdown, substitutes the environment issuer, and publishes browser pages. MCP embeds the guide sources in the API binary. Publishing here does not update either deployment.
 
-## Eleven-page coverage
+## Canonical-source coverage
 
 Destination paths below are relative to the repository root and resolve under `https://docs.world.org/` without the `.mdx` extension.
 
@@ -31,15 +31,19 @@ Destination paths below are relative to the repository root and resolve under `h
 | [coding-agent-setup.md][coding-source] | `world-id-auth/build-with-a-coding-agent.mdx` | Prompts; connection instructions; CLI examples; connection checks; complete agent instructions; portal permission; app registration and configuration; benefit listing publication. |
 | [testing.md][testing-source] | `world-id-auth/testing.mdx` | Sandbox and playground; app setup; sandbox identity creation; a complete real flow; failure paths. |
 
-The publisher copies the canonical federation illustration from `apps/idpportal/public/assets/mcp-federation.svg` to `images/world-id-auth/mcp-federation.svg` and rewrites the guide's image URL. The manifest records that asset mapping and the source lock tracks its source. Keep diagram changes in `temporal-apps` so the Auth guide and Mintlify page use the same illustration.
+The human federation page uses the native Mermaid snippet; keep it aligned with the canonical illustration. The publisher still copies the canonical federation illustration from `apps/idpportal/public/assets/mcp-federation.svg` to `images/world-id-auth/mcp-federation.svg` and rewrites the guide's image URL. The manifest records that asset mapping and the source lock tracks its source. Keep diagram changes in `temporal-apps` so the Auth guide and Mintlify page use the same illustration.
 
 ## Adaptation rules
 
 Preserve content rather than summarizing guide bodies. The deterministic converter in `scripts/sync-world-id-auth.mjs` applies the metadata and route mapping in `.mintlify/world-id-auth-pages.json`. Titles, frontmatter, MDX syntax, documentation links, and page layout may change to fit Mintlify. Preserve examples, tables, link destinations, and section meaning. Keep every subsection, including those not named in the sidebar. Fix content in the source Markdown and publishing adaptations in the manifest or converter, then regenerate.
 
-Use the complete Markdown for `coding-agent-setup`. The current Auth browser renderer cuts its content at `## Agent instructions`, hiding that section and everything after it. The raw Markdown and MCP guide include the complete content. Keep the agent instructions and later app-management sections available in the migrated page and its machine-readable form; update prompts to point to the complete migrated Markdown.
+Use the complete Markdown for `coding-agent-setup`. The current Auth browser renderer cuts its content at `## Agent instructions`, hiding that section and everything after it. The raw Markdown and MCP guide include the complete content. Keep the agent instructions and later app-management sections complete in `coding-agent-reference.mdx` and its machine-readable form. The human setup page retains links at every existing section anchor. Update prompts to point to the complete reference Markdown.
 
 `world-id-users` contains general guidance, not private account data. Its public adaptation is explicitly included. Replace the opening assumption that the reader already authenticated with language describing what happens after connection. Its publication does not remove authorization from the original MCP guide or `get_world_id_account`.
+
+## Reading follow-up
+
+The per-page `presentation` preset enables deterministic adaptations in `scripts/world-id-auth-presentation.mjs`. OIDC derives `world-id-auth/device-flow.mdx`; coding-agent setup derives `world-id-auth/coding-agent-reference.mdx`. Device details and complete agent instructions remain available, and old anchors retain useful destinations. Learning snippets use the existing site components. The user view summarizes connection internals without changing the authenticated MCP source or its permissions. See the publishing runbook and reading plan for scope and capture limits.
 
 ## Environments and service URLs
 

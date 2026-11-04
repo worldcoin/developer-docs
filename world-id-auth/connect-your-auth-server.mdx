@@ -8,6 +8,8 @@ description: "Use the World ID issuer as an upstream provider for your auth serv
 
 {/* Generated from worldcoin/temporal-apps/apps/idpapi/mcp/guides/federation.md. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}
 
+import AuthFederationDiagram from "/snippets/world-id-auth-federation.mdx";
+
 Use the World ID issuer as an upstream OpenID Connect provider when your
 application already has an auth server, such as a login backend or OAuth
 authorization server. Your auth server is the confidential OIDC client
@@ -69,7 +71,7 @@ sessions. Your auth server issues access tokens, and your MCP server controls
 access to its tools. The MCP client is the software connecting the agent to your
 server.
 
-![The World ID issuer returns an ID token to your auth server. Your auth server maps the subject to your application's account and issues an access token to the MCP client, which uses it to call your MCP server.](/images/world-id-auth/mcp-federation.svg)
+<AuthFederationDiagram />
 
 The diagram shows which service issues and receives each token. Browser
 authorization uses two code exchanges:

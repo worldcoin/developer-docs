@@ -6,15 +6,30 @@ Author IDP guides in `worldcoin/temporal-apps/apps/idpapi/mcp/guides/*.md`. The 
 
 ## Files and ownership
 
+- `scripts/world-id-auth-presentation.mjs` applies the explicit human-reading presets in the page manifest. Reusable presentation fragments live in `snippets/world-id-auth/`.
 - `scripts/sync-world-id-auth.mjs` converts the source Markdown without an LLM or runtime dependencies beyond Node.js.
-- `.mintlify/world-id-auth-pages.json` allowlists the eleven source guides and records their existing destination slugs, publishing metadata, and asset mapping.
+- `.mintlify/world-id-auth-pages.json` allowlists eleven source guides and records their destination slugs, reading presets, metadata and asset mapping. Two additional pages are derived from the OIDC and coding-agent sources, without additional source files.
 - `.mintlify/world-id-auth-source.json` records the source commit used for the generated pages and assets.
 - `world-id-auth/*.mdx` are generated output. Change the canonical Markdown, manifest, or converter and regenerate instead of editing these pages directly.
 - `.github/workflows/sync-world-id-auth.yml` proposes updates through a PR. Global navigation in `docs.json` remains separately maintained.
 
 The converter resolves `{{issuer}}` to the production issuer, preserves documented sandbox examples, maps documentation links, and escapes Markdown syntax for MDX. It retains the complete coding-agent instructions and applies the approved public introduction for `world-id-users.md`. That public adaptation does not change MCP authentication or account-tool permissions. See [the source and cutover map](world-id-auth-migration.md) for coverage and URL requirements.
 
-The federation SVG is copied from `temporal-apps/apps/idpportal/public/assets/mcp-federation.svg` to `images/world-id-auth/mcp-federation.svg`. Edit the source illustration and regenerate when the diagram changes.
+The federation SVG remains copied and tracked for source comparison. The human federation page uses the native Mermaid fragment `snippets/world-id-auth-federation.mdx`. Keep it aligned with source changes.
+
+## Reading adaptations and release order
+
+The faithful migration in #225 ships first. Review this draft follow-up afterward; it is not part of the initial cutover. No Auth deployment or MCP access policy changes are included.
+
+The browser page links its old device anchors to `device-flow.mdx`, which retains the complete extracted section. Coding-agent setup keeps human configuration steps and native host tabs; its full source is generated as `coding-agent-reference.mdx`, including every permission, approval and management section. Raw Markdown prompts point to that complete reference. Missing expected section boundaries fail generation instead of silently dropping content.
+
+The presentation adapter also adds learning snippets and clarifies freshness wording against the existing passkey contract. Propose those wording corrections upstream in temporal-apps. The user-facing connection section retains access lifetime, refresh inactivity and revocation behavior while leaving digest-retention internals in the canonical authenticated MCP guide.
+
+Source updates still regenerate every output. Review the canonical diff alongside changes in the adapter and snippets. Keep source protocol behavior and local presentation responsibilities distinct.
+
+Real registration/settings screenshots are pending authenticated portal access. Both portal environments required Google sign-in during asset capture; no credentials or applications were created. Mobile sandbox screenshots require the actual sandbox app. Do not publish login screens as registration steps or invent UI captures.
+
+The complete Node HTTPS learning example follows the versioned openid-client documentation. It requires real HTTPS, a registered client and secure configuration. Its in-memory store is for a single-process demonstration. It has not been exercised against an issuer and must not be described as an end-to-end validated integration.
 
 Mintlify Autopilot may maintain other pages. It must not independently edit generated IDP pages. IDP content proposals belong in the canonical Markdown and then pass through this publisher.
 

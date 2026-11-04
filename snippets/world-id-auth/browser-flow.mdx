@@ -1,0 +1,28 @@
+The browser carries redirects. Your backend keeps credentials and the PKCE
+verifier private, exchanges the code, and validates the result.
+
+```mermaid
+sequenceDiagram
+    accTitle: Browser authorization code flow
+    accDescr: The backend saves state, nonce, and a PKCE verifier before redirecting the browser to the World ID issuer. It checks the callback state and issuer, exchanges the code with client authentication, validates the ID token, and applies its own session or operation policy.
+    participant Browser
+    participant Backend as Your backend
+    participant Issuer as World ID issuer
+
+    Browser->>Backend: Start authentication
+    Backend->>Backend: Save state, nonce, and PKCE verifier
+    Backend-->>Browser: Redirect to authorization endpoint
+    Browser->>Issuer: Authorize with state, nonce, and S256 challenge
+    Issuer->>Issuer: Authenticate or reuse an eligible session
+    Issuer-->>Browser: Redirect with code, state, and iss
+    Browser->>Backend: Deliver callback
+    Backend->>Backend: Check callback state and issuer
+    Backend->>Issuer: Exchange code with verifier and client authentication
+    Issuer-->>Backend: ID token and access token
+    Backend->>Backend: Validate signature, issuer, audience, expiry, and nonce
+    Backend->>Backend: Match account and apply application policy
+    Backend-->>Browser: Continue with the application's session or action
+```
+
+For step-up, also check authentication freshness and assurance before allowing
+the protected action. The ID token's claims become usable only after validation.

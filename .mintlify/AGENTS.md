@@ -9,12 +9,15 @@
 
 ## IDP
 
-The new tab has eleven generated pages under `world-id-auth/`, starting with Quickstart. Read [the source and cutover map](world-id-auth-migration.md) and [publishing runbook](world-id-auth-publishing.md) before updating them.
+The follow-up IDP tab has thirteen generated pages from eleven canonical guides, starting with Start here. The faithful migration remains the first release; these reading adaptations are a separate draft follow-up. Read [the source and cutover map](world-id-auth-migration.md) and [publishing runbook](world-id-auth-publishing.md) before updating them.
 
 - Keep `worldcoin/temporal-apps/apps/idpapi/mcp/guides/*.md` as the canonical guide text shared by the Auth browser documentation, MCP, and the generated Mintlify pages. Make content changes in those Markdown files, then regenerate. The landing page in `apps/idpportal/docs.html` is excluded from this migration.
 - Do not edit generated `world-id-auth/*.mdx` bodies directly. Keep publishing metadata and approved adaptations in `.mintlify/world-id-auth-pages.json` and `scripts/sync-world-id-auth.mjs`. Record the source commit in `.mintlify/world-id-auth-source.json` through the generator.
 - Read relevant source diffs and the complete canonical guides. Preserve all sections, tables, examples, limitations, errors, and instructions when converting them to MDX. If code, canonical text, and generated pages disagree, identify the conflict for review and correct the source or converter.
-- Keep the complete `coding-agent-setup.md` content, including `Agent instructions` and all sections after it. The Auth HTML renderer hides those sections; copying only rendered HTML loses content.
+- Keep the complete `coding-agent-setup.md` content in `coding-agent-reference.mdx` and its machine-readable form. The human setup page links to that reference at every existing section anchor. Never truncate the agent reference.
+- Keep the full OIDC device section in the derived `device-flow.mdx` page. Existing backend device anchors must remain useful links.
+- Reading adaptations live in `scripts/world-id-auth-presentation.mjs` with per-page manifest presets and reusable `snippets/world-id-auth/` fragments. The public user view may summarize connection implementation internals; the authenticated canonical MCP guide remains unchanged. Preserve its access lifetime, inactivity and revocation contracts.
+- Keep new presentation content in English and use the existing cards, tabs, code fences, notes and Mermaid sequence diagrams. Do not introduce global styling or invented screenshots. See the reading plan for capture limitations.
 - Public adaptation of `world-id-users.md` as `use-world-id-with-your-agent.mdx` is approved for this migration. Adapt its authenticated-reader introduction for public readers. Keep the original MCP guide's access controls and the authentication requirements of account tools unchanged.
 - Rewrite documentation links to the new routes. Keep issuer, discovery, authorization, token, portal, MCP, consent, connection-management, and resource-metadata URLs on the correct Auth host. Moving documentation does not move an API endpoint.
 - Keep production, sandbox, staging, and local behavior separate. A source merge does not prove a production release. Use matching issuer, discovery, registration, and credentials for each environment; flag unclear release status.

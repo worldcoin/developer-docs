@@ -8,6 +8,8 @@ description: "Connect agent hosts to reviewed apps with World ID identity delega
 
 {/* Generated from worldcoin/temporal-apps/apps/idpapi/mcp/guides/xaa.md. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}
 
+import AuthXaaFlow from "/snippets/world-id-auth/xaa-flow.mdx";
+
 World IdP supports consumer-controlled identity delegation using
 [ID-JAG](https://www.ietf.org/archive/id/draft-ietf-oauth-identity-assertion-authz-grant-04.html).
 A user connects an agent host and chooses the apps it may access. The host can
@@ -39,6 +41,8 @@ or a World proxy is not required.
 
 World's own MCP tools use separate connections. Connecting to those tools does
 not authorize the host to access other apps through XAA.
+
+<AuthXaaFlow />
 
 ## Configure your authorization server {#configure-your-authorization-server}
 

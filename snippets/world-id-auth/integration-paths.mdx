@@ -1,0 +1,28 @@
+Choose how your application connects, then add the checks your use case needs.
+
+<CardGroup cols={2}>
+  <Card title="Connect your backend" href="/world-id-auth/connect-your-backend">
+    Use OIDC directly from a backend that keeps client credentials private and
+    validates the returned ID token.
+  </Card>
+  <Card title="Connect your auth server" href="/world-id-auth/connect-your-auth-server">
+    Add World ID as an upstream provider when your existing auth server handles
+    application sign-in and sessions.
+  </Card>
+</CardGroup>
+
+<CardGroup cols={2}>
+  <Card title="Protect a sensitive action" href="/world-id-auth/step-up">
+    Keep your existing sign-in and require recent World ID authentication before
+    an action. Your application checks permissions before allowing it.
+  </Card>
+  <Card title="Add a human checkpoint" href="/world-id-auth/human-in-the-loop">
+    Pause an agent workflow, validate fresh authentication, and collect separate
+    action approval in your application when your policy requires it.
+  </Card>
+</CardGroup>
+
+For an agent or CLI without a browser callback, use the
+[device flow](/world-id-auth/device-flow).
+For user-controlled access from an agent host to other apps, see
+[Cross App Access](/world-id-auth/xaa).

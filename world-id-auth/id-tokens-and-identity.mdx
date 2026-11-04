@@ -8,6 +8,8 @@ description: "Validate token claims, read UserInfo, and recognize accounts using
 
 {/* Generated from worldcoin/temporal-apps/apps/idpapi/mcp/guides/id-token.md. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}
 
+import AuthFreshness from "/snippets/world-id-auth/freshness.mdx";
+
 This guide describes the OIDC token response, the ID token's claims, and how to
 store and compare the subject (`sub`).
 
@@ -59,6 +61,10 @@ returned `exp` rather than assuming a fixed lifetime.
   "nonce": "<nonce-from-your-request>"
 }
 ```
+
+## Authentication time and token time {#freshness-example}
+
+<AuthFreshness />
 
 ## Claim reference {#claim-reference}
 
