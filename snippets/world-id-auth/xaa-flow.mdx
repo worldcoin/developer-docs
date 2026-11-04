@@ -1,6 +1,3 @@
-The World issuer supplies an identity delegation grant. Your app's authorization
-server validates it and issues the access token used by your MCP server.
-
 ```mermaid
 sequenceDiagram
     accTitle: XAA delegation and application access tokens
@@ -24,7 +21,7 @@ sequenceDiagram
     MCP->>MCP: Validate access before running the tool
 ```
 
-The host's authentication layer handles exchange, refresh, and credential storage.
-The model does not need these credentials in messages or tool results. Revoking
-World app permission stops new ID-JAGs; your authorization server controls the
-expiry and revocation of access tokens it has already issued.
+Keep exchange, refresh, and credentials in the host's authentication layer,
+outside model messages and tool results. Revoking World app permission stops new
+ID-JAGs; your authorization server controls existing access tokens' expiry and
+revocation.

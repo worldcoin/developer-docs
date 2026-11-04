@@ -1,6 +1,4 @@
-This example requires both fresh authentication and approval of a draft. World ID
-provides the authentication result. Your application shows the draft and records
-the approval.
+This example adds application-owned draft approval after fresh authentication.
 
 ```mermaid
 sequenceDiagram
@@ -30,5 +28,5 @@ sequenceDiagram
     end
 ```
 
-A changed draft or destination requires new approval. Use the stored action and
-application controls to prevent a retry from publishing twice.
+A changed draft or destination requires new approval. Enforce one-use execution
+in backend storage.

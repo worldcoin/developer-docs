@@ -16,17 +16,12 @@ import AuthIntegrationPaths from "/snippets/world-id-auth/integration-paths.mdx"
 
 <Note>For sandbox testing, request access to the sandbox World ID app before starting. Test identity issuance can take about one hour. [Set up the sandbox](/world-id-auth/testing#test-in-the-sandbox).</Note>
 
-A person uses the World ID app to authenticate with their World ID. The World ID
-issuer verifies that authentication and issues a signed ID token to your backend.
-Your application uses the token to recognize the same World ID and determine when the person last
-authenticated. Your application keeps its own accounts, sessions, permissions,
-and actions.
+The World ID issuer returns a signed ID token through OpenID Connect (OIDC).
+Your application controls its accounts, sessions, permissions, and actions.
 
 ## How it works {#how-it-works}
 
-Your backend connects to the World ID issuer with OpenID Connect (OIDC). After
-the person authenticates in the World ID app, your backend validates the returned
-ID token and reads two claims:
+After validating the ID token, read:
 
 - **`sub`:** a stable identifier for the person's World ID account, private to your
   application's sector. Store it with the issuer as `(iss, sub)` to recognize the account.
@@ -84,7 +79,4 @@ atomic consumption in the
 
 ## Get help from a coding agent {#get-help-from-a-coding-agent}
 
-Give your coding agent the public guides to help implement your integration.
-No plugin or MCP connection is required to read them. For optional app registration
-and management through tools, connect the developer MCP server. See
-[Set up your coding agent](/world-id-auth/build-with-a-coding-agent).
+[Build with a coding agent](/world-id-auth/build-with-a-coding-agent) using the public guides or optional developer MCP tools.

@@ -64,25 +64,15 @@ Before migrating an auth server or callback domain, follow
 
 ## Connect the World ID issuer to your MCP server {#connect-the-world-id-issuer-to-your-mcp-server}
 
-Connect the World ID issuer to the auth server used by your MCP server. Your auth
-server validates the issuer's ID token and maps `(iss, sub)` to your application's
-account. This lets you associate MCP activity with the same account across
-sessions. Your auth server issues access tokens, and your MCP server controls
-access to its tools. The MCP client is the software connecting the agent to your
-server.
+Connect the World ID issuer to the auth server used by your MCP server. The MCP
+client is the software connecting the agent to your server.
 
 <AuthFederationDiagram />
 
-The diagram shows which service issues and receives each token. Browser
-authorization uses two code exchanges:
-
-- **World ID issuer → your auth server:** the issuer redirects the user's browser
-  to your auth server's callback with a code. Your auth server exchanges it for
-  an ID token and validates the result.
-- **Your auth server → the MCP client:** after checking permissions and required
-  consent, your auth server redirects the browser to the MCP client's callback
-  with a different code. The client exchanges it for an access token for your
-  MCP server.
+Browser authorization uses two separate code exchanges. Your auth server
+exchanges the World ID code for an ID token. After permission and consent checks,
+it sends a different code to the MCP client's callback; the client exchanges it
+for an access token for your MCP server.
 
 Your MCP server publishes protected-resource metadata identifying your auth
 server and challenges requests without a valid access token. The MCP client uses

@@ -1,5 +1,4 @@
-The browser carries redirects. Your backend keeps credentials and the PKCE
-verifier private, exchanges the code, and validates the result.
+Keep client credentials and the PKCE verifier private in your backend.
 
 ```mermaid
 sequenceDiagram
@@ -24,5 +23,4 @@ sequenceDiagram
     Backend-->>Browser: Continue with the application's session or action
 ```
 
-For step-up, also check authentication freshness and assurance before allowing
-the protected action. The ID token's claims become usable only after validation.
+For step-up, also check freshness and assurance before allowing the action.

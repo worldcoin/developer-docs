@@ -1,6 +1,5 @@
-This Node.js example follows one attempt from redirect to a validated identity.
-It uses `openid-client` 6.8.1 with `client_secret_basic`, S256 PKCE, `state`, and
-`nonce`. The client secret, verifier, tokens, and identity stay in the backend.
+Run one browser authentication attempt with `openid-client` 6.8.1 and
+`client_secret_basic`.
 
 ### 1. Prepare the backend
 
@@ -29,10 +28,8 @@ PORT=8443
 
 ### 2. Run one browser flow
 
-Save the server below as `server.mjs`, then start it with
-`node --env-file=.env server.mjs`. Open `/login` on your configured HTTPS
-origin. The example terminates TLS itself, so it does not depend on proxy
-headers or an HTTP cookie exception.
+Save the server below as `server.mjs` and run `node --env-file=.env server.mjs`.
+Open `/login` on your configured HTTPS origin.
 
 ### Complete learning server
 
@@ -180,17 +177,13 @@ After successful authentication, `/session` returns:
 { "authenticated": true }
 ```
 
-The backend stores the validated `(iss, sub)` pair. A new browser session
-without the demo cookie returns `false`. An expired or missing attempt,
-mismatched callback issuer, altered state, invalid nonce, or failed token
-validation cannot create an authenticated demo session. If the issuer is
-unavailable, the attempt also stays unsuccessful; that is not evidence of an
-invalid World ID.
+Without the demo cookie, `/session` returns `false`. Expired attempts and failed
+validation cannot create a session. Issuer unavailability also leaves the attempt
+unsuccessful; it does not establish an invalid identity.
 
-For an existing application account, require an explicit linking flow while
-the user is signed in to that account. For a sensitive action, add the
-[step-up checks](/world-id-auth/step-up#implement-step-up); this example does
-not enforce authentication freshness or action approval.
+Link an existing account only while its user is signed in. Add
+[step-up checks](/world-id-auth/step-up#implement-step-up) for sensitive actions;
+this example does not enforce freshness or action approval.
 
 The library API calls follow the official
 [discovery and client-authentication documentation](https://github.com/panva/openid-client/blob/v6.8.1/docs/functions/discovery.md),

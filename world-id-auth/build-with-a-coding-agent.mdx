@@ -11,10 +11,8 @@ description: "Give your coding agent complete integration instructions and conne
 import AuthAgentConnectionChecks from "/snippets/world-id-auth/agent-connection-checks.mdx";
 import AuthDeveloperConnections from "/snippets/world-id-auth/developer-connections.mdx";
 
-Connect a coding agent to the World ID developer tools. No plugin is required.
-The public integration guides are available without sign-in or an MCP connection.
-Add the developer MCP server only when you want the agent to register or manage
-your application through tools.
+Use these public guides with your coding agent. Connect the developer MCP server
+only for application management.
 
 ## Give your coding agent the guide {#give-your-coding-agent-the-guide}
 
@@ -43,9 +41,7 @@ implemented. If your host does not support this connection, use the public guide
 and portal directly.
 
 Keep the connection, guides, app registration, and credentials in the same
-production or sandbox environment. Before authorizing, confirm that the current
-session lists the developer MCP server at `https://auth.world.org/mcp/developer`.
-Call `list_idp_guides` to check the connection; it requires no authorization.
+production or sandbox environment.
 
 The commands below use this page's environment. For sandbox, replace
 `world-id-developer` with `world-id-developer-sandbox` in every command. When
@@ -88,21 +84,9 @@ OAuth permission `developer-portal:manage`.
   </Tab>
 </Tabs>
 
-<AuthAgentConnectionChecks />
-
 ### Check the connection {#check-the-connection}
 
-Complete Google sign-in and consent in the browser when authorizing portal access.
-
-If the tools are unavailable, first check whether the developer server is listed
-and enabled in the active host. Add it only if it is missing; otherwise use the
-host's refresh controls. Start a new coding session if the host needs one to load
-new tools. A desktop or workspace host manages its own connection; configuring a
-separate CLI does not establish that the active chat can use it.
-
-Ask the agent to list the World ID integration guides to confirm the connection.
-Reading guides requires no authorization. For app management, ask the agent to
-check developer access and follow the Google sign-in and portal consent prompt.
+<AuthAgentConnectionChecks />
 
 <AuthDeveloperConnections />
 

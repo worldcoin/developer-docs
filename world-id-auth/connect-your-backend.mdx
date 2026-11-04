@@ -11,10 +11,7 @@ description: "Connect your backend to the World ID issuer with OpenID Connect (O
 import AuthBrowserFlow from "/snippets/world-id-auth/browser-flow.mdx";
 import AuthBrowserExample from "/snippets/world-id-auth/browser-example.mdx";
 
-Connect your backend to the World ID issuer with OpenID Connect (OIDC). Your backend receives
-a signed ID token and validates it before using the account identifier and
-authentication time. Step-up, human checkpoints, and primary sign-in all use this
-connection.
+Connect your backend to the World ID issuer with OpenID Connect (OIDC).
 
 Your backend is a confidential OIDC client that keeps its
 credentials private. Browser-only, native, and CLI applications also need a backend for
@@ -46,23 +43,13 @@ credentials from the same environment.
 
 ## Authenticate through the browser {#authenticate-through-the-browser}
 
-1. **Start authorization.** Redirect the browser to the discovered authorization
-   endpoint with `client_id`, the exact registered `redirect_uri`,
-   `response_type=code`, `scope=openid`, a fresh `state`, an optional fresh
-   `nonce`, and an S256 PKCE challenge. Keep the PKCE verifier in your server-side
-   state for this attempt.
-2. **Handle the callback.** The World ID issuer handles passkey or World ID proof authentication and
-   browser-session eligibility, then redirects to your callback. Validate the
-   returned `state` and require the response's `iss` parameter to match the
-   discovered issuer exactly before redeeming the code. Success and error
-   responses both include `iss`. Treat an authorization error as a failure,
-   never as success.
-3. **Exchange the code.** POST the code to the discovered token endpoint,
-   authenticated with your [registered method](/world-id-auth/connect-your-backend#client-authentication).
-   Each code can be used once and expires after five minutes.
-4. **Validate the ID token** as described in
-   [Validate the ID token](/world-id-auth/connect-your-backend#validate-the-id-token),
-   then find the account by `(iss, sub)`.
+Save fresh `state`, an optional fresh `nonce`, and the S256 PKCE verifier in
+server-side state for each attempt. On success and error callbacks, validate
+`state` and require `iss` to match the discovered issuer before redeeming the code.
+Treat authorization errors as failure. Exchange the code with your registered
+client-authentication method; each code expires after five minutes and can be
+used once. [Validate the ID token](/world-id-auth/connect-your-backend#validate-the-id-token)
+before finding the account by `(iss, sub)`.
 
 The authorization request has these decoded query parameters. URL-encode them
 with your library and generate fresh random values for each attempt:

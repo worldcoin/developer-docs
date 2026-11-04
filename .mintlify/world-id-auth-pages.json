@@ -10,7 +10,8 @@
       "sidebarTitle": "Start here",
       "description": "Choose your World ID integration, prepare your environment, and connect your application.",
       "environmentNote": true,
-      "presentation": "overview"
+      "presentation": "overview",
+      "compact": true
     },
     {
       "source": "app-registration.md",
@@ -18,7 +19,8 @@
       "title": "Register your application",
       "sidebarTitle": "Register your application",
       "description": "Register and manage your World ID OIDC application, credentials, callbacks, and benefit listing.",
-      "presentation": "registration"
+      "presentation": "registration",
+      "compact": true
     },
     {
       "source": "oidc.md",
@@ -34,7 +36,8 @@
           "sign-in-a-headless-agent-device-flow"
         ]
       },
-      "presentation": "browser"
+      "presentation": "browser",
+      "compact": true
     },
     {
       "source": "federation.md",
@@ -42,7 +45,8 @@
       "title": "Connect your auth server",
       "sidebarTitle": "Connect your auth server",
       "description": "Use the World ID issuer as an upstream provider for your auth server or MCP server.",
-      "presentation": "federation"
+      "presentation": "federation",
+      "compact": true
     },
     {
       "source": "id-token.md",
@@ -50,7 +54,8 @@
       "title": "ID tokens and identity",
       "sidebarTitle": "ID tokens and identity",
       "description": "Validate token claims, read UserInfo, and recognize accounts using the issuer and pairwise subject.",
-      "presentation": "identity"
+      "presentation": "identity",
+      "compact": true
     },
     {
       "source": "step-up.md",
@@ -67,7 +72,8 @@
       "sidebarTitle": "Human in the loop",
       "icon": "/images/docs/human-badge-blue.svg",
       "description": "Pause an agent workflow and require fresh World ID authentication before continuing.",
-      "presentation": "hitl"
+      "presentation": "hitl",
+      "compact": true
     },
     {
       "source": "xaa.md",
@@ -75,7 +81,8 @@
       "title": "Cross App Access (XAA)",
       "sidebarTitle": "Cross App Access (XAA)",
       "description": "Connect agent hosts to reviewed apps with World ID identity delegation and user-controlled permissions.",
-      "presentation": "xaa"
+      "presentation": "xaa",
+      "compact": true
     },
     {
       "source": "world-id-users.md",
@@ -92,7 +99,8 @@
       "title": "Build with a coding agent",
       "sidebarTitle": "Build with a coding agent",
       "description": "Give your coding agent complete integration instructions and connect developer MCP tools.",
-      "presentation": "agent-setup"
+      "presentation": "agent-setup",
+      "compact": true
     },
     {
       "source": "testing.md",
@@ -100,7 +108,8 @@
       "title": "Test your integration",
       "sidebarTitle": "Test your integration",
       "description": "Test World ID integration in the sandbox, complete real flows, and check failure paths.",
-      "presentation": "testing"
+      "presentation": "testing",
+      "compact": true
     }
   ],
   "assets": [

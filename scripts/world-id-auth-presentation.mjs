@@ -1,4 +1,7 @@
 // Approved human-reading adaptations. Canonical Markdown stays in temporal-apps.
+import { readFileSync } from "node:fs";
+
+const readingEdits = JSON.parse(readFileSync(new URL("../.mintlify/world-id-auth-reading-edits.json", import.meta.url), "utf8"));
 const deviceHeading = "## Connect a headless agent (device flow)";
 const agentHeading = "## Agent instructions";
 const devicePath = "world-id-auth/device-flow.mdx";
@@ -52,8 +55,22 @@ export function deriveGuides(markdown, page) {
   return [];
 }
 
-export function presentGuide(original, page) {
+export function trimRepeatedProse(original, preset) {
   let content = original;
+  for (const edit of readingEdits[preset] ?? []) {
+    const start = content.indexOf(edit.before);
+    if (start < 0 || content.indexOf(edit.before, start + 1) >= 0) {
+      throw new Error(`Reading edit no longer matches exactly once: ${preset}/${edit.id}`);
+    }
+    let end = start + edit.before.length;
+    if (!edit.after && content.slice(end, end + 2) === "\n\n") end += 2;
+    content = content.slice(0, start) + edit.after + content.slice(end);
+  }
+  return content;
+}
+
+export function presentGuide(original, page) {
+  let content = page.compact ? trimRepeatedProse(original, page.presentation) : original;
   const imports = [];
   const use = (name, filename) => {
     imports.push(`import ${name} from "/snippets/world-id-auth/${filename}.mdx";`);
@@ -139,7 +156,7 @@ export function presentGuide(original, page) {
       const codexBody = content.slice(codex.start, claude.start).trim();
       const claudeBody = content.slice(claude.start, check.start).trim();
       content = content.slice(0, codex.start) + `<Tabs>\n  <Tab title="Codex">\n\n${codexBody}\n\n  </Tab>\n  <Tab title="Claude Code">\n\n${claudeBody}\n\n  </Tab>\n</Tabs>\n\n` + content.slice(check.start);
-      before("### Check the connection", use("AuthAgentConnectionChecks", "agent-connection-checks"));
+      afterHeading("### Check the connection", use("AuthAgentConnectionChecks", "agent-connection-checks"));
       before("## Complete instructions for agents", use("AuthDeveloperConnections", "developer-connections"));
       break;
     }

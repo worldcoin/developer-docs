@@ -12,6 +12,7 @@ Prepare a draft follow-up to #225. Ship the faithful migration first; review the
 - Add task-specific snippets for route selection, registration prerequisites, worked browser integration, freshness, HITL, XAA, testing and connection management.
 - Use the four real portal screenshots recorded in `.mintlify/world-id-auth-screenshots.json`. Keep instructions before the form and settings images, use short captions and native image markup, and distinguish the empty developer-connections state from a successful connection. Never publish credentials, account identity or submitted example settings. Mobile sandbox capture requires the actual app.
 - Document the source/presentation boundary and follow-up release order.
+- Compact nine human views with exact, drift-checked prose edits; shorten surrounding snippet prose and screenshot captions. Preserve source examples, validation and policy constraints, and the full agent reference. Keep the testing failure table separate from its short evidence checklist.
 
 ## Verification
 

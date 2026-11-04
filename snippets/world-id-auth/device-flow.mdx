@@ -1,5 +1,4 @@
-Your backend owns the device attempt and polling. The user sees the requester,
-user code, and connection link; the private `device_code` stays in the backend.
+Keep the private `device_code` in your backend.
 
 ```mermaid
 sequenceDiagram
@@ -32,8 +31,6 @@ sequenceDiagram
     Note over Backend,Issuer: Stop at expiry; never extend the attempt by polling
 ```
 
-Follow the response table in the device procedure below for every poll. HTTP 429 flood protection can end
-the attempt; `Retry-After` does not override the stop rules. After a connection
-timeout, back off within the remaining lifetime. Do not restart authorization in
-a loop after failure. Device tokens omit `nonce`, and this grant does not use
-browser `prompt` or `max_age` controls.
+Follow the polling and stop rules in the procedure below; do not restart
+authorization in a loop after failure. Device tokens omit `nonce`. Browser
+`prompt` and `max_age` controls do not apply to this grant.

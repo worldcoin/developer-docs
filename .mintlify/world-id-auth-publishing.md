@@ -7,6 +7,7 @@ Author IDP guides in `worldcoin/temporal-apps/apps/idpapi/mcp/guides/*.md`. The 
 ## Files and ownership
 
 - `scripts/world-id-auth-presentation.mjs` applies the explicit human-reading presets in the page manifest. Reusable presentation fragments live in `snippets/world-id-auth/`.
+- `.mintlify/world-id-auth-reading-edits.json` records the reviewed prose replacements for `compact` human views. Each replacement must match exactly once; a changed source paragraph requires a new editorial review before regeneration. The complete agent reference does not use these edits.
 - `scripts/sync-world-id-auth.mjs` converts the source Markdown without an LLM or runtime dependencies beyond Node.js.
 - `.mintlify/world-id-auth-pages.json` allowlists eleven source guides and records their destination slugs, reading presets, metadata and asset mapping. Two additional pages are derived from the OIDC and coding-agent sources, without additional source files.
 - `.mintlify/world-id-auth-source.json` records the source commit used for the generated pages and assets.
@@ -26,6 +27,8 @@ The browser page links its old device anchors to `device-flow.mdx`, which retain
 The presentation adapter also adds learning snippets and clarifies freshness wording against the existing passkey contract. Propose those wording corrections upstream in temporal-apps. The user-facing connection section retains access lifetime, refresh inactivity and revocation behavior while leaving digest-retention internals in the canonical authenticated MCP guide.
 
 Source updates still regenerate every output. Review the canonical diff alongside changes in the adapter and snippets. Keep source protocol behavior and local presentation responsibilities distinct.
+
+Compact views keep one explanation per teaching resource: the freshness sequence owns the clock example, the connection table owns host/access checks, and screenshots keep short captions. The browser procedure still states callback validation on success and error, the one-use five-minute code lifetime, and ID-token validation. The federation guide still distinguishes its two code exchanges, which the token-handoff diagram does not show. Testing retains its failure table and fixture limitations. These are implementation requirements, not repeated descriptions to remove.
 
 The portal illustrations use real production screenshots captured on 2026-11-04: sign-in, the application-registration form, callback settings, and the empty developer-agent connections view. The sign-in image explains access only; the form and settings images use example values that were not saved. The developer-agent image is explicitly an empty state, not evidence of a completed connection or approval. Presentation images live in `images/world-id-auth/portal/`; their origin and purpose are recorded in `.mintlify/world-id-auth-screenshots.json`. These documentation-owned assets are committed with their snippets rather than copied from the canonical guide repository.
 

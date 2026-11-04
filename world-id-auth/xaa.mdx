@@ -10,18 +10,9 @@ description: "Connect agent hosts to reviewed apps with World ID identity delega
 
 import AuthXaaFlow from "/snippets/world-id-auth/xaa-flow.mdx";
 
-World IdP supports consumer-controlled identity delegation using
-[ID-JAG](https://www.ietf.org/archive/id/draft-ietf-oauth-identity-assertion-authz-grant-04.html).
-A user connects an agent host and chooses the apps it may access. The host can
-then obtain credentials for those apps without separate World ID authentication
-for each app. Each app's authorization server issues its own access tokens and
-controls API permissions. The app does not need OIDC sign-in federation.
-
-This guide covers app integration and user permissions. The host's MCP
-authentication layer handles World sign-in, ID-JAG exchange, token renewal,
-and credential storage. The model calls MCP tools and can help developers
-implement the integration. Credentials stay outside model context, tool results,
-and conversations.
+Use [ID-JAG](https://www.ietf.org/archive/id/draft-ietf-oauth-identity-assertion-authz-grant-04.html)
+for user-controlled access from an agent host to your application's MCP server.
+The app does not need OIDC sign-in federation.
 
 ## Requirements {#requirements}
 

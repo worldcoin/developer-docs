@@ -1,0 +1,125 @@
+{
+  "overview": [
+    {
+      "id": "token-overview",
+      "before": "A person uses the World ID app to authenticate with their World ID. The World ID\nissuer verifies that authentication and issues a signed ID token to your backend.\nYour application uses the token to recognize the same World ID and determine when the person last\nauthenticated. Your application keeps its own accounts, sessions, permissions,\nand actions.",
+      "after": "The World ID issuer returns a signed ID token through OpenID Connect (OIDC).\nYour application controls its accounts, sessions, permissions, and actions."
+    },
+    {
+      "id": "claim-introduction",
+      "before": "Your backend connects to the World ID issuer with OpenID Connect (OIDC). After\nthe person authenticates in the World ID app, your backend validates the returned\nID token and reads two claims:",
+      "after": "After validating the ID token, read:"
+    },
+    {
+      "id": "coding-agent-link",
+      "before": "Give your coding agent the public guides to help implement your integration.\nNo plugin or MCP connection is required to read them. For optional app registration\nand management through tools, connect the developer MCP server. See\n[Set up your coding agent](/world-id-auth/build-with-a-coding-agent).",
+      "after": "[Build with a coding agent](/world-id-auth/build-with-a-coding-agent) using the public guides or optional developer MCP tools."
+    }
+  ],
+  "registration": [
+    {
+      "id": "portal-introduction",
+      "before": "Sign in to the [developer portal](https://auth.world.org/portal) with Google to register an\nOIDC client for your application or auth server. This registration supports\nstep-up, human-in-the-loop workflows, and primary sign-in.",
+      "after": "Register an OIDC client for your application or auth server in the\n[developer portal](https://auth.world.org/portal)."
+    },
+    {
+      "id": "sign-in-roles",
+      "before": "Developers sign in to the portal with Google to manage clients. Your users\nauthenticate with World ID in your application.",
+      "after": ""
+    },
+    {
+      "id": "coding-agent-link",
+      "before": "Your coding agent can [read the public integration guides](/world-id-auth/build-with-a-coding-agent#give-your-coding-agent-the-guide)\nwithout a plugin or MCP connection. Optionally\n[connect developer MCP tools](/world-id-auth/build-with-a-coding-agent#connect-your-coding-agent)\nto register and manage the application. Portal tools use Google authorization, and registration\nand credential changes require your approval in the portal. Keep client secrets\nand private keys outside agent conversations. The\n[agent instructions](/world-id-auth/coding-agent-reference.md) cover portal tool use.",
+      "after": "For optional registration and app management, [connect your coding agent](/world-id-auth/build-with-a-coding-agent). Registration and credential changes require your approval in the portal."
+    }
+  ],
+  "browser": [
+    {
+      "id": "flow-introduction",
+      "before": "Connect your backend to the World ID issuer with OpenID Connect (OIDC). Your backend receives\na signed ID token and validates it before using the account identifier and\nauthentication time. Step-up, human checkpoints, and primary sign-in all use this\nconnection.",
+      "after": "Connect your backend to the World ID issuer with OpenID Connect (OIDC)."
+    },
+    {
+      "id": "browser-procedure",
+      "before": "1. **Start authorization.** Redirect the browser to the discovered authorization\n   endpoint with `client_id`, the exact registered `redirect_uri`,\n   `response_type=code`, `scope=openid`, a fresh `state`, an optional fresh\n   `nonce`, and an S256 PKCE challenge. Keep the PKCE verifier in your server-side\n   state for this attempt.\n2. **Handle the callback.** The World ID issuer handles passkey or World ID proof authentication and\n   browser-session eligibility, then redirects to your callback. Validate the\n   returned `state` and require the response's `iss` parameter to match the\n   discovered issuer exactly before redeeming the code. Success and error\n   responses both include `iss`. Treat an authorization error as a failure,\n   never as success.\n3. **Exchange the code.** POST the code to the discovered token endpoint,\n   authenticated with your [registered method](/world-id-auth/connect-your-backend#client-authentication).\n   Each code can be used once and expires after five minutes.\n4. **Validate the ID token** as described in\n   [Validate the ID token](/world-id-auth/connect-your-backend#validate-the-id-token),\n   then find the account by `(iss, sub)`.",
+      "after": "Save fresh `state`, an optional fresh `nonce`, and the S256 PKCE verifier in\nserver-side state for each attempt. On success and error callbacks, validate\n`state` and require `iss` to match the discovered issuer before redeeming the code.\nTreat authorization errors as failure. Exchange the code with your registered\nclient-authentication method; each code expires after five minutes and can be\nused once. [Validate the ID token](/world-id-auth/connect-your-backend#validate-the-id-token)\nbefore finding the account by `(iss, sub)`."
+    }
+  ],
+  "identity": [
+    {
+      "id": "freshness-narration",
+      "before": "For example, if a user authenticates at 10:00 and their existing session produces\na token at 11:00, `auth_time` still represents 10:00 while `iat` represents 11:00.\nUse `auth_time` for authentication freshness, as described in\n[Step-up authentication](/world-id-auth/step-up).",
+      "after": ""
+    }
+  ],
+  "federation": [
+    {
+      "id": "token-handoff-narration",
+      "before": "Connect the World ID issuer to the auth server used by your MCP server. Your auth\nserver validates the issuer's ID token and maps `(iss, sub)` to your application's\naccount. This lets you associate MCP activity with the same account across\nsessions. Your auth server issues access tokens, and your MCP server controls\naccess to its tools. The MCP client is the software connecting the agent to your\nserver.",
+      "after": "Connect the World ID issuer to the auth server used by your MCP server. The MCP\nclient is the software connecting the agent to your server."
+    },
+    {
+      "id": "two-code-exchanges",
+      "before": "The diagram shows which service issues and receives each token. Browser\nauthorization uses two code exchanges:\n\n- **World ID issuer \u2192 your auth server:** the issuer redirects the user's browser\n  to your auth server's callback with a code. Your auth server exchanges it for\n  an ID token and validates the result.\n- **Your auth server \u2192 the MCP client:** after checking permissions and required\n  consent, your auth server redirects the browser to the MCP client's callback\n  with a different code. The client exchanges it for an access token for your\n  MCP server.",
+      "after": "Browser authorization uses two separate code exchanges. Your auth server\nexchanges the World ID code for an ID token. After permission and consent checks,\nit sends a different code to the MCP client's callback; the client exchanges it\nfor an access token for your MCP server."
+    }
+  ],
+  "hitl": [
+    {
+      "id": "draft-introduction",
+      "before": "Your application implements this approval flow. For example, it may require the user to\nreview a draft before an agent publishes it:",
+      "after": ""
+    },
+    {
+      "id": "approval-responsibility",
+      "before": " The World ID issuer provides the\n   authentication result; your application captures approval of what will be published.",
+      "after": ""
+    }
+  ],
+  "xaa": [
+    {
+      "id": "delegation-introduction",
+      "before": "World IdP supports consumer-controlled identity delegation using\n[ID-JAG](https://www.ietf.org/archive/id/draft-ietf-oauth-identity-assertion-authz-grant-04.html).\nA user connects an agent host and chooses the apps it may access. The host can\nthen obtain credentials for those apps without separate World ID authentication\nfor each app. Each app's authorization server issues its own access tokens and\ncontrols API permissions. The app does not need OIDC sign-in federation.",
+      "after": "Use [ID-JAG](https://www.ietf.org/archive/id/draft-ietf-oauth-identity-assertion-authz-grant-04.html)\nfor user-controlled access from an agent host to your application's MCP server.\nThe app does not need OIDC sign-in federation."
+    },
+    {
+      "id": "host-responsibilities",
+      "before": "This guide covers app integration and user permissions. The host's MCP\nauthentication layer handles World sign-in, ID-JAG exchange, token renewal,\nand credential storage. The model calls MCP tools and can help developers\nimplement the integration. Credentials stay outside model context, tool results,\nand conversations.",
+      "after": ""
+    }
+  ],
+  "agent-setup": [
+    {
+      "id": "setup-introduction",
+      "before": "Connect a coding agent to the World ID developer tools. No plugin is required.\nThe public integration guides are available without sign-in or an MCP connection.\nAdd the developer MCP server only when you want the agent to register or manage\nyour application through tools.",
+      "after": "Use these public guides with your coding agent. Connect the developer MCP server\nonly for application management."
+    },
+    {
+      "id": "connection-checks-before-commands",
+      "before": "Keep the connection, guides, app registration, and credentials in the same\nproduction or sandbox environment. Before authorizing, confirm that the current\nsession lists the developer MCP server at `https://auth.world.org/mcp/developer`.\nCall `list_idp_guides` to check the connection; it requires no authorization.",
+      "after": "Keep the connection, guides, app registration, and credentials in the same\nproduction or sandbox environment."
+    },
+    {
+      "id": "google-consent",
+      "before": "Complete Google sign-in and consent in the browser when authorizing portal access.",
+      "after": ""
+    },
+    {
+      "id": "active-host",
+      "before": "If the tools are unavailable, first check whether the developer server is listed\nand enabled in the active host. Add it only if it is missing; otherwise use the\nhost's refresh controls. Start a new coding session if the host needs one to load\nnew tools. A desktop or workspace host manages its own connection; configuring a\nseparate CLI does not establish that the active chat can use it.",
+      "after": ""
+    },
+    {
+      "id": "guide-access",
+      "before": "Ask the agent to list the World ID integration guides to confirm the connection.\nReading guides requires no authorization. For app management, ask the agent to\ncheck developer access and follow the Google sign-in and portal consent prompt.",
+      "after": ""
+    }
+  ],
+  "testing": [
+    {
+      "id": "testing-introduction",
+      "before": "Use the checks that apply to your integration and authorization policy.",
+      "after": ""
+    }
+  ]
+}

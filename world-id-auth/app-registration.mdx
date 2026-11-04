@@ -13,9 +13,8 @@ import AuthRegistrationChecklist from "/snippets/world-id-auth/registration-chec
 import AuthPortalRegistration from "/snippets/world-id-auth/portal-registration.mdx";
 import AuthApplicationSettings from "/snippets/world-id-auth/application-settings.mdx";
 
-Sign in to the [developer portal](https://auth.world.org/portal) with Google to register an
-OIDC client for your application or auth server. This registration supports
-step-up, human-in-the-loop workflows, and primary sign-in.
+Register an OIDC client for your application or auth server in the
+[developer portal](https://auth.world.org/portal).
 
 <AuthPortalSignIn />
 
@@ -50,9 +49,6 @@ have reached the limit on clients you can own. If you receive
 World ID authentication with `openid` requires a client registered through the portal.
 [XAA hosts](/world-id-auth/xaa) may instead use public or confidential CIMD
 registration. OIDC dynamic client registration (DCR) is not supported.
-
-Developers sign in to the portal with Google to manage clients. Your users
-authenticate with World ID in your application.
 
 Once registered, [connect your backend](/world-id-auth/connect-your-backend) or
 [configure your auth server](/world-id-auth/connect-your-auth-server).
@@ -108,13 +104,7 @@ an account using an unvalidated subject.
 
 ## Get help from a coding agent {#get-help-from-a-coding-agent}
 
-Your coding agent can [read the public integration guides](/world-id-auth/build-with-a-coding-agent#give-your-coding-agent-the-guide)
-without a plugin or MCP connection. Optionally
-[connect developer MCP tools](/world-id-auth/build-with-a-coding-agent#connect-your-coding-agent)
-to register and manage the application. Portal tools use Google authorization, and registration
-and credential changes require your approval in the portal. Keep client secrets
-and private keys outside agent conversations. The
-[agent instructions](/world-id-auth/coding-agent-reference.md) cover portal tool use.
+For optional registration and app management, [connect your coding agent](/world-id-auth/build-with-a-coding-agent). Registration and credential changes require your approval in the portal.
 
 ## Publish a benefit listing {#publish-a-benefit-listing}
 

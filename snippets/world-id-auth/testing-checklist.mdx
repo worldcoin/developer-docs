@@ -1,16 +1,7 @@
-Choose the scenarios your integration supports. Inspect backend state and the
-final outcome, without logging tokens, credentials, or callback query strings.
-
-| Scenario | Expected result | Evidence to inspect |
-| --- | --- | --- |
-| Primary sign-in | Your application creates a session for the validated identity. | An authenticated application request resolves to the intended account. |
-| Step-up | The action stays blocked until account, freshness, assurance, and permissions pass. | The saved attempt matches the account and the operation that executes. |
-| Human checkpoint with action approval | Authentication alone leaves the action pending. | The exact stored action has the required approval and executes at most once. |
-| Auth server with existing sessions | An old upstream authentication cannot bypass the new freshness requirement. | The upstream request and retained claims demonstrate the required authentication; cancellation or the wrong account leaves the action blocked. |
-| Headless agent | The backend validates and binds the device result before issuing its own credential. | An authenticated backend read using that credential resolves to the intended grant. |
-| Cancelled or expired attempt | No new access is granted and no protected action executes. | The attempt and operation remain unauthorized in backend state. |
-| Invalid token or wrong account | Validation or the saved account policy rejects the result. | No session, permission, or operation is authorized from the rejected result. |
-| Lost response or repeated request | An uncertain result is reconciled before a retry can duplicate an action. | The saved operation and external service agree on whether it completed. |
-
-Sandbox checks exercise the integration. Before launch, also complete the
-production flow with the production World ID app and a real World ID.
+| Scenario | Evidence to inspect |
+| --- | --- |
+| Primary sign-in | An authenticated application request resolves to the intended account. |
+| Step-up | The saved attempt matches the account and operation; execution follows all required checks. |
+| Human checkpoint with action approval | The exact stored action has the required approval and executes at most once. |
+| Auth server with existing sessions | Upstream request parameters and retained claims demonstrate the required fresh authentication. |
+| Headless agent | An authenticated backend read using its issued credential resolves to the intended grant. |

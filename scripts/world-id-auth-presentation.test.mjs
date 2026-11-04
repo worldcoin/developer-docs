@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { deriveGuides, presentGuide } from "./world-id-auth-presentation.mjs";
+import { deriveGuides, presentGuide, trimRepeatedProse } from "./world-id-auth-presentation.mjs";
 
 const browserPage = {
   source: "oidc.md",
@@ -216,7 +216,26 @@ test("the human agent setup view retains connection steps and useful links at al
 
 test("the complete agent reference has no human-view truncation", () => {
   const content = renderedBody(agentMarkdown);
-  assert.deepEqual(presentGuide(content, { ...agentPage, presentation: "agent-reference" }), { content, imports: [] });
+  assert.deepEqual(presentGuide(content, { ...agentPage, presentation: "agent-reference", compact: true }), { content, imports: [] });
+});
+
+const repeatedFreshness = [
+  "For example, if a user authenticates at 10:00 and their existing session produces",
+  "a token at 11:00, `auth_time` still represents 10:00 while `iat` represents 11:00.",
+  "Use `auth_time` for authentication freshness, as described in",
+  "[Step-up authentication](/world-id-auth/step-up).",
+].join("\n");
+
+test("the diagram-owned freshness explanation is removed without changing the payload or validation rule", () => {
+  const payload = '```json\n{ "auth_time": 1790000000, "iat": 1790000120 }\n```';
+  const rule = "Validate the token before using its claims.";
+  const input = `${payload}\n\n${repeatedFreshness}\n\n${rule}`;
+  assert.equal(trimRepeatedProse(input, "identity"), `${payload}\n\n${rule}`);
+});
+
+test("changed or repeated source prose stops compaction instead of silently removing a different block", () => {
+  assert.throws(() => trimRepeatedProse(repeatedFreshness.replace("10:00", "09:00"), "identity"), /no longer matches exactly once/);
+  assert.throws(() => trimRepeatedProse(`${repeatedFreshness}\n\n${repeatedFreshness}`, "identity"), /no longer matches exactly once/);
 });
 
 test("changed device boundaries fail instead of silently dropping instructions", () => {
