@@ -127,6 +127,15 @@
         ]
       },
       {
+        "tab": "World ID Auth",
+        "groups": [
+          {
+            "group": "Authentication",
+            "pages": ["world-id-auth/step-up"]
+          }
+        ]
+      },
+      {
         "tab": "Mini Apps",
         "groups": [
           {
