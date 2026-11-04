@@ -94,6 +94,13 @@
             ]
           },
           {
+            "group": "World ID Auth",
+            "pages": [
+              "world-id-auth/authentication",
+              "world-id-auth/tokens-and-identity"
+            ]
+          },
+          {
             "group": "Sandbox",
             "pages": [
               "world-id/sandbox/what-is-sandbox",
