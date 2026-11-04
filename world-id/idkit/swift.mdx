@@ -81,10 +81,14 @@ let completion = await request.pollUntilCompletion(
 switch completion {
 case .success(let result):
   print(result)
-case .failure(let error):
-  print(error)
+case .failure(let error, let reason):
+  print(error.rawValue, String(describing: reason))
 }
 ```
+
+Both `IDKitStatus.failed` and `IDKitCompletionResult.failure` carry `reason: ErrorReason?`, which defaults to `nil`. Missing or `null` bridge reasons stay `nil`; unrecognized strings become `.unknown`. `challenge_failed` is exposed as `IDKitErrorCode.challengeFailed`.
+
+When upgrading, update failure switch patterns to match both associated values, even if you ignore the reason: `.failure(let error, _)` or `.failed(let error, _)`. See [Error codes and reasons](/world-id/idkit/error-codes#optional-error-reasons) for the shared vocabulary and parsing behavior.
 
 ## Invite-code mode
 

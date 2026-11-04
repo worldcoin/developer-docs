@@ -1,11 +1,11 @@
 ---
-title: "Error Codes"
-description: "Reference for IDKit request error codes and handling guidance across JS, React, Kotlin, and Swift."
+title: "Error Codes and Reasons"
+description: "Reference for IDKit error codes, optional failure reasons, and handling across JavaScript, React, Rust, Swift, and Kotlin."
 "og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-This page documents the IDKit SDK and bridge error codes returned during request flows.
+This page documents the IDKit SDK and bridge error codes returned during request flows, plus the optional `ErrorReason` that provides more detail about an application failure.
 
 ## Canonical codes
 
@@ -27,6 +27,11 @@ This page documents the IDKit SDK and bridge error codes returned during request
       <td className="p-2 align-middle whitespace-nowrap"><code>verification_rejected</code></td>
       <td className="p-2 align-middle">Legacy rejection code (older bridge/app behavior).</td>
       <td className="p-2 align-middle">Handle same as <code>user_rejected</code>.</td>
+    </tr>
+    <tr>
+      <td className="p-2 align-middle whitespace-nowrap"><code>challenge_failed</code></td>
+      <td className="p-2 align-middle">A requested challenge failed.</td>
+      <td className="p-2 align-middle">Use the optional <code>reason</code> to choose guidance; handle its absence with a general failure message.</td>
     </tr>
     <tr>
       <td className="p-2 align-middle whitespace-nowrap"><code>credential_unavailable</code></td>
@@ -161,9 +166,95 @@ This page documents the IDKit SDK and bridge error codes returned during request
   </tbody>
 </table>
 
+## Optional error reasons
+
+An error code describes the broad failure. An optional `reason` provides more specific context. IDKit decodes it automatically into the generic `ErrorReason` type; no separate parsing function is required. Reasons can accompany different error codes, so handle the code and reason independently.
+
+For example, World App can send this decrypted bridge response:
+
+```json
+{
+  "error_code": "challenge_failed",
+  "reason": "face_challenge_mismatch"
+}
+```
+
+JavaScript `pollOnce()` returns:
+
+```json
+{
+  "type": "failed",
+  "error": "challenge_failed",
+  "reason": "face_challenge_mismatch"
+}
+```
+
+`pollUntilCompletion()` returns the same `error` and optional `reason`, with `success: false` instead of `type: "failed"`.
+
+### Parsing behavior
+
+| Bridge `error_code` | Bridge `reason` | Parsed error | Parsed reason |
+| --- | --- | --- | --- |
+| `challenge_failed` | `face_challenge_mismatch` | `challenge_failed` | `face_challenge_mismatch` |
+| `user_rejected` | `user_cancelled` | `user_rejected` | `user_cancelled` |
+| `connection_failed` | `network_error` | `connection_failed` | `network_error` |
+| `challenge_failed` | An unrecognized string or `""` | `challenge_failed` | `unknown` |
+| An unrecognized code | `network_error` | `generic_error` | `network_error` |
+| `challenge_failed` | Missing or `null` | `challenge_failed` | Absent |
+
+A missing or `null` reason stays absent; it does not become `unknown`. A reason must be a string or `null`; other JSON types are malformed. Never require a reason to handle a failure: app versions and failure paths can omit it, and SDK-generated errors such as a polling timeout do not have one.
+
+The same parsing applies to v4 protocol errors: `reason` sits alongside `error` in a raw proof response, or inside `proof_response` in a wrapped response. Waiting and successful proof results do not include an error reason. JS mini-app error responses also preserve the optional reason.
+
+### SDK surfaces
+
+| SDK surface | Reason field or value |
+| --- | --- |
+| JavaScript failed `Status` and `IDKitCompletionResult` | `reason?: ErrorReason`; absent reasons are omitted from the returned object |
+| React hooks | `errorReason: ErrorReason \| null` |
+| React widget `onError` | Optional third argument: `onError(errorCode, debugReport?, reason?)` |
+| Rust `Status::Failed` and UniFFI `StatusWrapper::Failed` | `reason: Option<ErrorReason>`; absent reasons are `None` |
+| Swift `IDKitStatus.failed` and `IDKitCompletionResult.failure` | `reason: ErrorReason?`, default `nil` |
+| Kotlin `IDKitStatus.Failed` and `IDKitCompletionResult.Failure` | `reason: ErrorReason?`, default `null` |
+
+`ErrorReason` is a string union in JavaScript/TypeScript and an enum in Rust and the native SDKs. Unrecognized strings become `unknown` in JS, `ErrorReason::Unknown` in Rust, `.unknown` in Swift, and `ErrorReason.UNKNOWN` in Kotlin.
+
+### Recognized reasons
+
+The following are the recognized wire strings. The `face_challenge_*` values refer to the challenge image; `face_selfie_*` refers to the live selfie.
+
+| Reason | Meaning |
+| --- | --- |
+| `face_challenge_quality` | The challenge image failed quality checks or could not be decoded. |
+| `face_challenge_mismatch` | The challenge image does not match the user. |
+| `face_challenge_missing` | The challenge image is missing. |
+| `face_challenge_integrity` | The challenge image digest did not match. |
+| `face_selfie_quality` | The live selfie failed quality checks. |
+| `face_selfie_mismatch` | The live selfie does not match the enrolled face. |
+| `face_selfie_timeout` | Live selfie capture timed out. |
+| `spoof_detected` | The selfie was flagged as a spoof. |
+| `age_below_threshold` | The estimated age is below the required threshold. |
+| `username_mismatch` | The requested username does not match the user. |
+| `biometric_rejected` | Device biometric authentication failed or was locked out. |
+| `user_cancelled` | The user cancelled or closed the flow. |
+| `proof_failed` | Proof generation failed. |
+| `credential_unavailable` | The required credential is unavailable. |
+| `pcp_missing` | The personal custody package containing enrolled face data is missing. |
+| `face_auth_unavailable` | Face authentication is unavailable or its configuration was rejected. |
+| `face_auth_failed` | Face authentication failed for another reason. |
+| `metadata_failed` | Request metadata could not be loaded. |
+| `network_error` | A network or verifier call failed or timed out. |
+| `server_rejected` | The verification service rejected the request. |
+| `client_error` | The app encountered an unexpected local error. |
+| `process_challenge_failed` | Challenge proof processing failed. |
+| `face_quality` | Legacy face-quality reason without a stage distinction. |
+| `face_mismatch` | Legacy face-mismatch reason without a stage distinction. |
+| `face_auth_timeout` | Legacy face-authentication timeout reason. |
+| `unknown` | An unrecognized reason. |
+
 ## Handling errors
 
-Widgets expose an `onError` callback. Hooks expose `isError` and `errorCode` on the result object.
+Widgets expose `onError(errorCode, debugReport?, reason?)`. Hooks expose `isError`, `errorCode`, and nullable `errorReason` on the result object.
 
 In JS and React, failed requests expose an `IDKitDebugReport` for triage. The widget `onError` callback receives it as a second `debugReport` argument for flow/bridge errors (host-app verify failures such as `failed_by_host_app` omit it); hooks expose `getDebugReport(): IDKitDebugReport | undefined`.
 
@@ -174,8 +265,8 @@ In JS and React, match these with `IDKitErrorCodes`. Kotlin and Swift expose the
 ```tsx
 <IDKitRequestWidget
   // ...
-  onError={(errorCode, debugReport) => {
-    console.error("IDKit error", errorCode, debugReport);
+  onError={(errorCode, debugReport, reason) => {
+    console.error("IDKit error", errorCode, reason, debugReport);
   }}
 />
 ```
@@ -184,6 +275,6 @@ In JS and React, match these with `IDKitErrorCodes`. Kotlin and Swift expose the
 const flow = useIDKitRequest({ /* ... */ });
 
 if (flow.isError) {
-  console.error(flow.errorCode, flow.getDebugReport());
+  console.error(flow.errorCode, flow.errorReason, flow.getDebugReport());
 }
 ```
