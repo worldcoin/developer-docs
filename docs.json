@@ -12,21 +12,21 @@
   },
   "colors": {
     "primary": "#007CFB",
-    "light": "#4B5563",
-    "dark": "#000000"
+    "light": "#007CFB",
+    "dark": "#007CFB"
   },
   "fonts": {
     "heading": {
       "family": "World Pro MVP",
       "source": "/fonts/WorldProMVPVF-v2.woff2",
       "format": "woff2",
-      "weight": 600
+      "weight": 400
     },
     "body": {
       "family": "World Pro MVP",
       "source": "/fonts/WorldProMVPVF-v2.woff2",
       "format": "woff2",
-      "weight": 300
+      "weight": 350
     }
   },
   "favicon": "/favicon.ico",

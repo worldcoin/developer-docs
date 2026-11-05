@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "World Pro MVP";
+  src: url("/fonts/WorldProMVPVF-v2.woff2") format("woff2");
+  font-weight: 300 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   html {
     font-family:
@@ -21,17 +29,322 @@
 }
 
 @layer components {
+  .prose {
+    --tw-prose-body: #1f1f1f;
+    --tw-prose-headings: #1f1f1f;
+    --tw-prose-bold: #1f1f1f;
+  }
+  .dark .prose {
+    --tw-prose-body: #ffffff;
+    --tw-prose-headings: #ffffff;
+    --tw-prose-bold: #ffffff;
+  }
+  /* Mintlify supplies font-semibold on headings; override its utilities. */
+  #page-title,
+  .prose :is(h1, h2, h3, h4):not(:where(.not-prose, .not-prose *)) {
+    font-family: "World Pro MVP", sans-serif !important;
+    font-weight: 400 !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.015em !important;
+    color: #1f1f1f !important;
+  }
+  #page-title,
+  .prose h1:not(:where(.not-prose, .not-prose *)) {
+    font-size: 34px !important;
+  }
+  .prose h2:not(:where(.not-prose, .not-prose *)) {
+    font-size: 27px !important;
+    margin-top: 48px;
+    margin-bottom: 20px;
+  }
+  .prose h3:not(:where(.not-prose, .not-prose *)) {
+    font-size: 24px !important;
+    font-weight: 450 !important;
+  }
+  .prose h4:not(:where(.not-prose, .not-prose *)) {
+    font-size: 19px !important;
+    font-weight: 450 !important;
+  }
+  #content > :is(h2, h3, h4):first-child {
+    margin-top: 0;
+  }
+  .prose :is(p, li):not(:where(.not-prose, .not-prose *)) {
+    font-size: 17px;
+    font-weight: 350;
+    line-height: 1.6;
+  }
+  #header > .prose,
+  #header > .prose p {
+    font-size: 17px !important;
+    line-height: 1.5 !important;
+    color: #7d7d7d !important;
+  }
+  .dark #page-title,
+  .dark .prose :is(h1, h2, h3, h4):not(:where(.not-prose, .not-prose *)) {
+    color: #ffffff !important;
+  }
+  .dark #header > .prose,
+  .dark #header > .prose p {
+    color: #b8b8b8 !important;
+  }
+  .prose .card {
+    border-radius: 24px !important;
+    border-color: #f1f1f1 !important;
+    box-shadow: none;
+  }
+  .prose [data-component-part="card-content-container"] {
+    padding: 24px;
+  }
+  .prose [data-component-part="card-title"] {
+    font-size: 19px !important;
+    font-weight: 450 !important;
+    line-height: 1.2 !important;
+    color: #1f1f1f !important;
+  }
+  .prose [data-component-part="card-content"] {
+    margin-top: 12px;
+    font-size: 17px !important;
+    font-weight: 350 !important;
+    line-height: 1.5 !important;
+    color: #7d7d7d !important;
+  }
+  .prose [data-component-part="card-icon"] > svg {
+    background-color: #1f1f1f !important;
+  }
+  .prose .card:hover {
+    border-color: #b8b8b8 !important;
+  }
+  .dark .prose .card {
+    background-color: #1f1f1f;
+    border-color: #333333 !important;
+  }
+  .dark .prose [data-component-part="card-title"] {
+    color: #ffffff !important;
+  }
+  .dark .prose [data-component-part="card-content"] {
+    color: #b8b8b8 !important;
+  }
+  .dark .prose [data-component-part="card-icon"] > svg {
+    background-color: #ffffff !important;
+  }
+  /* These exported SVGs contain fixed dark fills, so `currentColor` on the
+     surrounding element cannot recolor them when Mintlify renders them as img. */
+  .dark img[src*="/icons/ui/"],
+  .dark .landing-container img[src*="/icons/landing/"],
+  .dark .landing-container img[src*="/icons/credentials/human-emblem.svg"] {
+    filter: brightness(0) invert(1) !important;
+  }
+  [role="menu"][data-base-ui-focusable] {
+    padding: 8px !important;
+    border-radius: 24px !important;
+    background-color: #ffffff !important;
+    border-color: #e4e4e4 !important;
+    box-shadow: 0 8px 16px rgb(0 0 0 / 0.06) !important;
+  }
+  [role="menuitem"] {
+    min-height: 44px !important;
+    padding: 10px 12px !important;
+    border-radius: 16px !important;
+    color: #1f1f1f !important;
+  }
+  [role="menuitem"] span {
+    font-size: 15px !important;
+    font-weight: 500 !important;
+  }
+  [role="menuitem"]:is(:hover, :focus-visible, [data-highlighted]) {
+    background-color: #f7f7f7 !important;
+  }
+  .dark [role="menu"][data-base-ui-focusable] {
+    background-color: #1f1f1f !important;
+    border-color: #333333 !important;
+  }
+  .dark [role="menuitem"] {
+    color: #ffffff !important;
+  }
+  .dark [role="menuitem"]:is(:hover, :focus-visible, [data-highlighted]) {
+    background-color: #2b2b2b !important;
+  }
+  [data-component-part="search-modal"] {
+    border-radius: 24px !important;
+    background-color: #ffffff !important;
+    --tw-ring-color: #e4e4e4;
+  }
+  [data-component-part="search-header"] {
+    height: 64px !important;
+    padding: 8px !important;
+  }
+  [data-component-part="search-header"] > div {
+    border-radius: 24px !important;
+    background-color: #f7f7f7 !important;
+    border-color: #f1f1f1 !important;
+    color: #7d7d7d !important;
+  }
+  [data-component-part="search-header"] input {
+    font-size: 17px;
+    font-weight: 350;
+    color: #1f1f1f;
+  }
+  :is([data-component-part="search-input-container"], [data-component-part="search-cli-state"]) > svg:first-child {
+    background-color: currentColor;
+    mask: url("/icons/ui/search.svg") center / contain no-repeat;
+  }
+  :is([data-component-part="search-input-container"], [data-component-part="search-cli-state"]) > svg:first-child > * {
+    visibility: hidden;
+  }
+  .dark [data-component-part="search-modal"] {
+    background-color: #1f1f1f !important;
+    --tw-ring-color: #333333;
+  }
+  .dark [data-component-part="search-header"] > div {
+    background-color: #2b2b2b !important;
+    border-color: #333333 !important;
+    color: #b8b8b8 !important;
+  }
+  .dark [data-component-part="search-header"] input {
+    color: #ffffff;
+  }
+  #page-context-menu button,
+  #navbar :is(#search-bar-entry, #assistant-entry) {
+    min-height: 44px !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    color: #1f1f1f !important;
+  }
+  #navbar :is(#search-bar-entry, #assistant-entry) {
+    background-color: #f7f7f7 !important;
+    border-color: #f1f1f1 !important;
+    --tw-ring-color: #f1f1f1;
+  }
+  #page-context-menu button > div {
+    font-size: 15px !important;
+    font-weight: 500 !important;
+  }
+  #page-context-menu button {
+    background-color: #ffffff !important;
+    border-color: #e4e4e4 !important;
+    --tw-ring-color: #e4e4e4;
+  }
+  #navbar #search-bar-entry-mobile {
+    width: 44px;
+    height: 44px;
+    border-radius: 100%;
+    color: #1f1f1f;
+    background-color: #f7f7f7;
+  }
+  .dark #navbar #search-bar-entry-mobile {
+    color: #ffffff;
+    background-color: #2b2b2b;
+  }
+  #page-context-menu button:first-child {
+    border-radius: 24px 0 0 24px;
+    padding: 10px 16px;
+  }
+  #page-context-menu button:last-child {
+    border-radius: 0 24px 24px 0;
+    width: 44px;
+  }
+  .dark #page-context-menu button,
+  .dark #navbar :is(#search-bar-entry, #assistant-entry) {
+    color: #ffffff !important;
+    background-color: #2b2b2b !important;
+    border-color: #333333 !important;
+    --tw-ring-color: #333333;
+  }
+  #page-context-menu button:hover,
+  #navbar :is(#search-bar-entry, #assistant-entry):hover {
+    background-color: #f1f1f1 !important;
+  }
+  .dark #page-context-menu button:hover,
+  .dark #navbar :is(#search-bar-entry, #assistant-entry):hover {
+    background-color: #333333 !important;
+  }
+  :is(#page-context-menu, #navbar) button:focus-visible,
+  .prose .card:focus-visible {
+    outline: 2px solid #007cfb;
+    outline-offset: 3px;
+  }
+  :is(#search-bar-entry, #search-bar-entry-mobile, #page-context-menu-button) svg {
+    color: inherit !important;
+    background-color: currentColor;
+    mask: url("/icons/ui/search.svg") center / contain no-repeat;
+  }
+  #page-context-menu-button svg {
+    width: 16px !important;
+    height: 16px !important;
+    mask-image: url("/icons/ui/copy.svg");
+  }
+  #page-context-menu button:last-child svg {
+    color: inherit !important;
+    background-color: currentColor;
+    mask: url("/icons/ui/nav-arrow-right.svg") center / contain no-repeat;
+  }
+  #page-context-menu button:last-child svg > * {
+    visibility: hidden;
+  }
+  :is(#search-bar-entry, #search-bar-entry-mobile, #page-context-menu-button) svg > * {
+    visibility: hidden;
+  }
+  [data-testid="copy-code-button"] > svg {
+    width: 16px !important;
+    height: 16px !important;
+    background-color: currentColor;
+    mask: url("/icons/ui/copy.svg") center / contain no-repeat;
+  }
+  [data-testid="copy-code-button"] > svg:not(.text-primary) {
+    color: #1f1f1f !important;
+  }
+  .dark [data-testid="copy-code-button"] > svg:not(.text-primary) {
+    color: #ffffff !important;
+  }
+  [data-testid="copy-code-button"] > svg.text-primary {
+    mask-image: url("/icons/ui/check.svg");
+  }
+  [data-testid="copy-code-button"] > svg > * {
+    visibility: hidden;
+  }
+  .docs-idkit-preview-close {
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.75), rgb(229 229 229 / 0.6) 18%, rgb(255 255 255 / 0.35) 85%);
+    box-shadow: 1.25px 0 0 -0.5px #b8b8b8, -1.25px 0 0 -0.5px #b8b8b8, 0 0 0 0.5px #e4e4e4, 0 8px 15px rgb(0 0 0 / 0.025), inset 0 1.25px 0 rgb(255 255 255 / 0.95);
+  }
+  .dark .docs-idkit-preview-close {
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.08), rgb(255 255 255 / 0.02) 45%, rgb(255 255 255 / 0.055));
+    box-shadow: 0 0 0 0.5px rgb(255 255 255 / 0.12), 0 8px 15px rgb(0 0 0 / 0.18), inset 0 1px 1px rgb(255 255 255 / 0.28);
+  }
   /* Sidebar — selected item is a neutral pill per Docs 3.0 (bg gray/a9, ink
      text), replacing the theme-default blue tint. */
   #sidebar-content li[data-active="true"] > a {
-    background-color: #F3F2F0 !important;
-    color: #181818 !important;
-    border-radius: 6px !important;
+    background-color: #f1f1f1 !important;
+    color: #1f1f1f !important;
+    border-radius: 12px !important;
     text-shadow: none !important;
   }
   .dark #sidebar-content li[data-active="true"] > a {
     background-color: rgba(255, 255, 255, 0.08) !important;
-    color: #F3F2F0 !important;
+    color: #ffffff !important;
+  }
+  #sidebar-content :is(a, button) {
+    font-size: 15px !important;
+    color: #7d7d7d !important;
+    border-radius: 12px;
+  }
+  #sidebar-content h3 {
+    font-size: 15px;
+    font-weight: 500 !important;
+    color: #1f1f1f;
+  }
+  #sidebar-content :is(a, button):hover {
+    color: #1f1f1f !important;
+    background-color: #f7f7f7;
+  }
+  .dark #sidebar-content :is(a, button) {
+    color: #b8b8b8 !important;
+  }
+  .dark #sidebar-content h3 {
+    color: #ffffff !important;
+  }
+  .dark #sidebar-content :is(a, button):hover {
+    color: #ffffff !important;
+    background-color: #2b2b2b;
   }
 
   /* The supplied human emblem has a fixed ink fill. Invert it in dark mode
@@ -44,7 +357,7 @@
   .prose a:not([class]),
   .prose a:not([class]):hover,
   .prose a:not([class]):focus {
-    color: #1989fb !important;
+    color: #007cfb !important;
     text-decoration: none !important;
     background-image: none !important;
     border-bottom: none !important;
@@ -65,11 +378,11 @@
   }
   :root select option {
     background-color: #ffffff;
-    color: #0f172a; /* slate-900 */
+    color: #1f1f1f;
   }
   .dark select option {
     background-color: #0b1220; /* near slate-950 */
-    color: #e5e7eb; /* gray-200 */
+    color: #ffffff;
   }
 
   /* ------------------------------------------------------------------ */
@@ -83,24 +396,26 @@
   }
   #navbar .nav-tabs-item {
     height: 32px !important;
-    padding: 6px 10px;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    line-height: 20px;
+    padding: 6px 12px;
     border-radius: 42px;
-    color: #181818 !important;
+    color: #1f1f1f !important;
     transition: background-color 0.15s ease;
   }
   #navbar .nav-tabs-item:hover {
-    color: #181818 !important;
-    background-color: #F3F2F0;
+    color: #1f1f1f !important;
+    background-color: #f1f1f1;
   }
   #navbar .nav-tabs-item[data-active="true"] {
-    padding: 6px 14px;
-    background-color: #181818;
-    color: #F9F9F8 !important;
+    background-color: #1f1f1f;
+    color: #ffffff !important;
     text-shadow: none;
   }
   #navbar .nav-tabs-item[data-active="true"]:hover {
-    color: #F9F9F8 !important;
-    background-color: #181818;
+    color: #ffffff !important;
+    background-color: #1f1f1f;
   }
   /* The theme's active-tab underline indicator */
   #navbar .nav-tabs-item > div.absolute {
@@ -125,30 +440,22 @@
     background-color: rgba(255, 255, 255, 0.15);
   }
   .dark #navbar .nav-tabs-item {
-    color: #F3F2F0 !important;
+    color: #ffffff !important;
   }
   .dark #navbar .nav-tabs-item:hover {
-    color: #F3F2F0 !important;
+    color: #ffffff !important;
     background-color: rgba(255, 255, 255, 0.08);
   }
   .dark #navbar .nav-tabs-item[data-active="true"],
   .dark #navbar .nav-tabs-item[data-active="true"]:hover {
-    background-color: #F3F2F0;
-    color: #181818 !important;
+    background-color: #f1f1f1;
+    color: #1f1f1f !important;
   }
 
   /* Search entry — quiet bordered pill per design */
   #navbar #search-bar-entry {
-    border-radius: 20px;
-    background-color: #F9F9F8;
+    border-radius: 24px !important;
     box-shadow: none;
-    --tw-ring-color: #E1DFDA;
-    color: #181818;
-  }
-  .dark #navbar #search-bar-entry {
-    background-color: rgb(24, 25, 27);
-    --tw-ring-color: rgba(255, 255, 255, 0.15);
-    color: #F3F2F0;
   }
 
   /* Developer Portal CTA — pill radius to match the design language */
@@ -210,11 +517,11 @@
       padding: 0 25px 0 33px;
       background-color: #FFFFFF;
       border: 1px solid #E1DFDA;
-      border-radius: 18px;
+      border-radius: 24px;
       box-shadow: 0px 15px 20px -5px rgba(0, 0, 0, 0.03);
     }
     .dark #navbar > div.max-w-8xl {
-      background-color: rgb(24, 25, 27);
+      background-color: #1f1f1f;
       border-color: rgba(255, 255, 255, 0.12);
     }
     /* Flatten the two-row scaffolding into the pill's flex line. */
@@ -252,35 +559,27 @@
     #navbar div.lg\:px-12 .nav-logo {
       height: 17.5px !important;
     }
-    /* Search pill at the design metrics: 34px tall, 6/14 padding. */
+    /* Search is a 44px control; navigation tabs use a compact 32px pill. */
     #navbar #search-bar-entry {
       width: auto !important;
-      height: 34px !important;
+      height: 44px !important;
       padding: 6px 14px !important;
-      border-radius: 20px;
-      box-shadow: none;
     }
     #navbar #search-bar-entry span.text-xs {
       display: none;
     }
     /* Ask Assistant (hosted-only) — the design's "Ask AI" pill. */
     #navbar #assistant-entry {
-      height: 34px !important;
+      height: 44px !important;
       padding: 6px 14px !important;
       border-radius: 20px !important;
-      background-color: #F9F9F8 !important;
-      border: 1px solid #E1DFDA !important;
+      border-width: 1px !important;
+      border-style: solid !important;
       box-shadow: none !important;
-      color: #181818 !important;
     }
     #navbar #assistant-entry kbd,
     #navbar #assistant-entry .text-xs {
       display: none !important;
-    }
-    .dark #navbar #assistant-entry {
-      background-color: rgb(24, 25, 27) !important;
-      border-color: rgba(255, 255, 255, 0.15) !important;
-      color: #F3F2F0 !important;
     }
     /* The emptied right-hand group collapses inside the pill. */
     #navbar div.lg\:px-12 > div > div.justify-end {
@@ -329,6 +628,12 @@
   }
 
   /* Landing page — product cards (borderless icon-tile rows per Docs 3.0) */
+  .landing-card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 80px;
+    row-gap: 113px;
+  }
   a.product-card {
     display: flex;
     align-items: flex-start;
@@ -356,46 +661,28 @@
     background-color: rgb(32, 33, 36);
   }
   .product-card-title {
-    color: #181818;
+    color: #1f1f1f;
   }
   .dark .product-card-title {
-    color: #FFFFFF;
+    color: #ffffff;
   }
   .product-card-desc {
-    color: #75726F;
+    color: #7d7d7d;
   }
   .dark .product-card-desc {
-    color: rgb(158, 162, 166);
+    color: #b8b8b8;
   }
   .dark .product-card-icon {
     filter: invert(1);
   }
-
-  /* Landing page — section headers (Developer stories / World Tech Updates) */
-  .landing-section-title {
-    font-size: 48px;
-    line-height: 1.15;
-    letter-spacing: -0.96px;
-    font-weight: 300;
-    color: #181818;
-  }
-  .dark .landing-section-title {
-    color: #F3F2F0;
-  }
-  .landing-section-sub {
-    margin-top: 12px;
-    font-size: 18px;
-    line-height: 1.4;
-    font-weight: 300;
-    color: #75726F;
-  }
-  .dark .landing-section-sub {
-    color: rgb(158, 162, 166);
-  }
-  @media (max-width: 600px) {
-    .landing-section-title {
-      font-size: 32px;
-      letter-spacing: -0.64px;
+  @media (max-width: 900px) {
+    .landing-card-grid {
+      grid-template-columns: 1fr;
+      row-gap: 40px;
+    }
+    .product-card-tile {
+      width: 84px;
+      height: 90px;
     }
   }
 
@@ -425,29 +712,11 @@
   .landing-stories-track::-webkit-scrollbar {
     display: none;
   }
-  .landing-carousel-arrow {
-    background-color: #FFFFFF;
-    border: 1px solid #E1DFDA;
-    color: #181818;
-    transition: background-color 0.15s ease;
-  }
-  .landing-carousel-arrow:hover {
-    background-color: #F3F2F0;
-  }
-  .dark .landing-carousel-arrow {
-    background-color: rgb(24, 25, 27);
-    border-color: rgba(255, 255, 255, 0.15);
-    color: #F3F2F0;
-  }
-  .dark .landing-carousel-arrow:hover {
-    background-color: rgb(32, 33, 36);
-  }
-
   /* Landing page — World Tech updates list; rows separated by hairline rules
      (above each row and below the last) per the Docs 3.0 QA design. */
   .landing-update {
     display: block;
-    padding: 40px 0;
+    padding: 32px 0;
     border-top: 1px solid #E1DFDA;
     text-decoration: none;
   }
@@ -459,50 +728,28 @@
   }
   .landing-update-title {
     font-size: 24px;
-    line-height: 1.3;
-    letter-spacing: -0.24px;
-    font-weight: 300;
-    color: #181818;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    font-weight: 450;
+    color: #1f1f1f;
   }
   .landing-update:hover .landing-update-title {
     text-decoration: underline;
     text-underline-offset: 4px;
   }
   .dark .landing-update-title {
-    color: #F3F2F0;
+    color: #ffffff;
   }
   .landing-update-desc {
     margin: 12px 0 0;
     max-width: 886px;
-    font-size: 16px;
+    font-size: 17px;
     line-height: 1.5;
-    font-weight: 300;
-    color: #75726F;
+    font-weight: 350;
+    color: #7d7d7d;
   }
   .dark .landing-update-desc {
-    color: rgb(158, 162, 166);
-  }
-
-  /* Landing page — hero text */
-  .landing-hero {
-    color: #2D2C2C;
-  }
-  .dark .landing-hero {
-    color: #F3F2F0;
-  }
-
-  /* Landing page — support links */
-  .landing-link {
-    color: #181818;
-  }
-  .landing-link svg {
-    fill: #181818;
-  }
-  .dark .landing-link {
-    color: #F3F2F0;
-  }
-  .dark .landing-link svg {
-    fill: #F3F2F0;
+    color: #b8b8b8;
   }
 
   /* Landing page — footer */
@@ -556,20 +803,20 @@
     color: #F3F2F0 !important;
   }
   .landing-footer-link {
-    color: #181818;
+    color: #1f1f1f;
     text-decoration: none;
   }
   .landing-footer-link:hover {
     text-decoration: underline;
   }
   .dark .landing-footer-link {
-    color: #F3F2F0;
+    color: #ffffff;
   }
   .landing-footer-links {
-    color: #181818;
+    color: #1f1f1f;
   }
   .dark .landing-footer-links {
-    color: #F3F2F0;
+    color: #ffffff;
   }
 
   /* ------------------------------------------------------------------ */
@@ -596,14 +843,14 @@
   }
   #footer.advanced-footer a.select-none::after {
     content: "™ 2026 World";
-    font-size: 16px;
+    font-size: 15px;
     line-height: 1.4;
-    font-weight: 300;
-    color: #181818;
+    font-weight: 350;
+    color: #1f1f1f;
     white-space: nowrap;
   }
   .dark #footer.advanced-footer a.select-none::after {
-    color: #F3F2F0;
+    color: #ffffff;
   }
   /* Link row: right-aligned single row, ink links per design. */
   @media (min-width: 768px) {
@@ -614,19 +861,19 @@
   }
   #footer.advanced-footer a[class*="max-w-36"] {
     max-width: none !important;
-    font-size: 16px !important;
+    font-size: 15px !important;
     line-height: 1.4;
-    font-weight: 300;
-    color: #181818 !important;
+    font-weight: 350;
+    color: #1f1f1f !important;
   }
   #footer.advanced-footer a[class*="max-w-36"]:hover {
-    color: #181818 !important;
+    color: #1f1f1f !important;
     text-decoration: underline;
     text-underline-offset: 4px;
   }
   .dark #footer.advanced-footer a[class*="max-w-36"],
   .dark #footer.advanced-footer a[class*="max-w-36"]:hover {
-    color: #F3F2F0 !important;
+    color: #ffffff !important;
   }
   /* The design's footer carries no social icons (those links live in the
      footer links row; GitHub also sits in the Resources menu). */
@@ -678,59 +925,6 @@
     }
   }
 
-  /* Landing page — hero */
-  .landing-hero-title {
-    font-size: 64px;
-    line-height: 1.1;
-    letter-spacing: -1.28px;
-    font-weight: 300;
-    color: #181818;
-  }
-  .dark .landing-hero-title {
-    color: #F3F2F0;
-  }
-  .landing-hero-sub {
-    margin-top: 24px;
-    max-width: 487px;
-    font-size: 24px;
-    line-height: 1.35;
-    letter-spacing: -0.24px;
-    font-weight: 300;
-    color: #75726F;
-  }
-  .dark .landing-hero-sub {
-    color: rgb(158, 162, 166);
-  }
-  @media (max-width: 600px) {
-    .landing-hero-title {
-      font-size: 40px;
-      letter-spacing: -0.8px;
-    }
-    .landing-hero-sub {
-      font-size: 18px;
-    }
-  }
-
-  /* Landing page — responsive card grid (2×2 per Docs 3.0) */
-  .landing-card-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    column-gap: 80px;
-    row-gap: 113px;
-  }
-  @media (max-width: 900px) {
-    .landing-card-grid {
-      grid-template-columns: 1fr;
-      row-gap: 40px;
-    }
-    .product-card-tile {
-      width: 84px;
-      height: 90px;
-    }
-    .product-card .product-card-title {
-      font-size: 24px !important;
-    }
-  }
   .landing-container {
     max-width: 1728px;
     margin: 0 auto;
