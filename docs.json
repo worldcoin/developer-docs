@@ -94,6 +94,13 @@
             ]
           },
           {
+            "group": "World ID Auth",
+            "pages": [
+              "world-id-auth/accepted-accounts",
+              "world-id-auth/step-up"
+            ]
+          },
+          {
             "group": "Sandbox",
             "pages": [
               "world-id/sandbox/what-is-sandbox",
