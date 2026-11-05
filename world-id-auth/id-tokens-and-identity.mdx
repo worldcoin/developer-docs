@@ -8,8 +8,37 @@ description: "Validate token claims, read UserInfo, and recognize accounts using
 
 {/* Generated from worldcoin/temporal-apps/apps/idpapi/mcp/guides/id-token.md. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}
 
-This guide describes the OIDC token response, the ID token's claims, and how to
-store and compare the subject (`sub`).
+World ID credentials, token responses, claim semantics, authentication methods, and account identifiers.
+
+## Credentials and authentication classes {#credentials-and-authentication-classes}
+
+Choose which verification your application accepts separately from how recently
+the person must authenticate. A World ID account can hold both Orb and Selfie
+Check credentials, plus passkeys for authentication.
+
+| Credential   | What it establishes                                                                                                                                             | Baseline `acr`                                                            |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Orb          | Iris-based verification at an Orb provides high assurance of unique humanness.                                                                                  | `https://world.org/oidc/acr/orb`                                          |
+| Selfie Check | Camera-based liveness and facial similarity checks provide a medium-assurance signal of humanness and uniqueness, with greater duplicate-account risk than Orb. | `https://world.org/oidc/acr/selfie`                                       |
+| Passkey      | Authenticates control of the account with WebAuthn user verification. It adds no biometric uniqueness verification.                                             | The account's Orb or Selfie Check class, or no `acr` if it holds neither. |
+
+[Orb verification](https://docs.world.org/world-id/credentials/1) is suited to
+applications that need stronger resistance to duplicate accounts.
+[Selfie Check](https://docs.world.org/world-id/credentials/11) is available without
+an Orb visit. It does not provide a strict one-person-one-account guarantee.
+Choose according to the consequences of accepting a duplicate account.
+
+**Face Auth adds a face check during authentication with an existing credential.**
+`https://world.org/oidc/acr/orb-face` adds a completed face check to an Orb proof;
+`https://world.org/oidc/acr/selfie-face` adds it to a Selfie Check proof. A Selfie
+Check credential by itself does not mean a face check occurred during this login.
+A passkey cannot satisfy either `-face` class.
+
+Use `acr` for the achieved class, `amr` for the authentication method, and
+`auth_time` for freshness. An account's verification type does not imply a fresh
+biometric check. See [Assurance values](#assurance-values)
+for the exact claims and [Accept Orb or Selfie Check](/world-id-auth/step-up#accept-orb-or-selfie-check)
+for requests that allow either credential.
 
 ## Token response {#token-response}
 
@@ -19,15 +48,15 @@ Browser and device flows both return `id_token`, `access_token`, `token_type`, a
 - **`id_token`:** the signed authentication result described below.
   [Validate it](/world-id-auth/connect-your-backend#validate-the-id-token) before using
   any claim.
-- **`access_token`:** an opaque credential for the [UserInfo endpoint](#userinfo).
-  It does not authorize calls to the World ID MCP server or your application's APIs.
+- **`access_token`:** an opaque credential whose authority is limited to the
+  [UserInfo endpoint](#userinfo).
 - **`token_type`:** `Bearer`.
 - **`expires_in`:** the access token's lifetime in seconds. Read the returned
   value. The ID token has its own expiration, given by `exp`.
 
-World ID authentication with `openid` does not issue refresh tokens. The
-[XAA profile](/world-id-auth/xaa) returns a rotating refresh token for
-`openid offline_access`.
+Refresh tokens are available only through the
+[XAA profile](/world-id-auth/xaa), which returns a rotating refresh token
+for `openid offline_access`.
 
 After validation, your backend creates its own application sessions and API or
 MCP credentials. Keep the ID token and subject in your backend, outside model
@@ -35,15 +64,9 @@ messages and tool results.
 
 ## Decoded ID token {#decoded-id-token}
 
-The `id_token` is a signed JWT with three parts: `header.payload.signature`. Its
-header identifies the RS256 signing algorithm and the signing key by its `kid`.
-Use an OIDC library to verify the signature with the keys advertised by the
-[discovery document](https://auth.world.org/.well-known/openid-configuration). Decoding the
-payload alone does not validate it.
-
-This example shows a decoded payload for a browser authorization request that
-included a nonce. Identifiers and timestamps are illustrative; validate the
-returned `exp` rather than assuming a fixed lifetime.
+World IdP signs ID tokens with RS256; `kid` selects a key from
+[discovery's `jwks_uri`](https://auth.world.org/.well-known/openid-configuration). Use an OIDC library for [ID token validation](https://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation).
+This illustrative browser response includes the requested nonce:
 
 ```json
 {
@@ -62,18 +85,16 @@ returned `exp` rather than assuming a fixed lifetime.
 
 ## Claim reference {#claim-reference}
 
-| Claim       | Meaning and use                                                                                                                                                                                                |
-| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `iss`       | Issuer. Require an exact match to your configured World ID issuer and store it with `sub`.                                                                                                                     |
-| `sub`       | The World ID account's stable identifier within your registered sector. Use it for account recognition after token validation.                                                                                 |
-| `aud`       | Intended client. Require your registered client ID as the audience. Sharing a sector does not make another client's token valid for yours.                                                                     |
-| `exp`       | Token expiration, as Unix time in seconds. Reject expired tokens.                                                                                                                                              |
-| `iat`       | Token issuance time, as Unix time in seconds. A new token can reuse an older authentication.                                                                                                                   |
-| `jti`       | Token identifier. Use `sub` to recognize the account; `jti` does not identify the user or approve a business action.                                                                                           |
-| `auth_time` | Authentication time, as Unix time in seconds. Use this to enforce your freshness requirement.                                                                                                                  |
-| `acr`       | Achieved authentication class: `https://world.org/oidc/acr/orb`, `https://world.org/oidc/acr/orb-face`, or, only when you request it, `https://world.org/oidc/acr/selfie`. Check it against your requirements. |
-| `amr`       | `["pop"]` for a World ID proof, `["pop", "face"]` for Face Auth or Selfie Check, or `["pop", "user", "mfa"]` for a user-verified passkey. Only the passkey value asserts MFA.                                  |
-| `nonce`     | Matches the nonce your backend sent in the browser authorization request. Present only when supplied; omitted in device grants.                                                                                |
+| Claim        | World IdP behavior                                                                                                                                                                                                                                                                       |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `iss`, `sub` | Store the exact issuer and opaque, case-sensitive subject together as the external account identity.                                                                                                                                                                                     |
+| `aud`        | Your registered client ID. Clients sharing a sector still have separate token audiences.                                                                                                                                                                                                 |
+| `auth_time`  | Server verification time for the proof or passkey assertion. See [Assurance values](#assurance-values).                                                                                                                                                                                  |
+| `acr`, `amr` | Achieved class and methods; see [Assurance values](#assurance-values). Selfie classes require a request or [accepted accounts](/world-id-auth/step-up#accepted-accounts) that list them. Any account also permits Selfie or unverified accounts; unverified accounts omit `acr`. |
+| `nonce`      | Included when supplied in browser authorization; omitted in device grants.                                                                                                                                                                                                               |
+
+Apply standard `exp`, `iat`, and `jti` semantics. Read `exp` from the ID token;
+`expires_in` describes the access token. Use `sub` for account recognition.
 
 For example, if a user authenticates at 10:00 and their existing session produces
 a token at 11:00, `auth_time` still represents 10:00 while `iat` represents 11:00.
@@ -96,6 +117,43 @@ Name, raw World identifiers, and World proofs are not included. See the
 [OIDC claim definitions](https://openid.net/specs/openid-connect-core-1_0.html#IDToken)
 and [identity stability rules](https://openid.net/specs/openid-connect-core-1_0.html#ClaimStability).
 
+## Assurance values {#assurance-values}
+
+- **`acr`:** `https://world.org/oidc/acr/orb` means the account holds a verified
+  Orb credential, and the person authenticated with a proof of that credential or
+  an enrolled passkey. `https://world.org/oidc/acr/orb-face` additionally requires
+  the World ID app to report a completed Face Auth check for the proof request.
+  `https://world.org/oidc/acr/selfie` and `https://world.org/oidc/acr/selfie-face` mean
+  the same for a Selfie Check credential.
+- **`amr`:** `["pop"]` for a World ID proof with either credential; `acr` names the credential.
+  A face check during the login adds `face` and `user`, giving `["pop", "face", "user"]`.
+  `["pop", "user", "mfa"]` identifies a user-verified passkey, which does not assert
+  a fresh World proof. Only the passkey value asserts MFA.
+- **`auth_time`:** server verification time for the credential proof or passkey assertion, not
+  the phone's exact proof-generation or biometric-check time. Browser-session reuse
+  preserves it and the original `acr` and `amr`; a new token's `iat` does not imply
+  a fresh proof.
+
+Face Auth assurance trusts the official app's completion signal together with
+the verified proof. The server does not independently verify the selfie check.
+A missing or false completion signal cannot satisfy a face check class,
+including when the signal is missing from an older app.
+
+## Authentication methods {#authentication-methods}
+
+For fresh authentication, World IdP verifies a credential proof or an enrolled
+passkey assertion with WebAuthn user presence and user verification. A passkey
+assertion completes authentication without a phone proof. Possession of a
+verification link alone cannot complete authentication.
+
+Only the initiating browser can claim a browser transaction's session and
+callback URL. Device grants create no browser session; redemption requires the
+private device code and the registered client's authentication.
+
+The ID token carries authentication context. Your application checks permissions
+and enforces and records any approval required for a payment, redemption, or
+account change.
+
 ## UserInfo {#userinfo}
 
 Send `GET` or `POST` to the discovery document's `userinfo_endpoint` with
@@ -112,6 +170,13 @@ old tokens after replication. The authenticated issuing client can revoke a toke
 at the discovery document's `revocation_endpoint`.
 Revoking an XAA access token revokes its delegation family.
 
+## Browser sessions {#browser-sessions}
+
+World IdP sessions expire after 180 days without authenticated browser activity.
+Activity renews that deadline; logout, revocation, account disablement, and
+requested reauthentication still apply. Session reuse preserves the original
+authentication context.
+
 ## Store and match sub {#store-and-match-sub}
 
 After validating the ID token, store **`(iss, sub)`** as the external identity
@@ -119,9 +184,9 @@ linked to your application's account. Link World ID through an explicit action w
 the user is signed in to that account. For later step-up, require the returned
 issuer and subject to match the stored pair before updating the session's assurance.
 
-Treat `sub` as an opaque, case-sensitive string. Compare the complete value;
-do not decode it or derive your own replacement. A subject supplied by a
-browser or agent is not proof of authentication.
+Treat `sub` as an opaque, case-sensitive string. Store and compare the complete
+value exactly as issued. For this OIDC account binding, use the subject from the
+validated ID token.
 
 For the same issuer and registered sector, the same World ID account receives
 the same `sub` across browser sign-ins, devices, and agent authentication flows.

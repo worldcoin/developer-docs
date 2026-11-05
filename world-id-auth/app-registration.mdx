@@ -12,10 +12,10 @@ Sign in to the [developer portal](https://auth.world.org/portal) with Google to 
 OIDC client for your application or auth server. This registration supports
 step-up, human-in-the-loop workflows, and primary sign-in.
 
-Check that your Google account is eligible in the target environment before
-relying on self-service registration. Registration may be disabled, or you may
-have reached the limit on clients you can own. If you receive
-`account_not_eligible`, you may need help from the environment's operator.
+Check that your Google account is eligible for self-service registration in the
+target environment. Registration may be disabled, or you may have reached the
+limit on clients you can own. If you receive `account_not_eligible`, contact the
+environment's operator for help.
 
 ## Register your application {#register-your-application}
 
@@ -25,28 +25,54 @@ have reached the limit on clients you can own. If you receive
    variable ports are not supported. Device-only clients also need a registered
    redirect URI, although the device grant does not use it.
 2. **Choose client authentication.** Register `client_secret_basic`,
-   `client_secret_post`, or `private_key_jwt`. You cannot change the method
-   after registration; switching methods requires a new client registration.
-   You can still rotate the existing client's secret or signing keys.
+   `client_secret_post`, or `private_key_jwt`. The method is fixed for the client's
+   lifetime; register a new client to switch methods. You can rotate the existing
+   client's secret or signing keys.
    For `private_key_jwt`, generate the key pair in your backend's secure
    environment and register only its public JWKS.
 3. **Save the credentials in your backend.** Save the client ID and, when using
-   a shared secret, the secret shown once by the portal. Never ship a shared
-   secret or private key in frontend code or a CLI distributed to users.
+   a shared secret, the secret shown once by the portal. Keep shared secrets and
+   private keys exclusively in your backend.
    Client secrets start with `worldidp_client_secret_`, so secret scanners can
    flag leaked ones.
 
 World ID authentication with `openid` requires a client registered through the portal.
-[XAA hosts](/world-id-auth/xaa) may instead use public or confidential CIMD
+[Agent hosts that use XAA](/world-id-auth/xaa) may instead use public or confidential CIMD
 registration. OIDC dynamic client registration (DCR) is not supported.
 
-Developers sign in to the portal with Google to manage clients. Your users
-authenticate with World ID in your application.
+Use Google sign-in to manage clients in the portal. Your application's users
+authenticate through the separate OIDC flow.
 
-Once registered, [connect your backend](/world-id-auth/connect-your-backend) or
-[configure your auth server](/world-id-auth/connect-your-auth-server).
-You can also [set a default verification preference](/world-id-auth/step-up#default-verification-preference)
+Once registered, [connect your backend or auth server with OIDC](/world-id-auth/connect-your-backend).
+When you create the client, choose its [accepted accounts](/world-id-auth/step-up#accepted-accounts)
 for requests that omit both `acr_values` and an `acr` claim request.
+
+## Client authentication {#client-authentication}
+
+Authenticate at the token and device authorization endpoints with the client's
+registered method:
+
+| Method                                 | How to send credentials                                                                                                                                                     |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `client_secret_basic` (portal default) | Form-encode the client ID and secret and send them in the Authorization header as Basic credentials. An optional body `client_id` must match.                               |
+| `client_secret_post`                   | Send `client_id` and `client_secret` in the form body, without an Authorization header.                                                                                     |
+| `private_key_jwt`                      | Send `client_id`, `client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer`, and `client_assertion` in the form body, without an Authorization header. |
+
+For `private_key_jwt`, register the public JWKS in the portal and keep the private
+key in your backend. The assertion is a compact RS256 JWT:
+
+- `kid` selects a registered RSA key (2048–8192 bits). It may be omitted when
+  exactly one key is registered.
+- `iss` and `sub` are both the client ID.
+- The single `aud` is `https://auth.world.org` or the exact endpoint being called.
+- Include `iat`, `exp` (at most one hour after `iat`), and a unique `jti` of at
+  most 256 bytes. Expiration is strict; `iat` and optional `nbf` allow 30 seconds
+  of clock skew.
+
+Use a fresh assertion for every request, retry, and device poll, including after
+`authorization_pending`. Assertions are single-use across endpoints. A rejected
+assertion returns HTTP 400 `invalid_client`.
+Keep request bodies, Authorization headers, and callback query strings out of logs.
 
 ## Manage credentials and callbacks {#manage-credentials-and-callbacks}
 
@@ -54,6 +80,8 @@ When rotating credentials, keep the old secret or key active until the new one w
 changes can take a short time to propagate.
 
 New portal applications receive a unique, permanent identity sector by default.
+World IdP's managed sectors extend the hostname-based sector selection in
+[OIDC Core §8.1](https://openid.net/specs/openid-connect-core-1_0.html#PairwiseAlg).
 Callbacks can use different hostnames without a hosted sector document.
 Applications in different sectors receive different pairwise `sub` values and
 relay aliases, even when their callbacks use the same hostname. Existing
@@ -90,8 +118,7 @@ When migrating to a new sector, retain the old account mapping during the transi
 Require an authenticated session for the existing application account and a fresh,
 browser-bound World ID linking attempt for the new client. Confirm the intended
 account with the user, then store the new validated `(iss, sub)` only after
-linking succeeds. Never guess which subjects correspond across sectors or link
-an account using an unvalidated subject.
+linking succeeds. Establish each mapping through this validated linking flow.
 
 ## Get help from a coding agent {#get-help-from-a-coding-agent}
 
@@ -105,14 +132,13 @@ and private keys outside agent conversations. The
 
 ## Publish a benefit listing {#publish-a-benefit-listing}
 
-If your application offers a World ID benefit, save a Catalog listing for its OIDC client
-in the developer portal: name, description, and HTTPS application URL. Optionally
-fill in **Instructions** (`instructions`) with steps
-to claim the benefit, a plugin link, or an MCP URL. Include any prerequisites and
-how to recognize success. These instructions are public;
-do not include credentials or tokens. The owner submits the listing for review. Only an approved, published
-listing for an active client appears in `get_benefits`; registration and successful
-authentication do not publish it. Changes to instructions require a new review.
+If your application offers a World ID benefit, create a Catalog listing for its
+OIDC client in the developer portal. Add a name, description, and HTTPS application
+URL. The optional **Instructions** (`instructions`) field can include steps to
+claim the benefit, a plugin link, or an MCP URL. Include prerequisites and explain
+how to recognize success. Keep these public instructions free of credentials and
+tokens. The owner submits the listing for review. Only an approved, published
+listing for an active client appears in `get_benefits`. Changes to instructions require a new review.
 Publication changes can take up to a minute to appear.
 
 Agents use the instructions to understand the partner's preferred claiming

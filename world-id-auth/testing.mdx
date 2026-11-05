@@ -19,8 +19,11 @@ not establish that a real person is Orb-verified.
 To try World ID flows before you register an application, use the
 [OAuth Playground](https://oauth-playground.toolsforhumanity.dev/) with a
 [sandbox World ID](/world-id-auth/testing#create-a-sandbox-world-id).
-The playground runs authentication, step-up, device, XAA, and MCP flows against
-the sandbox issuer and shows what a relying party should validate.
+The playground runs authentication, step-up, and device flows against the
+sandbox World IdP and shows what a relying party should validate. It also hosts MCP
+servers for your agent: one authenticates you through World ID and shows the
+ID token, and one shows the ID-JAG an app receives through
+[Cross App Access](/world-id-auth/xaa).
 
 ### Set up your application {#set-up-your-application}
 
@@ -37,8 +40,7 @@ Sign in to the sandbox portal with Google and
 Configure your application with the registration's credentials and the sandbox
 discovery document. Production registrations, credentials, and World IDs are
 separate. Keep sandbox account mappings separate from production, and store
-validated
-identities as `(iss, sub)`.
+validated identities as `(iss, sub)`.
 
 ### Create a sandbox World ID {#create-a-sandbox-world-id}
 
@@ -54,7 +56,7 @@ identities as `(iss, sub)`.
    the identity is ready. Authentication can fail during this wait, even though
    setup looks complete in the app.
 4. **Authenticate through your application.** Start a new authentication attempt
-   using the sandbox issuer and approve it with the sandbox app. Use the
+   using the sandbox World IdP and approve it with the sandbox app. Use the
    end-to-end checks below to validate the result in your backend.
 
 If scanning a QR code or opening an authentication link fails, check that both
@@ -80,11 +82,11 @@ verification.
    backend accepts the authentication and any permissions or action approval
    your policy requires. Then perform the operation.
 4. **Check the final outcome.** If the operation calls another service, confirm
-   its result there. A queued request or an application receipt alone does not establish
-   that a payment settled or another external action completed.
+   its result there. For example, verify payment settlement with the payment
+   service before reporting the payment as complete.
 
 Exercise each browser, device, or auth-server path you intend to support. For step-up through your auth server, include the [existing-session acceptance test](/world-id-auth/step-up#through-your-auth-server).
-For separate action approval, test the [application-owned approval flow](/world-id-auth/human-in-the-loop#optional-collect-action-approval-in-your-application).
+For separate action approval, test the [application-owned approval flow](/world-id-auth/step-up#optional-collect-action-approval-in-your-application).
 
 ## Check failure paths {#check-failure-paths}
 
@@ -101,7 +103,7 @@ source of expected behavior.
 | Retry a consumed code or repeat a one-use operation.            | The code cannot be redeemed again. Where your application promises one-use execution, retries and concurrent requests do not execute it twice. Repeated World ID authentication remains allowed. |
 | Interrupt a dependency call or lose its response.               | The application does not treat an error or unknown outcome as success. An uncertain external action is reconciled before a retry could duplicate it.                                             |
 
-Use local signed fixtures to exercise validation failures and application policy without
-requiring a person for every test. Keep them isolated from live credentials and
-execution. Fixture tests do not demonstrate a real World ID proof or a complete
-issuer-backed flow.
+Use local signed fixtures to exercise validation failures and application policy
+without requiring a person for every test. Keep them isolated from live
+credentials and execution. Verify real World ID proofs and complete flows
+against World IdP with the end-to-end checks above.

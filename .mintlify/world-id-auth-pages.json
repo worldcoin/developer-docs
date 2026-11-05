@@ -9,7 +9,13 @@
       "title": "Quickstart",
       "sidebarTitle": "Quickstart",
       "description": "Register an application, connect to the World ID issuer, and add step-up authentication.",
-      "environmentNote": true
+      "environmentNote": true,
+      "anchorAliases": {
+        "choose-your-integration": [
+          "how-it-works",
+          "integrate-in-four-steps"
+        ]
+      }
     },
     {
       "source": "app-registration.md",
@@ -25,20 +31,43 @@
       "sidebarTitle": "Connect your backend",
       "description": "Connect your backend to the World ID issuer with OpenID Connect (OIDC).",
       "anchorAliases": {
-        "authenticate-through-the-browser": [
-          "sign-in-through-the-browser"
+        "configure-your-oidc-library": [
+          "client-authentication"
         ],
-        "connect-a-headless-agent-device-flow": [
-          "sign-in-a-headless-agent-device-flow"
+        "authorization-code-flow": [
+          "sign-in-through-the-browser",
+          "authenticate-through-the-browser"
+        ],
+        "device-authorization-grant": [
+          "sign-in-a-headless-agent-device-flow",
+          "connect-a-headless-agent-device-flow"
+        ],
+        "related-guides": [
+          "cross-app-access-for-agent-hosts"
         ]
       }
     },
     {
-      "source": "federation.md",
+      "source": "mcp-authorization.md",
       "destination": "world-id-auth/connect-your-auth-server.mdx",
-      "title": "Connect your auth server",
-      "sidebarTitle": "Connect your auth server",
-      "description": "Use the World ID issuer as an upstream provider for your auth server or MCP server."
+      "title": "MCP authorization",
+      "sidebarTitle": "MCP authorization",
+      "description": "Authenticate through your auth server and issue access tokens for your MCP resource.",
+      "federationDiagram": true,
+      "introAliases": [
+        "configure-your-auth-server"
+      ],
+      "anchorAliases": {
+        "browser-authorization": [
+          "connect-the-world-id-issuer-to-your-mcp-server"
+        ],
+        "protect-your-mcp-server": [
+          "verify-the-integration"
+        ],
+        "device-authentication": [
+          "require-recent-authentication-through-your-auth-server"
+        ]
+      }
     },
     {
       "source": "id-token.md",
@@ -52,15 +81,30 @@
       "destination": "world-id-auth/step-up.mdx",
       "title": "Step-up authentication",
       "sidebarTitle": "Step-up authentication",
-      "description": "Require recent World ID authentication before sensitive actions."
+      "description": "Require recent World ID authentication before sensitive actions.",
+      "anchorAliases": {
+        "accepted-accounts": [
+          "default-verification-preference"
+        ]
+      }
     },
     {
-      "source": "human-in-the-loop.md",
+      "source": "step-up.md",
       "destination": "world-id-auth/human-in-the-loop.mdx",
       "title": "Human in the loop",
       "sidebarTitle": "Human in the loop",
       "icon": "/images/docs/human-badge-blue.svg",
-      "description": "Pause an agent workflow and require fresh World ID authentication before continuing."
+      "description": "Pause an agent workflow and require fresh World ID authentication before continuing.",
+      "section": "Human checkpoints",
+      "sectionEnd": "Prevent stale or duplicate operations",
+      "anchorAliases": {
+        "human-checkpoints": [
+          "require-fresh-authentication"
+        ],
+        "optional-collect-action-approval-in-your-application": [
+          "headless-agents"
+        ]
+      }
     },
     {
       "source": "xaa.md",
@@ -90,13 +134,6 @@
       "title": "Test your integration",
       "sidebarTitle": "Test your integration",
       "description": "Test World ID integration in the sandbox, complete real flows, and check failure paths."
-    }
-  ],
-  "assets": [
-    {
-      "source": "apps/idpportal/public/assets/mcp-federation.svg",
-      "destination": "images/world-id-auth/mcp-federation.svg",
-      "url": "{{issuer}}/portal/assets/mcp-federation.svg"
     }
   ]
 }

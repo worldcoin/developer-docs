@@ -408,24 +408,24 @@
         ]
       },
       {
-        "tab": "MCP",
-        "groups": [
-          {
-            "group": "Overview",
-            "pages": ["model-context-protocol/index"]
-          },
-          {
-            "group": "World MCP",
-            "pages": [
-              "model-context-protocol/world-docs",
-              "model-context-protocol/developer-portal"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "Resources",
         "menu": [
+          {
+            "item": "MCP",
+            "groups": [
+              {
+                "group": "Overview",
+                "pages": ["model-context-protocol/index"]
+              },
+              {
+                "group": "World MCP",
+                "pages": [
+                  "model-context-protocol/world-docs",
+                  "model-context-protocol/developer-portal"
+                ]
+              }
+            ]
+          },
           {
             "item": "Developer Portal",
             "href": "https://developer.worldcoin.org"

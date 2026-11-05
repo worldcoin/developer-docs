@@ -39,7 +39,7 @@ jobs:
           fi
 
       - name: Check out publishing code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: main
           path: developer-docs
@@ -47,7 +47,7 @@ jobs:
 
       - name: Create read-only source token
         id: source-token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
         with:
           app-id: ${{ vars.IDP_DOCS_APP_ID }}
           private-key: ${{ secrets.IDP_DOCS_APP_PRIVATE_KEY }}
@@ -56,7 +56,7 @@ jobs:
           permission-contents: read
 
       - name: Check out canonical guides
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           repository: worldcoin/temporal-apps
           ref: ${{ inputs.source_ref || 'main' }}
@@ -65,7 +65,6 @@ jobs:
           persist-credentials: false
           sparse-checkout: |
             apps/idpapi/mcp/guides
-            apps/idpportal/public/assets
 
       - name: Record source commit
         id: source
@@ -73,7 +72,7 @@ jobs:
           source_sha=$(git -C ../_source/temporal-apps rev-parse HEAD)
           echo "sha=$source_sha" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 24.22.1
 
@@ -83,15 +82,17 @@ jobs:
         run: node scripts/sync-world-id-auth.mjs --source-dir ../_source/temporal-apps --source-commit "$SOURCE_COMMIT"
 
       - name: Check generated output
+        timeout-minutes: 2
         env:
           SOURCE_COMMIT: ${{ steps.source.outputs.sha }}
         run: |
           node scripts/sync-world-id-auth.mjs --source-dir ../_source/temporal-apps --source-commit "$SOURCE_COMMIT" --check
+          node --test scripts/sync-world-id-auth.test.mjs
           git diff --check -- world-id-auth images/world-id-auth .mintlify/world-id-auth-source.json
 
       - name: Create publishing token
         id: docs-token
-        uses: actions/create-github-app-token@v2
+        uses: actions/create-github-app-token@fee1f7d63c2ff003460e3d139729b119787bc349 # v2
         with:
           app-id: ${{ vars.IDP_DOCS_APP_ID }}
           private-key: ${{ secrets.IDP_DOCS_APP_PRIVATE_KEY }}
@@ -101,7 +102,7 @@ jobs:
           permission-pull-requests: write
 
       - name: Open or update publishing PR
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7
         with:
           token: ${{ steps.docs-token.outputs.token }}
           path: developer-docs
@@ -112,7 +113,6 @@ jobs:
           draft: true
           add-paths: |
             world-id-auth/*.mdx
-            images/world-id-auth/mcp-federation.svg
             .mintlify/world-id-auth-source.json
           body: |
             ## Summary
@@ -120,5 +120,5 @@ jobs:
             - Review content and release status before merging. This PR does not deploy Auth or change MCP access controls.
 
             ## Testing
-            - Passed: deterministic regeneration check and `git diff --check`.
+            - Passed: publisher tests, deterministic regeneration check, and `git diff --check`.
             - Not run: full Mintlify build.

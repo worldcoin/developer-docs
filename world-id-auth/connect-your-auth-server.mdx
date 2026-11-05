@@ -1,80 +1,56 @@
 ---
-title: "Connect your auth server"
-sidebarTitle: "Connect your auth server"
-description: "Use the World ID issuer as an upstream provider for your auth server or MCP server."
+title: "MCP authorization"
+sidebarTitle: "MCP authorization"
+description: "Authenticate through your auth server and issue access tokens for your MCP resource."
 "og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-{/* Generated from worldcoin/temporal-apps/apps/idpapi/mcp/guides/federation.md. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}
+{/* Generated from worldcoin/temporal-apps/apps/idpapi/mcp/guides/mcp-authorization.md. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}
 
-Use the World ID issuer as an upstream OpenID Connect provider when your
-application already has an auth server, such as a login backend or OAuth
-authorization server. Your auth server is the confidential OIDC client
-registered with the World ID issuer. The issuer verifies the person's World ID proof;
-your auth server controls your application's sessions, API tokens, permissions,
-and consent.
+<span id="configure-your-auth-server" />
 
-This integration uses the World ID issuer's OIDC endpoints. The issuer does not
-configure your auth server, host its downstream OAuth endpoints, or implement
-OpenID Federation trust-chain discovery. Verify that your auth server meets the
-requirements below before selecting a generic “custom OIDC” connector.
+First [configure your auth server](/world-id-auth/connect-your-backend#configure-your-auth-server).
+It authenticates the user with World ID over OIDC, maps `(iss, sub)` to your
+application's account, and issues OAuth access tokens for your MCP server.
+The MCP client connects the agent to your server and presents those tokens when
+calling its tools.
 
-## Configure your auth server {#configure-your-auth-server}
+<span id="connect-the-world-id-issuer-to-your-mcp-server" />
 
-1. **[Register your auth server](/world-id-auth/app-registration)** in the
-   developer portal. Use the auth server's callback URL. Your application's
-   homepage or an MCP client's callback cannot substitute for it. Choose the
-   authentication method your auth server supports and keep its credentials
-   there.
-2. **Set the issuer** to `https://auth.world.org` and the discovery URL to
-   `https://auth.world.org/.well-known/openid-configuration`. Use its authorization endpoint,
-   token endpoint, and JWKS URI. Do not select the `/mcp` OAuth issuer for
-   federation.
-3. **Match the [OIDC settings](/world-id-auth/connect-your-backend#configure-your-oidc-library):**
-   authorization code, query response mode, `scope=openid` (optionally adding `email`), fresh `state`
-   and `nonce`, and S256 PKCE, including for confidential clients. Disable
-   connector defaults that add `profile` or `offline_access`.
-4. **Validate the ID token** as described in
-   [Validate the ID token](/world-id-auth/connect-your-backend#validate-the-id-token).
-5. **Read identity from the validated ID token.** Map `(iss, sub)` to your
-   application's account. Preserve validated `auth_time`, `acr`, and `amr` if you
-   will enforce step-up. [UserInfo and inbox email claims](/world-id-auth/id-tokens-and-identity)
-   are supported, but email is absent for accounts without an enabled inbox.
-   Configure your connector to handle that absence.
-6. **Issue your own credentials.** Issue your application session or
-   resource-bound access token after your own authorization checks. The World ID
-   issuer does not issue an OIDC refresh token for authentication with `openid`.
-   Your auth server may maintain its own session and refresh policy; renewals
-   under that policy do not refresh World ID authentication.
+## Browser authorization {#browser-authorization}
 
-See [Client authentication](/world-id-auth/connect-your-backend#client-authentication)
-for the credential formats. Do not assume every library's default OIDC
-configuration satisfies this contract.
+```mermaid
+---
+config:
+    sequence:
+        useMaxWidth: false
+---
+sequenceDiagram
+    accTitle: Two code exchanges authorize your MCP client
+    accDescr: The auth server exchanges an upstream authorization code with World ID for an ID token. After identity validation, permission checks, and consent, the MCP client exchanges a different downstream code with that auth server for a resource-bound access token.
 
-Follow [Store and match sub](/world-id-auth/id-tokens-and-identity#store-and-match-sub)
-for account linking and subject matching. Multiple applications using one auth
-server may share the subject issued by the World ID issuer. Configure how your
-auth server separates its downstream tenants and users.
+    participant Issuer as World ID issuer
+    participant Auth as Your auth server
+    participant Client as MCP client
+    participant MCP as Your MCP server
 
-Before migrating an auth server or callback domain, follow
-[Manage credentials and callbacks](/world-id-auth/app-registration#manage-credentials-and-callbacks).
+    Note over Issuer,Auth: Upstream OIDC code exchange
+    Issuer-->>Auth: Authorization code via browser callback
+    Auth->>Issuer: Exchange upstream code
+    Issuer-->>Auth: ID token
+    Auth->>Auth: Validate identity, permissions, and consent
+    Note over Auth,Client: Separate downstream OAuth code exchange
+    Auth-->>Client: Different code via browser callback
+    Client->>Auth: Exchange downstream code
+    Auth-->>Client: Resource-bound access token
+    Client->>MCP: MCP request + access token
+    MCP->>MCP: Validate token and permissions before tools
+```
 
-## Connect the World ID issuer to your MCP server {#connect-the-world-id-issuer-to-your-mcp-server}
+Browser authorization uses two code exchanges:
 
-Connect the World ID issuer to the auth server used by your MCP server. Your auth
-server validates the issuer's ID token and maps `(iss, sub)` to your application's
-account. This lets you associate MCP activity with the same account across
-sessions. Your auth server issues access tokens, and your MCP server controls
-access to its tools. The MCP client is the software connecting the agent to your
-server.
-
-![The World ID issuer returns an ID token to your auth server. Your auth server maps the subject to your application's account and issues an access token to the MCP client, which uses it to call your MCP server.](/images/world-id-auth/mcp-federation.svg)
-
-The diagram shows which service issues and receives each token. Browser
-authorization uses two code exchanges:
-
-- **World ID issuer → your auth server:** the issuer redirects the user's browser
+- **World IdP → your auth server:** World IdP redirects the user's browser
   to your auth server's callback with a code. Your auth server exchanges it for
   an ID token and validates the result.
 - **Your auth server → the MCP client:** after checking permissions and required
@@ -82,54 +58,38 @@ authorization uses two code exchanges:
   with a different code. The client exchanges it for an access token for your
   MCP server.
 
-Your MCP server publishes protected-resource metadata identifying your auth
-server and challenges requests without a valid access token. The MCP client uses
-that metadata to start authorization in the user's browser. For tool calls, your
-MCP server validates the access token's issuer, audience, expiry, permissions,
-and revocation policy.
-
 Keep the two code exchanges' state, PKCE verifiers, callbacks, and codes separate.
 Bind both exchanges to the same pending login. Use existing OAuth/MCP components
 for client registration, redirect validation, S256 PKCE, resource binding, and
 consent.
 
-Do not advertise `https://auth.world.org/mcp` as your MCP server's auth server: it issues
-tokens only for the World ID user and developer MCP resources and rejects any
-other `resource`.
-It cannot mint access tokens for your service. Passing tokens from the World ID
-issuer to your MCP server does not establish an authorized integration.
+<span id="verify-the-integration" />
 
-An agent can alternatively use a backend that supports the OIDC device flow.
-The backend obtains and validates an ID token, then issues its own credential for
-the agent. Both the agent client and backend must support this flow; ordinary
-MCP OAuth clients do not automatically use the OIDC device grant.
+## Protect your MCP server {#protect-your-mcp-server}
 
-## Require recent authentication through your auth server {#require-recent-authentication-through-your-auth-server}
+Publish protected-resource metadata identifying your own auth server, and
+challenge requests without a valid access token. The MCP client uses that
+metadata to start authorization in the user's browser. Validate each access
+token's issuer, audience, expiry, permissions, and revocation policy.
+Require access tokens issued for your MCP server's resource, and test rejection
+of tokens intended for other resources.
 
-Your auth server may reuse its own session before redirecting to the World ID
-issuer. For an operation that needs fresh authentication, make your auth server
-start a new upstream OIDC request with `max_age=0` or `prompt=login`. Request an
-Orb or Face Auth class explicitly when your policy requires World ID proof. Preserve
-the validated result from the issuer and check its freshness when the operation
-runs. Follow [Step-up through your auth server](/world-id-auth/step-up#through-your-auth-server)
-for each layer's requirements.
+`https://auth.world.org/mcp` issues tokens exclusively for the World ID user and developer MCP
+resources and rejects any other `resource`.
 
-## Verify the integration {#verify-the-integration}
+<span id="require-recent-authentication-through-your-auth-server" />
 
-Test these cases, inspecting the actual upstream authorization parameters and
-validated claims without logging tokens or callback query strings:
+## Device authentication {#device-authentication}
 
-- Sign in with and without an enabled inbox, and match UserInfo `sub` to the ID token.
-- Reuse an existing session and link an account.
-- Reject reauthentication with the wrong account and require step-up when
-  authentication is too old.
-- If you use MCP, reject a token intended for a different resource.
+If your authorization server supports World ID device authentication, use the
+[Device Authorization Grant](/world-id-auth/connect-your-backend#sign-in-a-headless-agent-device-flow)
+for that upstream step. Your authorization server validates the returned ID
+token and issues its own access token for your MCP resource through a downstream authorization flow
+that the MCP client supports. Confirm support for that downstream flow in both
+your authorization server and MCP client.
 
-A browser redirect back to the application is only one part of this test.
-
-Ending the World ID issuer's browser session or revoking its saved consent does
-not automatically terminate your auth server's sessions or tokens. Provide your
-own sign-out and revocation behavior; there is no advertised OIDC end-session or
-back-channel logout endpoint to configure.
+For authentication freshness at tool execution, follow
+[Step-up authentication](/world-id-auth/step-up#challenge-an-agent-or-api-client-rfc-9470).
+For ID-JAG-based access, see [Cross-App Access (XAA)](/world-id-auth/xaa).
 
 Reference: [MCP authorization](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization).
