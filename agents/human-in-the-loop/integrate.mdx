@@ -74,6 +74,7 @@ The default `action` is the unique `toolCallId`. For a sensitive operation, your
 ```ts
 // src/workflows/chat/steps/tools.ts
 import { requestHumanAuthorization } from '@worldcoin/human-in-the-loop/workflows'
+import { Nullifier } from '@worldcoin/idkit/nullifier'
 import { z } from 'zod'
 
 const approvalInputSchema = z.object({
@@ -144,7 +145,7 @@ export const tools = {
       // proofs). Parse it as the verifier does, so "0x01" and "0x1" share a
       // key. Nullifiers repeat per person and action, so each person can book
       // a flight number once; add a unique booking ID to the action to allow more.
-      const nullifier = BigInt(approval.responses[0].nullifier).toString(16)
+      const nullifier = Nullifier.fromHex(approval.responses[0].nullifier).toBigInt().toString(16)
       if (!(await consumeApproval(`${expectedAction}:${nullifier}`))) {
         throw new Error('approval already used')
       }
@@ -155,6 +156,8 @@ export const tools = {
   // ...your other tools
 }
 ```
+
+See the [Nullifier API](/world-id/idkit/javascript#nullifier) for input validation.
 
 ## Step 3: Render the approval on the client
 

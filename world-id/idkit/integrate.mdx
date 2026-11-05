@@ -375,6 +375,9 @@ The Developer Portal confirms the proof is **cryptographically valid**, but your
 
 Nullifiers are returned as 0x-prefixed hex strings representing 256-bit integers. Convert and store them as numbers to avoid parsing and casing issues that can lead to security vulnerabilities. For example, PostgreSQL doesn't natively support 256-bit integers, so convert the nullifier to a decimal and store it as `NUMERIC(78, 0)`.
 
+The schema below assumes one RP, protocol version and environment. If you share
+the table across these scopes, include them in the unique constraint.
+
 <CodeGroup>
 ```sql title="PostgreSQL schema"
 CREATE TABLE nullifiers (
@@ -385,6 +388,42 @@ CREATE TABLE nullifiers (
 );
 ```
 </CodeGroup>
+
+Use `Nullifier` after successful uniqueness verification in Step 5, before
+performing the protected action. `db` is your PostgreSQL client.
+
+```typescript title="Store verified participation"
+import { Nullifier } from "@worldcoin/idkit-core/nullifier";
+
+// This snippet is for uniqueness requests; sessions use a separate flow.
+if (typeof verification.nullifier !== "string") {
+  return NextResponse.json({ error: "Missing nullifier" }, { status: 400 });
+}
+
+const number = Nullifier.fromHex(verification.nullifier).toBigInt();
+const stored = await db.query(
+  `INSERT INTO nullifiers (nullifier, action)
+   VALUES ($1, $2)
+   ON CONFLICT (nullifier, action) DO NOTHING
+   RETURNING nullifier`,
+  [number.toString(), verification.action],
+);
+
+if (stored.rowCount === 0) {
+  return NextResponse.json(
+    { error: "You have already participated in this action." },
+    { status: 409 },
+  );
+}
+```
+
+The unique constraint rejects duplicates atomically. The decimal query parameter
+preserves the value in the numeric column. Forward the original proof unchanged;
+parsing a nullifier does not verify its proof.
+
+See the [JavaScript](/world-id/idkit/javascript#nullifier),
+[Swift](/world-id/idkit/swift#nullifier), [Kotlin](/world-id/idkit/kotlin#nullifier)
+and [Go](/world-id/idkit/go#nullifier) references for methods and validation.
 
 ## Architecture detail
 

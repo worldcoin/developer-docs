@@ -35,6 +35,10 @@ Integrate World ID into my project using IDKit. Here are my app details:
    The backend should forward the payload as-is to: POST https://developer.world.org/api/v4/verify/{rp_id}
    No field remapping is needed.
 
+5. After successful uniqueness verification, use the SDK's Nullifier helper
+   to store the returned nullifier as an exact number and reject duplicates.
+   Follow https://docs.world.org/world-id/idkit/integrate#step-6-store-the-nullifier
+
 ## Reference
 - Full docs: https://docs.world.org/llms.txt
 ```
