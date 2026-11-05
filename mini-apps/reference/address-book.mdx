@@ -23,8 +23,7 @@ const userWalletAddress = "0x000000000000000000000000000000000000dEaD"
 const isUserVerified = await getIsUserVerified(userWalletAddress) // optionally you can provide your rpc url as a second argument to the function
 ```
 - Returns `true` if the address is verified
-- Returns `false` if the address is not verified
-- Throws an error if the verification check fails
+- Returns `false` if the address is not verified, or if the check itself fails (errors are caught and logged, not thrown)
 
 
 ## React Bindings

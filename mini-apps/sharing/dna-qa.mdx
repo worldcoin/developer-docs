@@ -118,6 +118,7 @@ A string representing the complete deeplink URL to the DNA application with the 
 
 ```typescript
 const deeplinkUrl = getDNADeeplinkUrl({
+  tab: "send",
   fromToken: "0x79A02482A880bCE3F13e09Da970dC34db4CD24d1",
   toToken: "0x4200000000000000000000000000000000000006",
   recipientAddress: "0xRecipientAddressHere",
@@ -131,7 +132,7 @@ console.log(deeplinkUrl);
 ## **Generated Deeplink URL:**
 
 ```bash
-https://worldcoin.org/mini-app?app_id=app_8e407cfbae7ae51c19b07faff837aeeb&path=%2Fwallet%3Ftab%3Dsend%26fromToken%3D0x79A02482A880bCE3F13e09Da970dC34db4CD24d1%26amount%3D1234500%26toToken%3D0x4200000000000000000000000000000000000006%26recipientAddress%3D0xRecipientAddressHere%26sourceAppId%3Dapp_a4f7f3e62c1de0b9490a5260cb390b56%26sourceDeeplinkPath%3D%252Fsome%252Fpath
+https://worldcoin.org/mini-app?app_id=app_8e407cfbae7ae51c19b07faff837aeeb&path=%2Fwallet%3Ftab%3Dsend%26fromToken%3D0x79A02482A880bCE3F13e09Da970dC34db4CD24d1%26amount%3D1235%26toToken%3D0x4200000000000000000000000000000000000006%26recipientAddress%3D0xRecipientAddressHere%26sourceAppId%3Dapp_a4f7f3e62c1de0b9490a5260cb390b56%26sourceDeeplinkPath%3D%252Fpath
 ```
 
 ## **Note**
