@@ -3,16 +3,16 @@
   "sourceDirectory": "apps/idpapi/mcp/guides",
   "configSha256": "aaa509542bc970277c7b63be7d4c174c20ea306330a778fed1ddb0042b0c16e7",
   "sources": {
-    "apps/idpapi/mcp/guides/getting-started.md": "a5cc87781bc2db45eeb473adb28a668d006f57ba55d961cf9401c9f0d6fd0f88",
-    "apps/idpapi/mcp/guides/app-registration.md": "1bc19f0107beb86c7b8006a70df146115052cac22f4838bc11273d36396d0391",
-    "apps/idpapi/mcp/guides/oidc.md": "d2fdeae401345456f2fa07926b2e7255f90793c708b51a341a9e09355a895730",
-    "apps/idpapi/mcp/guides/mcp-authorization.md": "532a368304fef4fbfafb70a18a06315aff1d9a1f47559e6012550532ffdf7d5e",
-    "apps/idpapi/mcp/guides/id-token.md": "7d85e945126f006ba5d6d4492945b7d6a319b289e3c7a7c51d58b743756a1d76",
-    "apps/idpapi/mcp/guides/step-up.md": "064cbbfd83412631d81cdc159922f991ccd705641f2ff0f12ec9ed64f64365c7",
-    "apps/idpapi/mcp/guides/xaa.md": "e30bed207c621914db6ba5fd758b3549f6a1b965a7c5b7ffb6cfa3e7387d9ed8",
-    "apps/idpapi/mcp/guides/world-id-users.md": "8a567ff3d86e92524decad0d35aa37682e8ce6bc9e61dc5690df4941be2ecfb1",
-    "apps/idpapi/mcp/guides/coding-agent-setup.md": "675605b25533f01317a290c202a606ae3ddb1ee6e37005fe21239d2ac262759f",
-    "apps/idpapi/mcp/guides/testing.md": "c933740095c727f5f441e2e69a58dc6c1c2a00fa07b44f82b7c87deaf4316efc"
+    "apps/idpapi/mcp/guides/getting-started.md": "562496424aed6fa2bc19bdde442eb2b9b4f370c974c92c2c4f11c35a4d9c0fb7",
+    "apps/idpapi/mcp/guides/app-registration.md": "f96c7a898d5198dc39587d7720d1a907a1ad6813ed444f944b36ecc242dc96a3",
+    "apps/idpapi/mcp/guides/oidc.md": "c6bf8c5a2427b6fb0992f791b94803c04095061ec61bd3668fddb95050dd1681",
+    "apps/idpapi/mcp/guides/mcp-authorization.md": "860fd71630b9965e7401ffbabb440d7b139b6b345d47f689043decaa73ce6c7f",
+    "apps/idpapi/mcp/guides/id-token.md": "73d3b46fb0c8b24ae19d5bae818bd3fa52f537d7261e2ac653792687ad1360d2",
+    "apps/idpapi/mcp/guides/step-up.md": "148b199b5b11c43f9174bb8d46907c3602ad203be9aececc5443bb8c70f5a8ec",
+    "apps/idpapi/mcp/guides/xaa.md": "8cfdeb56b9738526f191b098bf87de1a1de0a9dac4263c4d1a42612b050a2767",
+    "apps/idpapi/mcp/guides/world-id-users.md": "7d654042f45f02eb1054db73d1ea8cc034573d834351fb18309f572db9caca75",
+    "apps/idpapi/mcp/guides/coding-agent-setup.md": "063eeaf4ad067cb1f2b7b8fa12f20dda25d55ee93ce584ed66d2bde0b558e5bb",
+    "apps/idpapi/mcp/guides/testing.md": "defe6bf677aec7a6f0ab7ad1ad8cda60dc4c1f5122bbb7cd6c17e4731328932a"
   },
   "outputs": {
     "world-id-auth/quickstart.mdx": "133c72301049f3db53f832cfea6963823bff4a1874691602a7fbc67663cc1649",

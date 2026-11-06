@@ -42,7 +42,9 @@ Review generated pages and the source lock together. Add `--check` to compare wi
 node --test scripts/sync-world-id-auth.test.mjs
 ```
 
-The workflow opens or updates a review PR on `codex/sync-world-id-auth` and never merges automatically. Configure a scoped GitHub App with source contents read access and destination contents/pull-request write access. In `developer-docs`, set Actions variable `IDP_DOCS_APP_ID` and secret `IDP_DOCS_APP_PRIVATE_KEY`.
+Scheduled runs and manual runs using `main` or `refs/heads/main` open or update a review PR on `codex/sync-world-id-auth`. A manual run using another `source_ref` uses `codex/sync-world-id-auth-manual-<resolved-source-SHA>`, so scheduled updates cannot overwrite that review. Runs resolving to the same source commit reuse that manual branch. The workflow never merges automatically.
+
+Configure a scoped GitHub App with source contents read access and destination contents/pull-request write access. In `developer-docs`, set Actions variable `IDP_DOCS_APP_ID` and secret `IDP_DOCS_APP_PRIVATE_KEY`.
 
 Automatic synchronization is active only after the workflow is merged to `main`, the App and credentials are configured, and a run succeeds. Mintlify publishes after the documentation PR merges through the site's existing configuration. A source merge or a local pass does not establish a production release.
 

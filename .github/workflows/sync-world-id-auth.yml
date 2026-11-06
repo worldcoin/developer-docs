@@ -66,11 +66,18 @@ jobs:
           sparse-checkout: |
             apps/idpapi/mcp/guides
 
-      - name: Record source commit
+      - name: Record source and publishing branch
         id: source
+        env:
+          SOURCE_REF: ${{ inputs.source_ref || 'main' }}
         run: |
           source_sha=$(git -C ../_source/temporal-apps rev-parse HEAD)
+          publishing_branch=codex/sync-world-id-auth
+          if [ "$GITHUB_EVENT_NAME" = workflow_dispatch ] && [ "$SOURCE_REF" != main ] && [ "$SOURCE_REF" != refs/heads/main ]; then
+            publishing_branch="codex/sync-world-id-auth-manual-$source_sha"
+          fi
           echo "sha=$source_sha" >> "$GITHUB_OUTPUT"
+          echo "branch=$publishing_branch" >> "$GITHUB_OUTPUT"
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
@@ -107,7 +114,7 @@ jobs:
           token: ${{ steps.docs-token.outputs.token }}
           path: developer-docs
           base: main
-          branch: codex/sync-world-id-auth
+          branch: ${{ steps.source.outputs.branch }}
           commit-message: sync IDP docs
           title: sync IDP docs
           draft: true

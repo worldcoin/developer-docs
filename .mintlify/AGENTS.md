@@ -38,7 +38,7 @@ Include the source PR and relevant source files in documentation PRs. Leave page
 
 ## Maintenance configuration
 
-Use `.github/workflows/sync-world-id-auth.yml` for one-way publishing from `temporal-apps`. It polls hourly and supports manual dispatch, regenerates the allowlisted pages, and opens or updates a review PR on `codex/sync-world-id-auth`. Keep the source commit visible in that PR. Do not merge automatically or change global `docs.json` during synchronization.
+Use `.github/workflows/sync-world-id-auth.yml` for one-way publishing from `temporal-apps`. It polls hourly and supports manual dispatch, regenerating the allowlisted pages. Scheduled and manual `main` publications use `codex/sync-world-id-auth`; manual non-main sources use `codex/sync-world-id-auth-manual-<resolved-source-SHA>` to keep their reviews separate. `refs/heads/main` also uses the main publishing branch. Keep the source commit visible in the PR. Do not merge automatically or change global `docs.json` during synchronization.
 
 The workflow requires a scoped GitHub App and the configuration in [IDP maintenance](world-id-auth-maintenance.md). Merging this workflow to `main` and configuring its credentials are activation steps. Do not describe automatic publishing as active until they are complete and a run succeeds.
 

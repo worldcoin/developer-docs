@@ -501,6 +501,34 @@
   },
   "redirects": [
     {
+      "source": "/agents/agent-kit/integrate",
+      "destination": "/world-id-auth/quickstart"
+    },
+    {
+      "source": "/agents/agent-kit/sdk-reference",
+      "destination": "/world-id-auth/quickstart"
+    },
+    {
+      "source": "/agents/agent-kit/ecosystem",
+      "destination": "/world-id-auth/quickstart"
+    },
+    {
+      "source": "/agents/hats",
+      "destination": "/world-id-auth/quickstart"
+    },
+    {
+      "source": "/agents/hats/index",
+      "destination": "/world-id-auth/quickstart"
+    },
+    {
+      "source": "/agents/human-in-the-loop/integrate",
+      "destination": "/world-id-auth/human-in-the-loop"
+    },
+    {
+      "source": "/agents/human-in-the-loop/sdk-reference",
+      "destination": "/world-id-auth/human-in-the-loop"
+    },
+    {
       "source": "/world-id",
       "destination": "/world-id/overview"
     },
