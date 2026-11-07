@@ -8,7 +8,7 @@ description: "Connect AI assistants to World documentation and the World develop
 
 Model Context Protocol (MCP) servers let AI assistants use World tools directly from your local coding environment.
 
-World provides two MCP servers:
+Use these servers for documentation lookup and World developer portal app management:
 
 <CardGroup cols={2}>
   <Card
@@ -33,10 +33,14 @@ World provides two MCP servers:
 | --- | --- | --- |
 | [World Docs MCP](/model-context-protocol/world-docs) | You want your AI assistant to search World docs while editing code. | None |
 | [Developer Portal MCP](/model-context-protocol/developer-portal) | You want your AI assistant to manage apps in the World developer portal. | Developer portal team API key |
+| [World ID Auth developer MCP](/world-id-auth/build-with-a-coding-agent) | You want your agent to register or manage World ID Auth applications. | Developer sign-in and portal consent |
+| [World ID Auth user MCP](/world-id-auth/use-world-id-with-your-agent) | You want your agent to use authorized World ID account capabilities. | World ID sign-in and user consent |
+
+These connections have separate permissions. Reading public documentation does not authorize app management or account access.
 
 ## Client support
 
-Both MCP servers use streamable HTTP. Most modern MCP clients can connect directly to an HTTP MCP server. Clients that only support stdio can connect through [`mcp-remote`](https://www.npmjs.com/package/mcp-remote).
+The World Docs and Developer Portal MCP servers use streamable HTTP. Most modern MCP clients can connect directly to an HTTP MCP server. Clients that only support stdio can connect through [`mcp-remote`](https://www.npmjs.com/package/mcp-remote). Follow the linked World ID Auth guides for their connection and authorization steps.
 
 <Note>
   Keep developer portal API keys scoped to trusted local MCP clients. The Developer Portal MCP can mutate apps in your team.

@@ -1,0 +1,39 @@
+---
+title: "Human in the loop"
+sidebarTitle: "Human in the loop"
+icon: "/images/docs/human-badge-blue.svg"
+description: "Pause an agent workflow and require fresh World ID authentication before continuing."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+{/* Generated from worldcoin/temporal-apps/apps/idpapi/mcp/guides/step-up.md. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}
+
+<span id="require-fresh-authentication" />
+
+## Human checkpoints {#human-checkpoints}
+
+Pause the agent workflow, complete the [step-up procedure](/world-id-auth/step-up#implement-step-up),
+and resume only after your backend accepts the authentication, checks permissions,
+and confirms any action approval required by your policy. This works with your
+existing sign-in or World ID as your primary sign-in.
+
+<span id="headless-agents" />
+
+### Optional: collect action approval in your application {#optional-collect-action-approval-in-your-application}
+
+Save the exact action, version, destination, owning account, and expiry, bound
+to the authentication attempt. After validating the account and assurance, show
+the saved action to the user and record their approval or denial. At execution,
+recheck permissions, expiry, freshness, and approval, and authorize only that
+version. Changes require new approval. Denial, cancellation, failed validation,
+or expiry leaves the action blocked. Apply the
+[one-use and retry rules](/world-id-auth/step-up#prevent-stale-or-duplicate-operations).
+
+For `max_age=0`, authentication belongs to the newly initiated attempt. Enforce
+your application's freshness window when the action runs, including time spent
+reviewing it.
+
+For headless clients, follow the [Device Authorization Grant](/world-id-auth/connect-your-backend#sign-in-a-headless-agent-device-flow).
+Your backend issues their API or MCP credentials. Where supported, use the
+[challenge and retry flow](/world-id-auth/step-up#challenge-an-agent-or-api-client-rfc-9470).

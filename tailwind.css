@@ -58,6 +58,43 @@
     height: auto !important;
   }
 
+  /* Keep native Mermaid diagrams readable in narrow content columns. */
+  [data-component-name="mermaid-container"] {
+    container: mermaid / inline-size;
+    display: flex;
+    flex-direction: column;
+  }
+  [data-component-name="mermaid-container"] > .mermaid {
+    min-width: 0;
+  }
+  [data-component-name="mermaid-container"] > .mermaid > svg {
+    max-width: 100%;
+    height: auto;
+  }
+  @container mermaid (max-width: 40rem) {
+    [data-component-name="mermaid-container"] > .mermaid {
+      order: 0;
+      width: 100%;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+    }
+    [data-component-name="mermaid-container"] > .mermaid > svg {
+      max-width: none;
+    }
+    [data-component-name="mermaid-container"] > [data-component-name="mermaid-controls-wrapper"] {
+      position: static !important;
+      order: 1;
+      align-self: flex-end;
+      margin-block: 0.75rem 0.25rem;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
+    [data-component-name="mermaid-container"] > [data-component-name="mermaid-controls-wrapper"] button {
+      min-width: 2.75rem;
+      min-height: 2.75rem;
+    }
+  }
+
   /* Improve select dropdown option contrast in light/dark modes */
   select,
   select option {
@@ -157,13 +194,14 @@
   }
 
   /* ------------------------------------------------------------------ */
-  /* Floating pill header (Docs 3.0, desktop ≥1440px) — collapse the     */
+  /* Floating pill header (Docs 3.0, desktop ≥1600px) — collapse the     */
   /* theme's two-row header into the design's single 84px rounded bar.   */
   /* The theme's row scaffolding is flattened with display:contents so   */
   /* the logo, the tab row, and the search/assistant cluster lay out on  */
   /* ONE flex line — no absolute positioning, so the variable-width      */
   /* hosted cluster (Search + Ask Assistant) can never overlap the tabs. */
-  /* Below 1440px — including when the hosted assistant panel narrows    */
+  /* Leave room for all tabs plus Search and Ask Assistant.             */
+  /* Below 1600px — including when the hosted assistant panel narrows    */
   /* the page without changing the window width — the two-row layout     */
   /* above remains: the pill activates on the header's own width via a   */
   /* container query, not a viewport media query.                        */
@@ -175,12 +213,12 @@
     container-type: inline-size;
   }
   /* #navbar can't query its own width, so its parent — which the navbar
-     fills edge to edge, so both cross 1440px together — is the query
+     fills edge to edge, so both cross 1600px together — is the query
      container for the one rule below that styles #navbar itself. */
   div:has(> #navbar) {
     container-type: inline-size;
   }
-  @container (min-width: 1440px) {
+  @container (min-width: 1600px) {
     /* No full-width backdrop: the pill floats on the page background. */
     #navbar #navbar-transition {
       display: none;

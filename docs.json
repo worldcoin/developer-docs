@@ -224,27 +224,6 @@
         ]
       },
       {
-        "tab": "Agents",
-        "groups": [
-          {
-            "group": "AgentKit",
-            "pages": [
-              "agents/agent-kit/integrate",
-              "agents/agent-kit/sdk-reference",
-              "agents/agent-kit/ecosystem",
-              "agents/hats/index"
-            ]
-          },
-          {
-            "group": "Human in the Loop",
-            "pages": [
-              "agents/human-in-the-loop/integrate",
-              "agents/human-in-the-loop/sdk-reference"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "World Chain",
         "groups": [
           {
@@ -372,24 +351,24 @@
         ]
       },
       {
-        "tab": "MCP",
-        "groups": [
-          {
-            "group": "Overview",
-            "pages": ["model-context-protocol/index"]
-          },
-          {
-            "group": "World MCP",
-            "pages": [
-              "model-context-protocol/world-docs",
-              "model-context-protocol/developer-portal"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "Resources",
         "menu": [
+          {
+            "item": "MCP",
+            "groups": [
+              {
+                "group": "Overview",
+                "pages": ["model-context-protocol/index"]
+              },
+              {
+                "group": "World MCP",
+                "pages": [
+                  "model-context-protocol/world-docs",
+                  "model-context-protocol/developer-portal"
+                ]
+              }
+            ]
+          },
           {
             "item": "Developer Portal",
             "href": "https://developer.worldcoin.org"
@@ -485,6 +464,34 @@
     ]
   },
   "redirects": [
+    {
+      "source": "/agents/agent-kit/integrate",
+      "destination": "/world-id-auth/quickstart"
+    },
+    {
+      "source": "/agents/agent-kit/sdk-reference",
+      "destination": "/world-id-auth/quickstart"
+    },
+    {
+      "source": "/agents/agent-kit/ecosystem",
+      "destination": "/world-id-auth/quickstart"
+    },
+    {
+      "source": "/agents/hats",
+      "destination": "/world-id-auth/quickstart"
+    },
+    {
+      "source": "/agents/hats/index",
+      "destination": "/world-id-auth/quickstart"
+    },
+    {
+      "source": "/agents/human-in-the-loop/integrate",
+      "destination": "/world-id-auth/human-in-the-loop"
+    },
+    {
+      "source": "/agents/human-in-the-loop/sdk-reference",
+      "destination": "/world-id-auth/human-in-the-loop"
+    },
     {
       "source": "/world-id",
       "destination": "/world-id/overview"
