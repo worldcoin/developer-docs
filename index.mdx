@@ -20,7 +20,8 @@ import { DeveloperStories } from "/snippets/developer-stories.jsx";
   for="humans" block: Mintlify inlines a snippet's full source into the export
   when the component appears in exported content, and drops it when all usages
   are hidden (verified on a preview deploy). Keep the twin's links and copy in
-  sync when editing.
+  sync when editing. Agent Pass is intentionally linked only in the agent twin
+  during MCP testing, before its visible launch.
 */}
 
 <Visibility for="humans">
@@ -52,16 +53,6 @@ import { DeveloperStories } from "/snippets/developer-stories.jsx";
     <div>
       <div className="product-card-title" style={{ fontSize: "32px", lineHeight: 1.2, letterSpacing: "-0.32px", fontWeight: 300 }}>Create a Mini App</div>
       <div className="product-card-desc" style={{ fontSize: "16px", lineHeight: 1.4, fontWeight: 300, marginTop: "10px", maxWidth: "280px" }}>Mini applications distributed in World App</div>
-    </div>
-  </a>
-
-  <a href="/world-id-auth/quickstart" className="product-card">
-    <div className="product-card-tile">
-      <img src="/icons/landing/agent-pass.svg" alt="" className="product-card-icon" style={{ width: "32px", height: "32px", display: "block" }} />
-    </div>
-    <div>
-      <div className="product-card-title" style={{ fontSize: "32px", lineHeight: 1.2, letterSpacing: "-0.32px", fontWeight: 300 }}>Agent Pass</div>
-      <div className="product-card-desc" style={{ fontSize: "16px", lineHeight: 1.4, fontWeight: 300, marginTop: "10px", maxWidth: "280px" }}>Connect apps and agents with World ID authentication</div>
     </div>
   </a>
 

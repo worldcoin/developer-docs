@@ -50,6 +50,8 @@ Automatic synchronization is active only after the workflow is merged to `main`,
 
 ## URLs and MCP
 
+Agent Pass is temporarily excluded from `docs.json` navigation and promotional cards while its published content is tested through World Docs MCP. Keep all generated pages and `seo.indexing: "all"`; do not add `noindex` or exclude `world-id-auth/` from publication. Hidden pages remain public at their existing URLs and can appear in search. Keep the homepage's agent-only link and technical MCP references for discovery. See [Mintlify hidden pages](https://www.mintlify.com/docs/organize/hidden-pages).
+
 Continue dual publication. Use the compatibility contract for the actual route/resource map, including the legacy `mcp-oauth` alias and trailing-slash variants. Keep Auth's existing routes on their production or sandbox hosts:
 
 - `/docs` and `/docs/`, whose landing content has no migrated equivalent.
@@ -69,5 +71,7 @@ No Auth routing change is needed for dual publication. Any later redirect requir
 - Auth owner: deployed guide content matches the intended source and environment; existing URLs, MCP resources, and access controls remain available.
 
 After publication, use a small search/read check through available MCP connections and existing URL checks, within two minutes total and without browser QA or a new harness. Record passes, failures, and skipped checks. Missing deployment evidence remains explicit follow-up work.
+
+For the hidden-page test, search World Docs MCP for the coding-agent guide and read `/world-id-auth/build-with-a-coding-agent.mdx` through its docs filesystem tool. Verify the complete `Agent instructions` section and the Auth MCP URLs. To test updates from `temporal-apps`, publish a reviewed source change through the configured docs automation, merge its documentation PR, then read the changed section through World Docs MCP after Mintlify publishes it. A successful source sync and a refreshed MCP response are separate checks; a preview does not prove production indexing.
 
 Investigate failed publishing runs, persistent empty searches, and guide-content mismatches. Compare content or source hashes, since different commits can contain identical guides. Revert and republish a bad documentation update; roll back a failing Auth release in its owning deployment. Keep existing Auth publication available throughout recovery.
