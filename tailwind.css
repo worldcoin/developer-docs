@@ -83,7 +83,7 @@
   }
   #navbar .nav-tabs-item {
     height: 32px !important;
-    padding: 6px 10px;
+    padding: 6px 10px !important;
     border-radius: 42px;
     color: #181818 !important;
     transition: background-color 0.15s ease;
@@ -93,7 +93,7 @@
     background-color: #F3F2F0;
   }
   #navbar .nav-tabs-item[data-active="true"] {
-    padding: 6px 14px;
+    padding: 6px 14px !important;
     background-color: #181818;
     color: #F9F9F8 !important;
     text-shadow: none;
@@ -369,6 +369,77 @@
   }
   .dark .product-card-icon {
     filter: invert(1);
+  }
+
+  /* Landing page — "World ID + Agents" coming-soon banner above the cards */
+  .landing-coming-soon {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    padding: 32px;
+    border-radius: 32px;
+    border: 1px solid rgba(0, 124, 251, 0.18);
+    background:
+      radial-gradient(120% 140% at 100% 0%, rgba(25, 183, 219, 0.28) 0%, rgba(25, 183, 219, 0) 60%),
+      linear-gradient(120deg, #EEF6FF 0%, #D9EBFF 55%, #CDEFF8 100%);
+  }
+  .landing-coming-soon .product-card-tile {
+    background-color: rgba(255, 255, 255, 0.7);
+  }
+  .dark .landing-coming-soon {
+    border-color: rgba(0, 124, 251, 0.35);
+    background:
+      radial-gradient(120% 140% at 100% 0%, rgba(25, 183, 219, 0.22) 0%, rgba(25, 183, 219, 0) 60%),
+      linear-gradient(120deg, #0B1626 0%, #0A2140 55%, #08303A 100%);
+  }
+  .dark .landing-coming-soon .product-card-tile {
+    background-color: rgba(255, 255, 255, 0.06);
+  }
+  .landing-coming-soon-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    line-height: 1.4;
+    font-weight: 500;
+    letter-spacing: 0.48px;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    background-color: #0068D6;
+  }
+  .landing-coming-soon-title {
+    margin-top: 12px;
+    font-size: 32px;
+    line-height: 1.2;
+    letter-spacing: -0.32px;
+    font-weight: 300;
+    color: #181818;
+  }
+  .dark .landing-coming-soon-title {
+    color: #F3F2F0;
+  }
+  .landing-coming-soon-desc {
+    margin: 10px 0 0;
+    max-width: 640px;
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 300;
+    color: #4A5568;
+  }
+  .dark .landing-coming-soon-desc {
+    color: rgb(158, 162, 166);
+  }
+  @media (max-width: 600px) {
+    .landing-coming-soon {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 24px;
+      border-radius: 24px;
+    }
+    .landing-coming-soon-title {
+      font-size: 24px;
+    }
   }
 
   /* Landing page — section headers (Developer stories / World Tech Updates) */
@@ -678,16 +749,23 @@
     }
   }
 
-  /* Landing page — hero */
+  /* Landing page — hero. !important because Mintlify's unlayered h1 styles
+     (and docs.json's heading weight 600) otherwise beat this @layer rule. */
   .landing-hero-title {
-    font-size: 64px;
-    line-height: 1.1;
-    letter-spacing: -1.28px;
-    font-weight: 300;
+    font-size: 56px !important;
+    line-height: 1.1 !important;
+    letter-spacing: -1.12px !important;
+    font-weight: 300 !important;
     color: #181818;
   }
   .dark .landing-hero-title {
     color: #F3F2F0;
+  }
+  @media (max-width: 900px) {
+    .landing-hero-title {
+      font-size: 46px !important;
+      letter-spacing: -0.92px !important;
+    }
   }
   .landing-hero-sub {
     margin-top: 24px;
@@ -703,8 +781,8 @@
   }
   @media (max-width: 600px) {
     .landing-hero-title {
-      font-size: 40px;
-      letter-spacing: -0.8px;
+      font-size: 36px !important;
+      letter-spacing: -0.72px !important;
     }
     .landing-hero-sub {
       font-size: 18px;
