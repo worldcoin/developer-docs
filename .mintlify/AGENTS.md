@@ -9,7 +9,7 @@
 
 ## IDP
 
-Agent Pass pages stay outside `docs.json` navigation during MCP testing. Keep the generated `world-id-auth/` pages, their URLs, agent-only homepage link, and `seo.indexing: "all"` so they remain available to search and AI tools. Do not restore the tab or promotional cards until the visible launch is requested. Read [IDP maintenance](world-id-auth-maintenance.md) before changing generated pages. Use the manifest, source lock, and compatibility contract for current coverage and provenance.
+Keep Agent Pass in `docs.json` as a tab with `hidden: true` and `searchable: true` during MCP testing. Preserve its complete groups and page list so direct links retain the internal sidebar without exposing the top-level tab. Keep the generated `world-id-auth/` pages, their URLs, agent-only homepage link, and `seo.indexing: "all"` so they remain available to search and AI tools. Do not make the tab or promotional cards visible until the public launch is requested. Read [IDP maintenance](world-id-auth-maintenance.md) before changing generated pages. Use the manifest, source lock, and compatibility contract for current coverage and provenance.
 
 - Keep `worldcoin/temporal-apps/apps/idpapi/mcp/guides/*.md` as the canonical guide text shared by the Auth browser documentation, MCP, and the generated Mintlify pages. Make content changes in those Markdown files, then regenerate. The landing page in `apps/idpportal/docs.html` is excluded from this migration.
 - Do not edit generated `world-id-auth/*.mdx` bodies directly. Keep publishing metadata and approved adaptations in `.mintlify/world-id-auth-pages.json` and `scripts/sync-world-id-auth.mjs`. Record the source commit in `.mintlify/world-id-auth-source.json` through the generator.
