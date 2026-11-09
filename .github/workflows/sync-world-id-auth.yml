@@ -66,17 +66,31 @@ jobs:
           sparse-checkout: |
             apps/idpapi/mcp/guides
 
-      - name: Record source and publishing branch
+      - name: Record guide commit and publishing branch
         id: source
         env:
           SOURCE_REF: ${{ inputs.source_ref || 'main' }}
+          GH_TOKEN: ${{ steps.source-token.outputs.token }}
         run: |
           source_sha=$(git -C ../_source/temporal-apps rev-parse HEAD)
+          if [[ ! "$source_sha" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::The source checkout did not resolve to a full commit SHA."
+            exit 1
+          fi
+          guide_sha=$(gh api --method GET /repos/worldcoin/temporal-apps/commits \
+            -f sha="$source_sha" \
+            -f path=apps/idpapi/mcp/guides \
+            -f per_page=1 \
+            --jq '.[0].sha')
+          if [[ ! "$guide_sha" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::Could not resolve the latest guide-changing commit for the source checkout."
+            exit 1
+          fi
           publishing_branch=codex/sync-world-id-auth
           if [ "$GITHUB_EVENT_NAME" = workflow_dispatch ] && [ "$SOURCE_REF" != main ] && [ "$SOURCE_REF" != refs/heads/main ]; then
             publishing_branch="codex/sync-world-id-auth-manual-$source_sha"
           fi
-          echo "sha=$source_sha" >> "$GITHUB_OUTPUT"
+          echo "sha=$guide_sha" >> "$GITHUB_OUTPUT"
           echo "branch=$publishing_branch" >> "$GITHUB_OUTPUT"
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4

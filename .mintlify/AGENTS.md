@@ -40,6 +40,8 @@ Include the source PR and relevant source files in documentation PRs. Leave page
 
 Use `.github/workflows/sync-world-id-auth.yml` for one-way publishing from `temporal-apps`. It polls hourly and supports manual dispatch, regenerating the allowlisted pages. Scheduled and manual `main` publications use `codex/sync-world-id-auth`; manual non-main sources use `codex/sync-world-id-auth-manual-<resolved-source-SHA>` to keep their reviews separate. `refs/heads/main` also uses the main publishing branch. Keep the source commit visible in the PR. Do not merge automatically or change global `docs.json` during synchronization.
 
+Use the latest commit changing `apps/idpapi/mcp/guides` at the selected checkout for generated provenance and the PR's source link. Unrelated source commits must not churn open publishing PRs. Keep manual branch isolation based on the selected checkout's HEAD, and stop publishing if guide provenance cannot be resolved.
+
 The workflow requires a scoped GitHub App and the configuration in [IDP maintenance](world-id-auth-maintenance.md). Merging this workflow to `main` and configuring its credentials are activation steps. Do not describe automatic publishing as active until they are complete and a run succeeds.
 
 Mintlify Autopilot may propose IDP content corrections in the canonical Markdown and continue maintaining other product areas. Publishing transports that reviewed source. Do not independently rewrite generated IDP pages, since regeneration overwrites those edits. Change the converter when a publishing adaptation needs correction. This workflow does not deploy Auth or its MCP services.
