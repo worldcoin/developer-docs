@@ -52,7 +52,7 @@ Automatic synchronization is active only after the workflow is merged to `main`,
 
 ## URLs and MCP
 
-Agent Pass stays in `docs.json` as a tab with `hidden: true` and `searchable: true` while its published content is tested through World Docs MCP. Keep the complete groups and page list so direct links retain the internal sidebar while the top-level tab and promotional cards stay hidden. Keep all generated pages and `seo.indexing: "all"`; do not add `noindex` or exclude `world-id-auth/` from publication. Pages remain public at their existing URLs and can appear in search. Keep the homepage's agent-only link and technical MCP references for discovery. See [Mintlify hidden pages](https://www.mintlify.com/docs/organize/hidden-pages).
+Agent Pass stays in `docs.json` as a tab with `hidden: true` and `searchable: true` while its published content is tested through World Docs MCP. Keep the complete groups and page list so direct links retain the internal sidebar. Mintlify reveals hidden tabs when active, so scoped rules in `tailwind.css` also hide Agent Pass from desktop and mobile tab switchers. Keep these rules in place and promotional cards hidden until launch. Keep all generated pages and `seo.indexing: "all"`; do not add `noindex` or exclude `world-id-auth/` from publication. Pages remain public at their existing URLs and can appear in search. Keep the homepage's agent-only link and technical MCP references for discovery. See [Mintlify hidden pages](https://www.mintlify.com/docs/organize/hidden-pages).
 
 Continue dual publication. Use the compatibility contract for the actual route/resource map, including the legacy `mcp-oauth` alias and trailing-slash variants. Keep Auth's existing routes on their production or sandbox hosts:
 
