@@ -37,14 +37,14 @@ environment's operator for help.
    flag leaked ones.
 
 World ID authentication with `openid` requires a client registered through the portal.
-[Agent hosts that use XAA](/world-id-auth/xaa) may instead use public or confidential CIMD
+[Agent hosts that use XAA](/agent-pass/xaa) may instead use public or confidential CIMD
 registration. OIDC dynamic client registration (DCR) is not supported.
 
 Use Google sign-in to manage clients in the portal. Your application's users
 authenticate through the separate OIDC flow.
 
-Once registered, [connect your backend or auth server with OIDC](/world-id-auth/connect-your-backend).
-When you create the client, choose its [accepted accounts](/world-id-auth/step-up#accepted-accounts)
+Once registered, [connect your backend or auth server with OIDC](/agent-pass/connect-your-backend).
+When you create the client, choose its [accepted accounts](/agent-pass/step-up#accepted-accounts)
 for requests that omit both `acr_values` and an `acr` claim request.
 
 ## Client authentication {#client-authentication}
@@ -122,13 +122,13 @@ linking succeeds. Establish each mapping through this validated linking flow.
 
 ## Get help from a coding agent {#get-help-from-a-coding-agent}
 
-Your coding agent can [read the public integration guides](/world-id-auth/build-with-a-coding-agent#give-your-coding-agent-the-guide)
+Your coding agent can [read the public integration guides](/agent-pass/build-with-a-coding-agent#give-your-coding-agent-the-guide)
 without a plugin or MCP connection. Optionally
-[connect developer MCP tools](/world-id-auth/build-with-a-coding-agent#connect-your-coding-agent)
+[connect developer MCP tools](/agent-pass/build-with-a-coding-agent#connect-your-coding-agent)
 to register and manage the application. Portal tools use Google authorization, and registration
 and credential changes require your approval in the portal. Keep client secrets
 and private keys outside agent conversations. The
-[agent instructions](/world-id-auth/build-with-a-coding-agent.md) cover portal tool use.
+[agent instructions](/agent-pass/build-with-a-coding-agent.md) cover portal tool use.
 
 ## Publish a benefit listing {#publish-a-benefit-listing}
 

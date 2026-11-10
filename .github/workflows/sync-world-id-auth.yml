@@ -109,7 +109,7 @@ jobs:
         run: |
           node scripts/sync-world-id-auth.mjs --source-dir ../_source/temporal-apps --source-commit "$SOURCE_COMMIT" --check
           node --test scripts/sync-world-id-auth.test.mjs
-          git diff --check -- world-id-auth images/world-id-auth .mintlify/world-id-auth-source.json
+          git diff --check -- agent-pass .mintlify/world-id-auth-source.json
 
       - name: Create publishing token
         id: docs-token
@@ -133,7 +133,7 @@ jobs:
           title: sync IDP docs
           draft: true
           add-paths: |
-            world-id-auth/*.mdx
+            agent-pass/*.mdx
             .mintlify/world-id-auth-source.json
           body: |
             ## Summary

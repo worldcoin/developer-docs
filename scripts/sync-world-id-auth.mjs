@@ -14,7 +14,7 @@ const environmentNote = [
   "  `https://auth.world.org`. For sandbox testing, use `https://sandbox.auth.world.org`",
   "  for discovery, portal registration, credentials, and all authentication endpoints.",
   "  Keep every part of an integration in the same environment. See",
-  "  [Test your integration](/world-id-auth/testing#test-in-the-sandbox).",
+  "  [Test your integration](/agent-pass/testing#test-in-the-sandbox).",
   "</Note>",
 ].join("\n");
 const federationDiagram = [
@@ -67,7 +67,7 @@ function validateConfig(config) {
   const sources = new Set();
   const destinations = new Set();
   for (const page of config.pages) {
-    if (!/^[a-z0-9-]+\.md$/.test(page.source) || !/^world-id-auth\/[a-z0-9-]+\.mdx$/.test(page.destination)) {
+    if (!/^[a-z0-9-]+\.md$/.test(page.source) || !/^agent-pass\/[a-z0-9-]+\.mdx$/.test(page.destination)) {
       throw new Error("Guide paths must stay within the approved source and destination directories");
     }
     const sourceSelection = `${page.source}#${page.section ?? ""}`;
@@ -104,7 +104,7 @@ function rewriteLinks(markdown, config) {
     return `](${routes.get(id)}${fragment})`;
   });
   // Markdown links use local routes; plain URLs and agent prompts stay absolute.
-  result = result.replace(/\]\(https:\/\/docs\.world\.org(\/world-id-auth\/[^)\s]+)\)/g, "]($1)");
+  result = result.replace(/\]\(https:\/\/docs\.world\.org(\/agent-pass\/[^)\s]+)\)/g, "]($1)");
   result = result.replaceAll("{{issuer}}", config.issuer);
   if (/\{\{[^}\n]+\}\}/.test(result)) throw new Error("Unknown source placeholder requires an explicit publishing rule");
   return result;

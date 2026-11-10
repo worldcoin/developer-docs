@@ -5,7 +5,7 @@
   "pages": [
     {
       "source": "getting-started.md",
-      "destination": "world-id-auth/quickstart.mdx",
+      "destination": "agent-pass/quickstart.mdx",
       "title": "Quickstart",
       "sidebarTitle": "Quickstart",
       "description": "Register an application, connect to the World ID issuer, and add step-up authentication.",
@@ -19,14 +19,14 @@
     },
     {
       "source": "app-registration.md",
-      "destination": "world-id-auth/app-registration.mdx",
+      "destination": "agent-pass/app-registration.mdx",
       "title": "Register your application",
       "sidebarTitle": "Register your application",
       "description": "Register and manage your World ID OIDC application, credentials, callbacks, and benefit listing."
     },
     {
       "source": "oidc.md",
-      "destination": "world-id-auth/connect-your-backend.mdx",
+      "destination": "agent-pass/connect-your-backend.mdx",
       "title": "Connect your backend",
       "sidebarTitle": "Connect your backend",
       "description": "Connect your backend to the World ID issuer with OpenID Connect (OIDC).",
@@ -49,7 +49,7 @@
     },
     {
       "source": "mcp-authorization.md",
-      "destination": "world-id-auth/connect-your-auth-server.mdx",
+      "destination": "agent-pass/connect-your-auth-server.mdx",
       "title": "MCP authorization",
       "sidebarTitle": "MCP authorization",
       "description": "Authenticate through your auth server and issue access tokens for your MCP resource.",
@@ -71,14 +71,14 @@
     },
     {
       "source": "id-token.md",
-      "destination": "world-id-auth/id-tokens-and-identity.mdx",
+      "destination": "agent-pass/id-tokens-and-identity.mdx",
       "title": "ID tokens and identity",
       "sidebarTitle": "ID tokens and identity",
       "description": "Validate token claims, read UserInfo, and recognize accounts using the issuer and pairwise subject."
     },
     {
       "source": "step-up.md",
-      "destination": "world-id-auth/step-up.mdx",
+      "destination": "agent-pass/step-up.mdx",
       "title": "Step-up authentication",
       "sidebarTitle": "Step-up authentication",
       "description": "Require recent World ID authentication before sensitive actions.",
@@ -90,7 +90,7 @@
     },
     {
       "source": "step-up.md",
-      "destination": "world-id-auth/human-in-the-loop.mdx",
+      "destination": "agent-pass/human-in-the-loop.mdx",
       "title": "Human in the loop",
       "sidebarTitle": "Human in the loop",
       "icon": "/images/docs/human-badge-blue.svg",
@@ -108,14 +108,14 @@
     },
     {
       "source": "xaa.md",
-      "destination": "world-id-auth/xaa.mdx",
+      "destination": "agent-pass/xaa.mdx",
       "title": "Cross App Access (XAA)",
       "sidebarTitle": "Cross App Access (XAA)",
       "description": "Connect agent hosts to reviewed apps with World ID identity delegation and user-controlled permissions."
     },
     {
       "source": "world-id-users.md",
-      "destination": "world-id-auth/use-world-id-with-your-agent.mdx",
+      "destination": "agent-pass/use-world-id-with-your-agent.mdx",
       "title": "Use World ID with your agent",
       "sidebarTitle": "Use World ID with your agent",
       "description": "Understand World ID agent permissions, discover benefits, and manage your connections.",
@@ -123,14 +123,14 @@
     },
     {
       "source": "coding-agent-setup.md",
-      "destination": "world-id-auth/build-with-a-coding-agent.mdx",
+      "destination": "agent-pass/build-with-a-coding-agent.mdx",
       "title": "Build with a coding agent",
       "sidebarTitle": "Build with a coding agent",
       "description": "Give your coding agent complete integration instructions and connect developer MCP tools."
     },
     {
       "source": "testing.md",
-      "destination": "world-id-auth/testing.mdx",
+      "destination": "agent-pass/testing.mdx",
       "title": "Test your integration",
       "sidebarTitle": "Test your integration",
       "description": "Test World ID integration in the sandbox, complete real flows, and check failure paths."

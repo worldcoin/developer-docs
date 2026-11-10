@@ -37,7 +37,7 @@ A passkey cannot satisfy either `-face` class.
 Use `acr` for the achieved class, `amr` for the authentication method, and
 `auth_time` for freshness. An account's verification type does not imply a fresh
 biometric check. See [Assurance values](#assurance-values)
-for the exact claims and [Accept Orb or Selfie Check](/world-id-auth/step-up#accept-orb-or-selfie-check)
+for the exact claims and [Accept Orb or Selfie Check](/agent-pass/step-up#accept-orb-or-selfie-check)
 for requests that allow either credential.
 
 ## Token response {#token-response}
@@ -46,7 +46,7 @@ Browser and device flows both return `id_token`, `access_token`, `token_type`, a
 `expires_in`:
 
 - **`id_token`:** the signed authentication result described below.
-  [Validate it](/world-id-auth/connect-your-backend#validate-the-id-token) before using
+  [Validate it](/agent-pass/connect-your-backend#validate-the-id-token) before using
   any claim.
 - **`access_token`:** an opaque credential whose authority is limited to the
   [UserInfo endpoint](#userinfo).
@@ -55,7 +55,7 @@ Browser and device flows both return `id_token`, `access_token`, `token_type`, a
   value. The ID token has its own expiration, given by `exp`.
 
 Refresh tokens are available only through the
-[XAA profile](/world-id-auth/xaa), which returns a rotating refresh token
+[XAA profile](/agent-pass/xaa), which returns a rotating refresh token
 for `openid offline_access`.
 
 After validation, your backend creates its own application sessions and API or
@@ -90,7 +90,7 @@ This illustrative browser response includes the requested nonce:
 | `iss`, `sub` | Store the exact issuer and opaque, case-sensitive subject together as the external account identity.                                                                                                                                                                                     |
 | `aud`        | Your registered client ID. Clients sharing a sector still have separate token audiences.                                                                                                                                                                                                 |
 | `auth_time`  | Server verification time for the proof or passkey assertion. See [Assurance values](#assurance-values).                                                                                                                                                                                  |
-| `acr`, `amr` | Achieved class and methods; see [Assurance values](#assurance-values). Selfie classes require a request or [accepted accounts](/world-id-auth/step-up#accepted-accounts) that list them. Any account also permits Selfie or unverified accounts; unverified accounts omit `acr`. |
+| `acr`, `amr` | Achieved class and methods; see [Assurance values](#assurance-values). Selfie classes require a request or [accepted accounts](/agent-pass/step-up#accepted-accounts) that list them. Any account also permits Selfie or unverified accounts; unverified accounts omit `acr`. |
 | `nonce`      | Included when supplied in browser authorization; omitted in device grants.                                                                                                                                                                                                               |
 
 Apply standard `exp`, `iat`, and `jti` semantics. Read `exp` from the ID token;
@@ -99,7 +99,7 @@ Apply standard `exp`, `iat`, and `jti` semantics. Read `exp` from the ID token;
 For example, if a user authenticates at 10:00 and their existing session produces
 a token at 11:00, `auth_time` still represents 10:00 while `iat` represents 11:00.
 Use `auth_time` for authentication freshness, as described in
-[Step-up authentication](/world-id-auth/step-up).
+[Step-up authentication](/agent-pass/step-up).
 
 For accounts with an enabled inbox, newly issued ID tokens and ID-JAGs also
 include `email` and `email_verified: true`. Clients may request the `email` scope;
@@ -196,7 +196,7 @@ The subject is **pairwise**: different sectors receive different values for the
 same account. Clients deliberately registered in the same sector receive the
 same value. Rotating a client secret or using a new client ID within that sector
 does not change the subject. Choose your sector before integrating; see
-[Manage credentials and callbacks](/world-id-auth/app-registration#manage-credentials-and-callbacks).
+[Manage credentials and callbacks](/agent-pass/app-registration#manage-credentials-and-callbacks).
 
 A new World identity can produce a new subject. Do not automatically merge
 accounts with different subjects or infer a mapping between sectors.

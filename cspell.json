@@ -62,6 +62,7 @@
     "idkit",
     "IDKit",
     "idpapi",
+    "idpcommon",
     "idpportal",
     "idpweb",
     "idpworker",

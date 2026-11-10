@@ -31,7 +31,7 @@ A host that uses device authorization must be confidential. A CIMD host that
 starts device authorization needs `private_key_jwt` and the device-code grant in
 its metadata. A host's login
 accepts any World ID account unless its metadata lists `default_acr_values` with
-classes from [Accepted accounts](/world-id-auth/step-up#accepted-accounts).
+classes from [Accepted accounts](/agent-pass/step-up#accepted-accounts).
 
 World IdP's profile differs from revision 06 in two ways: it accepts public hosts
 at the token exchange
@@ -72,7 +72,7 @@ credentials, and never accept a client secret that World IdP issued to it.
 The ID-JAG's `sub` is the same pairwise subject World IdP issues to your app in
 ID tokens. Its `auth_time`, `acr`, and `amr` describe the user's original World ID
 authentication, not a fresh one. Match accounts by
-[`(iss, sub)`](/world-id-auth/id-tokens-and-identity#store-and-match-sub), as for ID tokens.
+[`(iss, sub)`](/agent-pass/id-tokens-and-identity#store-and-match-sub), as for ID tokens.
 Your authorization server applies its own scope policy and issues the access
 token used to call your MCP server.
 
@@ -119,7 +119,7 @@ apps it may access. A new app starts unselected, and users can change their
 selection later.
 
 A host can connect any World ID account. Your app's
-[accepted accounts](/world-id-auth/step-up#accepted-accounts) decide which
+[accepted accounts](/agent-pass/step-up#accepted-accounts) decide which
 accounts it receives ID-JAGs for: **Orb** admits Orb accounts, **Selfie Check** also
 admits Selfie Check accounts, and **Any account** admits every account. Consent marks
 apps that do not accept the user's account, and ID-JAG requests for them return

@@ -8,7 +8,7 @@ import { renderGuide, syncGuides } from "./sync-world-id-auth.mjs";
 
 const page = {
   source: "getting-started.md",
-  destination: "world-id-auth/quickstart.mdx",
+  destination: "agent-pass/quickstart.mdx",
   title: "Quickstart",
   description: "Connect your application.",
 };
@@ -19,7 +19,7 @@ const config = {
   pages: [page],
 };
 const sourceCommit = "a".repeat(40);
-const codingPage = { ...page, source: "coding-agent-setup.md", destination: "world-id-auth/build-with-a-coding-agent.mdx" };
+const codingPage = { ...page, source: "coding-agent-setup.md", destination: "agent-pass/build-with-a-coding-agent.mdx" };
 const codingSections = [
   "Agent instructions",
   "Developer-portal permission",
@@ -78,8 +78,8 @@ test("maps guide links and raw Markdown prompts without moving service endpoints
     "Use `{{issuer}}/api/v1/token` and `{{issuer}}/mcp/developer`.",
   ].join("\n");
   const rendered = renderGuide(markdown, page, config);
-  assert.ok(rendered.includes("[Start](/world-id-auth/quickstart#next)"));
-  assert.ok(rendered.includes("https://docs.world.org/world-id-auth/quickstart.md"));
+  assert.ok(rendered.includes("[Start](/agent-pass/quickstart#next)"));
+  assert.ok(rendered.includes("https://docs.world.org/agent-pass/quickstart.md"));
   assert.ok(rendered.includes("`https://auth.world.org/api/v1/token`"));
   assert.ok(rendered.includes("`https://auth.world.org/mcp/developer`"));
   assert.ok(!rendered.includes("/docs/guides/"));
@@ -88,8 +88,8 @@ test("maps guide links and raw Markdown prompts without moving service endpoints
 test("maps relative guide links to browser pages while keeping explicit raw Markdown URLs", () => {
   const markdown = "# Guide\n\n[Instructions](./getting-started.md#next)\nRead {{issuer}}/docs/guides/getting-started.md?source=agent#next\n";
   const rendered = renderGuide(markdown, page, config);
-  assert.ok(rendered.includes("[Instructions](/world-id-auth/quickstart#next)"));
-  assert.ok(rendered.includes("https://docs.world.org/world-id-auth/quickstart.md?source=agent#next"));
+  assert.ok(rendered.includes("[Instructions](/agent-pass/quickstart#next)"));
+  assert.ok(rendered.includes("https://docs.world.org/agent-pass/quickstart.md?source=agent#next"));
 });
 
 test("inlines environment guidance without a snippet dependency", () => {
@@ -116,8 +116,8 @@ test("inlines the current MCP diagram with separate upstream and downstream code
 });
 
 test("a derived human-checkpoint page preserves its section and links back to the full step-up guide", () => {
-  const primary = { ...page, source: "step-up.md", destination: "world-id-auth/step-up.mdx" };
-  const derived = { ...primary, destination: "world-id-auth/human-in-the-loop.mdx", section: "Human checkpoints", sectionEnd: "Prevent stale or duplicate operations" };
+  const primary = { ...page, source: "step-up.md", destination: "agent-pass/step-up.mdx" };
+  const derived = { ...primary, destination: "agent-pass/human-in-the-loop.mdx", section: "Human checkpoints", sectionEnd: "Prevent stale or duplicate operations" };
   const derivedConfig = { ...config, pages: [primary, derived] };
   const markdown = [
     "# Step-up authentication",
@@ -143,13 +143,13 @@ test("a derived human-checkpoint page preserves its section and links back to th
   assert.ok(rendered.includes("## Human checkpoints {#human-checkpoints}"));
   assert.ok(rendered.includes("Keep the saved action bound to the authentication attempt."));
   assert.ok(rendered.includes("[approval](#optional-collect-action-approval-in-your-application)"));
-  assert.ok(rendered.includes("[step-up](/world-id-auth/step-up#implement-step-up)"));
-  assert.ok(rendered.includes("[one-use rules](/world-id-auth/step-up#prevent-stale-or-duplicate-operations)"));
+  assert.ok(rendered.includes("[step-up](/agent-pass/step-up#implement-step-up)"));
+  assert.ok(rendered.includes("[one-use rules](/agent-pass/step-up#prevent-stale-or-duplicate-operations)"));
   assert.ok(!rendered.includes("Reconcile before retrying."));
   const complete = renderGuide(markdown + "\n[Full guide]({{issuer}}/docs/guides/step-up#human-checkpoints)\n", primary, derivedConfig);
   assert.ok(complete.includes("Keep every backend validation step in the full guide."));
   assert.ok(complete.includes("Reconcile before retrying."));
-  assert.ok(complete.includes("[Full guide](/world-id-auth/step-up#human-checkpoints)"));
+  assert.ok(complete.includes("[Full guide](/agent-pass/step-up#human-checkpoints)"));
   for (const changed of [markdown.replace("## Human checkpoints", "## Renamed checkpoints"), markdown.replace("## Prevent stale or duplicate operations", "## New boundary")]) {
     assert.throws(() => renderGuide(changed, derived, derivedConfig), /derived guide|boundary/i);
   }
@@ -261,13 +261,13 @@ test("regenerates deterministically and ignores files outside the approved guide
   const second = await syncGuides({ ...options, sourceCommit: "b".repeat(40) });
   assert.deepEqual(second.changed, []);
   assert.equal(await readFile(provenancePath, "utf8"), provenance);
-  assert.deepEqual(await readdir(path.join(f.outputDir, "world-id-auth")), ["quickstart.mdx"]);
+  assert.deepEqual(await readdir(path.join(f.outputDir, "agent-pass")), ["quickstart.mdx"]);
 });
 
 test("a missing approved source fails before any destination is written", async (t) => {
   const f = await fixture(t);
   await f.write(page.source, "# Guide\n\nExisting source.\n");
-  const missing = { ...page, source: "missing.md", destination: "world-id-auth/missing.mdx" };
+  const missing = { ...page, source: "missing.md", destination: "agent-pass/missing.mdx" };
   await assert.rejects(() => syncGuides({ ...f, sourceCommit, config: { ...config, pages: [page, missing] } }));
   assert.deepEqual(await readdir(f.outputDir), []);
 });
@@ -289,17 +289,18 @@ test("published IDP pages stay discoverable and include complete machine-readabl
     const route = entry.destination.replace(/\.mdx$/, "");
     assert.ok(site.seo?.indexing === "all" || navigation.includes(JSON.stringify(route)), `Not indexed: ${route}`);
     const generated = await readFile(new URL(`../${entry.destination}`, import.meta.url), "utf8");
+    assert.doesNotMatch(generated, /\/world-id-auth\//, `Outdated docs route: ${route}`);
     assert.doesNotMatch(generated, /^noindex:\s*true\s*$/m, `Excluded from search: ${route}`);
     assert.doesNotMatch(generated, /^import [^\n]+ from ["']\/snippets\//m, `Unexpected snippet dependency: ${route}`);
   }
-  const instructions = await readFile(new URL("../world-id-auth/build-with-a-coding-agent.mdx", import.meta.url), "utf8");
+  const instructions = await readFile(new URL("../agent-pass/build-with-a-coding-agent.mdx", import.meta.url), "utf8");
   for (const heading of codingSections) assert.ok(instructions.includes(`## ${heading} {#`), `Missing section: ${heading}`);
-  assert.ok(instructions.includes("Read https://docs.world.org/world-id-auth/build-with-a-coding-agent.md"));
+  assert.ok(instructions.includes("Read https://docs.world.org/agent-pass/build-with-a-coding-agent.md"));
   assert.ok(instructions.includes("https://auth.world.org/mcp/developer"));
   assert.ok(instructions.includes("https://sandbox.auth.world.org/mcp/developer"));
   assert.ok(instructions.includes("`worldid://guides/<id>`"));
   assert.ok(instructions.includes("`resources/read`"));
-  const userGuide = await readFile(new URL("../world-id-auth/use-world-id-with-your-agent.mdx", import.meta.url), "utf8");
+  const userGuide = await readFile(new URL("../agent-pass/use-world-id-with-your-agent.mdx", import.meta.url), "utf8");
   assert.ok(userGuide.includes("https://auth.world.org/mcp"));
   assert.ok(userGuide.includes("`world-id:read`"));
 });
@@ -307,6 +308,15 @@ test("published IDP pages stay discoverable and include complete machine-readabl
 test("the compatibility contract keeps legacy Auth routes and protected MCP resources", async () => {
   const manifest = JSON.parse(await readFile(new URL("../.mintlify/world-id-auth-pages.json", import.meta.url), "utf8"));
   const contract = JSON.parse(await readFile(new URL("../.mintlify/world-id-auth-compatibility.json", import.meta.url), "utf8"));
+  const site = JSON.parse(await readFile(new URL("../docs.json", import.meta.url), "utf8"));
+  const redirects = new Map(site.redirects.map((redirect) => [redirect.source, redirect.destination]));
+  for (const entry of manifest.pages) {
+    assert.ok(entry.destination.startsWith("agent-pass/"));
+    const route = `/${entry.destination.replace(/\.mdx$/, "")}`;
+    const legacyRoute = route.replace("/agent-pass/", "/world-id-auth/");
+    assert.equal(redirects.get(legacyRoute), route);
+    assert.equal(redirects.get(`${legacyRoute}.md`), `${route}.md`);
+  }
   const ids = [...new Set(manifest.pages.map((entry) => entry.source.replace(/\.md$/, "")))];
   assert.deepEqual(contract.guideResources.map((guide) => guide.id).sort(), ids.sort());
   const routes = new Map(contract.legacyHtmlRoutes.map((route) => [route.path, route.docsPath]));
@@ -315,15 +325,15 @@ test("the compatibility contract keeps legacy Auth routes and protected MCP reso
     assert.equal(routes.get(`/docs/guides/${id}`), `/${entry.destination.replace(/\.mdx$/, "")}`);
     assert.deepEqual(contract.guideResources.find((guide) => guide.id === id), { id, audience: "developer", requiresAuth: false });
   }
-  assert.equal(routes.get("/docs/guides/human-in-the-loop"), "/world-id-auth/human-in-the-loop");
-  assert.equal(routes.get("/docs/guides/federation"), "/world-id-auth/connect-your-auth-server");
-  assert.equal(routes.get("/docs/guides/mcp-oauth"), "/world-id-auth/build-with-a-coding-agent");
+  assert.equal(routes.get("/docs/guides/human-in-the-loop"), "/agent-pass/human-in-the-loop");
+  assert.equal(routes.get("/docs/guides/federation"), "/agent-pass/connect-your-auth-server");
+  assert.equal(routes.get("/docs/guides/mcp-oauth"), "/agent-pass/build-with-a-coding-agent");
   assert.equal(routes.has("/docs/guides/world-id-users"), false);
   assert.deepEqual(contract.guideResources.find((guide) => guide.id === "world-id-users"), { id: "world-id-users", audience: "user", requiresAuth: true });
   assert.equal(contract.mode, "dual-publication");
   assert.deepEqual(contract.preserveOnAuth.mcpPaths, ["/mcp", "/mcp/developer"]);
   assert.equal(contract.preserveOnAuth.resourceUriPrefix, "worldid://guides/");
   assert.equal(contract.preserveOnAuth.rawAgentGuidePath, "/docs/guides/coding-agent-setup.md");
-  assert.equal(contract.markdownEquivalent.docsPath, "/world-id-auth/build-with-a-coding-agent.md");
+  assert.equal(contract.markdownEquivalent.docsPath, "/agent-pass/build-with-a-coding-agent.md");
   assert.equal(contract.legacyHtmlPolicy.includeTrailingSlash, true);
 });

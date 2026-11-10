@@ -120,8 +120,8 @@
   }
   /* Mintlify reveals hidden tabs when active. Keep Agent Pass out of the
      tab switchers while its navigation tree supplies the page sidebar. */
-  #navbar .nav-tabs-item[href^="/world-id-auth/"],
-  a.mobile-nav-tabs-item[href^="/world-id-auth/"] {
+  #navbar .nav-tabs-item[href^="/agent-pass/"],
+  a.mobile-nav-tabs-item[href^="/agent-pass/"] {
     display: none !important;
   }
   #navbar .nav-tabs-item {

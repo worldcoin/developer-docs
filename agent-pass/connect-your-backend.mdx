@@ -11,7 +11,7 @@ description: "Connect your backend to the World ID issuer with OpenID Connect (O
 Authenticate users through the Authorization Code Flow or Device Authorization
 Grant. Your backend or existing auth server is the confidential client;
 browser-only, native, and CLI clients use that backend.
-[Set up the client](/world-id-auth/app-registration) first.
+[Set up the client](/agent-pass/app-registration) first.
 
 <span id="client-authentication" />
 
@@ -22,16 +22,16 @@ browser-only, native, and CLI clients use that backend.
 | Issuer                | `https://auth.world.org`                                                                                                       |
 | Discovery             | `https://auth.world.org/.well-known/openid-configuration`                                                                      |
 | Scope                 | `openid`, optionally with `email`                                                                                  |
-| Client authentication | Your registered method; see [Client authentication](/world-id-auth/app-registration#client-authentication) |
+| Client authentication | Your registered method; see [Client authentication](/agent-pass/app-registration#client-authentication) |
 
 Read endpoints and `jwks_uri` from discovery. Use the same environment for
 registration, credentials, and discovery. Request `openid`, optionally `email`;
 remove library defaults for `profile`, `offline_access`, `prompt=consent`, and
-`prompt=select_account`. For delegation with `offline_access`, follow [XAA](/world-id-auth/xaa).
+`prompt=select_account`. For delegation with `offline_access`, follow [XAA](/agent-pass/xaa).
 
 To accept people verified by either Orb or Selfie Check, send both authentication
-classes as described in [Accept Orb or Selfie Check](/world-id-auth/step-up#accept-orb-or-selfie-check).
-Omitting them uses your client's [accepted accounts](/world-id-auth/step-up#accepted-accounts).
+classes as described in [Accept Orb or Selfie Check](/agent-pass/step-up#accept-orb-or-selfie-check).
+Omitting them uses your client's [accepted accounts](/agent-pass/step-up#accepted-accounts).
 
 <span id="sign-in-through-the-browser" />
 
@@ -81,7 +81,7 @@ code_verifier=<original-verifier>
 ```
 
 URL-encode requests. For the portal default `client_secret_basic` or
-`private_key_jwt`, use the [registered method](/world-id-auth/app-registration#client-authentication).
+`private_key_jwt`, use the [registered method](/agent-pass/app-registration#client-authentication).
 [Validate the result](#validate-the-id-token) before using its claims.
 
 <span id="sign-in-a-headless-agent-device-flow" />
@@ -98,7 +98,7 @@ registered client-authentication method and `scope=openid`.
 Run requests from your backend. The service running an agent or CLI can act as
 that backend when it securely stores credentials and validates the ID token.
 Keep credentials, device codes, and tokens in server-side storage, outside model messages.
-For delegation with `openid offline_access`, follow the [XAA profile](/world-id-auth/xaa).
+For delegation with `openid offline_access`, follow the [XAA profile](/agent-pass/xaa).
 
 ### Supported device profile {#supported-device-profile}
 
@@ -108,10 +108,10 @@ Configure the client for the device grant separately from browser authorization:
 
 | Input or result                   | Device grant contract                                                                                                                                                            |
 | --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Initiation                        | `scope=openid`, form-encoded, with confidential client authentication. For delegation, use the [XAA profile](/world-id-auth/xaa).                                        |
+| Initiation                        | `scope=openid`, form-encoded, with confidential client authentication. For delegation, use the [XAA profile](/agent-pass/xaa).                                        |
 | Polling                           | Form-encoded `grant_type=urn:ietf:params:oauth:grant-type:device_code`, `device_code`, and the same client's authentication.                                                     |
 | Browser parameters                | No callback, PKCE, or `state` exchange. `nonce`, `prompt`, and `max_age` do not provide request controls for this grant. Fresh authentication is required regardless.            |
-| Authentication class              | Supports `acr_values` preferences and essential ID-token `acr` requests through `claims`; see [Face Auth](/world-id-auth/step-up#require-face-auth).                     |
+| Authentication class              | Supports `acr_values` preferences and essential ID-token `acr` requests through `claims`; see [Face Auth](/agent-pass/step-up#require-face-auth).                     |
 | Unknown parameters                | Ignored when supplied once. A successful initiation does not mean an extension was understood or enforced.                                                                       |
 | Malformed or repeated fields      | Malformed form encoding and repeated fields, including unknown parameters and identical repeated values, return `invalid_request`.                                               |
 | ID token                          | Validate signature, issuer, audience, expiry, and required `auth_time`, `acr`, and `amr`. Device tokens omit `nonce`, even if one was sent; accept its absence for this profile. |
@@ -175,13 +175,13 @@ client_secret=<backend-secret>
 device_code=<private-device-code>
 ```
 
-Use your form encoder. For other methods, use the [registered client authentication](/world-id-auth/app-registration#client-authentication).
+Use your form encoder. For other methods, use the [registered client authentication](/agent-pass/app-registration#client-authentication).
 
 ### Expiry and rate limits {#expiry-and-rate-limits}
 
 - The device code expires 20 minutes after creation, even if approval occurs near
   expiry, and can be redeemed once. See
-  [recovery after interrupted requests](/world-id-auth/connect-your-backend#recovery-after-interrupted-requests)
+  [recovery after interrupted requests](/agent-pass/connect-your-backend#recovery-after-interrupted-requests)
   for when to retry or start again.
 - If you cannot tell whether a start request succeeded, it may leave an unused
   attempt until expiry. Do not retry it in a tight loop.
@@ -198,9 +198,9 @@ with issuer `https://auth.world.org`, your client ID as audience, and RS256 sign
 from discovery's `jwks_uri`. Use bounded JWKS refresh and handle key overlap.
 Validate a requested browser nonce; device tokens omit it.
 For required freshness and assurance, also enforce the
-[step-up policy](/world-id-auth/step-up) against `auth_time`, `acr`, and `amr`.
+[step-up policy](/agent-pass/step-up) against `auth_time`, `acr`, and `amr`.
 
-Use `(iss, sub)` for account matching. See [Tokens and identity](/world-id-auth/id-tokens-and-identity) for token responses,
+Use `(iss, sub)` for account matching. See [Tokens and identity](/agent-pass/id-tokens-and-identity) for token responses,
 claim values, UserInfo, and subject sharing.
 
 ## Configure your auth server {#configure-your-auth-server}
@@ -219,14 +219,14 @@ server controls how its downstream tenants and users are separated.
 Refreshes under your auth server's policy preserve the original World ID
 authentication time. World IdP provides no advertised OIDC end-session or
 back-channel logout endpoint.
-For account linking, follow [Store and match sub](/world-id-auth/id-tokens-and-identity#store-and-match-sub);
-for callback migrations, follow [Manage credentials and callbacks](/world-id-auth/app-registration#manage-credentials-and-callbacks).
+For account linking, follow [Store and match sub](/agent-pass/id-tokens-and-identity#store-and-match-sub);
+for callback migrations, follow [Manage credentials and callbacks](/agent-pass/app-registration#manage-credentials-and-callbacks).
 
 ## Primary sign-in {#primary-sign-in}
 
 To use World ID as your application's primary or only sign-in, validate a browser
 or device ID token, find or create the account by `(iss, sub)`, and issue your own
-session. Handle [accounts without email claims](/world-id-auth/id-tokens-and-identity#claim-reference).
+session. Handle [accounts without email claims](/agent-pass/id-tokens-and-identity#claim-reference).
 Your application owns its sessions, permissions, sign-out, and revocation.
 Ending World IdP's browser session or revoking its saved consent leaves your
 application's sessions and tokens under its own policy.
@@ -237,13 +237,13 @@ application's sessions and tokens under its own policy.
   of times before the code's original expiry, using the same code, redirect URI,
   and PKCE verifier.
 - **Device poll fails:** Follow the
-  [polling and stop rules](/world-id-auth/connect-your-backend#device-flow).
+  [polling and stop rules](/agent-pass/connect-your-backend#device-flow).
 - **Exchange returns `invalid_grant`:** Treat it as failure.
   Start a new authentication attempt. Each code can be redeemed once. If a
   successful exchange's response was lost and you retained no tokens, you must
   also start again.
 
-For [`private_key_jwt`](/world-id-auth/app-registration#client-authentication),
+For [`private_key_jwt`](/agent-pass/app-registration#client-authentication),
 generate a fresh assertion for every retry or poll, even after a signing failure.
 Keep codes, assertions, tokens, PKCE verifiers, and client credentials out of logs.
 
@@ -251,15 +251,15 @@ Keep codes, assertions, tokens, PKCE verifiers, and client credentials out of lo
 
 - Implicit and hybrid grants, client credentials, and request objects
   (`request` / `request_uri`) are unsupported. Refresh and token exchange belong
-  to [XAA](/world-id-auth/xaa).
-- The authentication access token authorizes [UserInfo](/world-id-auth/id-tokens-and-identity#userinfo).
+  to [XAA](/agent-pass/xaa).
+- The authentication access token authorizes [UserInfo](/agent-pass/id-tokens-and-identity#userinfo).
   Your backend issues credentials for its own APIs and MCP resources.
 - The [device profile](#supported-device-profile) specifies supported controls
   and the authentication result's action-approval boundary.
 
 ## Verify the integration {#verify-the-integration}
 
-Follow [Sandbox and testing](/world-id-auth/testing), including accounts
+Follow [Sandbox and testing](/agent-pass/testing), including accounts
 with and without email, account linking, wrong-account rejection, and step-up
 through existing sessions. Match UserInfo `sub` to the ID token if you use UserInfo.
 
@@ -267,10 +267,10 @@ through existing sessions. Match UserInfo `sub` to the ID token if you use UserI
 
 ## Related guides {#related-guides}
 
-- [Client setup](/world-id-auth/app-registration#client-authentication): credential formats and rotation.
-- [Step-up authentication](/world-id-auth/step-up#through-your-auth-server): freshness, assurance, and propagation through your auth server.
-- [MCP authorization](/world-id-auth/connect-your-auth-server): access tokens for your MCP resource.
-- [Cross-App Access (XAA)](/world-id-auth/xaa): app enrollment, ID-JAG integration, consent, renewal, and revocation.
+- [Client setup](/agent-pass/app-registration#client-authentication): credential formats and rotation.
+- [Step-up authentication](/agent-pass/step-up#through-your-auth-server): freshness, assurance, and propagation through your auth server.
+- [MCP authorization](/agent-pass/connect-your-auth-server): access tokens for your MCP resource.
+- [Cross-App Access (XAA)](/agent-pass/xaa): app enrollment, ID-JAG integration, consent, renewal, and revocation.
 
 ## Troubleshooting {#troubleshooting}
 
@@ -285,7 +285,7 @@ Keep dependency failures distinguishable from invalid authentication.
 | Symptom                                                           | Check                                                                                                                                                                                                                           |
 | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `invalid_scope`                                                   | Request `openid` for World ID authentication or `openid offline_access` for XAA delegation when discovery advertises it; `email` is also accepted. Remove other library scopes.                                                 |
-| HTTP 400 `unsupported_grant_type`                                 | Use a grant type advertised by discovery. See [XAA availability](/world-id-auth/xaa#requirements) for refresh and exchange.                                                                                             |
+| HTTP 400 `unsupported_grant_type`                                 | Use a grant type advertised by discovery. See [XAA availability](/agent-pass/xaa#requirements) for refresh and exchange.                                                                                             |
 | Authorization `invalid_request`                                   | Check the active client, exact registered callback, state, nonce, S256 challenge, response mode, and supported prompt. Bad client/callback requests fail without redirecting to your callback.                                  |
 | `invalid_client` at token/device endpoint                         | Check environment, registered auth method, credential encoding, and that methods are not mixed. For JWTs check audience, key, expiry, and a fresh JTI per request. Basic failures use HTTP 401; POST/JWT failures use HTTP 400. |
 | `invalid_grant`                                                   | Check expiry, single-use code, exact callback, PKCE verifier, and client binding. Do not blindly replay a possibly consumed code.                                                                                               |

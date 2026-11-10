@@ -10,7 +10,7 @@ description: "Authenticate through your auth server and issue access tokens for 
 
 <span id="configure-your-auth-server" />
 
-First [configure your auth server](/world-id-auth/connect-your-backend#configure-your-auth-server).
+First [configure your auth server](/agent-pass/connect-your-backend#configure-your-auth-server).
 It authenticates the user with World ID over OIDC, maps `(iss, sub)` to your
 application's account, and issues OAuth access tokens for your MCP server.
 The MCP client connects the agent to your server and presents those tokens when
@@ -82,14 +82,14 @@ resources and rejects any other `resource`.
 ## Device authentication {#device-authentication}
 
 If your authorization server supports World ID device authentication, use the
-[Device Authorization Grant](/world-id-auth/connect-your-backend#sign-in-a-headless-agent-device-flow)
+[Device Authorization Grant](/agent-pass/connect-your-backend#sign-in-a-headless-agent-device-flow)
 for that upstream step. Your authorization server validates the returned ID
 token and issues its own access token for your MCP resource through a downstream authorization flow
 that the MCP client supports. Confirm support for that downstream flow in both
 your authorization server and MCP client.
 
 For authentication freshness at tool execution, follow
-[Step-up authentication](/world-id-auth/step-up#challenge-an-agent-or-api-client-rfc-9470).
-For ID-JAG-based access, see [Cross-App Access (XAA)](/world-id-auth/xaa).
+[Step-up authentication](/agent-pass/step-up#challenge-an-agent-or-api-client-rfc-9470).
+For ID-JAG-based access, see [Cross-App Access (XAA)](/agent-pass/xaa).
 
 Reference: [MCP authorization](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization).

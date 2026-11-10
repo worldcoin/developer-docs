@@ -18,7 +18,7 @@ register or manage your application through tools.
 Copy this prompt into your coding agent:
 
 ```text
-Read https://docs.world.org/world-id-auth/build-with-a-coding-agent.md and follow its instructions to integrate World ID into this project.
+Read https://docs.world.org/agent-pass/build-with-a-coding-agent.md and follow its instructions to integrate World ID into this project.
 ```
 
 ## Connect your coding agent {#connect-your-coding-agent}
@@ -92,10 +92,10 @@ check developer access and follow the Google sign-in and portal consent prompt.
 
 ## Agent instructions {#agent-instructions}
 
-Read [Start here](/world-id-auth/quickstart) and inspect the project's
+Read [Start here](/agent-pass/quickstart) and inspect the project's
 existing authentication setup. Follow the
-[OIDC guide](/world-id-auth/connect-your-backend) to connect its backend or auth server.
-Follow the [testing guide](/world-id-auth/testing) to verify the integration.
+[OIDC guide](/agent-pass/connect-your-backend) to connect its backend or auth server.
+Follow the [testing guide](/agent-pass/testing) to verify the integration.
 Use this environment's issuer and portal throughout, and ask for missing deployment
 URLs. Keep client secrets and private keys out of chat and frontend code.
 
@@ -103,7 +103,7 @@ To verify the MCP connection, call `list_idp_guides`; it requires no authorizati
 Call `get_idp_guide` with an ID from that list to read a guide. The same content is
 available through `resources/read` at each guide's `worldid://guides/<id>` URI.
 These are MCP resource identifiers; browser readers use
-[Integration guides](/world-id-auth/quickstart).
+[Integration guides](/agent-pass/quickstart).
 A missing tool alone does not prove that the server is unconfigured or authorization
 expired. Check the host's connection status before changing its configuration.
 
@@ -153,7 +153,7 @@ Before configuring the application, check that the completed registration's
 `request.result.client` matches the intended application. It includes the public client
 ID, callbacks, sector, and authentication method.
 
-Follow [Authentication](/world-id-auth/connect-your-backend)
+Follow [Authentication](/agent-pass/connect-your-backend)
 to use the approved client.
 
 ## Register an application with your agent {#register-an-application-with-your-agent}
@@ -176,12 +176,12 @@ Use the project's existing configuration and ask for missing deployment URLs.
   owner-enabled `sectorSourceClientId` and confirm the developer owns every
   client in that sector. Membership alone is insufficient. Hosted sector
   documents are not supported. The sector and authentication method cannot change
-  after registration. See [Manage credentials and callbacks](/world-id-auth/app-registration#manage-credentials-and-callbacks).
+  after registration. See [Manage credentials and callbacks](/agent-pass/app-registration#manage-credentials-and-callbacks).
 
 1. Call `list_oidc_clients` before creating a client. Reuse the intended app's
    `clientId` if it already exists; ask which app when the match is ambiguous.
 2. Confirm the registration details above with the developer. For protocol details,
-   see the [client-authentication reference](/world-id-auth/app-registration#client-authentication).
+   see the [client-authentication reference](/agent-pass/app-registration#client-authentication).
 3. Call `request_oidc_client_registration` with a fresh UUID `requestId`, `name`,
    `redirectUris`, and `tokenEndpointAuthMethod`. Include `logoUri`, an approved
    `sectorSourceClientId`, or public `jwks` when needed. Never send private keys.

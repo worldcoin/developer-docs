@@ -13,7 +13,7 @@ application. Your backend validates the authentication result, links or matches
 the returned World ID to the application account, and checks permissions before
 allowing the action.
 
-Before starting, [connect your backend or auth server with OIDC](/world-id-auth/connect-your-backend).
+Before starting, [connect your backend or auth server with OIDC](/agent-pass/connect-your-backend).
 Link World ID before step-up, or explicitly authorize the flow below to enroll
 the first validated identity for the signed-in account.
 This works with your existing sign-in or World ID as your primary sign-in.
@@ -37,7 +37,7 @@ is allowed. Test both acceptance and rejection against that authorization policy
    server-side state. Bind a fresh OAuth `state`, `nonce`, and PKCE verifier to
    this attempt. Keep the operation pending until all checks pass.
 2. **Request fresh authentication.** Redirect to the authorization endpoint with the
-   usual [browser authentication](/world-id-auth/connect-your-backend#sign-in-through-the-browser)
+   usual [browser authentication](/agent-pass/connect-your-backend#sign-in-through-the-browser)
    parameters plus `max_age=0` for fresh authentication, or a positive `max_age` for a
    maximum authentication age. For example, these additional decoded query
    fields require fresh Orb-class authentication:
@@ -50,11 +50,11 @@ is allowed. Test both acceptance and rejection against that authorization policy
    A successful result has the Orb class. The person can authenticate with an
    Orb proof or an enrolled passkey for an Orb-verified account. Validate the
    returned `acr` against the requested class. To require a fresh proof with
-   Face Auth, use the [essential Face Auth request](/world-id-auth/step-up#require-face-auth)
+   Face Auth, use the [essential Face Auth request](/agent-pass/step-up#require-face-auth)
    with `max_age=0`.
 
 3. **Validate the result.** Validate the callback `state`, redeem the code once,
-   and [validate the ID token](/world-id-auth/connect-your-backend#validate-the-id-token),
+   and [validate the ID token](/agent-pass/connect-your-backend#validate-the-id-token),
    including its nonce. Reconfirm that the initiating session and target account
    match the saved attempt. For a linked account, require the returned
    `(iss, sub)` to match. For an unlinked account, continue only when the attempt
@@ -81,11 +81,11 @@ permission checks. For agent workflows, follow [Human checkpoints](#human-checkp
 ## Request parameters {#request-parameters}
 
 Validate the returned `acr`, `amr`, and `auth_time` against the saved policy.
-See [class and method definitions](/world-id-auth/id-tokens-and-identity#assurance-values)
+See [class and method definitions](/agent-pass/id-tokens-and-identity#assurance-values)
 for the values and their guarantees.
 
 Step-up uses the same registered client, `scope=openid`, state, and S256 PKCE
-requirements as [browser authentication](/world-id-auth/connect-your-backend#sign-in-through-the-browser),
+requirements as [browser authentication](/agent-pass/connect-your-backend#sign-in-through-the-browser),
 at the authorization endpoint from the
 [OIDC discovery document](https://auth.world.org/.well-known/openid-configuration). The
 protocol permits omitting nonce; the step-up procedure above uses it to bind the
@@ -136,7 +136,7 @@ check with either credential, use the same essential request with
 `https://world.org/oidc/acr/orb-face` and
 `https://world.org/oidc/acr/selfie-face`, plus `max_age=0`.
 
-See [Credentials and authentication classes](/world-id-auth/id-tokens-and-identity#credentials-and-authentication-classes)
+See [Credentials and authentication classes](/agent-pass/id-tokens-and-identity#credentials-and-authentication-classes)
 for the differences in assurance. Omitting a class request uses the client's
 [accepted accounts](#accepted-accounts). **Any account** also admits accounts
 without Orb or Selfie Check, so use explicit classes when verification is required.
@@ -243,7 +243,7 @@ For `max_age=0`, authentication belongs to the newly initiated attempt. Enforce
 your application's freshness window when the action runs, including time spent
 reviewing it.
 
-For headless clients, follow the [Device Authorization Grant](/world-id-auth/connect-your-backend#sign-in-a-headless-agent-device-flow).
+For headless clients, follow the [Device Authorization Grant](/agent-pass/connect-your-backend#sign-in-a-headless-agent-device-flow).
 Your backend issues their API or MCP credentials. Where supported, use the
 [challenge and retry flow](#challenge-an-agent-or-api-client-rfc-9470).
 
@@ -289,7 +289,7 @@ auth server → your protected operation. Each layer must preserve the requireme
 - **Enforce at the resource.** If your auth server cannot propagate or validate
   the requirement, this integration cannot provide World ID step-up.
 
-See [Configure your auth server](/world-id-auth/connect-your-backend#configure-your-auth-server)
+See [Configure your auth server](/agent-pass/connect-your-backend#configure-your-auth-server)
 for configuration. A useful acceptance test starts with an old World IdP browser
 session and a live session on your auth server: the sensitive operation must cause a
 fresh upstream authentication, produce a newer `auth_time`, and remain blocked when the

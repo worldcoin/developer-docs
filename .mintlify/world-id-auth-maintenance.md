@@ -16,7 +16,7 @@ The JSON files above live in `.mintlify/`; script and workflow paths are relativ
 
 ## Content changes
 
-- Change product guidance in the canonical Markdown, then regenerate. Do not edit generated `world-id-auth/*.mdx` bodies independently.
+- Change product guidance in the canonical Markdown, then regenerate. Do not edit generated `agent-pass/*.mdx` bodies independently.
 - Preserve complete sections, tables, examples, errors, limitations, and agent instructions, including everything after `Agent instructions`. Auth's HTML may omit agent-only sections; its raw Markdown and MCP are the complete sources.
 - Use the manifest for renamed routes, old heading aliases, and approved layout adaptations. Keep existing public URLs useful when the source reorganizes or merges topics. Do not restore obsolete product guidance merely to retain an old route.
 - Preserve production and sandbox examples separately. Resolve production `{{issuer}}` to `https://auth.world.org`; keep documented sandbox values on `https://sandbox.auth.world.org`.
@@ -52,7 +52,9 @@ Automatic synchronization is active only after the workflow is merged to `main`,
 
 ## URLs and MCP
 
-Agent Pass stays in `docs.json` as a tab with `hidden: true` and `searchable: true` while its published content is tested through World Docs MCP. Keep the complete groups and page list so direct links retain the internal sidebar. Mintlify reveals hidden tabs when active, so scoped rules in `tailwind.css` also hide Agent Pass from desktop and mobile tab switchers. Keep these rules in place and promotional cards hidden until launch. Keep all generated pages and `seo.indexing: "all"`; do not add `noindex` or exclude `world-id-auth/` from publication. Pages remain public at their existing URLs and can appear in search. Keep the homepage's agent-only link and technical MCP references for discovery. See [Mintlify hidden pages](https://www.mintlify.com/docs/organize/hidden-pages).
+Agent Pass stays in `docs.json` as a tab with `hidden: true` and `searchable: true` while its published content is tested through World Docs MCP. Keep the complete groups and page list so direct links retain the internal sidebar. Mintlify reveals hidden tabs when active, so scoped rules in `tailwind.css` also hide Agent Pass from desktop and mobile tab switchers. Keep these rules in place and promotional cards hidden until launch. Keep all generated pages and `seo.indexing: "all"`; do not add `noindex` or exclude `agent-pass/` from publication. Pages remain public at their existing URLs and can appear in search. Keep the homepage's agent-only link and technical MCP references for discovery. See [Mintlify hidden pages](https://www.mintlify.com/docs/organize/hidden-pages).
+
+The public documentation routes use `/agent-pass/`. Redirects in `docs.json` preserve the former `/world-id-auth/` HTML and raw Markdown page URLs and send both documentation roots to `/agent-pass/quickstart`. Keep the internal `world-id-auth` configuration and script filenames unchanged.
 
 Continue dual publication. Use the compatibility contract for the actual route/resource map, including the legacy `mcp-oauth` alias and trailing-slash variants. Keep Auth's existing routes on their production or sandbox hosts:
 
@@ -74,6 +76,6 @@ No Auth routing change is needed for dual publication. Any later redirect requir
 
 After publication, use a small search/read check through available MCP connections and existing URL checks, within two minutes total and without browser QA or a new harness. Record passes, failures, and skipped checks. Missing deployment evidence remains explicit follow-up work.
 
-For the hidden-page test, search World Docs MCP for the coding-agent guide and read `/world-id-auth/build-with-a-coding-agent.mdx` through its docs filesystem tool. Verify the complete `Agent instructions` section and the Auth MCP URLs. To test updates from `temporal-apps`, publish a reviewed source change through the configured docs automation, merge its documentation PR, then read the changed section through World Docs MCP after Mintlify publishes it. A successful source sync and a refreshed MCP response are separate checks; a preview does not prove production indexing.
+For the hidden-page test, search World Docs MCP for the coding-agent guide and read `/agent-pass/build-with-a-coding-agent.mdx` through its docs filesystem tool. Verify the complete `Agent instructions` section and the Auth MCP URLs. To test updates from `temporal-apps`, publish a reviewed source change through the configured docs automation, merge its documentation PR, then read the changed section through World Docs MCP after Mintlify publishes it. A successful source sync and a refreshed MCP response are separate checks; a preview does not prove production indexing.
 
 Investigate failed publishing runs, persistent empty searches, and guide-content mismatches. Compare content or source hashes, since different commits can contain identical guides. Revert and republish a bad documentation update; roll back a failing Auth release in its owning deployment. Keep existing Auth publication available throughout recovery.

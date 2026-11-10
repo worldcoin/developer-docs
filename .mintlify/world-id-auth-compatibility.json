@@ -1,6 +1,13 @@
 {
   "mode": "dual-publication",
   "docsOrigin": "https://docs.world.org",
+  "docsRoutePrefix": "/agent-pass",
+  "legacyDocsRouting": {
+    "sourcePrefix": "/world-id-auth",
+    "destinationPrefix": "/agent-pass",
+    "action": "preserve-legacy-documentation-urls-through-docs-json-redirects",
+    "includeRawMarkdown": true
+  },
   "authOrigins": [
     "https://auth.world.org",
     "https://sandbox.auth.world.org"
@@ -25,19 +32,19 @@
     "resourceUriPrefix": "worldid://guides/"
   },
   "legacyHtmlRoutes": [
-    { "path": "/docs/guides", "docsPath": "/world-id-auth/quickstart" },
-    { "path": "/docs/guides/getting-started", "docsPath": "/world-id-auth/quickstart" },
-    { "path": "/docs/guides/app-registration", "docsPath": "/world-id-auth/app-registration" },
-    { "path": "/docs/guides/oidc", "docsPath": "/world-id-auth/connect-your-backend" },
-    { "path": "/docs/guides/federation", "docsPath": "/world-id-auth/connect-your-auth-server" },
-    { "path": "/docs/guides/mcp-authorization", "docsPath": "/world-id-auth/connect-your-auth-server" },
-    { "path": "/docs/guides/id-token", "docsPath": "/world-id-auth/id-tokens-and-identity" },
-    { "path": "/docs/guides/step-up", "docsPath": "/world-id-auth/step-up" },
-    { "path": "/docs/guides/human-in-the-loop", "docsPath": "/world-id-auth/human-in-the-loop" },
-    { "path": "/docs/guides/xaa", "docsPath": "/world-id-auth/xaa" },
-    { "path": "/docs/guides/coding-agent-setup", "docsPath": "/world-id-auth/build-with-a-coding-agent" },
-    { "path": "/docs/guides/mcp-oauth", "docsPath": "/world-id-auth/build-with-a-coding-agent" },
-    { "path": "/docs/guides/testing", "docsPath": "/world-id-auth/testing" }
+    { "path": "/docs/guides", "docsPath": "/agent-pass/quickstart" },
+    { "path": "/docs/guides/getting-started", "docsPath": "/agent-pass/quickstart" },
+    { "path": "/docs/guides/app-registration", "docsPath": "/agent-pass/app-registration" },
+    { "path": "/docs/guides/oidc", "docsPath": "/agent-pass/connect-your-backend" },
+    { "path": "/docs/guides/federation", "docsPath": "/agent-pass/connect-your-auth-server" },
+    { "path": "/docs/guides/mcp-authorization", "docsPath": "/agent-pass/connect-your-auth-server" },
+    { "path": "/docs/guides/id-token", "docsPath": "/agent-pass/id-tokens-and-identity" },
+    { "path": "/docs/guides/step-up", "docsPath": "/agent-pass/step-up" },
+    { "path": "/docs/guides/human-in-the-loop", "docsPath": "/agent-pass/human-in-the-loop" },
+    { "path": "/docs/guides/xaa", "docsPath": "/agent-pass/xaa" },
+    { "path": "/docs/guides/coding-agent-setup", "docsPath": "/agent-pass/build-with-a-coding-agent" },
+    { "path": "/docs/guides/mcp-oauth", "docsPath": "/agent-pass/build-with-a-coding-agent" },
+    { "path": "/docs/guides/testing", "docsPath": "/agent-pass/testing" }
   ],
   "legacyHtmlPolicy": {
     "includeTrailingSlash": true,
@@ -47,7 +54,7 @@
   },
   "markdownEquivalent": {
     "authPath": "/docs/guides/coding-agent-setup.md",
-    "docsPath": "/world-id-auth/build-with-a-coding-agent.md",
+    "docsPath": "/agent-pass/build-with-a-coding-agent.md",
     "action": "keep-serving-environment-specific-markdown-on-auth"
   },
   "guideResources": [
