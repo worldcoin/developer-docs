@@ -85,6 +85,25 @@ test("maps guide links and raw Markdown prompts without moving service endpoints
   assert.ok(!rendered.includes("/docs/guides/"));
 });
 
+test("keeps sandbox guide links and raw Markdown on the sandbox host", () => {
+  const sandboxGuide = "https://sandbox.auth.world.org/docs/guides/getting-started";
+  const sandboxMarkdown = `${sandboxGuide}.md?source=agent#next`;
+  const sandboxOnlyGuide = "https://sandbox.auth.world.org/docs/guides/sandbox-only-guide";
+  const markdown = [
+    "# Guide",
+    "",
+    `[Sandbox](${sandboxGuide}#next)`,
+    `Read ${sandboxMarkdown} with your agent.`,
+    `[Sandbox only](${sandboxOnlyGuide})`,
+    "[Production](https://auth.world.org/docs/guides/getting-started#next)",
+  ].join("\n");
+  const rendered = renderGuide(markdown, page, config);
+  assert.ok(rendered.includes(`[Sandbox](${sandboxGuide}#next)`));
+  assert.ok(rendered.includes(sandboxMarkdown));
+  assert.ok(rendered.includes(`[Sandbox only](${sandboxOnlyGuide})`));
+  assert.ok(rendered.includes("[Production](/agent-pass/quickstart#next)"));
+});
+
 test("maps relative guide links to browser pages while keeping explicit raw Markdown URLs", () => {
   const markdown = "# Guide\n\n[Instructions](./getting-started.md#next)\nRead {{issuer}}/docs/guides/getting-started.md?source=agent#next\n";
   const rendered = renderGuide(markdown, page, config);

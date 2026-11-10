@@ -95,7 +95,8 @@ function validateConfig(config) {
 
 function rewriteLinks(markdown, config) {
   const routes = new Map(config.pages.filter((page) => !page.section).map((page) => [page.source.replace(/\.md$/, ""), `/${page.destination.replace(/\.mdx$/, "")}`]));
-  let result = markdown.replace(/(?:\{\{issuer\}\}|https:\/\/(?:sandbox\.)?auth\.world\.org)\/docs\/guides\/([a-z0-9-]+)(\.md)?(?=\/?(?:[?#\s)`"'<>\]]|$))/g, (_, id, extension = "") => {
+  // Explicit sandbox guides must keep their environment-specific URLs.
+  let result = markdown.replace(/(?:\{\{issuer\}\}|https:\/\/auth\.world\.org)\/docs\/guides\/([a-z0-9-]+)(\.md)?(?=\/?(?:[?#\s)`"'<>\]]|$))/g, (_, id, extension = "") => {
     if (!routes.has(id)) throw new Error(`Unmapped guide link: ${id}`);
     return `https://docs.world.org${routes.get(id)}${extension}`;
   });
