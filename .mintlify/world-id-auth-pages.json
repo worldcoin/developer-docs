@@ -1,0 +1,139 @@
+{
+  "repository": "worldcoin/temporal-apps",
+  "sourceDirectory": "apps/idpapi/mcp/guides",
+  "issuer": "https://auth.world.org",
+  "pages": [
+    {
+      "source": "getting-started.md",
+      "destination": "agent-pass/quickstart.mdx",
+      "title": "Quickstart",
+      "sidebarTitle": "Quickstart",
+      "description": "Register an application, connect to the World ID issuer, and add step-up authentication.",
+      "environmentNote": true,
+      "anchorAliases": {
+        "choose-your-integration": [
+          "how-it-works",
+          "integrate-in-four-steps"
+        ]
+      }
+    },
+    {
+      "source": "app-registration.md",
+      "destination": "agent-pass/app-registration.mdx",
+      "title": "Register your application",
+      "sidebarTitle": "Register your application",
+      "description": "Register and manage your World ID OIDC application, credentials, callbacks, and benefit listing."
+    },
+    {
+      "source": "oidc.md",
+      "destination": "agent-pass/connect-your-backend.mdx",
+      "title": "Connect your backend",
+      "sidebarTitle": "Connect your backend",
+      "description": "Connect your backend to the World ID issuer with OpenID Connect (OIDC).",
+      "anchorAliases": {
+        "configure-your-oidc-library": [
+          "client-authentication"
+        ],
+        "authorization-code-flow": [
+          "sign-in-through-the-browser",
+          "authenticate-through-the-browser"
+        ],
+        "device-authorization-grant": [
+          "sign-in-a-headless-agent-device-flow",
+          "connect-a-headless-agent-device-flow"
+        ],
+        "related-guides": [
+          "cross-app-access-for-agent-hosts"
+        ]
+      }
+    },
+    {
+      "source": "mcp-authorization.md",
+      "destination": "agent-pass/connect-your-auth-server.mdx",
+      "title": "MCP authorization",
+      "sidebarTitle": "MCP authorization",
+      "description": "Authenticate through your auth server and issue access tokens for your MCP resource.",
+      "federationDiagram": true,
+      "introAliases": [
+        "configure-your-auth-server"
+      ],
+      "anchorAliases": {
+        "browser-authorization": [
+          "connect-the-world-id-issuer-to-your-mcp-server"
+        ],
+        "protect-your-mcp-server": [
+          "verify-the-integration"
+        ],
+        "device-authentication": [
+          "require-recent-authentication-through-your-auth-server"
+        ]
+      }
+    },
+    {
+      "source": "id-token.md",
+      "destination": "agent-pass/id-tokens-and-identity.mdx",
+      "title": "ID tokens and identity",
+      "sidebarTitle": "ID tokens and identity",
+      "description": "Validate token claims, read UserInfo, and recognize accounts using the issuer and pairwise subject."
+    },
+    {
+      "source": "step-up.md",
+      "destination": "agent-pass/step-up.mdx",
+      "title": "Step-up authentication",
+      "sidebarTitle": "Step-up authentication",
+      "description": "Require recent World ID authentication before sensitive actions.",
+      "anchorAliases": {
+        "accepted-accounts": [
+          "default-verification-preference"
+        ]
+      }
+    },
+    {
+      "source": "step-up.md",
+      "destination": "agent-pass/human-in-the-loop.mdx",
+      "title": "Human in the loop",
+      "sidebarTitle": "Human in the loop",
+      "icon": "/images/docs/human-badge-blue.svg",
+      "description": "Pause an agent workflow and require fresh World ID authentication before continuing.",
+      "section": "Human checkpoints",
+      "sectionEnd": "Prevent stale or duplicate operations",
+      "anchorAliases": {
+        "human-checkpoints": [
+          "require-fresh-authentication"
+        ],
+        "optional-collect-action-approval-in-your-application": [
+          "headless-agents"
+        ]
+      }
+    },
+    {
+      "source": "xaa.md",
+      "destination": "agent-pass/xaa.mdx",
+      "title": "Cross App Access (XAA)",
+      "sidebarTitle": "Cross App Access (XAA)",
+      "description": "Connect agent hosts to reviewed apps with World ID identity delegation and user-controlled permissions."
+    },
+    {
+      "source": "world-id-users.md",
+      "destination": "agent-pass/use-world-id-with-your-agent.mdx",
+      "title": "Use World ID with your agent",
+      "sidebarTitle": "Use World ID with your agent",
+      "description": "Understand World ID agent permissions, discover benefits, and manage your connections.",
+      "publicUserGuide": true
+    },
+    {
+      "source": "coding-agent-setup.md",
+      "destination": "agent-pass/build-with-a-coding-agent.mdx",
+      "title": "Build with a coding agent",
+      "sidebarTitle": "Build with a coding agent",
+      "description": "Give your coding agent complete integration instructions and connect developer MCP tools."
+    },
+    {
+      "source": "testing.md",
+      "destination": "agent-pass/testing.mdx",
+      "title": "Test your integration",
+      "sidebarTitle": "Test your integration",
+      "description": "Test World ID integration in the sandbox, complete real flows, and check failure paths."
+    }
+  ]
+}

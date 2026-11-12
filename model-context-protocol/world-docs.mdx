@@ -64,7 +64,13 @@ The docs MCP does not require authentication.
 
 | Tool | Purpose |
 | --- | --- |
-| `search_world_documentation` | Search and retrieve relevant World documentation for the current task. |
+| `search_world_documentation` | Find relevant guides, examples, and API references, with links to the source pages. |
+| `query_docs_filesystem_world_documentation` | Search exact terms, explore the documentation tree, and read complete pages or OpenAPI specs. |
+| `submit_feedback` | Report incorrect, outdated, or incomplete documentation to the docs team. |
+
+Start with search to find the relevant pages. When you need the full guide, use the filesystem tool to read its discovered `.mdx` path with `head` or `cat`. Use `rg` for exact terms and `tree / -L 2` to explore available paths.
+
+The filesystem is a read-only view of published documentation and API specs. Its commands do not run on your computer or access your local files. Feedback is the only tool that submits information to the docs team.
 
 ## Suggested prompts
 
@@ -76,6 +82,12 @@ Use the World Docs MCP to find the current MiniKit install steps and add them to
 Search the World docs for World ID verification and explain which endpoint this app should call.
 ```
 
+```text
+Find the World ID Auth integration guide, read the complete page with the docs filesystem tool, and check its sandbox instructions before changing this project.
+```
+
 ## When to use it
 
-Use the docs MCP for read-only documentation lookup. To create or configure apps in the developer portal, use the [Developer Portal MCP](/model-context-protocol/developer-portal).
+Use the docs MCP to look up public integration instructions. For app management in the World developer portal, use the [Developer Portal MCP](/model-context-protocol/developer-portal).
+
+World ID Auth has separate connections. Its [developer MCP](/agent-pass/build-with-a-coding-agent) manages Auth applications after developer authorization. Its [user MCP](/agent-pass/use-world-id-with-your-agent) accesses authorized World ID account capabilities after user sign-in and consent. Reading documentation through World Docs MCP grants neither connection's permissions.

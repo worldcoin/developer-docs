@@ -56,7 +56,9 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": ["index"]
+            "pages": [
+              "index"
+            ]
           }
         ]
       },
@@ -65,7 +67,9 @@
         "groups": [
           {
             "group": "Overview",
-            "pages": ["world-id/overview"]
+            "pages": [
+              "world-id/overview"
+            ]
           },
           {
             "group": "IDKit",
@@ -127,11 +131,51 @@
         ]
       },
       {
+        "tab": "Agent Pass",
+        "hidden": true,
+        "searchable": true,
+        "groups": [
+          {
+            "group": "Get started",
+            "pages": [
+              "agent-pass/quickstart",
+              "agent-pass/app-registration"
+            ]
+          },
+          {
+            "group": "Authentication",
+            "pages": [
+              "agent-pass/connect-your-backend",
+              "agent-pass/connect-your-auth-server",
+              "agent-pass/id-tokens-and-identity",
+              "agent-pass/step-up"
+            ]
+          },
+          {
+            "group": "Agents",
+            "pages": [
+              "agent-pass/human-in-the-loop",
+              "agent-pass/xaa",
+              "agent-pass/use-world-id-with-your-agent"
+            ]
+          },
+          {
+            "group": "Development",
+            "pages": [
+              "agent-pass/build-with-a-coding-agent",
+              "agent-pass/testing"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "Mini Apps",
         "groups": [
           {
             "group": "Introduction",
-            "pages": ["mini-apps/index"]
+            "pages": [
+              "mini-apps/index"
+            ]
           },
           {
             "group": "Integrate",
@@ -224,27 +268,6 @@
         ]
       },
       {
-        "tab": "Agents",
-        "groups": [
-          {
-            "group": "AgentKit",
-            "pages": [
-              "agents/agent-kit/integrate",
-              "agents/agent-kit/sdk-reference",
-              "agents/agent-kit/ecosystem",
-              "agents/hats/index"
-            ]
-          },
-          {
-            "group": "Human in the Loop",
-            "pages": [
-              "agents/human-in-the-loop/integrate",
-              "agents/human-in-the-loop/sdk-reference"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "World Chain",
         "groups": [
           {
@@ -305,7 +328,9 @@
           },
           {
             "group": "Further Reading",
-            "pages": ["world-chain/resources"]
+            "pages": [
+              "world-chain/resources"
+            ]
           }
         ]
       },
@@ -372,24 +397,26 @@
         ]
       },
       {
-        "tab": "MCP",
-        "groups": [
-          {
-            "group": "Overview",
-            "pages": ["model-context-protocol/index"]
-          },
-          {
-            "group": "World MCP",
-            "pages": [
-              "model-context-protocol/world-docs",
-              "model-context-protocol/developer-portal"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "Resources",
         "menu": [
+          {
+            "item": "MCP",
+            "groups": [
+              {
+                "group": "Overview",
+                "pages": [
+                  "model-context-protocol/index"
+                ]
+              },
+              {
+                "group": "World MCP",
+                "pages": [
+                  "model-context-protocol/world-docs",
+                  "model-context-protocol/developer-portal"
+                ]
+              }
+            ]
+          },
           {
             "item": "Developer Portal",
             "href": "https://developer.worldcoin.org"
@@ -485,6 +512,130 @@
     ]
   },
   "redirects": [
+    {
+      "source": "/world-id-auth/quickstart.md",
+      "destination": "/agent-pass/quickstart.md"
+    },
+    {
+      "source": "/world-id-auth/app-registration.md",
+      "destination": "/agent-pass/app-registration.md"
+    },
+    {
+      "source": "/world-id-auth/connect-your-backend.md",
+      "destination": "/agent-pass/connect-your-backend.md"
+    },
+    {
+      "source": "/world-id-auth/connect-your-auth-server.md",
+      "destination": "/agent-pass/connect-your-auth-server.md"
+    },
+    {
+      "source": "/world-id-auth/id-tokens-and-identity.md",
+      "destination": "/agent-pass/id-tokens-and-identity.md"
+    },
+    {
+      "source": "/world-id-auth/step-up.md",
+      "destination": "/agent-pass/step-up.md"
+    },
+    {
+      "source": "/world-id-auth/human-in-the-loop.md",
+      "destination": "/agent-pass/human-in-the-loop.md"
+    },
+    {
+      "source": "/world-id-auth/xaa.md",
+      "destination": "/agent-pass/xaa.md"
+    },
+    {
+      "source": "/world-id-auth/use-world-id-with-your-agent.md",
+      "destination": "/agent-pass/use-world-id-with-your-agent.md"
+    },
+    {
+      "source": "/world-id-auth/build-with-a-coding-agent.md",
+      "destination": "/agent-pass/build-with-a-coding-agent.md"
+    },
+    {
+      "source": "/world-id-auth/testing.md",
+      "destination": "/agent-pass/testing.md"
+    },
+    {
+      "source": "/agent-pass",
+      "destination": "/agent-pass/quickstart"
+    },
+    {
+      "source": "/world-id-auth",
+      "destination": "/agent-pass/quickstart"
+    },
+    {
+      "source": "/world-id-auth/quickstart",
+      "destination": "/agent-pass/quickstart"
+    },
+    {
+      "source": "/world-id-auth/app-registration",
+      "destination": "/agent-pass/app-registration"
+    },
+    {
+      "source": "/world-id-auth/connect-your-backend",
+      "destination": "/agent-pass/connect-your-backend"
+    },
+    {
+      "source": "/world-id-auth/connect-your-auth-server",
+      "destination": "/agent-pass/connect-your-auth-server"
+    },
+    {
+      "source": "/world-id-auth/id-tokens-and-identity",
+      "destination": "/agent-pass/id-tokens-and-identity"
+    },
+    {
+      "source": "/world-id-auth/step-up",
+      "destination": "/agent-pass/step-up"
+    },
+    {
+      "source": "/world-id-auth/human-in-the-loop",
+      "destination": "/agent-pass/human-in-the-loop"
+    },
+    {
+      "source": "/world-id-auth/xaa",
+      "destination": "/agent-pass/xaa"
+    },
+    {
+      "source": "/world-id-auth/use-world-id-with-your-agent",
+      "destination": "/agent-pass/use-world-id-with-your-agent"
+    },
+    {
+      "source": "/world-id-auth/build-with-a-coding-agent",
+      "destination": "/agent-pass/build-with-a-coding-agent"
+    },
+    {
+      "source": "/world-id-auth/testing",
+      "destination": "/agent-pass/testing"
+    },
+    {
+      "source": "/agents/agent-kit/integrate",
+      "destination": "/agent-pass/quickstart"
+    },
+    {
+      "source": "/agents/agent-kit/sdk-reference",
+      "destination": "/agent-pass/quickstart"
+    },
+    {
+      "source": "/agents/agent-kit/ecosystem",
+      "destination": "/agent-pass/quickstart"
+    },
+    {
+      "source": "/agents/hats",
+      "destination": "/agent-pass/quickstart"
+    },
+    {
+      "source": "/agents/hats/index",
+      "destination": "/agent-pass/quickstart"
+    },
+    {
+      "source": "/agents/human-in-the-loop/integrate",
+      "destination": "/agent-pass/human-in-the-loop"
+    },
+    {
+      "source": "/agents/human-in-the-loop/sdk-reference",
+      "destination": "/agent-pass/human-in-the-loop"
+    },
     {
       "source": "/world-id",
       "destination": "/world-id/overview"
@@ -851,7 +1002,10 @@
       "display": "interactive"
     },
     "examples": {
-      "languages": ["curl", "javascript"],
+      "languages": [
+        "curl",
+        "javascript"
+      ],
       "defaults": "required",
       "prefill": true
     }
