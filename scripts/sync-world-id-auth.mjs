@@ -4,6 +4,8 @@ import { createHash } from "node:crypto";
 import { lstat, mkdir, readFile, realpath, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { renderQuickstartLayout } from "./world-id-auth-quickstart.mjs";
+import { renderClientAuthentication } from "./world-id-auth-client-auth.mjs";
 
 const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
 const manifestPath = new URL("../.mintlify/world-id-auth-pages.json", import.meta.url);
@@ -76,6 +78,14 @@ function validateConfig(config) {
     }
     if ((page.source === "world-id-users.md") !== Boolean(page.publicUserGuide)) {
       throw new Error("The authenticated user guide requires its explicitly approved public adaptation");
+    }
+    for (const [flag, source, destination] of [
+      ["quickstartLayout", "getting-started.md", "agent-pass/quickstart.mdx"],
+      ["clientAuthenticationExamples", "app-registration.md", "agent-pass/app-registration.mdx"],
+    ]) {
+      if (page[flag] !== undefined && (typeof page[flag] !== "boolean" || page.source !== source || page.destination !== destination)) {
+        throw new Error(`The ${flag} adaptation is limited to ${source}`);
+      }
     }
     if (page.section !== undefined && (typeof page.section !== "string" || !page.section.trim() || typeof page.sectionEnd !== "string" || !page.sectionEnd.trim())) {
       throw new Error("A derived guide requires its exact section heading and next-section boundary");
@@ -209,6 +219,8 @@ export function renderGuide(markdown, page, config) {
     if (!image.test(content)) throw new Error("The federation illustration changed; review its Mermaid adaptation");
     content = content.replace(image, federationDiagram);
   }
+  if (page.quickstartLayout) content = renderQuickstartLayout(content);
+  if (page.clientAuthenticationExamples) content = renderClientAuthentication(content);
   for (const alias of [...(page.introAliases ?? [])].reverse()) {
     if (ids.has(alias)) continue;
     content = `<span id="${alias}" />\n\n${content}`;

@@ -10,6 +10,7 @@
       "sidebarTitle": "Quickstart",
       "description": "Register an application, connect to the World ID issuer, and add step-up authentication.",
       "environmentNote": true,
+      "quickstartLayout": true,
       "anchorAliases": {
         "choose-your-integration": [
           "how-it-works",
@@ -22,6 +23,7 @@
       "destination": "agent-pass/app-registration.mdx",
       "title": "Register your application",
       "sidebarTitle": "Register your application",
+      "clientAuthenticationExamples": true,
       "description": "Register and manage your World ID OIDC application, credentials, callbacks, and benefit listing."
     },
     {

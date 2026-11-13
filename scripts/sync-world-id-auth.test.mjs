@@ -5,6 +5,8 @@ import path from "node:path";
 import test from "node:test";
 
 import { renderGuide, syncGuides } from "./sync-world-id-auth.mjs";
+import { renderQuickstartLayout } from "./world-id-auth-quickstart.mjs";
+import { renderClientAuthentication } from "./world-id-auth-client-auth.mjs";
 
 const page = {
   source: "getting-started.md",
@@ -355,4 +357,179 @@ test("the compatibility contract keeps legacy Auth routes and protected MCP reso
   assert.equal(contract.preserveOnAuth.rawAgentGuidePath, "/docs/guides/coding-agent-setup.md");
   assert.equal(contract.markdownEquivalent.docsPath, "/agent-pass/build-with-a-coding-agent.md");
   assert.equal(contract.legacyHtmlPolicy.includeTrailingSlash, true);
+});
+
+const quickstartChoices = [
+  ["Authenticate through a browser", "Authorization Code Flow", "/agent-pass/connect-your-backend#sign-in-through-the-browser"],
+  ["Authenticate a CLI or client without a browser callback", "Device Authorization Grant", "/agent-pass/connect-your-backend#sign-in-a-headless-agent-device-flow"],
+  ["Require recent or specific authentication before an action", "Step-up authentication", "/agent-pass/step-up"],
+  ["Pause an agent workflow for a human checkpoint", "Human checkpoints", "/agent-pass/step-up#human-checkpoints"],
+  ["Use World ID for your application's primary sign-in", "Primary sign-in", "/agent-pass/connect-your-backend#primary-sign-in"],
+  ["Authorize access to your MCP server", "MCP authorization", "/agent-pass/connect-your-auth-server"],
+  ["Accept delegated access through an XAA-capable host", "Cross-App Access (XAA)", "/agent-pass/xaa"],
+];
+const quickstartTable = [
+  "| Goal | Guide |",
+  "| --- | --- |",
+  ...quickstartChoices.map(([goal, title, href]) => `| ${goal} | [${title}](${href}) |`),
+].join("\n");
+const environmentTable = [
+  "| Setting | Value |",
+  "| --- | --- |",
+  "| Issuer | `https://auth.world.org` |",
+  "| Discovery | `https://auth.world.org/.well-known/openid-configuration` |",
+  "| Developer portal | [Portal](https://auth.world.org/portal) |",
+].join("\n");
+const otherIntegrations = `These guides cover OIDC integration with World IdP. Use World IdP's
+registrations, credentials, and identifiers only for that flow; IDKit proof
+applications use their own.
+
+- **IDKit uniqueness:** use a nullifier scoped to the application and action for
+  one-use eligibility. Verify the proof on your backend and atomically reject a
+  previously consumed nullifier. Check authentication freshness separately from
+  stored uniqueness results. Follow the
+  [IDKit setup and verification guide](https://docs.world.org/world-id/idkit/integrate).
+- **IDKit sessions:** use repeated proofs of the saved \`session_id\` for account
+  continuity. Each check still requires user interaction and a fresh proof.
+  Use \`session_nullifier\` to identify a proof for replay checks. Manage
+  application login cookies and World IdP browser
+  sessions separately from proof sessions. Follow
+  the [session-proof guide](https://docs.world.org/world-id/idkit/session-proofs)
+  for registration, signed requests, verification, and replay checks.
+
+**Legacy Sign In with World ID is deprecated.** Use World IdP's OIDC flow for
+new sign-in integrations; legacy credentials and identities are not interchangeable
+with World IdP's.
+
+Apply the selected product's credential, environment, request-expiry, and replay
+rules. Validate the resulting assurance and check business permissions in your application.
+OIDC authentication remains repeatable. For one-use benefits, enforce your own rule with
+atomic consumption in the
+[appropriate identity scope](/agent-pass/id-tokens-and-identity#store-and-match-sub).`;
+const quickstartContent = [
+  "World IdP returns a signed authentication result and a sector-scoped account identifier.",
+  '<span id="how-it-works" />',
+  '<span id="integrate-in-four-steps" />',
+  "## Choose your integration {#choose-your-integration}",
+  "[Set up your client](/agent-pass/app-registration), then follow the path for your application.",
+  quickstartTable,
+  "Keep your existing sign-in and add step-up when your application needs World ID authentication before sensitive actions.",
+  "## Environment values {#environment-values}",
+  environmentTable,
+  "Use registration, credentials, and discovery from the same environment.",
+  "## Other World ID integrations {#other-world-id-integrations}",
+  otherIntegrations,
+  "## Get help from a coding agent {#get-help-from-a-coding-agent}",
+  "Keep the final coding-agent setup link.",
+].join("\n\n");
+
+function visibilityParts(content, audience) {
+  return [...content.matchAll(new RegExp(`<Visibility for="${audience}">([\\s\\S]*?)<\\/Visibility>`, "g"))]
+    .map((match) => match[1]).join("\n");
+}
+
+test("quickstart cards and environment examples keep canonical agent tables, links, and anchors", () => {
+  const rendered = renderQuickstartLayout(quickstartContent);
+  const human = visibilityParts(rendered, "humans");
+  const agents = visibilityParts(rendered, "agents");
+  assert.equal([...human.matchAll(/<Card\s/g)].length, 7);
+  for (const [goal, title, href] of quickstartChoices) {
+    assert.ok(human.includes(`href="${href}"`), `Missing card destination: ${href}`);
+    assert.ok(human.includes(goal), `Missing goal: ${goal}`);
+    assert.ok(human.includes(title), `Missing guide title: ${title}`);
+  }
+  assert.ok(agents.includes(quickstartTable));
+  assert.ok(agents.includes(environmentTable));
+  assert.ok(agents.includes(otherIntegrations.split("\n\n**Legacy Sign In with World ID is deprecated.**")[0]));
+  assert.ok(!human.includes(quickstartTable));
+  assert.ok(!human.includes(environmentTable));
+  for (const url of ["https://auth.world.org", "https://auth.world.org/.well-known/openid-configuration", "https://auth.world.org/portal"]) {
+    assert.ok(human.includes(url), `Missing environment URL: ${url}`);
+  }
+  for (const id of ["how-it-works", "integrate-in-four-steps"]) {
+    assert.equal(rendered.split(`<span id="${id}" />`).length - 1, 1);
+  }
+  assert.equal(rendered.split("{#choose-your-integration}").length - 1, 1);
+  assert.equal(rendered.split("{#environment-values}").length - 1, 1);
+  assert.ok(rendered.includes("Keep the final coding-agent setup link."));
+  assert.ok(rendered.includes("Use registration, credentials, and discovery from the same environment."));
+  assert.ok(human.includes("https://docs.world.org/world-id/idkit/integrate"));
+  assert.ok(human.includes("https://docs.world.org/world-id/idkit/session-proofs"));
+  assert.ok(human.includes("atomically reject any `nullifier`"));
+  assert.ok(human.includes("reject reused `session_nullifier` values"));
+  assert.ok(human.includes("requires user interaction and a fresh proof."));
+  assert.equal(rendered.split("**Legacy Sign In with World ID is deprecated.**").length - 1, 1);
+  assert.doesNotMatch(rendered, /^import /m);
+});
+
+test("quickstart adaptation rejects missing choices and changed reviewed identity guidance", () => {
+  const missingChoice = quickstartContent.replace(/^\| Authenticate a CLI[^\n]+\n/m, "");
+  assert.throws(() => renderQuickstartLayout(missingChoice), /quickstart|integration|table|row|card/i);
+  const missingEnvironment = quickstartContent.replace(/^\| Discovery[^\n]+\n/m, "");
+  assert.throws(() => renderQuickstartLayout(missingEnvironment), /quickstart|environment|table|row/i);
+  const changedClaim = quickstartContent.replace("Each check still requires user interaction and a fresh proof.", "Repeated checks need no user interaction.");
+  assert.throws(() => renderQuickstartLayout(changedClaim), /quickstart|IDKit|integration|source|review/i);
+});
+
+const clientAuthentication = `Authenticate at the token and device authorization endpoints with the client's
+registered method:
+
+| Method | How to send credentials |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| \`client_secret_basic\` (portal default) | Form-encode the client ID and secret and send them in the Authorization header as Basic credentials. An optional body \`client_id\` must match. |
+| \`client_secret_post\` | Send \`client_id\` and \`client_secret\` in the form body, without an Authorization header. |
+| \`private_key_jwt\` | Send \`client_id\`, \`client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer\`, and \`client_assertion\` in the form body, without an Authorization header. |
+
+For \`private_key_jwt\`, register the public JWKS in the portal and keep the private
+key in your backend. The assertion is a compact RS256 JWT:
+
+- \`kid\` selects a registered RSA key (2048–8192 bits). It may be omitted when
+  exactly one key is registered.
+- \`iss\` and \`sub\` are both the client ID.
+- The single \`aud\` is \`https://auth.world.org\` or the exact endpoint being called.
+- Include \`iat\`, \`exp\` (at most one hour after \`iat\`), and a unique \`jti\` of at
+  most 256 bytes. Expiration is strict; \`iat\` and optional \`nbf\` allow 30 seconds
+  of clock skew.
+
+Use a fresh assertion for every request, retry, and device poll, including after
+\`authorization_pending\`. Assertions are single-use across endpoints. A rejected
+assertion returns HTTP 400 \`invalid_client\`.
+Keep request bodies, Authorization headers, and callback query strings out of logs.`;
+const clientAuthenticationContent = [
+  "## Register your application {#register-your-application}",
+  "Preserve the registration workflow.",
+  "## Client authentication {#client-authentication}",
+  clientAuthentication,
+  "## Manage credentials and callbacks {#manage-credentials-and-callbacks}",
+  "Keep rotation, sectors, and account-linking rules unchanged.",
+].join("\n\n");
+
+test("client authentication examples keep all methods and their complete canonical rules for agents", () => {
+  const rendered = renderClientAuthentication(clientAuthenticationContent);
+  const human = visibilityParts(rendered, "humans");
+  const agents = visibilityParts(rendered, "agents");
+  assert.match(human, /<CodeGroup(?:\s|>)/);
+  for (const method of ["client_secret_basic", "client_secret_post", "private_key_jwt"]) {
+    assert.ok(human.includes(method), `Missing method example: ${method}`);
+  }
+  assert.match(human, /form.encod/i);
+  assert.ok(human.includes("Authorization: Basic"));
+  assert.ok(human.includes("client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer"));
+  assert.ok(human.includes('```json title="JWT header"'));
+  assert.ok(human.includes('```json title="JWT payload"'));
+  assert.ok(agents.includes(clientAuthentication));
+  for (const detail of ["2048–8192", "256 bytes", "30 seconds", "authorization_pending", "HTTP 400", "RS256"]) {
+    assert.ok(rendered.includes(detail), `Missing client authentication rule: ${detail}`);
+  }
+  assert.ok(rendered.includes("Preserve the registration workflow."));
+  assert.ok(rendered.includes("Keep rotation, sectors, and account-linking rules unchanged."));
+  assert.equal(rendered.split("{#client-authentication}").length - 1, 1);
+  assert.doesNotMatch(rendered, /^import /m);
+});
+
+test("client authentication adaptation fails when the reviewed methods or section boundary change", () => {
+  const missingMethod = clientAuthenticationContent.replace(/^\| `client_secret_post`[^\n]+\n/m, "");
+  assert.throws(() => renderClientAuthentication(missingMethod), /client|auth|method|table|row/i);
+  const missingBoundary = clientAuthenticationContent.replace("## Manage credentials and callbacks {#manage-credentials-and-callbacks}", "## Renamed section {#renamed-section}");
+  assert.throws(() => renderClientAuthentication(missingBoundary), /client|auth|section|boundar/i);
 });
