@@ -101,6 +101,19 @@ Through credentials like Proof of Human, Proof of Attributes, and Proof of Prese
   - [Proof of Presence](/world-id/credentials/11) — Low-friction liveness and facial similarity checks from a selfie flow. Best for sign-up and bot defense where speed matters most.
 </Visibility>
 
+## IDKit or Agent Pass {#idkit-or-agent-pass}
+
+| | IDKit | Agent Pass with World IdP |
+| --- | --- | --- |
+| Integration | Your backend verifies World ID proofs. | Your backend or auth server validates OIDC ID tokens. |
+| Identifiers | Use a `nullifier` for uniqueness checks within an app and action. For repeated checks, `session_id` provides continuity and `session_nullifier` protects against replay. | Store `(iss, sub)` to recognize the account within its registered identity sector. |
+| Application responsibility | Verify the complete proof and enforce uniqueness or replay checks before granting access. | Validate the token, match the account, and enforce any required authentication freshness and assurance before granting access. |
+| Guides | [Verify a proof](/world-id/idkit/integrate) or [use session proofs](/world-id/idkit/session-proofs). | [Connect a backend](/agent-pass/connect-your-backend), [require step-up](/agent-pass/step-up), or [authorize an MCP server](/agent-pass/connect-your-auth-server). |
+
+Your application owns its accounts, sessions, and permissions with either integration.
+Keep IDKit and World IdP registrations, credentials, and identifiers separate.
+For OIDC authentication, start with the [Agent Pass overview](/world-id/agent-pass).
+
 ## Choose your integration {#choose-your-integration}
 
 <Visibility for="humans">
@@ -142,16 +155,3 @@ Through credentials like Proof of Human, Proof of Attributes, and Proof of Prese
   - [Authenticate users and agents](/world-id/agent-pass). Use Agent Pass with World IdP for OpenID Connect authentication.
   - [Check wallet verification](/world-chain/reference/address-book). Use Address Book to check whether a World Chain wallet is Orb verified.
 </Visibility>
-
-## IDKit or Agent Pass {#idkit-or-agent-pass}
-
-| | IDKit | Agent Pass with World IdP |
-| --- | --- | --- |
-| Integration | Your backend verifies World ID proofs. | Your backend or auth server validates OIDC ID tokens. |
-| Identifiers | Use a `nullifier` for uniqueness checks within an app and action. For repeated checks, `session_id` provides continuity and `session_nullifier` protects against replay. | Store `(iss, sub)` to recognize the account within its registered identity sector. |
-| Application responsibility | Verify the complete proof and enforce uniqueness or replay checks before granting access. | Validate the token, match the account, and enforce any required authentication freshness and assurance before granting access. |
-| Guides | [Verify a proof](/world-id/idkit/integrate) or [use session proofs](/world-id/idkit/session-proofs). | [Connect a backend](/agent-pass/connect-your-backend), [require step-up](/agent-pass/step-up), or [authorize an MCP server](/agent-pass/connect-your-auth-server). |
-
-Your application owns its accounts, sessions, and permissions with either integration.
-Keep IDKit and World IdP registrations, credentials, and identifiers separate.
-For OIDC authentication, start with the [Agent Pass overview](/world-id/agent-pass).
