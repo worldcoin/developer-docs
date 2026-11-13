@@ -211,6 +211,24 @@ and private keys outside agent conversations. The
 
 ## Publish a benefit listing {#publish-a-benefit-listing}
 
+<Visibility for="humans">
+
+Open your app's **Catalog** tab in the [developer portal](https://auth.world.org/portal).
+
+1. Add a listing name, description, and HTTPS benefit URL, separate from your OIDC callback.
+2. Add optional public **Instructions** explaining how to claim. Exclude credentials and tokens.
+3. The owner selects **Submit for review**.
+
+![Catalog tab showing the benefit listing fields and Submit for review below Instructions](/images/agent-pass/catalog-submit-review.jpg)
+
+Only approved, published listings for active clients appear in `get_benefits`.
+Updates can take one minute; changing Instructions requires another review.
+Your app enforces eligibility, authorization, and redemption.
+
+</Visibility>
+
+<Visibility for="agents">
+
 If your application offers a World ID benefit, create a Catalog listing for its
 OIDC client in the developer portal. Add a name, description, and HTTPS application
 URL. The optional **Instructions** (`instructions`) field can include steps to
@@ -224,3 +242,5 @@ Agents use the instructions to understand the partner's preferred claiming
 flow, or start at the app URL if no instructions are supplied. Your application
 enforces eligibility, authorization, and redemption. The application URL is
 separate from the OIDC callback.
+
+</Visibility>

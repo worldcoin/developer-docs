@@ -9,6 +9,7 @@ import { renderClientAuthentication } from "./world-id-auth-client-auth.mjs";
 import { renderOidcExamples } from "./world-id-auth-oidc.mjs";
 import { renderOidcTroubleshooting } from "./world-id-auth-troubleshooting.mjs";
 import { renderCredentialCards } from "./world-id-auth-credentials.mjs";
+import { renderBenefitPublishing } from "./world-id-auth-benefits.mjs";
 
 const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
 const manifestPath = new URL("../.mintlify/world-id-auth-pages.json", import.meta.url);
@@ -87,6 +88,7 @@ function validateConfig(config) {
       ["clientAuthenticationExamples", "app-registration.md", "agent-pass/app-registration.mdx"],
       ["oidcExamples", "oidc.md", "agent-pass/connect-your-backend.mdx"],
       ["credentialCards", "id-token.md", "agent-pass/id-tokens-and-identity.mdx"],
+      ["benefitPublishing", "app-registration.md", "agent-pass/app-registration.mdx"],
     ]) {
       if (page[flag] !== undefined && (typeof page[flag] !== "boolean" || page.source !== source || page.destination !== destination)) {
         throw new Error(`The ${flag} adaptation is limited to ${source}`);
@@ -231,6 +233,7 @@ export function renderGuide(markdown, page, config) {
     content = renderOidcTroubleshooting(content);
   }
   if (page.credentialCards) content = renderCredentialCards(content);
+  if (page.benefitPublishing) content = renderBenefitPublishing(content);
   for (const alias of [...(page.introAliases ?? [])].reverse()) {
     if (ids.has(alias)) continue;
     content = `<span id="${alias}" />\n\n${content}`;

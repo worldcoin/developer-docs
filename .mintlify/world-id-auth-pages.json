@@ -24,6 +24,7 @@
       "title": "Register your application",
       "sidebarTitle": "Register your application",
       "clientAuthenticationExamples": true,
+      "benefitPublishing": true,
       "description": "Register and manage your World ID OIDC application, credentials, callbacks, and benefit listing."
     },
     {
