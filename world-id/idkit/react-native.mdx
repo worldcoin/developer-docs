@@ -61,10 +61,10 @@ export function VerificationScreen({ rpContext }: { rpContext: RpContext }) {
 
       {flow.connectorURI && !flow.result && !flow.isError && (
         <Button
-          title="Open World App"
+          title="Open World ID app"
           onPress={() => {
             Linking.openURL(flow.connectorURI!).catch(() => {
-              Alert.alert("Could not open World App", "Please try again.");
+              Alert.alert("Could not open World ID app", "Please try again.");
             });
           }}
         />
@@ -80,7 +80,7 @@ export function VerificationScreen({ rpContext }: { rpContext: RpContext }) {
 }
 ```
 
-`flow.open()` creates the request and starts polling. Your app opens World App using `Linking.openURL`; the hook does not render a screen or open World App automatically.
+`flow.open()` creates the request and starts polling. Your app opens the World ID app using `Linking.openURL`; the hook does not render a screen or open the World ID app automatically.
 
 Configure the `myapp://` callback scheme in your app to match `return_to`. Send `flow.result` to your backend for verification before granting access. Keep RP signing keys on your backend.
 

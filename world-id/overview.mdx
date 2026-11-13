@@ -1,11 +1,10 @@
 ---
 title: "Overview"
-description: ""
+description: "Prove a person is real and unique without sharing personal information."
 "og:title": "World ID"
 ---
 
 import { Quickstart } from "/snippets/quickstart.jsx";
-import { FeatureBlocks } from "/snippets/feature-blocks.jsx";
 
 ## World ID
 
@@ -30,7 +29,7 @@ Through credentials like Proof of Human, Proof of Attributes, and Proof of Prese
 
 <Visibility for="humans">
   <Quickstart
-    title="Developer Quickstart"
+    title="IDKit quickstart"
     description="Add proof of human to your app with one React widget."
     buttonHref="/world-id/idkit/integrate"
     buttonLabel="Open integration guide"
@@ -52,7 +51,7 @@ Through credentials like Proof of Human, Proof of Attributes, and Proof of Prese
 </Visibility>
 
 <Visibility for="agents">
-  **Developer Quickstart** — add proof of human to your app with one React widget:
+  **IDKit quickstart**. Add proof of human to your app with one React widget:
 
   ```tsx
   import { IDKitRequestWidget } from "@worldcoin/idkit";
@@ -102,56 +101,66 @@ Through credentials like Proof of Human, Proof of Attributes, and Proof of Prese
   - [Proof of Presence](/world-id/credentials/11) — Low-friction liveness and facial similarity checks from a selfie flow. Best for sign-up and bot defense where speed matters most.
 </Visibility>
 
-## Start building
+## IDKit or Agent Pass {#idkit-or-agent-pass}
+
+IDKit gives your application World ID proofs to verify. World IdP gives it
+OpenID Connect ID tokens to validate.
+
+### Verify proofs with IDKit
+
+Verify the complete proof on your backend. For a one-use action, reject any
+`nullifier` already accepted for that app and action. For returning users, verify
+a new proof for the account's saved `session_id` and reject reused
+`session_nullifier` values.
+
+### Use OpenID Connect with World IdP
+
+Validate the ID token and map `(iss, sub)` to an account in your application.
+Use [step-up authentication](/agent-pass/step-up) when an action requires recent
+authentication or a specific authentication method.
+
+With either integration, you manage your application's accounts, sessions, and
+permissions. Keep IDKit and World IdP registrations, credentials, and identifiers
+separate.
+
+## Choose your integration {#choose-your-integration}
 
 <Visibility for="humans">
-  <FeatureBlocks
-    items={[
-      {
-        icon: "user",
-        title: "Stop bots and duplicate accounts",
-        body: "Use proof of human to enforce one human per account and reduce Sybil abuse in rewards, referrals, governance, and account creation.",
-      },
-      {
-        icon: "shield-check",
-        title: "Protect conversion and user privacy",
-        body: "Replace CAPTCHA-heavy or document-heavy gating with reusable proof flows. Relying parties receive proofs, not personal data.",
-      },
-    ]}
-  />
+  <CardGroup cols={2}>
+    <Card
+      title="Verify a World ID proof (IDKit)"
+      icon="fingerprint"
+      href="/world-id/idkit/integrate"
+    >
+      Verify a proof on your backend and reject reused nullifiers.
+    </Card>
+    <Card
+      title="Verify returning users (IDKit)"
+      icon="arrows-rotate"
+      href="/world-id/idkit/session-proofs"
+    >
+      Verify a new proof against the account's saved session ID.
+    </Card>
+    <Card
+      title="Authenticate users (World IdP)"
+      icon="key"
+      href="/world-id/agent-pass"
+    >
+      Add browser sign-in or device authorization from a CLI.
+    </Card>
+    <Card
+      title="Check wallet verification (Address Book)"
+      icon="wallet"
+      href="/world-chain/reference/address-book"
+    >
+      Use Address Book to check whether a World Chain wallet is Orb verified.
+    </Card>
+  </CardGroup>
 </Visibility>
 
 <Visibility for="agents">
-  - **Stop bots and duplicate accounts** — Use proof of human to enforce one human per account and reduce Sybil abuse in rewards, referrals, governance, and account creation.
-  - **Protect conversion and user privacy** — Replace CAPTCHA-heavy or document-heavy gating with reusable proof flows. Relying parties receive proofs, not personal data.
-</Visibility>
-
-## Privacy by architecture
-
-<Visibility for="humans">
-  <FeatureBlocks
-    items={[
-      {
-        icon: "eye",
-        title: "Zero-knowledge proofs",
-        body: "Users prove what is true without revealing personal information. Proofs are unlinkable across apps.",
-      },
-      {
-        icon: "community",
-        title: "Multi-party computation",
-        body: "Matching and uniqueness checks are split across independent nodes so no single party holds complete sensitive data.",
-      },
-      {
-        icon: "shield",
-        title: "Self-custodial",
-        body: "Proof generation happens on the user’s device. Your app receives a proof, not raw personal data.",
-      },
-    ]}
-  />
-</Visibility>
-
-<Visibility for="agents">
-  - **Zero-knowledge proofs** — Users prove what is true without revealing personal information. Proofs are unlinkable across apps.
-  - **Multi-party computation** — Matching and uniqueness checks are split across independent nodes so no single party holds complete sensitive data.
-  - **Self-custodial** — Proof generation happens on the user’s device. Your app receives a proof, not raw personal data.
+  - [Verify a World ID proof (IDKit)](/world-id/idkit/integrate). Verify a proof on your backend and reject reused nullifiers.
+  - [Verify returning users (IDKit)](/world-id/idkit/session-proofs). Verify a new proof against the account's saved session ID.
+  - [Authenticate users (World IdP)](/world-id/agent-pass). Add browser sign-in or device authorization from a CLI.
+  - [Check wallet verification (Address Book)](/world-chain/reference/address-book). Use Address Book to check whether a World Chain wallet is Orb verified.
 </Visibility>

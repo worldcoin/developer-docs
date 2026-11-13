@@ -331,7 +331,7 @@
               "type": "string",
               "pattern": "^0x[a-fA-F0-9]{64}$"
             },
-            "description": "The MiniKit `userOpHash` returned by `MiniKit.sendTransaction()` or `eth_sendTransaction` through the World App provider."
+            "description": "The MiniKit `userOpHash` returned by `MiniKit.sendTransaction()` or `eth_sendTransaction` through the World Money provider."
           }
         ],
         "responses": {
@@ -578,7 +578,7 @@
             }
           },
           "426": {
-            "description": "Rejected by an app-version/client gate. Expects an approved client (e.g. World App); required header(s) aren't publicly documented.",
+            "description": "Rejected by an app-version/client gate. Expects an approved client (e.g. World Money); required header(s) aren't publicly documented.",
             "content": {
               "application/json": {
                 "example": {
@@ -1345,7 +1345,7 @@
               },
               "mini_app_path": {
                 "type": "string",
-                "description": "Deeplink to open when the user taps the notification: a WorldApp/World ID mini app deeplink (`worldapp://mini-app?app_id=...` or `worldid://mini-app?app_id=...`, where `app_id` must match the request's `app_id`), a Deep Face Universal Link (`https://world.org/verify?t=deepface`), or a Deep Face deeplink (`worldapp://verify?t=deepface`, `worldid://verify?t=deepface`, `worldidstg://verify?t=deepface`)."
+                "description": "Deeplink to open when the user taps the notification: a Mini App deeplink (`worldapp://mini-app?app_id=...` or `worldid://mini-app?app_id=...`, where `app_id` must match the request's `app_id`), a Deep Face Universal Link (`https://world.org/verify?t=deepface`), or a Deep Face deeplink (`worldapp://verify?t=deepface`, `worldid://verify?t=deepface`, `worldidstg://verify?t=deepface`)."
               },
               "app_id": {
                 "type": "string"
@@ -1379,7 +1379,7 @@
               },
               "mini_app_path": {
                 "type": "string",
-                "description": "Deeplink to open when the user taps the notification: a WorldApp/World ID mini app deeplink (`worldapp://mini-app?app_id=...` or `worldid://mini-app?app_id=...`, where `app_id` must match the request's `app_id`), a Deep Face Universal Link (`https://world.org/verify?t=deepface`), or a Deep Face deeplink (`worldapp://verify?t=deepface`, `worldid://verify?t=deepface`, `worldidstg://verify?t=deepface`)."
+                "description": "Deeplink to open when the user taps the notification: a Mini App deeplink (`worldapp://mini-app?app_id=...` or `worldid://mini-app?app_id=...`, where `app_id` must match the request's `app_id`), a Deep Face Universal Link (`https://world.org/verify?t=deepface`), or a Deep Face deeplink (`worldapp://verify?t=deepface`, `worldid://verify?t=deepface`, `worldidstg://verify?t=deepface`)."
               },
               "app_id": {
                 "type": "string"
@@ -1674,7 +1674,7 @@
       "IntegrityBundle": {
         "type": "object",
         "required": ["version", "signature_format", "timestamp", "signature", "jwt"],
-        "description": "World ID App integrity attestation. Selfie Check responses with `issuer_schema_id: 11` require version 2, which covers the disclosed `sybil_score`.",
+        "description": "World ID app integrity attestation. Selfie Check responses with `issuer_schema_id: 11` require version 2, which covers the disclosed `sybil_score`.",
         "properties": {
           "version": {
             "type": "integer",
@@ -1763,7 +1763,7 @@
           },
           "user_presence_completed": {
             "type": "boolean",
-            "description": "Whether World App completed the requested user-presence check. IDKit includes this field only when `require_user_presence` was true in the request."
+            "description": "Whether the World ID app completed the requested user-presence check. IDKit includes this field only when `require_user_presence` was true in the request."
           }
         }
       },
@@ -1808,7 +1808,7 @@
           },
           "user_presence_completed": {
             "type": "boolean",
-            "description": "Whether World App completed the requested user-presence check. IDKit includes this field only when `require_user_presence` was true in the request."
+            "description": "Whether the World ID app completed the requested user-presence check. IDKit includes this field only when `require_user_presence` was true in the request."
           }
         }
       },
@@ -1852,7 +1852,7 @@
           },
           "user_presence_completed": {
             "type": "boolean",
-            "description": "Whether World App completed the requested user-presence check. IDKit includes this field only when `require_user_presence` was true in the request."
+            "description": "Whether the World ID app completed the requested user-presence check. IDKit includes this field only when `require_user_presence` was true in the request."
           }
         }
       },

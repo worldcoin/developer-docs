@@ -8,7 +8,7 @@ title: "Mini Apps"
 
 IDKit is the verification layer for Mini Apps. MiniKit handles native Mini App commands such as wallet auth, payments, transactions, sharing, and permissions. World ID verification, including Selfie Check, is implemented with `@worldcoin/idkit`.
 
-Inside World App, IDKit uses the native World App transport — no QR code is shown. The same widget also works outside World App, where it falls back to the normal connect URL and QR experience. Your backend responsibilities do not change: sign each request server-side, verify the proof server-side, and store nullifiers for replay protection.
+Inside World Money, IDKit uses the native World Money transport — no QR code is shown. The same widget also works outside World Money, where it falls back to the normal connect URL and QR experience. Your backend responsibilities do not change: sign each request server-side, verify the proof server-side, and store nullifiers for replay protection.
 
 <Note>
   If you are migrating from MiniKit 1.x, replace `MiniKit.verify(...)` or
@@ -29,8 +29,8 @@ The integration is the standard IDKit flow — follow the [Integrate IDKit](/wor
 The Mini-App-specific details:
 
 - **Separate app IDs.** If your Mini App and World ID integration use separate Developer Portal apps, MiniKit initialization uses the Mini App `app_id`, while IDKit uses the World ID `app_id`, `rp_id`, action, and signing key.
-- **No transport configuration needed.** IDKit detects World App and uses the native transport automatically.
-- **Standalone websites work too.** If your Mini App also runs as a regular website, the same widget handles browser users. For iOS install-continuation flows outside World App, see [invite-code mode](/world-id/idkit/verification-flows#with-invite-code-mode).
+- **No transport configuration needed.** IDKit detects World Money and uses the native transport automatically.
+- **Standalone websites work too.** If your Mini App also runs as a regular website, the same widget handles browser users. For standalone iOS users who need to install the World ID app, see [invite-code mode](/world-id/idkit/verification-flows#with-invite-code-mode).
 
 ## Choose a verification level
 
@@ -64,7 +64,7 @@ This is the same widget from [Step 4 of the integration guide](/world-id/idkit/i
     // Unlock the protected Mini App experience here.
   }}
   onError={(errorCode, debugReport) => {
-    // Inside World App, debugReport?.transport is "mini_app".
+    // Inside World Money, debugReport?.transport is "mini_app".
     console.error("IDKit error", errorCode, debugReport);
   }}
 />

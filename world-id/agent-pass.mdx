@@ -1,0 +1,47 @@
+---
+title: "World IdP"
+sidebarTitle: "Agent Pass (OIDC)"
+description: "Authenticate World ID accounts with OpenID Connect and check authentication before sensitive actions."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+World IdP returns an OpenID Connect ID token after a user authenticates with
+World ID. Your backend or auth server validates the token and uses `(iss, sub)`
+to match the user to an application account. You manage login sessions and
+permissions in your application.
+
+<span id="choose-a-guide" />
+
+## Connect your application
+
+Follow the [Quickstart](/agent-pass/quickstart) and
+[register your application](/agent-pass/app-registration). Choose the flow your
+client supports:
+
+- [Browser sign-in](/agent-pass/connect-your-backend#sign-in-through-the-browser).
+  For web apps with a browser callback URL.
+- [Device authorization](/agent-pass/connect-your-backend#sign-in-a-headless-agent-device-flow).
+  For a CLI or other client without a browser callback.
+
+## Check authentication before an action
+
+Use [step-up authentication](/agent-pass/step-up) to require recent authentication
+or a specific method before an action.
+
+[Human checkpoints](/agent-pass/human-in-the-loop) pause an agent workflow while
+a person authenticates. Your backend checks permissions and any required action
+approval before resuming.
+
+## Authorize access to your MCP server
+
+With [MCP authorization](/agent-pass/connect-your-auth-server), your auth server
+authenticates the user through World IdP and issues an access token for your MCP
+server.
+
+With [Cross App Access (XAA)](/agent-pass/xaa), users choose which apps a supported
+agent host may access. Each app's auth server issues its own access tokens.
+
+For proof-based integration with IDKit, return to
+[Choose your integration](/world-id/overview#choose-your-integration). IDKit and
+World IdP use different registrations, credentials, and account identifiers.
