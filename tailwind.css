@@ -149,7 +149,7 @@
   #navbar .nav-tabs-item > div.absolute {
     display: none;
   }
-  /* Hairline divider between the page tabs and the Resources/Support
+  /* Hairline divider between the page tabs and the Others/Resources/Support
      menus (the menu tabs render as <button>, page tabs as <a>). */
   #navbar .nav-tabs > button.nav-tabs-item:first-of-type {
     margin-left: 17px;

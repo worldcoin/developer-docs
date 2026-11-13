@@ -1,6 +1,6 @@
 ---
 title: "Overview"
-description: ""
+description: "Choose IDKit for proof verification, Agent Pass for OIDC authentication, or Address Book for wallet verification status."
 "og:title": "World ID"
 ---
 
@@ -11,9 +11,28 @@ import { FeatureBlocks } from "/snippets/feature-blocks.jsx";
 
 World ID is a privacy-preserving protocol that lets people prove they are real and unique online without sharing personal information.
 
-It gives developers a high-assurance trust layer to stop bots, duplicate accounts, and abuse — while keeping onboarding fast and user data off your servers.
+## Choose your integration {#choose-your-integration}
 
-Through credentials like Proof of Human, Proof of Attributes, and Proof of Presence, World ID extends that trust layer with additional proofs without exposing underlying user data.
+| What you want to build | Start here |
+| --- | --- |
+| Verify a person's World ID proof and enforce eligibility for an action | [IDKit integration](/world-id/idkit/integrate) |
+| Verify a returning person across repeated proof checks | [IDKit session proofs](/world-id/idkit/session-proofs) |
+| Authenticate users or agents through OpenID Connect | [Agent Pass with World IdP](/world-id/agent-pass) |
+| Check whether a wallet address on World Chain is Orb verified | [Address Book](/world-chain/reference/address-book) |
+
+## IDKit or Agent Pass {#idkit-or-agent-pass}
+
+| | IDKit | Agent Pass with World IdP |
+| --- | --- | --- |
+| Integration | Your backend verifies World ID proofs. | Your backend or auth server validates OIDC ID tokens. |
+| Identifiers | Use a `nullifier` for uniqueness checks within an app and action. For repeated checks, `session_id` provides continuity and `session_nullifier` protects against replay. | Store `(iss, sub)` to recognize the account within its registered identity sector. |
+| Application responsibility | Verify the complete proof and enforce uniqueness or replay checks before granting access. | Validate the token, match the account, and enforce any required authentication freshness and assurance before granting access. |
+| Guides | [Verify a proof](/world-id/idkit/integrate) or [use session proofs](/world-id/idkit/session-proofs). | [Connect a backend](/agent-pass/connect-your-backend), [require step-up](/agent-pass/step-up), or [authorize an MCP server](/agent-pass/connect-your-auth-server). |
+
+Your application owns its accounts, sessions, and permissions with either integration.
+Keep IDKit and World IdP registrations, credentials, and identifiers separate.
+For OIDC authentication, start with the [Agent Pass overview](/world-id/agent-pass).
+The quickstart below uses IDKit.
 
 {/* cspell:ignore worldcoin idkit orblegacy rp_context app_id rp_id selfie-check sybil PoH CAPTCHAs NFC unlinkable nullifier */}
 
@@ -30,7 +49,7 @@ Through credentials like Proof of Human, Proof of Attributes, and Proof of Prese
 
 <Visibility for="humans">
   <Quickstart
-    title="Developer Quickstart"
+    title="IDKit quickstart"
     description="Add proof of human to your app with one React widget."
     buttonHref="/world-id/idkit/integrate"
     buttonLabel="Open integration guide"
@@ -52,7 +71,7 @@ Through credentials like Proof of Human, Proof of Attributes, and Proof of Prese
 </Visibility>
 
 <Visibility for="agents">
-  **Developer Quickstart** — add proof of human to your app with one React widget:
+  **IDKit quickstart**. Add proof of human to your app with one React widget:
 
   ```tsx
   import { IDKitRequestWidget } from "@worldcoin/idkit";

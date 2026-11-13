@@ -1,0 +1,29 @@
+---
+title: "Agent Pass / World IdP"
+sidebarTitle: "Agent Pass (OIDC)"
+description: "Choose World IdP's OIDC integration for account authentication, step-up checks, and agent access."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+Agent Pass covers World IdP's OpenID Connect integration for applications and
+agents. Your backend validates an ID token and recognizes the World ID account
+using the issuer and sector-scoped subject, `(iss, sub)`. Your application controls
+its own accounts, sessions, permissions, and action approvals.
+
+## Choose a guide
+
+Start with [Agent Pass Quickstart](/agent-pass/quickstart), then
+[register your application](/agent-pass/app-registration).
+
+| I need to… | Guide |
+| --- | --- |
+| Authenticate through a browser or a headless client | [Connect your backend or auth server](/agent-pass/connect-your-backend) |
+| Require recent authentication before an action | [Step-up authentication](/agent-pass/step-up) |
+| Pause an agent for a human checkpoint | [Human in the loop](/agent-pass/human-in-the-loop) |
+| Issue access tokens for my MCP server | [MCP authorization](/agent-pass/connect-your-auth-server) |
+| Accept delegated access through a supported agent host | [Cross App Access](/agent-pass/xaa) |
+
+For proof-based integration with IDKit, return to
+[Choose your integration](/world-id/overview#choose-your-integration). IDKit and
+World IdP use different registrations, credentials, and account identifiers.
