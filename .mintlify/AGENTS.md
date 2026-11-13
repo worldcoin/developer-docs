@@ -2,6 +2,8 @@
 
 - Write all published pages, maintenance notes, commit messages, and PR descriptions in English.
 - Follow the existing MDX, navigation, branding, and terminology conventions. Register pages in `docs.json`; reuse existing snippets and components when they fit.
+- Explain concepts in short paragraphs, setup in numbered steps, and guide choices with links or cards. Use tables when readers need to compare the same fields or look up values. Introduce each table with a short explanation of the comparison or decision it supports.
+- State what an integration returns, what the developer must validate, and what the application must enforce. Replace vague phrases such as "trust layer" or "enforce eligibility" with the specific behavior needed at that point.
 - Document durable product behavior, public contracts, and necessary integration setup. Keep implementation walkthroughs, operational runbooks, and PR history out of published pages.
 - Keep changes focused. Preserve coverage of the rest of the site when extending maintenance to IDP. Explain any necessary edits outside the affected product area.
 - Keep commit subjects and PR titles short. Follow the repository's PR template. If there is no template, use `Summary` with one to three bullets and `Testing` with commands and outcomes or `Not run`.

@@ -103,16 +103,25 @@ Through credentials like Proof of Human, Proof of Attributes, and Proof of Prese
 
 ## IDKit or Agent Pass {#idkit-or-agent-pass}
 
-| | IDKit | Agent Pass with World IdP |
-| --- | --- | --- |
-| Integration | Your backend verifies World ID proofs. | Your backend or auth server validates OIDC ID tokens. |
-| Identifiers | Use a `nullifier` for uniqueness checks within an app and action. For repeated checks, `session_id` provides continuity and `session_nullifier` protects against replay. | Store `(iss, sub)` to recognize the account within its registered identity sector. |
-| Application responsibility | Verify the complete proof and enforce uniqueness or replay checks before granting access. | Validate the token, match the account, and enforce any required authentication freshness and assurance before granting access. |
-| Guides | [Verify a proof](/world-id/idkit/integrate) or [use session proofs](/world-id/idkit/session-proofs). | [Connect a backend](/agent-pass/connect-your-backend), [require step-up](/agent-pass/step-up), or [authorize an MCP server](/agent-pass/connect-your-auth-server). |
+IDKit gives your application World ID proofs to verify. World IdP gives it
+OpenID Connect ID tokens to validate.
 
-Your application owns its accounts, sessions, and permissions with either integration.
-Keep IDKit and World IdP registrations, credentials, and identifiers separate.
-For OIDC authentication, start with the [Agent Pass overview](/world-id/agent-pass).
+### Verify proofs with IDKit
+
+Verify the complete proof on your backend. For a one-use action, reject any
+`nullifier` already accepted for that app and action. For returning users, verify
+a new proof for the account's saved `session_id` and reject reused
+`session_nullifier` values.
+
+### Use OpenID Connect with World IdP
+
+Validate the ID token and map `(iss, sub)` to an account in your application.
+Use [step-up authentication](/agent-pass/step-up) when an action requires recent
+authentication or a specific authentication method.
+
+With either integration, you manage your application's accounts, sessions, and
+permissions. Keep IDKit and World IdP registrations, credentials, and identifiers
+separate.
 
 ## Choose your integration {#choose-your-integration}
 
@@ -123,21 +132,21 @@ For OIDC authentication, start with the [Agent Pass overview](/world-id/agent-pa
       icon="fingerprint"
       href="/world-id/idkit/integrate"
     >
-      Use IDKit to verify proofs and enforce eligibility for an action.
+      Verify a proof on your backend and reject reused nullifiers.
     </Card>
     <Card
       title="Verify returning users"
       icon="arrows-rotate"
       href="/world-id/idkit/session-proofs"
     >
-      Use IDKit session proofs for continuity across repeated proof checks.
+      Verify a new proof against the account's saved session ID.
     </Card>
     <Card
-      title="Authenticate users and agents"
+      title="Authenticate with World IdP"
       icon="key"
       href="/world-id/agent-pass"
     >
-      Use Agent Pass with World IdP for OpenID Connect authentication.
+      Add browser sign-in or device authorization from a CLI.
     </Card>
     <Card
       title="Check wallet verification"
@@ -150,8 +159,8 @@ For OIDC authentication, start with the [Agent Pass overview](/world-id/agent-pa
 </Visibility>
 
 <Visibility for="agents">
-  - [Verify a World ID proof](/world-id/idkit/integrate). Use IDKit to verify proofs and enforce eligibility for an action.
-  - [Verify returning users](/world-id/idkit/session-proofs). Use IDKit session proofs for continuity across repeated proof checks.
-  - [Authenticate users and agents](/world-id/agent-pass). Use Agent Pass with World IdP for OpenID Connect authentication.
+  - [Verify a World ID proof](/world-id/idkit/integrate). Verify a proof on your backend and reject reused nullifiers.
+  - [Verify returning users](/world-id/idkit/session-proofs). Verify a new proof against the account's saved session ID.
+  - [Authenticate with World IdP](/world-id/agent-pass). Add browser sign-in or device authorization from a CLI.
   - [Check wallet verification](/world-chain/reference/address-book). Use Address Book to check whether a World Chain wallet is Orb verified.
 </Visibility>

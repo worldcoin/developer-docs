@@ -1,28 +1,46 @@
 ---
 title: "World IdP"
 sidebarTitle: "Agent Pass (OIDC)"
-description: "Choose World IdP's OIDC integration for account authentication, step-up checks, and agent access."
+description: "Authenticate World ID accounts with OpenID Connect and check authentication before sensitive actions."
 "og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-Agent Pass covers World IdP's OpenID Connect integration for applications and
-agents. Your backend validates an ID token and recognizes the World ID account
-using the issuer and sector-scoped subject, `(iss, sub)`. Your application controls
-its own accounts, sessions, permissions, and action approvals.
+World IdP returns an OpenID Connect ID token after a user authenticates with
+World ID. Your backend or auth server validates the token and uses `(iss, sub)`
+to match the user to an application account. You manage login sessions and
+permissions in your application.
 
-## Choose a guide
+<span id="choose-a-guide" />
 
-Start with [Agent Pass Quickstart](/agent-pass/quickstart), then
-[register your application](/agent-pass/app-registration).
+## Connect your application
 
-| I need to… | Guide |
-| --- | --- |
-| Authenticate through a browser or a headless client | [Connect your backend or auth server](/agent-pass/connect-your-backend) |
-| Require recent authentication before an action | [Step-up authentication](/agent-pass/step-up) |
-| Pause an agent for a human checkpoint | [Human in the loop](/agent-pass/human-in-the-loop) |
-| Issue access tokens for my MCP server | [MCP authorization](/agent-pass/connect-your-auth-server) |
-| Accept delegated access through a supported agent host | [Cross App Access](/agent-pass/xaa) |
+Follow the [Quickstart](/agent-pass/quickstart) and
+[register your application](/agent-pass/app-registration). Choose the flow your
+client supports:
+
+- [Browser sign-in](/agent-pass/connect-your-backend#sign-in-through-the-browser).
+  For web apps with a browser callback URL.
+- [Device authorization](/agent-pass/connect-your-backend#sign-in-a-headless-agent-device-flow).
+  For a CLI or other client without a browser callback.
+
+## Check authentication before an action
+
+Use [step-up authentication](/agent-pass/step-up) to require recent authentication
+or a specific method before an action.
+
+[Human checkpoints](/agent-pass/human-in-the-loop) pause an agent workflow while
+a person authenticates. Your backend checks permissions and any required action
+approval before resuming.
+
+## Authorize access to your MCP server
+
+With [MCP authorization](/agent-pass/connect-your-auth-server), your auth server
+authenticates the user through World IdP and issues an access token for your MCP
+server.
+
+With [Cross App Access (XAA)](/agent-pass/xaa), users choose which apps a supported
+agent host may access. Each app's auth server issues its own access tokens.
 
 For proof-based integration with IDKit, return to
 [Choose your integration](/world-id/overview#choose-your-integration). IDKit and
