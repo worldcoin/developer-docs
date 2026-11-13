@@ -91,14 +91,14 @@ at the authorization endpoint from the
 protocol permits omitting nonce; the step-up procedure above uses it to bind the
 result to the attempt.
 
-| Parameter      | Implemented behavior                                                                                               |
-| -------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `max_age=N`    | Accept authentication no older than N seconds, subject to session/consent eligibility. N is a nonnegative integer. |
-| `max_age=0`    | Require fresh authentication for this transaction, even with an existing browser session.                          |
-| `prompt=login` | Require fresh authentication; overrides a larger `max_age`.                                                        |
-| `prompt=none`  | Forbid interaction; return `login_required` or `interaction_required` if silent authorization cannot complete.     |
-| `acr_values`   | Voluntary preferences. Unsupported values do not force an error; validate the achieved `acr` yourself.             |
-| `claims`       | Request an essential ID-token `acr` to require an acceptable authentication class.                                 |
+| Parameter      | Implemented behavior                                                                                                                                             |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `max_age=N`    | Accept authentication no older than N seconds, subject to session/consent eligibility. N is a nonnegative integer.                                               |
+| `max_age=0`    | Require fresh authentication for this transaction, even with an existing browser session.                                                                        |
+| `prompt=login` | Require fresh authentication; overrides a larger `max_age`.                                                                                                      |
+| `prompt=none`  | Forbid interaction; return `login_required` or `interaction_required` if silent authorization cannot complete.                                                   |
+| `acr_values`   | Choose the [accepted accounts](#accepted-accounts), as the client's defaults do. Unsupported values do not force an error; validate the achieved `acr` yourself. |
+| `claims`       | Request an essential ID-token `acr` to require an acceptable authentication class.                                                                               |
 
 Omit `prompt` for normal interactive fallback. The supported values are `login`,
 `none`, and `consent`, supplied individually. `consent` forces the interactive
@@ -198,13 +198,19 @@ to **Settings → Authenticate → Default accepted accounts**:
 
 - **Orb:** accounts verified at an Orb.
 - **Selfie Check:** accounts verified with Selfie Check or at an Orb. The login
-  offers Selfie Check first.
+  asks for Selfie Check first.
 - **Any account:** every World ID account. Accounts with Orb or Selfie Check
   verification still receive their class in `acr`; ID tokens for accounts without
   either omit `acr`.
 
 Each choice also accepts the accounts above it: any account, then Selfie Check,
 then Orb. An essential `acr` claim request accepts only the classes it lists.
+
+Classes in `acr_values` choose accounts the same way, although OIDC calls
+`acr_values` voluntary. `acr_values=https://world.org/oidc/acr/orb` accepts only
+Orb accounts, and `acr_values=https://world.org/oidc/acr/selfie` accepts Selfie
+Check or Orb accounts. Face Auth classes in `acr_values` are
+[preferences](#require-face-auth).
 
 To accept any account for one request, including accounts without Orb or Selfie
 Check verification, send this decoded `claims` parameter:

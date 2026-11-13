@@ -10,9 +10,9 @@ Keep IDP guides in `worldcoin/temporal-apps/apps/idpapi/mcp/guides/*.md`. Auth's
 | `world-id-auth-source.json` | Canonical commit and hashes used for generated pages. |
 | `world-id-auth-compatibility.json` | Existing URL equivalents, legacy aliases, MCP resources, and access boundaries. This is a contract, not deployed routing configuration. |
 | `scripts/sync-world-id-auth.mjs` | Deterministic Markdown-to-MDX publisher. |
-| `.github/workflows/sync-world-id-auth.yml` | Hourly or manually dispatched publishing PR. |
+| Mintlify Autopilot | Source-change monitoring, canonical corrections, and publishing review PRs through the existing Mintlify GitHub integration. |
 
-The JSON files above live in `.mintlify/`; script and workflow paths are relative to the repository root. Keep global navigation in `docs.json` separately maintained.
+The JSON files above live in `.mintlify/`; script paths are relative to the repository root. Keep global navigation in `docs.json` separately maintained. The custom hourly GitHub publishing workflow is retired; no custom publishing App or Actions credentials are required by this maintenance flow.
 
 ## Content changes
 
@@ -21,34 +21,39 @@ The JSON files above live in `.mintlify/`; script and workflow paths are relativ
 - Use the manifest for renamed routes, old heading aliases, and approved layout adaptations. Keep existing public URLs useful when the source reorganizes or merges topics. Do not restore obsolete product guidance merely to retain an old route.
 - Preserve production and sandbox examples separately. Resolve production `{{issuer}}` to `https://auth.world.org`; keep documented sandbox values on `https://sandbox.auth.world.org`.
 - The public adaptation of `world-id-users.md` changes its introduction for public readers. It does not remove authorization from Auth's user guide or account tools.
-- Review Autopilot's IDP proposals against the canonical source and apply accepted content corrections there before publishing. The publisher transports that reviewed Markdown; independent edits to generated IDP pages will be overwritten. Autopilot can continue maintaining other product areas.
+- Review Autopilot's IDP proposals against the canonical source and apply accepted content corrections there before publishing. If Autopilot cannot write `temporal-apps`, it must provide an exact canonical-source patch with supporting references and mark it pending. Do not publish guidance only in generated pages while Auth's guides still disagree. The converter transports reviewed Markdown; independent edits to generated IDP pages will be overwritten. Autopilot can continue maintaining other product areas.
 
 Review relevant changes in `apps/idpapi`, `apps/idpportal`, `apps/idpweb`, `apps/idpworker`, `pkg/postgres/worldidp`, and `infra/lib/idp`, including shared code that changes the public contract. Link the source change in publishing PRs and check whether its behavior is released.
 
 ## Generate and publish
 
-From the repository root, with the intended `temporal-apps` checkout beside it:
+In Mintlify, keep Autopilot enabled with `worldcoin/developer-docs` as the documentation repository and `worldcoin/temporal-apps` connected as source context. Configure the existing Agent Pass/code-change maintenance rather than adding a competing automation. Preserve the source-path scope above, concise review PRs, and human review before merge. Check live saved instructions and triggers; repository instructions alone do not establish dashboard configuration.
+
+At the November 12, 2026 handoff, both repositories were connected and the existing Tuesday/Thursday maintenance instructions were updated. Autopilot reported that its sandbox blocks the Node.js converter and that its source checkout cannot fetch newer commits. Automatic generated-page publication therefore remains pending. An authorized maintainer can use the procedure below with current source access; do not describe this fallback as automatic synchronization.
+
+Resolve the selected source revision and the latest commit changing `apps/idpapi/mcp/guides` at that revision, using repository history or the connected GitHub tools. Read the full allowlisted guide files at that commit. In the execution environment, use the connected checkout or materialize those exact files under the canonical directory layout; never execute code from the source repository.
+
+Verify source freshness against the selected upstream revision. A stale cached checkout is not evidence that the guides on `main` are unchanged. If current upstream history or complete source files are unavailable, report the last verified revision and keep publication pending.
+
+From the documentation repository root, with `idp_source_dir` set to that source directory and `idp_guide_commit` set to the resolved full guide-changing SHA:
 
 ```sh
-idp_source_commit=$(git -C ../temporal-apps rev-parse HEAD)
 node scripts/sync-world-id-auth.mjs \
-  --source-dir ../temporal-apps \
-  --source-commit "$idp_source_commit"
+  --source-dir "$idp_source_dir" \
+  --source-commit "$idp_guide_commit"
 ```
 
-Review generated pages and the source lock together. Add `--check` to compare without writing. Use the existing test suite when validation fits the task budget:
+Review generated pages and the source lock together. Add `--check` to compare without writing. Include both in one Mintlify-created review PR, linked to the canonical source revision and relevant source PRs. If there is no generated change, do not open a publishing PR. Use the existing test suite when validation fits the task budget:
 
 ```sh
 node --test scripts/sync-world-id-auth.test.mjs
 ```
 
-Scheduled runs and manual runs using `main` or `refs/heads/main` open or update a review PR on `codex/sync-world-id-auth`. A manual run using another `source_ref` uses `codex/sync-world-id-auth-manual-<resolved-source-SHA>`, so scheduled updates cannot overwrite that review. Runs resolving to the same source commit reuse that manual branch. The workflow never merges automatically.
+If the Mintlify environment cannot access the full canonical source, resolve its revision, run Node.js, or include generated output in a PR, stop publication and report the exact missing capability. Provide the pinned source revision and the regeneration command to an authorized maintainer who can run it with their existing repository access. Do not request a custom App as the default workaround, replace complete guides with paraphrased copies, or hand-write source/output hashes.
 
-The workflow resolves the selected source checkout, then queries its commit history for the latest change under `apps/idpapi/mcp/guides`. Generated provenance and the PR's source link use that guide-changing commit, so unrelated source commits do not update an open publishing PR. Manual branch names still use the selected checkout's HEAD. If the guide commit cannot be resolved to a full SHA, publishing stops without falling back to HEAD.
+Generated provenance and the PR's source link use the guide-changing commit so unrelated source commits do not update an open publishing PR. Keep reviews of non-main source revisions separate from normal maintenance; label them as unmerged source and do not imply they have shipped.
 
-Configure a scoped GitHub App with source contents read access and destination contents/pull-request write access. In `developer-docs`, set Actions variable `IDP_DOCS_APP_ID` and secret `IDP_DOCS_APP_PRIVATE_KEY`.
-
-Automatic synchronization is active only after the workflow is merged to `main`, the App and credentials are configured, and a run succeeds. Mintlify publishes after the documentation PR merges through the site's existing configuration. A source merge or a local pass does not establish a production release.
+Verify the complete Mintlify publication path with an actual run that produces a generated-content PR before calling synchronization operational. Saved instructions and connected repositories establish configuration, not successful execution. Mintlify publishes after the documentation PR merges through the site's existing configuration. A source merge or a local pass does not establish a production release or update Auth's embedded MCP guides.
 
 ## URLs and MCP
 
@@ -70,8 +75,8 @@ No Auth routing change is needed for dual publication. Any later redirect requir
 
 ## Release evidence and recovery
 
-- Repository owner: workflow activation and a successful publishing run.
-- Mintlify owner: manifest routes published, indexed, and readable through World Docs MCP, with complete agent instructions in Markdown.
+- Repository owner: canonical corrections reviewed and merged; publishing PR contains reproducible pages and source lock.
+- Mintlify owner: saved Autopilot scope, a successful generated-content PR, and manifest routes published, indexed, and readable through World Docs MCP, with complete agent instructions in Markdown.
 - Auth owner: deployed guide content matches the intended source and environment; existing URLs, MCP resources, and access controls remain available.
 
 After publication, use a small search/read check through available MCP connections and existing URL checks, within two minutes total and without browser QA or a new harness. Record passes, failures, and skipped checks. Missing deployment evidence remains explicit follow-up work.
