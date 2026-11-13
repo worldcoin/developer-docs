@@ -72,7 +72,7 @@
             ]
           },
           {
-            "group": "Agent Pass",
+            "group": "World IdP",
             "pages": [
               "world-id/agent-pass"
             ]
