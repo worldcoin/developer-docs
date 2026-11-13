@@ -5,7 +5,6 @@ description: "Prove a person is real and unique without sharing personal informa
 ---
 
 import { Quickstart } from "/snippets/quickstart.jsx";
-import { FeatureBlocks } from "/snippets/feature-blocks.jsx";
 
 ## World ID
 
@@ -100,60 +99,6 @@ Through credentials like Proof of Human, Proof of Attributes, and Proof of Prese
   - [Proof of Human](/world-id/credentials/1) — Highest-assurance uniqueness signal from Orb verification. Best for one-person-one-action flows and strong Sybil resistance.
   - [Proof of Attributes](/world-id/credentials/9303) — Proves possession of a unique government document through NFC checks. Useful for proof of age and document-backed access flows.
   - [Proof of Presence](/world-id/credentials/11) — Low-friction liveness and facial similarity checks from a selfie flow. Best for sign-up and bot defense where speed matters most.
-</Visibility>
-
-## Start building
-
-<Visibility for="humans">
-  <FeatureBlocks
-    items={[
-      {
-        icon: "user",
-        title: "Stop bots and duplicate accounts",
-        body: "Use proof of human to enforce one human per account and reduce Sybil abuse in rewards, referrals, governance, and account creation.",
-      },
-      {
-        icon: "shield-check",
-        title: "Protect conversion and user privacy",
-        body: "Replace CAPTCHA-heavy or document-heavy gating with reusable proof flows. Relying parties receive proofs, not personal data.",
-      },
-    ]}
-  />
-</Visibility>
-
-<Visibility for="agents">
-  - **Stop bots and duplicate accounts** — Use proof of human to enforce one human per account and reduce Sybil abuse in rewards, referrals, governance, and account creation.
-  - **Protect conversion and user privacy** — Replace CAPTCHA-heavy or document-heavy gating with reusable proof flows. Relying parties receive proofs, not personal data.
-</Visibility>
-
-## Privacy by architecture
-
-<Visibility for="humans">
-  <FeatureBlocks
-    items={[
-      {
-        icon: "eye",
-        title: "Zero-knowledge proofs",
-        body: "Users prove what is true without revealing personal information. Proofs are unlinkable across apps.",
-      },
-      {
-        icon: "community",
-        title: "Multi-party computation",
-        body: "Matching and uniqueness checks are split across independent nodes so no single party holds complete sensitive data.",
-      },
-      {
-        icon: "shield",
-        title: "Self-custodial",
-        body: "Proof generation happens on the user’s device. Your app receives a proof, not raw personal data.",
-      },
-    ]}
-  />
-</Visibility>
-
-<Visibility for="agents">
-  - **Zero-knowledge proofs** — Users prove what is true without revealing personal information. Proofs are unlinkable across apps.
-  - **Multi-party computation** — Matching and uniqueness checks are split across independent nodes so no single party holds complete sensitive data.
-  - **Self-custodial** — Proof generation happens on the user’s device. Your app receives a proof, not raw personal data.
 </Visibility>
 
 ## Choose your integration {#choose-your-integration}
