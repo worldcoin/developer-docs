@@ -223,7 +223,7 @@ export function renderGuide(markdown, page, config) {
     '"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"',
     "---",
     "",
-    `{/* Generated from ${config.repository}/${config.sourceDirectory}/${page.source}. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}`,
+    `{/* Source reference: ${config.repository}/${config.sourceDirectory}/${page.source}. Maintained by Mintlify Autopilot; see .mintlify/world-id-auth-maintenance.md. */}`,
     "",
   ];
   if (page.environmentNote) metadata.push(environmentNote, "");

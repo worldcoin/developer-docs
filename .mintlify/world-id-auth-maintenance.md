@@ -1,63 +1,69 @@
 # IDP maintenance
 
-Keep IDP guides in `worldcoin/temporal-apps/apps/idpapi/mcp/guides/*.md`. Auth's browser documentation and MCP consume that Markdown; this repository publishes generated MDX from the same source. Publication here does not deploy Auth or update its embedded MCP guides.
+Mintlify Autopilot reads `worldcoin/temporal-apps`, reviews merged product PRs, and directly updates `agent-pass/*.mdx` through documentation review PRs. Auth's browser documentation and MCP continue consuming `temporal-apps/apps/idpapi/mcp/guides/*.md`. Keep corresponding guide corrections explicit; publishing here does not deploy Auth or update its embedded MCP guides.
 
 ## Files and ownership
 
 | File | Purpose |
 | --- | --- |
-| `world-id-auth-pages.json` | Source allowlist, destination routes, metadata, and approved publishing adaptations. |
-| `world-id-auth-source.json` | Canonical commit and hashes used for generated pages. |
+| `world-id-auth-pages.json` | Original guide-to-page mappings, metadata, and approved publishing adaptations. |
+| `world-id-auth-source.json` | Last converter snapshot only; not provenance for later native Mintlify edits. |
 | `world-id-auth-compatibility.json` | Existing URL equivalents, legacy aliases, MCP resources, and access boundaries. This is a contract, not deployed routing configuration. |
-| `scripts/sync-world-id-auth.mjs` | Deterministic Markdown-to-MDX publisher. |
+| `scripts/sync-world-id-auth.mjs` | Optional deterministic import/reconciliation tool; not required for Autopilot maintenance. |
 | Mintlify Autopilot | Source-change monitoring, canonical corrections, and publishing review PRs through the existing Mintlify GitHub integration. |
 
 The JSON files above live in `.mintlify/`; script paths are relative to the repository root. Keep global navigation in `docs.json` separately maintained. The custom hourly GitHub publishing workflow is retired; no custom publishing App or Actions credentials are required by this maintenance flow.
 
 ## Content changes
 
-- Change product guidance in the canonical Markdown, then regenerate. Do not edit generated `agent-pass/*.mdx` bodies independently.
+- Create and edit the affected `agent-pass/*.mdx` pages directly using merged source PRs, implementation context, and the complete Auth guides. Native maintenance does not require Node.js, the converter, or a source-guide merge first.
 - Preserve complete sections, tables, examples, errors, limitations, and agent instructions, including everything after `Agent instructions`. Auth's HTML may omit agent-only sections; its raw Markdown and MCP are the complete sources.
 - Use the manifest for renamed routes, old heading aliases, and approved layout adaptations. Keep existing public URLs useful when the source reorganizes or merges topics. Do not restore obsolete product guidance merely to retain an old route.
 - Preserve production and sandbox examples separately. Resolve production `{{issuer}}` to `https://auth.world.org`; keep documented sandbox values on `https://sandbox.auth.world.org`.
 - The public adaptation of `world-id-users.md` changes its introduction for public readers. It does not remove authorization from Auth's user guide or account tools.
-- Review Autopilot's IDP proposals against the canonical source and apply accepted content corrections there before publishing. If Autopilot cannot write `temporal-apps`, it must provide an exact canonical-source patch with supporting references and mark it pending. Do not publish guidance only in generated pages while Auth's guides still disagree. The converter transports reviewed Markdown; independent edits to generated IDP pages will be overwritten. Autopilot can continue maintaining other product areas.
+- Compare code-backed corrections with the corresponding Auth guides. If a guide also needs updating and source writes are unavailable, include its exact Markdown patch and source path in the documentation PR description, marked pending Auth-guide update. Do not silently claim both publications agree. That follow-up does not block proposing a supported documentation PR. Autopilot can continue maintaining other product areas.
 
 Review relevant changes in `apps/idpapi`, `apps/idpportal`, `apps/idpweb`, `apps/idpworker`, `pkg/postgres/worldidp`, and `infra/lib/idp`, including shared code that changes the public contract. Link the source change in publishing PRs and check whether its behavior is released.
 
-## Generate and publish
+## Native maintenance and publication
 
-In Mintlify, keep Autopilot enabled with `worldcoin/developer-docs` as the documentation repository and `worldcoin/temporal-apps` connected as source context. Configure the existing Agent Pass/code-change maintenance rather than adding a competing automation. Preserve the source-path scope above, concise review PRs, and human review before merge. Check live saved instructions and triggers; repository instructions alone do not establish dashboard configuration.
+Keep Autopilot enabled with `worldcoin/developer-docs` as the documentation repository and `worldcoin/temporal-apps` connected as source context. Use the existing Agent Pass code-change maintenance job and its current schedule; avoid overlapping jobs and leave unrelated product maintenance unchanged. Save the direct-edit policy in the live job and standing instructions. Repository instructions alone do not establish dashboard configuration.
 
-At the November 12, 2026 handoff, both repositories were connected and the existing Tuesday/Thursday maintenance instructions were updated. Autopilot reported that its sandbox blocks the Node.js converter and that its source checkout cannot fetch newer commits. Automatic generated-page publication therefore remains pending. An authorized maintainer can use the procedure below with current source access; do not describe this fallback as automatic synchronization.
+On each run:
 
-Resolve the selected source revision and the latest commit changing `apps/idpapi/mcp/guides` at that revision, using repository history or the connected GitHub tools. Read the full allowlisted guide files at that commit. In the execution environment, use the connected checkout or materialize those exact files under the canonical directory layout; never execute code from the source repository.
+1. Inspect new merged `temporal-apps` PRs since the last successfully reviewed boundary. Read the actual source diffs and relevant implementation for the paths above, not only PR titles. Skip changes without public documentation impact.
+2. Compare supported changes with the affected MDX and complete Auth guides. Edit the documentation directly, preserving all existing instructions and the environment/MCP boundaries below. Do not require the converter, hash regeneration, or an earlier canonical-guide merge.
+3. Group related changes into concise review PRs with links to source PRs, commits, and files. Avoid duplicating open documentation PRs. Include exact pending Auth-guide patches when needed and distinguish merged code from verified deployed behavior.
+4. Keep the review boundary explicit. A stale cached checkout alone is not evidence of current `main`; use current repository tools or merged-PR history for newer changes. If evidence for one change is inaccessible, flag that gap without blocking unrelated well-supported updates. Never advance past unreviewed changes.
 
-Verify source freshness against the selected upstream revision. A stale cached checkout is not evidence that the guides on `main` are unchanged. If current upstream history or complete source files are unavailable, report the last verified revision and keep publication pending.
+Mintlify publishes after a documentation PR merges through the site's existing configuration. The normal automated deliverable is a proposed documentation PR, not an automatic merge or an Auth deployment. Verify configuration and an actual maintenance result separately.
 
-From the documentation repository root, with `idp_source_dir` set to that source directory and `idp_guide_commit` set to the resolved full guide-changing SHA:
+## Optional converter reconciliation
+
+The converter remains available for deliberate imports from a reviewed guide revision. It is not part of the native Autopilot publication path. Node execution being unavailable in Mintlify does not block native documentation updates.
+
+`.mintlify/world-id-auth-source.json` records the last converter snapshot, including its source revision and hashes. Native edits may differ from that snapshot. Do not update its hashes by hand or treat them as provenance for later edits; cite the actual source evidence in the maintenance PR.
+
+A converter run can overwrite native improvements that have not reached Auth's guides. Generate into a separate review directory first. With `idp_source_dir` pointing to complete guide files at the reviewed revision, `idp_guide_commit` set to the full guide-changing SHA, and `idp_review_dir` pointing to a separate output directory:
 
 ```sh
 node scripts/sync-world-id-auth.mjs \
   --source-dir "$idp_source_dir" \
-  --source-commit "$idp_guide_commit"
+  --source-commit "$idp_guide_commit" \
+  --output-dir "$idp_review_dir"
 ```
 
-Review generated pages and the source lock together. Add `--check` to compare without writing. Include both in one Mintlify-created review PR, linked to the canonical source revision and relevant source PRs. If there is no generated change, do not open a publishing PR. Use the existing test suite when validation fits the task budget:
+Compare that output with the maintained pages and resolve differences in a review PR. Preserve native improvements or propose matching Auth-guide corrections rather than blindly replacing them. Apply a converter import and its generated snapshot together only after that review. A converter `--check` difference can reflect intentional native maintenance; it is not an automatic instruction to revert the pages.
+
+Existing converter tests remain useful when that tool changes and validation fits the task budget:
 
 ```sh
 node --test scripts/sync-world-id-auth.test.mjs
 ```
 
-If the Mintlify environment cannot access the full canonical source, resolve its revision, run Node.js, or include generated output in a PR, stop publication and report the exact missing capability. Provide the pinned source revision and the regeneration command to an authorized maintainer who can run it with their existing repository access. Do not request a custom App as the default workaround, replace complete guides with paraphrased copies, or hand-write source/output hashes.
-
-Generated provenance and the PR's source link use the guide-changing commit so unrelated source commits do not update an open publishing PR. Keep reviews of non-main source revisions separate from normal maintenance; label them as unmerged source and do not imply they have shipped.
-
-Verify the complete Mintlify publication path with an actual run that produces a generated-content PR before calling synchronization operational. Saved instructions and connected repositories establish configuration, not successful execution. Mintlify publishes after the documentation PR merges through the site's existing configuration. A source merge or a local pass does not establish a production release or update Auth's embedded MCP guides.
-
 ## URLs and MCP
 
-Agent Pass stays in `docs.json` as a tab with `hidden: true` and `searchable: true` while its published content is tested through World Docs MCP. Keep the complete groups and page list so direct links retain the internal sidebar. Mintlify reveals hidden tabs when active, so scoped rules in `tailwind.css` also hide Agent Pass from desktop and mobile tab switchers. Keep these rules in place and promotional cards hidden until launch. Keep all generated pages and `seo.indexing: "all"`; do not add `noindex` or exclude `agent-pass/` from publication. Pages remain public at their existing URLs and can appear in search. Keep the homepage's agent-only link and technical MCP references for discovery. See [Mintlify hidden pages](https://www.mintlify.com/docs/organize/hidden-pages).
+Agent Pass stays in `docs.json` as a tab with `hidden: true` and `searchable: true` while its published content is tested through World Docs MCP. Keep the complete groups and page list so direct links retain the internal sidebar. Mintlify reveals hidden tabs when active, so scoped rules in `tailwind.css` also hide Agent Pass from desktop and mobile tab switchers. Keep these rules in place and promotional cards hidden until launch. Keep all pages and `seo.indexing: "all"`; do not add `noindex` or exclude `agent-pass/` from publication. Pages remain public at their existing URLs and can appear in search. Keep the homepage's agent-only link and technical MCP references for discovery. See [Mintlify hidden pages](https://www.mintlify.com/docs/organize/hidden-pages).
 
 The public documentation routes use `/agent-pass/`. Redirects in `docs.json` preserve the former `/world-id-auth/` HTML and raw Markdown page URLs and send both documentation roots to `/agent-pass/quickstart`. Keep the internal `world-id-auth` configuration and script filenames unchanged.
 
@@ -75,12 +81,12 @@ No Auth routing change is needed for dual publication. Any later redirect requir
 
 ## Release evidence and recovery
 
-- Repository owner: canonical corrections reviewed and merged; publishing PR contains reproducible pages and source lock.
-- Mintlify owner: saved Autopilot scope, a successful generated-content PR, and manifest routes published, indexed, and readable through World Docs MCP, with complete agent instructions in Markdown.
+- Repository owner: review the documentation PR and its code references; track any pending Auth-guide correction explicitly.
+- Mintlify owner: saved Autopilot scope, an actual native documentation PR, and routes published, indexed, and readable through World Docs MCP, with complete agent instructions in Markdown.
 - Auth owner: deployed guide content matches the intended source and environment; existing URLs, MCP resources, and access controls remain available.
 
 After publication, use a small search/read check through available MCP connections and existing URL checks, within two minutes total and without browser QA or a new harness. Record passes, failures, and skipped checks. Missing deployment evidence remains explicit follow-up work.
 
-For the hidden-page test, search World Docs MCP for the coding-agent guide and read `/agent-pass/build-with-a-coding-agent.mdx` through its docs filesystem tool. Verify the complete `Agent instructions` section and the Auth MCP URLs. To test updates from `temporal-apps`, publish a reviewed source change through the configured docs automation, merge its documentation PR, then read the changed section through World Docs MCP after Mintlify publishes it. A successful source sync and a refreshed MCP response are separate checks; a preview does not prove production indexing.
+For the hidden-page test, search World Docs MCP for the coding-agent guide and read `/agent-pass/build-with-a-coding-agent.mdx` through its docs filesystem tool. Verify the complete `Agent instructions` section and the Auth MCP URLs. To test updates from `temporal-apps`, publish a reviewed source change through the configured docs automation, merge its documentation PR, then read the changed section through World Docs MCP after Mintlify publishes it. A merged documentation PR and a refreshed MCP response are separate checks; a preview does not prove production indexing.
 
-Investigate failed publishing runs, persistent empty searches, and guide-content mismatches. Compare content or source hashes, since different commits can contain identical guides. Revert and republish a bad documentation update; roll back a failing Auth release in its owning deployment. Keep existing Auth publication available throughout recovery.
+Investigate failed publishing runs, persistent empty searches, and guide-content mismatches. Compare the current pages, supporting source PRs, complete Auth guides, and any pending guide patches. The last converter hashes alone do not describe native edits. Revert and republish a bad documentation update; roll back a failing Auth release in its owning deployment. Keep existing Auth publication available throughout recovery.
