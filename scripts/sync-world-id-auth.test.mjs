@@ -7,6 +7,9 @@ import test from "node:test";
 import { renderGuide, syncGuides } from "./sync-world-id-auth.mjs";
 import { renderQuickstartLayout } from "./world-id-auth-quickstart.mjs";
 import { renderClientAuthentication } from "./world-id-auth-client-auth.mjs";
+import { renderOidcExamples } from "./world-id-auth-oidc.mjs";
+import { renderOidcTroubleshooting } from "./world-id-auth-troubleshooting.mjs";
+import { renderCredentialCards } from "./world-id-auth-credentials.mjs";
 
 const page = {
   source: "getting-started.md",
@@ -532,4 +535,265 @@ test("client authentication adaptation fails when the reviewed methods or sectio
   assert.throws(() => renderClientAuthentication(missingMethod), /client|auth|method|table|row/i);
   const missingBoundary = clientAuthenticationContent.replace("## Manage credentials and callbacks {#manage-credentials-and-callbacks}", "## Renamed section {#renamed-section}");
   assert.throws(() => renderClientAuthentication(missingBoundary), /client|auth|section|boundar/i);
+});
+
+const oidcRequestBodies = [
+  `GET https://auth.world.org/api/v1/authorize
+client_id=<portal-client-id>
+redirect_uri=https://app.example/auth/world/callback
+response_type=code
+scope=openid
+state=<fresh-random-state>
+nonce=<fresh-random-nonce>
+code_challenge=<base64url-sha256-of-verifier-without-padding>
+code_challenge_method=S256`,
+  `POST https://auth.world.org/api/v1/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code
+client_id=<portal-client-id>
+client_secret=<backend-secret>
+code=<returned-code>
+redirect_uri=https://app.example/auth/world/callback
+code_verifier=<original-verifier>`,
+  `POST https://auth.world.org/api/v1/device_authorization
+Content-Type: application/x-www-form-urlencoded
+
+client_id=<portal-client-id>
+client_secret=<backend-secret>
+scope=openid`,
+  `POST https://auth.world.org/api/v1/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:device_code
+client_id=<same-portal-client-id>
+client_secret=<backend-secret>
+device_code=<private-device-code>`,
+];
+const oidcRequestBlocks = oidcRequestBodies.map((body) => `\`\`\`text\n${body}\n\`\`\``);
+const oidcPollRows = [
+  ["HTTP 400 `authorization_pending`", "Keep waiting and poll again after the interval."],
+  ["HTTP 400 `slow_down`", "Add five seconds to all later intervals. An early poll can return this before the grant is checked; it never extends the attempt's expiry."],
+  ["`access_denied`, `expired_token`, `invalid_grant`, other OAuth error", "Stop polling."],
+  ["HTTP 503", "Temporary unavailability, never approval. End this attempt."],
+  ["HTTP 429", "Per-network-address flood protection on back-channel endpoints, separate from the per-client limits. It can end the attempt; `Retry-After` does not override the stop rules."],
+  ["Connection timeout", "Back off before polling again."],
+];
+const oidcPollTable = [
+  "| Poll response | What to do |",
+  "| --- | --- |",
+  ...oidcPollRows.map(([response, action]) => `| ${response} | ${action} |`),
+].join("\n");
+const oidcExamplesContent = [
+  '<span id="sign-in-through-the-browser" />',
+  "## Authorization Code Flow {#authorization-code-flow}",
+  "The decoded authorization parameters are:",
+  oidcRequestBlocks[0],
+  "At the callback, validate state and the response issuer before redeeming the code.",
+  "For a client registered with `client_secret_post`, exchange the code with these decoded form fields:",
+  oidcRequestBlocks[1],
+  "URL-encode requests. Use your registered method and validate the result.",
+  '<span id="sign-in-a-headless-agent-device-flow" />',
+  "## Device Authorization Grant {#device-authorization-grant}",
+  "### Device flow {#device-flow}",
+  "Keep the device code private and bind the validated result to the intended grant.",
+  oidcPollTable,
+  "Set each request's timeout within the attempt's remaining lifetime, and stop\nwhen the attempt expires. Do not automatically restart authorization in a loop\nafter a failed attempt.",
+  "For a client registered with `client_secret_post`, the decoded request fields are:",
+  oidcRequestBlocks[2],
+  "After waiting the returned `interval`, the decoded poll form is:",
+  oidcRequestBlocks[3],
+  "Use your form encoder. For other methods, use the registered client authentication.",
+  "### Expiry and rate limits {#expiry-and-rate-limits}",
+  "Keep all expiry, rate-limit, token-validation, and account-binding guidance.",
+].join("\n\n");
+
+test("OIDC request examples show decoded JSON while preserving every wire parameter and original agent block", () => {
+  const rendered = renderOidcExamples(oidcExamplesContent);
+  const human = visibilityParts(rendered, "humans");
+  const agents = visibilityParts(rendered, "agents");
+  const groups = [...human.matchAll(/<CodeGroup(?:\s[^>]*)?>([\s\S]*?)<\/CodeGroup>/g)];
+  assert.equal(groups.length, 4);
+  const expectedParameters = [
+    { client_id: "<portal-client-id>", redirect_uri: "https://app.example/auth/world/callback", response_type: "code", scope: "openid", state: "<fresh-random-state>", nonce: "<fresh-random-nonce>", code_challenge: "<base64url-sha256-of-verifier-without-padding>", code_challenge_method: "S256" },
+    { grant_type: "authorization_code", client_id: "<portal-client-id>", client_secret: "<backend-secret>", code: "<returned-code>", redirect_uri: "https://app.example/auth/world/callback", code_verifier: "<original-verifier>" },
+    { client_id: "<portal-client-id>", client_secret: "<backend-secret>", scope: "openid" },
+    { grant_type: "urn:ietf:params:oauth:grant-type:device_code", client_id: "<same-portal-client-id>", client_secret: "<backend-secret>", device_code: "<private-device-code>" },
+  ];
+  for (const [index, group] of groups.entries()) {
+    const json = group[1].match(/```json[^\n]*\n([\s\S]*?)\n```/);
+    assert.ok(json, `Missing decoded JSON parameters for request ${index + 1}`);
+    assert.deepEqual(JSON.parse(json[1]), expectedParameters[index]);
+    assert.ok(agents.includes(oidcRequestBlocks[index]), `Original request ${index + 1} must remain available to agents`);
+    assert.ok(!human.includes(oidcRequestBlocks[index]));
+  }
+  for (const endpoint of ["GET https://auth.world.org/api/v1/authorize", "POST https://auth.world.org/api/v1/token", "POST https://auth.world.org/api/v1/device_authorization"]) {
+    assert.ok(human.includes(endpoint), `Missing request endpoint: ${endpoint}`);
+  }
+  assert.ok(human.includes("application/x-www-form-urlencoded"));
+  assert.equal(human.split("Content-Type: application/x-www-form-urlencoded").length - 1, 3);
+  assert.match(human, /URL.encod/i);
+  assert.match(human, /form.encod|form encoder/i);
+  assert.match(human, /not[^.\n]*JSON|JSON[^.\n]*not|decoded parameter/i);
+  assert.ok(rendered.includes("At the callback, validate state and the response issuer before redeeming the code."));
+  assert.ok(rendered.includes("Keep all expiry, rate-limit, token-validation, and account-binding guidance."));
+});
+
+test("device polling tabs preserve waits, terminal stops, and the complete canonical response table", () => {
+  const rendered = renderOidcExamples(oidcExamplesContent);
+  const human = visibilityParts(rendered, "humans");
+  const agents = visibilityParts(rendered, "agents");
+  assert.equal([...human.matchAll(/<Tab\s/g)].length, 9);
+  assert.ok(agents.includes(oidcPollTable));
+  assert.ok(!human.includes(oidcPollTable));
+  for (const response of ["authorization_pending", "slow_down", "access_denied", "expired_token", "invalid_grant", "503", "429"]) {
+    assert.ok(human.includes(response), `Missing polling response: ${response}`);
+  }
+  for (const [, action] of oidcPollRows) {
+    assert.ok(human.includes(action), `Missing polling action: ${action}`);
+  }
+  assert.match(human, /other OAuth error/i);
+  assert.match(human, /timeout/i);
+  assert.ok(rendered.includes("Set each request's timeout within the attempt's remaining lifetime"));
+  assert.ok(rendered.includes("Do not automatically restart authorization in a loop"));
+  assert.equal(rendered.split("{#device-flow}").length - 1, 1);
+  assert.equal(rendered.split('<span id="sign-in-a-headless-agent-device-flow" />').length - 1, 1);
+});
+
+test("OIDC example adaptation fails closed when request fields or polling rules drift", () => {
+  const missingField = oidcExamplesContent.replace("code_verifier=<original-verifier>\n", "");
+  assert.throws(() => renderOidcExamples(missingField), /OIDC|request|parameter|field|review/i);
+  const changedValue = oidcExamplesContent.replace("code_challenge_method=S256", "code_challenge_method=plain");
+  assert.throws(() => renderOidcExamples(changedValue), /OIDC|request|parameter|field|review/i);
+  const changedEncoding = oidcExamplesContent.replace("Content-Type: application/x-www-form-urlencoded", "Content-Type: application/json");
+  assert.throws(() => renderOidcExamples(changedEncoding), /OIDC|request|content.type|review/i);
+  const missingResponse = oidcExamplesContent.replace(/^\| HTTP 503[^\n]+\n/m, "");
+  assert.throws(() => renderOidcExamples(missingResponse), /OIDC|poll|response|row|review/i);
+  const changedStop = oidcExamplesContent.replace("Stop polling.", "Retry indefinitely.");
+  assert.throws(() => renderOidcExamples(changedStop), /OIDC|poll|response|action|review/i);
+});
+
+const oidcTroubleshootingContent = [
+  "## Troubleshooting {#troubleshooting}",
+  "",
+  "OAuth failures include a human-readable `error_description` alongside `error` in",
+  "the JSON response or authorization error redirect. Use the description to diagnose",
+  "malformed parameters, and use the `error` code to decide how your application responds.",
+  "Descriptions never echo submitted values. A client or callback mismatch returns",
+  "an error without redirecting to your callback, using the same guidance for either mismatch.",
+  "Credential, grant, and service errors use deliberately generic descriptions.",
+  "Keep dependency failures distinguishable from invalid authentication.",
+  "",
+  "| Symptom                                                           | Check                                                                                                                                                                                                                           |",
+  "| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |",
+  "| `invalid_scope`                                                   | Request `openid` for World ID authentication or `openid offline_access` for XAA delegation when discovery advertises it; `email` is also accepted. Remove other library scopes.                                                 |",
+  "| HTTP 400 `unsupported_grant_type`                                 | Use a grant type advertised by discovery. See [XAA availability](/agent-pass/xaa#requirements) for refresh and exchange.                                                                                             |",
+  "| Authorization `invalid_request`                                   | Check the active client, exact registered callback, state, nonce, S256 challenge, response mode, and supported prompt. Bad client/callback requests fail without redirecting to your callback.                                  |",
+  "| `invalid_client` at token/device endpoint                         | Check environment, registered auth method, credential encoding, and that methods are not mixed. For JWTs check audience, key, expiry, and a fresh JTI per request. Basic failures use HTTP 401; POST/JWT failures use HTTP 400. |",
+  "| `invalid_grant`                                                   | Check expiry, single-use code, exact callback, PKCE verifier, and client binding. Do not blindly replay a possibly consumed code.                                                                                               |",
+  "| `login_required` / `interaction_required`                         | A `prompt=none` request cannot complete silently. Start an interactive request when appropriate.                                                                                                                                |",
+  "| `account_not_eligible` / `client_registration_disabled` in portal | Check participant Google-account eligibility and registration availability with the organizer/operator. These are not World ID proof failures.                                                                                  |",
+  "| HTTP 503                                                          | Treat as temporary unavailability, never invalid identity or successful approval. Use bounded requests; apply the device polling rules above.                                                                                   |",
+].join("\n");
+
+test("OIDC troubleshooting tabs retain every symptom and check with the complete original agent guidance", () => {
+  const prefix = "Keep the full browser and device instructions.\n\n";
+  const rendered = renderOidcTroubleshooting(prefix + oidcTroubleshootingContent);
+  const human = visibilityParts(rendered, "humans");
+  const agents = visibilityParts(rendered, "agents");
+  assert.equal([...human.matchAll(/<Tab\s/g)].length, 8);
+  for (const title of ["invalid_scope", "unsupported_grant_type", "invalid_request", "invalid_client", "invalid_grant", "Silent sign-in", "Portal access", "HTTP 503"]) {
+    assert.ok(human.includes(`<Tab title="${title}">`), `Missing troubleshooting tab: ${title}`);
+  }
+  const originalBody = oidcTroubleshootingContent.slice("## Troubleshooting {#troubleshooting}".length).trim();
+  assert.ok(agents.includes(originalBody));
+  const rows = originalBody.split("\n").filter((line) => line.startsWith("| ")).slice(2);
+  for (const row of rows) {
+    const [symptom, check] = row.split("|").slice(1, -1).map((cell) => cell.trim());
+    assert.ok(human.includes(symptom), `Missing original symptom: ${symptom}`);
+    assert.ok(human.includes(check), `Missing original action: ${check}`);
+  }
+  assert.ok(human.includes("Descriptions never echo submitted values."));
+  assert.match(human, /Credential, grant, and service\s+errors use generic descriptions\./);
+  assert.match(human, /Keep dependency failures distinguishable\s+from invalid authentication\./);
+  assert.ok(human.includes("Client and callback mismatches use the same guidance."));
+  assert.ok(rendered.startsWith(prefix));
+  assert.equal(rendered.split("{#troubleshooting}").length - 1, 1);
+});
+
+test("OIDC troubleshooting adaptation rejects changed contracts, extra rows, and duplicate sections", () => {
+  const changedAction = oidcTroubleshootingContent.replace("Treat as temporary unavailability, never invalid identity or successful approval.", "Treat an outage as approval.");
+  assert.notEqual(changedAction, oidcTroubleshootingContent);
+  assert.throws(() => renderOidcTroubleshooting(changedAction), /OIDC|troubleshooting|changed|review/i);
+  const extraRow = oidcTroubleshootingContent + "\n| New error | Unreviewed action. |";
+  assert.throws(() => renderOidcTroubleshooting(extraRow), /OIDC|troubleshooting|changed|review/i);
+  const duplicate = oidcTroubleshootingContent + "\n\n## Troubleshooting {#troubleshooting}\n";
+  assert.throws(() => renderOidcTroubleshooting(duplicate), /OIDC|troubleshooting|section/i);
+});
+
+const credentialCardsContent = [
+  "## Credentials and authentication classes {#credentials-and-authentication-classes}",
+  "",
+  "Choose which verification your application accepts separately from how recently",
+  "the person must authenticate. A World ID account can hold both Orb and Selfie",
+  "Check credentials, plus passkeys for authentication.",
+  "",
+  "| Credential   | What it establishes                                                                                                                                             | Baseline `acr`                                                            |",
+  "| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |",
+  "| Orb          | Iris-based verification at an Orb provides high assurance of unique humanness.                                                                                  | `https://world.org/oidc/acr/orb`                                          |",
+  "| Selfie Check | Camera-based liveness and facial similarity checks provide a medium-assurance signal of humanness and uniqueness, with greater duplicate-account risk than Orb. | `https://world.org/oidc/acr/selfie`                                       |",
+  "| Passkey      | Authenticates control of the account with WebAuthn user verification. It adds no biometric uniqueness verification.                                             | The account's Orb or Selfie Check class, or no `acr` if it holds neither. |",
+  "",
+  "[Orb verification](https://docs.world.org/world-id/credentials/1) is suited to",
+  "applications that need stronger resistance to duplicate accounts.",
+  "[Selfie Check](https://docs.world.org/world-id/credentials/11) is available without",
+  "an Orb visit. It does not provide a strict one-person-one-account guarantee.",
+  "Choose according to the consequences of accepting a duplicate account.",
+  "",
+  "**Face Auth adds a face check during authentication with an existing credential.**",
+  "`https://world.org/oidc/acr/orb-face` adds a completed face check to an Orb proof;",
+  "`https://world.org/oidc/acr/selfie-face` adds it to a Selfie Check proof. A Selfie",
+  "Check credential by itself does not mean a face check occurred during this login.",
+  "A passkey cannot satisfy either `-face` class.",
+  "",
+  "Use `acr` for the achieved class, `amr` for the authentication method, and",
+  "`auth_time` for freshness. An account's verification type does not imply a fresh",
+  "biometric check. See [Assurance values](#assurance-values)",
+  "for the exact claims and [Accept Orb or Selfie Check](/agent-pass/step-up#accept-orb-or-selfie-check)",
+  "for requests that allow either credential.",
+  "",
+  "## Token response {#token-response}",
+  "",
+  "Keep token validation and response guidance unchanged.",
+].join("\n");
+
+test("credential cards distinguish Orb, passkey, and Selfie Check while retaining all canonical assurance rules", () => {
+  const rendered = renderCredentialCards(credentialCardsContent);
+  const human = visibilityParts(rendered, "humans");
+  const agents = visibilityParts(rendered, "agents");
+  const table = credentialCardsContent.match(/^\| Credential[^\n]+(?:\n\|[^\n]+)+/m)?.[0];
+  assert.ok(table);
+  assert.ok(agents.includes(table));
+  assert.ok(!human.includes(table));
+  const humanImage = "/images/docs/credentials/proof-of-human.png";
+  const presenceImage = "/images/docs/credentials/proof-of-presence.png";
+  assert.ok(human.includes(humanImage));
+  assert.ok(human.includes(presenceImage));
+  assert.ok(human.indexOf(humanImage) < human.indexOf("Passkey"));
+  assert.ok(human.indexOf("Passkey") < human.indexOf(presenceImage));
+  assert.ok(human.includes('<Icon icon="key"'));
+  assert.doesNotMatch(human, /proof-of-attributes\.png|National ID/i);
+  const readableHuman = human.replace(/<[^>]*>/g, "").replaceAll("&#39;", "'");
+  for (const row of table.split("\n").slice(2)) {
+    const [, description, acr] = row.split("|").slice(1, -1).map((cell) => cell.trim());
+    assert.ok(readableHuman.includes(description), `Missing credential meaning: ${description}`);
+    assert.ok(readableHuman.includes(acr.replaceAll("`", "")), `Missing baseline class: ${acr}`);
+  }
+  assert.equal(rendered.split("**Face Auth adds a face check during authentication with an existing credential.**").length - 1, 1);
+  assert.ok(rendered.includes("A passkey cannot satisfy either `-face` class."));
+  assert.ok(rendered.includes("Keep token validation and response guidance unchanged."));
+  assert.equal(rendered.split("{#credentials-and-authentication-classes}").length - 1, 1);
+  const changedCredential = credentialCardsContent.replace("| Selfie Check |", "| Unreviewed credential |");
+  assert.notEqual(changedCredential, credentialCardsContent);
+  assert.throws(() => renderCredentialCards(changedCredential), /credential|class|table|review|changed/i);
 });

@@ -47,6 +47,28 @@ PKCE verifier bound to each server-side attempt.
 
 The decoded authorization parameters are:
 
+<Visibility for="humans">
+`GET https://auth.world.org/api/v1/authorize`.
+
+Send these as URL-encoded query parameters.
+
+<CodeGroup>
+```json title="Authorization parameters"
+{
+  "client_id": "<portal-client-id>",
+  "redirect_uri": "https://app.example/auth/world/callback",
+  "response_type": "code",
+  "scope": "openid",
+  "state": "<fresh-random-state>",
+  "nonce": "<fresh-random-nonce>",
+  "code_challenge": "<base64url-sha256-of-verifier-without-padding>",
+  "code_challenge_method": "S256"
+}
+```
+</CodeGroup>
+</Visibility>
+
+<Visibility for="agents">
 ```text
 GET https://auth.world.org/api/v1/authorize
 client_id=<portal-client-id>
@@ -58,6 +80,7 @@ nonce=<fresh-random-nonce>
 code_challenge=<base64url-sha256-of-verifier-without-padding>
 code_challenge_method=S256
 ```
+</Visibility>
 
 World IdP handles passkey or proof authentication and browser-session eligibility.
 At the callback, validate `state` and require the response's `iss` to match the
@@ -68,6 +91,26 @@ after five minutes and can be redeemed once.
 For a client registered with `client_secret_post`, exchange the code with these
 decoded form fields:
 
+<Visibility for="humans">
+`POST https://auth.world.org/api/v1/token` with `Content-Type: application/x-www-form-urlencoded`.
+
+Form-encode these fields; do not send JSON.
+
+<CodeGroup>
+```json title="Code exchange"
+{
+  "grant_type": "authorization_code",
+  "client_id": "<portal-client-id>",
+  "client_secret": "<backend-secret>",
+  "code": "<returned-code>",
+  "redirect_uri": "https://app.example/auth/world/callback",
+  "code_verifier": "<original-verifier>"
+}
+```
+</CodeGroup>
+</Visibility>
+
+<Visibility for="agents">
 ```text
 POST https://auth.world.org/api/v1/token
 Content-Type: application/x-www-form-urlencoded
@@ -79,6 +122,7 @@ code=<returned-code>
 redirect_uri=https://app.example/auth/world/callback
 code_verifier=<original-verifier>
 ```
+</Visibility>
 
 URL-encode requests. For the portal default `client_secret_basic` or
 `private_key_jwt`, use the [registered method](/agent-pass/app-registration#client-authentication).
@@ -139,6 +183,103 @@ validate one through a profile that advertises support for it.
    application session or grant before authorizing access. Apply your account,
    freshness, assurance, and permission checks before using the result.
 
+<Visibility for="humans">
+<Tabs>
+  <Tab title="authorization_pending">
+
+HTTP 400.
+
+```json
+{
+  "error": "authorization_pending"
+}
+```
+
+Keep waiting and poll again after the interval.
+
+  </Tab>
+  <Tab title="slow_down">
+
+HTTP 400.
+
+```json
+{
+  "error": "slow_down"
+}
+```
+
+Add five seconds to all later intervals. An early poll can return this before the grant is checked; it never extends the attempt's expiry.
+
+  </Tab>
+  <Tab title="access_denied">
+
+```json
+{
+  "error": "access_denied"
+}
+```
+
+Stop polling.
+
+  </Tab>
+  <Tab title="expired_token">
+
+```json
+{
+  "error": "expired_token"
+}
+```
+
+Stop polling.
+
+  </Tab>
+  <Tab title="invalid_grant">
+
+```json
+{
+  "error": "invalid_grant"
+}
+```
+
+Stop polling.
+
+  </Tab>
+  <Tab title="Other OAuth errors">
+
+Any other OAuth error.
+
+Stop polling.
+
+  </Tab>
+  <Tab title="HTTP 503">
+
+```http
+HTTP/1.1 503
+```
+
+Temporary unavailability, never approval. End this attempt.
+
+  </Tab>
+  <Tab title="HTTP 429">
+
+```http
+HTTP/1.1 429
+```
+
+Per-network-address flood protection on back-channel endpoints, separate from the per-client limits. It can end the attempt; `Retry-After` does not override the stop rules.
+
+  </Tab>
+  <Tab title="Timeout">
+
+No HTTP response.
+
+Back off before polling again.
+
+  </Tab>
+</Tabs>
+</Visibility>
+
+<Visibility for="agents">
 | Poll response                                                        | What to do                                                                                                                                                                   |
 | -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | HTTP 400 `authorization_pending`                                     | Keep waiting and poll again after the interval.                                                                                                                              |
@@ -147,6 +288,7 @@ validate one through a profile that advertises support for it.
 | HTTP 503                                                             | Temporary unavailability, never approval. End this attempt.                                                                                                                  |
 | HTTP 429                                                             | Per-network-address flood protection on back-channel endpoints, separate from the per-client limits. It can end the attempt; `Retry-After` does not override the stop rules. |
 | Connection timeout                                                   | Back off before polling again.                                                                                                                                               |
+</Visibility>
 
 Set each request's timeout within the attempt's remaining lifetime, and stop
 when the attempt expires. Do not automatically restart authorization in a loop
@@ -154,6 +296,23 @@ after a failed attempt.
 
 For a client registered with `client_secret_post`, the decoded request fields are:
 
+<Visibility for="humans">
+`POST https://auth.world.org/api/v1/device_authorization` with `Content-Type: application/x-www-form-urlencoded`.
+
+Form-encode these fields; do not send JSON.
+
+<CodeGroup>
+```json title="Device authorization"
+{
+  "client_id": "<portal-client-id>",
+  "client_secret": "<backend-secret>",
+  "scope": "openid"
+}
+```
+</CodeGroup>
+</Visibility>
+
+<Visibility for="agents">
 ```text
 POST https://auth.world.org/api/v1/device_authorization
 Content-Type: application/x-www-form-urlencoded
@@ -162,9 +321,28 @@ client_id=<portal-client-id>
 client_secret=<backend-secret>
 scope=openid
 ```
+</Visibility>
 
 After waiting the returned `interval`, the decoded poll form is:
 
+<Visibility for="humans">
+`POST https://auth.world.org/api/v1/token` with `Content-Type: application/x-www-form-urlencoded`.
+
+Form-encode these fields; do not send JSON.
+
+<CodeGroup>
+```json title="Device token polling"
+{
+  "grant_type": "urn:ietf:params:oauth:grant-type:device_code",
+  "client_id": "<same-portal-client-id>",
+  "client_secret": "<backend-secret>",
+  "device_code": "<private-device-code>"
+}
+```
+</CodeGroup>
+</Visibility>
+
+<Visibility for="agents">
 ```text
 POST https://auth.world.org/api/v1/token
 Content-Type: application/x-www-form-urlencoded
@@ -174,6 +352,7 @@ client_id=<same-portal-client-id>
 client_secret=<backend-secret>
 device_code=<private-device-code>
 ```
+</Visibility>
 
 Use your form encoder. For other methods, use the [registered client authentication](/agent-pass/app-registration#client-authentication).
 
@@ -274,6 +453,84 @@ through existing sessions. Match UserInfo `sub` to the ID token if you use UserI
 
 ## Troubleshooting {#troubleshooting}
 
+<Visibility for="humans">
+
+Select an error to see what to check. OAuth failures provide `error` and
+`error_description` in a JSON response or authorization error redirect.
+Use `error` to choose how your application responds and `error_description`
+to diagnose malformed parameters.
+
+<Note>
+  Descriptions never echo submitted values. Credential, grant, and service
+  errors use generic descriptions. Keep dependency failures distinguishable
+  from invalid authentication.
+</Note>
+
+<Tabs>
+  <Tab title="invalid_scope">
+
+`invalid_scope`
+
+Request `openid` for World ID authentication or `openid offline_access` for XAA delegation when discovery advertises it; `email` is also accepted. Remove other library scopes.
+
+  </Tab>
+  <Tab title="unsupported_grant_type">
+
+HTTP 400 `unsupported_grant_type`
+
+Use a grant type advertised by discovery. See [XAA availability](/agent-pass/xaa#requirements) for refresh and exchange.
+
+  </Tab>
+  <Tab title="invalid_request">
+
+Authorization `invalid_request`
+
+Check the active client, exact registered callback, state, nonce, S256 challenge, response mode, and supported prompt. Bad client/callback requests fail without redirecting to your callback.
+
+Client and callback mismatches use the same guidance.
+
+  </Tab>
+  <Tab title="invalid_client">
+
+`invalid_client` at token/device endpoint
+
+Check environment, registered auth method, credential encoding, and that methods are not mixed. For JWTs check audience, key, expiry, and a fresh JTI per request. Basic failures use HTTP 401; POST/JWT failures use HTTP 400.
+
+  </Tab>
+  <Tab title="invalid_grant">
+
+`invalid_grant`
+
+Check expiry, single-use code, exact callback, PKCE verifier, and client binding. Do not blindly replay a possibly consumed code.
+
+  </Tab>
+  <Tab title="Silent sign-in">
+
+`login_required` / `interaction_required`
+
+A `prompt=none` request cannot complete silently. Start an interactive request when appropriate.
+
+  </Tab>
+  <Tab title="Portal access">
+
+`account_not_eligible` / `client_registration_disabled` in portal
+
+Check participant Google-account eligibility and registration availability with the organizer/operator. These are not World ID proof failures.
+
+  </Tab>
+  <Tab title="HTTP 503">
+
+HTTP 503
+
+Treat as temporary unavailability, never invalid identity or successful approval. Use bounded requests; apply the device polling rules above.
+
+  </Tab>
+</Tabs>
+
+</Visibility>
+
+<Visibility for="agents">
+
 OAuth failures include a human-readable `error_description` alongside `error` in
 the JSON response or authorization error redirect. Use the description to diagnose
 malformed parameters, and use the `error` code to decide how your application responds.
@@ -292,3 +549,5 @@ Keep dependency failures distinguishable from invalid authentication.
 | `login_required` / `interaction_required`                         | A `prompt=none` request cannot complete silently. Start an interactive request when appropriate.                                                                                                                                |
 | `account_not_eligible` / `client_registration_disabled` in portal | Check participant Google-account eligibility and registration availability with the organizer/operator. These are not World ID proof failures.                                                                                  |
 | HTTP 503                                                          | Treat as temporary unavailability, never invalid identity or successful approval. Use bounded requests; apply the device polling rules above.                                                                                   |
+
+</Visibility>

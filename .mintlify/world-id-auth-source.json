@@ -1,7 +1,7 @@
 {
   "repository": "worldcoin/temporal-apps",
   "sourceDirectory": "apps/idpapi/mcp/guides",
-  "configSha256": "be9ebd8a4a574ec33f685b2d0bd33a49b29df37e60fbed2dc0d962711f50e430",
+  "configSha256": "c3fab4afe583571095ad5b1709fc9f7bced4b829dc38bce53831e430c87626a4",
   "sources": {
     "apps/idpapi/mcp/guides/getting-started.md": "562496424aed6fa2bc19bdde442eb2b9b4f370c974c92c2c4f11c35a4d9c0fb7",
     "apps/idpapi/mcp/guides/app-registration.md": "f96c7a898d5198dc39587d7720d1a907a1ad6813ed444f944b36ecc242dc96a3",
@@ -17,9 +17,9 @@
   "outputs": {
     "agent-pass/quickstart.mdx": "870bbcae12fc69400ce13b557336fe3686f0e4425d5194766de9c8564bef34d6",
     "agent-pass/app-registration.mdx": "ecf2086ecad9d6b159da437b43f154e938eda78d8b4cf80c2f720de5d71e0583",
-    "agent-pass/connect-your-backend.mdx": "ff499c3d536bcbb8058696188c2ff406153522c3770f7374c6423bc085dc8966",
+    "agent-pass/connect-your-backend.mdx": "6c9159afaf784862b01c6237848dcfd65d3efd85f1d7da081769418ec8e7f823",
     "agent-pass/connect-your-auth-server.mdx": "cddab629cdadbef4d154fa719b223954d16f69c241a0d87d21bf191ac2065d1a",
-    "agent-pass/id-tokens-and-identity.mdx": "e7c416ec0adf5273d1d2b62b9fc1e560e4e9468f15cff3775388311e2e0f777e",
+    "agent-pass/id-tokens-and-identity.mdx": "92fc2950f1ec264bac33afb37e1b4c73c3605756f92c8f7c7506a7e538ae2db9",
     "agent-pass/step-up.mdx": "3ee436eeb2a18353dc43de69d093e71a027a379f759475e77f6b659d843a7aa2",
     "agent-pass/human-in-the-loop.mdx": "deb04082440ad78c9f4ce74d55348768c3e946809d86fd305da439a18f29c923",
     "agent-pass/xaa.mdx": "d0174c6493980c150b2859cc57458da5672c9c40c3de25deb7b5392cc4010a2c",

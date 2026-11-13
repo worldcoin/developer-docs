@@ -6,6 +6,9 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { renderQuickstartLayout } from "./world-id-auth-quickstart.mjs";
 import { renderClientAuthentication } from "./world-id-auth-client-auth.mjs";
+import { renderOidcExamples } from "./world-id-auth-oidc.mjs";
+import { renderOidcTroubleshooting } from "./world-id-auth-troubleshooting.mjs";
+import { renderCredentialCards } from "./world-id-auth-credentials.mjs";
 
 const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
 const manifestPath = new URL("../.mintlify/world-id-auth-pages.json", import.meta.url);
@@ -82,6 +85,8 @@ function validateConfig(config) {
     for (const [flag, source, destination] of [
       ["quickstartLayout", "getting-started.md", "agent-pass/quickstart.mdx"],
       ["clientAuthenticationExamples", "app-registration.md", "agent-pass/app-registration.mdx"],
+      ["oidcExamples", "oidc.md", "agent-pass/connect-your-backend.mdx"],
+      ["credentialCards", "id-token.md", "agent-pass/id-tokens-and-identity.mdx"],
     ]) {
       if (page[flag] !== undefined && (typeof page[flag] !== "boolean" || page.source !== source || page.destination !== destination)) {
         throw new Error(`The ${flag} adaptation is limited to ${source}`);
@@ -221,6 +226,11 @@ export function renderGuide(markdown, page, config) {
   }
   if (page.quickstartLayout) content = renderQuickstartLayout(content);
   if (page.clientAuthenticationExamples) content = renderClientAuthentication(content);
+  if (page.oidcExamples) {
+    content = renderOidcExamples(content);
+    content = renderOidcTroubleshooting(content);
+  }
+  if (page.credentialCards) content = renderCredentialCards(content);
   for (const alias of [...(page.introAliases ?? [])].reverse()) {
     if (ids.has(alias)) continue;
     content = `<span id="${alias}" />\n\n${content}`;

@@ -29,6 +29,7 @@
     {
       "source": "oidc.md",
       "destination": "agent-pass/connect-your-backend.mdx",
+      "oidcExamples": true,
       "title": "Connect your backend",
       "sidebarTitle": "Connect your backend",
       "description": "Connect your backend to the World ID issuer with OpenID Connect (OIDC).",
@@ -74,6 +75,7 @@
     {
       "source": "id-token.md",
       "destination": "agent-pass/id-tokens-and-identity.mdx",
+      "credentialCards": true,
       "title": "ID tokens and identity",
       "sidebarTitle": "ID tokens and identity",
       "description": "Validate token claims, read UserInfo, and recognize accounts using the issuer and pairwise subject."
