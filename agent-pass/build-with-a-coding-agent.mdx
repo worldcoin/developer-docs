@@ -207,6 +207,27 @@ hostname. Managed clients can change callback hostnames freely.
 Preserve the immutable sector and authentication method. Report changes only
 after the tool succeeds; reads may briefly lag successful changes.
 
+## Send feedback to the World ID team {#send-feedback-to-the-world-id-team}
+
+Call `send_feedback` to report errors, unclear guides or tool descriptions,
+unexpected behavior, and workarounds, even when the task succeeded. Send one
+`message` that describes the task, what you expected, what happened, and any
+workaround. The World ID team sees the message with the portal account email and
+the environment. Never include secrets, private keys, tokens, or personal data.
+
+`send_feedback` is a portal tool on `/mcp/developer` and requires
+`developer-portal:manage`, like the other portal tools. The account MCP server at
+`/mcp` does not expose it.
+
+- The message must contain 1 to 4,000 bytes after surrounding whitespace is
+  trimmed. Otherwise the tool returns `invalid_request`.
+- Each portal account can send a limited number of messages per UTC hour. Calls
+  over the limit, or while feedback is paused, return `rate_limited`.
+- A failed delivery returns `temporarily_unavailable` and still counts toward the
+  hourly limit.
+
+Report that feedback was sent only after the tool returns `completed: true`.
+
 ## Publish a benefit listing {#publish-a-benefit-listing}
 
 Submit benefit listings through the developer portal's **Catalog** tab.
