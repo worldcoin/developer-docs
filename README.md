@@ -6,7 +6,7 @@ Source for the official World developer documentation, published at **[docs.worl
 
 - **World ID** (`world-id/`) — IDKit SDKs (JS, React, Swift, Kotlin, Go), Credentials, Selfie Check, on-chain verification, API reference.
 - **Agent Pass** (`agent-pass/`) — OIDC integration, identity, step-up authentication, agent delegation, user connections, and developer MCP tools. See [IDP maintenance](.mintlify/world-id-auth-maintenance.md) for source ownership and publishing.
-- **Mini Apps** (`mini-apps/`) — building applications that run inside World App, including commands, sharing, growth, and the MiniKit reference.
+- **Mini Apps** (`mini-apps/`) — building applications that run inside World Money, including commands, sharing, growth, and the MiniKit reference.
 - **World Chain** (`world-chain/`) — quick start, provider integrations, tokens, and developer reference for the chain.
 - **MCP servers** (`model-context-protocol/`) — World's Model Context Protocol integrations (developer portal, world-docs).
 - **OpenAPI specs** (`openapi/`) — machine-readable specs for the World ID and Developer Portal APIs.

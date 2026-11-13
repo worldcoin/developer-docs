@@ -1,7 +1,7 @@
 ---
 name: world-id-integration
 description: |
-  Use this skill when adding, upgrading, debugging, or testing World ID verification with IDKit in a new or existing web or mobile app. Covers Proof of Human, passport/document, Selfie Check, and session/sign-in flows; Developer Portal app, RP, and action setup; server-side signing and proof verification; environment matching; nullifier replay protection; and launch testing. Trigger when the user asks to add World ID, verify humans, stop bots or multi-accounting, add Sybil resistance, or mentions IDKit, Orb, World ID proof flows, World App proof flows, @worldcoin/idkit, signing keys, rp_id, or app_id.
+  Use this skill when adding, upgrading, debugging, or testing World ID verification with IDKit in a new or existing web or mobile app. Covers Proof of Human, passport/document, Selfie Check, and session/sign-in flows; Developer Portal app, RP, and action setup; server-side signing and proof verification; environment matching; nullifier replay protection; and launch testing. Trigger when the user asks to add World ID, verify humans, stop bots or multi-accounting, add Sybil resistance, or mentions IDKit, Orb, World ID proof flows, World ID app proof flows, @worldcoin/idkit, signing keys, rp_id, or app_id.
 version: 0.1.0
 metadata:
   author: worldcoin
@@ -190,7 +190,7 @@ Surface these proactively when you see the matching symptom — don't make the u
 |---|---|---|
 | World ID shows "action not found" or QR scan does nothing | Action wasn't created in the environment IDKit is pointing at | Create the missing action with `create_world_id_action` (`environment: "production"` for real devices, `"staging"` for simulator). Confirm `NEXT_PUBLIC_WLD_ENVIRONMENT` matches. |
 | `/api/v4/verify/{rp_id}` returns `invalid_proof` or `verification_failed` | Often staging/production env mismatch, or proof was mutated before forward | Re-check Phase 5. Forward the proof JSON byte-for-byte without re-encoding fields. |
-| Verification fails in JS/React and the error code alone isn't enough | Need transport/payload diagnostics | Read `getDebugReport()` (or the `onError` `debugReport` arg) — it carries `transport`, `request_id`, request/response payloads, and World App `mini_app` channel info. JS SDKs only. |
+| Verification fails in JS/React and the error code alone isn't enough | Need transport/payload diagnostics | Read `getDebugReport()` (or the `onError` `debugReport` arg) — it carries `transport`, `request_id`, request/response payloads, and World Money `mini_app` channel info. JS SDKs only. |
 | `/api/v4/verify/{rp_id}` returns `not_registered` or 4xx with `rp` errors | On-chain registration is still `pending` | Poll `get_world_id_registration_status` until the intended environment is `registered`. Production must be registered before launch. |
 | Signing key is gone (lost `.env`, never persisted) | `signing_key.private_key` is returned exactly once at create/rotate time | Prepare the replacement secret destination, explain the invalidation impact, get confirmation, then call `rotate_world_id_signing_key`, persist the new key immediately, and redeploy. |
 | Duplicate-verification (user submits the same proof twice) | Expected — that's what nullifiers prevent | Reject on the unique-constraint violation. **Do not** "helpfully" upsert. |

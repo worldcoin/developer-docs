@@ -90,7 +90,7 @@ Replace `api_...` with the API key you copied from the Developer Portal.
 | --- | --- |
 | `get_team_context` | List your team's apps and status. |
 | `get_app_config` | Fetch app, World ID, Mini App, and app store configuration. |
-| `create_app` | Create an external World ID app or Mini App. |
+| `create_app` | Create an external World ID application or Mini App. |
 | `configure_world_id` | Create a managed World ID 4.0 relying party for an app. |
 | `get_world_id_signing_key` | Fetch the current signer address. Private keys are not returned. |
 | `rotate_world_id_signing_key` | Generate or set a new World ID signing key. The private key is returned once. |
@@ -108,10 +108,10 @@ Start every session by asking the assistant to inspect the team:
 Use the Developer Portal MCP to get my team context. If there is no app for this project, create one.
 ```
 
-For an external World ID app:
+For an external World ID application:
 
 ```text
-Create a production external World ID app named Example, configure World ID, create an action called verify-account, and tell me which environment variables to add.
+Create a production external World ID application named Example, configure World ID, create an action called verify-account, and tell me which environment variables to add.
 ```
 
 For a Mini App:

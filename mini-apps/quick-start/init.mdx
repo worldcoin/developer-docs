@@ -4,7 +4,7 @@ title: Initialization
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-When your mini app initializes inside World App, MiniKit stores device context, launch context, and basic user metadata on the client.
+When your mini app initializes inside World Money, MiniKit stores device context, launch context, and basic user metadata on the client.
 
 If you are using React, `MiniKitProvider` will perform the initialization for you.
 
@@ -87,7 +87,7 @@ Notes:
 
 ## Launch Location
 
-MiniKit normalizes the raw World App launch origin into:
+MiniKit normalizes the raw World Money launch origin into:
 
 <Tabs>
   <Tab title="Type">
@@ -113,9 +113,9 @@ MiniKit normalizes the raw World App launch origin into:
   </Tab>
 </Tabs>
 
-## Raw World App Object
+## Raw `window.WorldApp` object {#raw-world-app-object}
 
-If you need the untransformed World App payload, read `window.WorldApp` directly.
+If you need the untransformed World Money payload, read `window.WorldApp` directly.
 
 <Tabs>
   <Tab title="Type">

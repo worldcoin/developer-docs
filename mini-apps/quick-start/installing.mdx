@@ -5,7 +5,13 @@ description: "Create a Mini App with the official template or install MiniKit-JS
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-[MiniKit-JS](https://github.com/worldcoin/minikit-js) is our official SDK for creating mini apps that work with World App.
+[MiniKit-JS](https://github.com/worldcoin/minikit-js) is our official SDK for creating mini apps that work with World Money.
+
+<Note>
+  SDK and protocol identifiers retain legacy names such as `window.WorldApp`,
+  `getWorldAppProvider()`, and `worldapp://`. Keep these names unchanged in code
+  and links.
+</Note>
 
 ## Quick Start
 
@@ -85,7 +91,7 @@ export default function RootLayout({
 ```
 
 2. Check if MiniKit is installed.
-`MiniKit.isInstalled()` will only return true if the mini app is opened and initialized inside the World App. This is useful to distinguish between a user opening your app in the browser or in the World App.
+`MiniKit.isInstalled()` returns true when the Mini App is open and initialized inside World Money. Use it to distinguish the native host from a regular browser.
 
 ```tsx
 import { MiniKit } from "@worldcoin/minikit-js";

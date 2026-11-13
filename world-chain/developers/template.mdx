@@ -82,7 +82,7 @@ using ByteHasher for bytes;
     event Verified(uint256 nullifierHash);
 
     /// @param _worldId The WorldID router that will verify the proofs
-    /// @param _appId The World ID app ID
+    /// @param _appId The World ID application ID
     /// @param _actionId The World ID action ID
     constructor(IWorldID _worldId, string memory _appId, string memory _actionId) {
     	worldId = _worldId;
@@ -214,9 +214,9 @@ You'll need to import the private keys on the local testnet into your wallet use
 
 When connecting your wallet to the local development environment, you will be prompted to add the network to your wallet.
 
-Use the [Worldcoin Simulator](https://simulator.worldcoin.org) in place of World App to scan the IDKit QR codes and generate the zero-knowledge proofs.
+Use the [Worldcoin Simulator](https://simulator.worldcoin.org) in place of the World ID app to scan the IDKit QR codes and generate the zero-knowledge proofs.
 
 ## Further resources
 
 If you want to learn more about the World ID protocol, you can check out the [World ID documentation](/world-id). If you want to build an application
-that uses World ID and targets existing World App users, check out [miniapps](/mini-apps)!
+that uses World ID and targets existing World Money users, check out [miniapps](/mini-apps)!

@@ -11,7 +11,7 @@ description: "Send one or more World Chain transactions using the unified MiniKi
 
 ## Permit2 Allowance Transfers (Recommended)
 
-[Allowance transfers](https://docs.uniswap.org/contracts/permit2/reference/allowance-transfer#approve) are the recommended method for moving tokens in mini apps. World App automatically approves tokens to Permit2, so you can bundle the Permit2 approval and your contract call in a single `sendTransaction` for a better UX. 
+[Allowance transfers](https://docs.uniswap.org/contracts/permit2/reference/allowance-transfer#approve) are the recommended method for moving tokens in mini apps. World Money automatically approves tokens to Permit2, so you can bundle the Permit2 approval and your contract call in a single `sendTransaction` for a better UX.
 Expiration should always be set to 0 as the approval will be consumed in the same transaction.
 
 
@@ -117,7 +117,7 @@ contract Swap {
 </CodeGroup>
 
 <Note>
-  World App automatically approves new ERC-20 tokens to the Permit2 contract.
+  World Money automatically approves new ERC-20 tokens to the Permit2 contract.
   Your contract only needs to call `permit2.transferFrom` — the token-level
   approval is already in place.
 </Note>
@@ -158,7 +158,7 @@ type SendTransactionResponse =
 </CodeGroup>
 
 <Warning>
-  If you are integrating through Wagmi, viem, or ethers with the World App
+  If you are integrating through Wagmi, viem, or ethers with the World Money
   EIP-1193 provider, the standard `eth_sendTransaction` call resolves to the
   MiniKit `userOpHash`, not a canonical transaction hash. Do not treat the
   returned value as a final transaction hash or pass it directly to
@@ -237,7 +237,7 @@ for the full endpoint response shape.
 
 ## Fallback Behavior
 
-By default we intend for mini apps to be useable outside of World App. Fallbacks generally will not be needed for this command and you should instead follow the [migration path outlined](/mini-apps/migration/minikit-v2).
+By default we intend for mini apps to be useable outside of World Money. Fallbacks generally will not be needed for this command and you should instead follow the [migration path outlined](/mini-apps/migration/minikit-v2).
 
 ## Allowlisting Contracts and Tokens
 

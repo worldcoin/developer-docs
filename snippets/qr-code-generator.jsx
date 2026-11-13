@@ -87,7 +87,7 @@ export const QRCodeGenerator = (props) => {
             <ol className="list-decimal pl-5 space-y-1">
               <li>Enter your App ID {hideInput ? "via props" : "above"}.</li>
               <li>Scan the QR with your phone’s camera.</li>
-              <li>Confirm the prompt in World App.</li>
+              <li>Confirm the prompt in World Money.</li>
             </ol>
           </div>
         )}
