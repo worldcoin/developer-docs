@@ -776,12 +776,15 @@ test("credential cards distinguish Orb, passkey, and Selfie Check while retainin
   assert.ok(agents.includes(table));
   assert.ok(!human.includes(table));
   const humanImage = "/images/docs/credentials/proof-of-human.png";
+  const passkeyImage = "/images/docs/credentials/passkey.png";
   const presenceImage = "/images/docs/credentials/proof-of-presence.png";
   assert.ok(human.includes(humanImage));
+  assert.ok(human.includes(passkeyImage));
   assert.ok(human.includes(presenceImage));
-  assert.ok(human.indexOf(humanImage) < human.indexOf("Passkey"));
-  assert.ok(human.indexOf("Passkey") < human.indexOf(presenceImage));
-  assert.ok(human.includes('<Icon icon="key"'));
+  assert.equal((human.match(/<img\b/g) ?? []).length, 3);
+  assert.ok(human.indexOf(humanImage) < human.indexOf(passkeyImage));
+  assert.ok(human.indexOf(passkeyImage) < human.indexOf(presenceImage));
+  assert.doesNotMatch(human, /<Icon\b|role="img"/);
   assert.doesNotMatch(human, /proof-of-attributes\.png|National ID/i);
   const readableHuman = human.replace(/<[^>]*>/g, "").replaceAll("&#39;", "'");
   for (const row of table.split("\n").slice(2)) {

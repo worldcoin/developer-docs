@@ -27,12 +27,7 @@ Check credentials, plus passkeys for authentication.
         <p className="mt-1 break-all text-sm text-zinc-800 dark:text-zinc-300"><code>https://world.org/oidc/acr/orb</code></p>
       </a>
       <a href="#authentication-methods" className="block no-underline transition-transform duration-200 hover:-translate-y-0.5">
-        <div role="img" aria-label="Passkey credential card" className="flex w-full rounded-xl p-3" style={{ backgroundColor: "#F5F5F5", aspectRatio: "1119 / 744" }}>
-          <div className="flex w-full flex-col justify-between rounded-xl border border-zinc-300 p-5 text-zinc-900 shadow-sm" style={{ backgroundColor: "#F2F3F5" }}>
-            <Icon icon="key" size={32} />
-            <span className="text-xl font-medium">Passkey</span>
-          </div>
-        </div>
+        <img noZoom src="/images/docs/credentials/passkey.png" alt="Passkey credential card" className="w-full h-auto rounded-xl p-3" style={{ backgroundColor: "#F5F5F5" }} />
         <h3 className="mt-5 mb-0 text-xl font-medium text-zinc-900 dark:text-zinc-100">Passkey</h3>
         <p className="mt-2 text-base text-zinc-800 dark:text-zinc-300">Authenticates control of the account with WebAuthn user verification. It adds no biometric uniqueness verification.</p>
         <p className="mt-4 mb-0 text-sm font-medium text-zinc-600 dark:text-zinc-400">Baseline <code>acr</code></p>

@@ -8,7 +8,7 @@ const baseline = {
 };
 const cards = [
   { source: "Orb", title: "Proof of Human", image: "/images/docs/credentials/proof-of-human.png", href: "/world-id/credentials/1" },
-  { source: "Passkey", title: "Passkey", href: "#authentication-methods" },
+  { source: "Passkey", title: "Passkey", image: "/images/docs/credentials/passkey.png", href: "#authentication-methods" },
   { source: "Selfie Check", title: "Proof of Presence", image: "/images/docs/credentials/proof-of-presence.png", href: "/world-id/credentials/11" },
 ];
 
@@ -26,14 +26,7 @@ function inlineCode(text) {
 
 function renderCard(card, row) {
   const title = escapeHtml(card.title);
-  const visual = card.image
-    ? `<img noZoom src="${escapeHtml(card.image)}" alt="${title} credential card" className="w-full h-auto rounded-xl p-3" style={{ backgroundColor: "#F5F5F5" }} />`
-    : `<div role="img" aria-label="Passkey credential card" className="flex w-full rounded-xl p-3" style={{ backgroundColor: "#F5F5F5", aspectRatio: "1119 / 744" }}>
-          <div className="flex w-full flex-col justify-between rounded-xl border border-zinc-300 p-5 text-zinc-900 shadow-sm" style={{ backgroundColor: "#F2F3F5" }}>
-            <Icon icon="key" size={32} />
-            <span className="text-xl font-medium">Passkey</span>
-          </div>
-        </div>`;
+  const visual = `<img noZoom src="${escapeHtml(card.image)}" alt="${title} credential card" className="w-full h-auto rounded-xl p-3" style={{ backgroundColor: "#F5F5F5" }} />`;
   return `      <a href="${escapeHtml(card.href)}" className="block no-underline transition-transform duration-200 hover:-translate-y-0.5">
         ${visual}
         <h3 className="mt-5 mb-0 text-xl font-medium text-zinc-900 dark:text-zinc-100">${title}</h3>
