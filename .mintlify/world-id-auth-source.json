@@ -16,7 +16,7 @@
   },
   "outputs": {
     "agent-pass/quickstart.mdx": "f3e50f2496f1309c9ad386ff2e31ea84dde12662c05b8da56986f1274331bee2",
-    "agent-pass/app-registration.mdx": "d16917de3380c04d722f6a8244ae510cf1615c46f37f7810cbabb46ea5e249c6",
+    "agent-pass/app-registration.mdx": "af1fa3a190590da9e1f64ab4ff44116f7211c9245ff592da78038cddf005fc23",
     "agent-pass/connect-your-backend.mdx": "f6bdf5da608ab11613d518877db792b904454be64e00ff4fa113927f09afcdb7",
     "agent-pass/connect-your-auth-server.mdx": "ec24ab915b85fda92691365578bf03d53a8db81da54e9393e7bb7d7e8df7ba03",
     "agent-pass/id-tokens-and-identity.mdx": "9ddab8214c4d45d83264895e492669e984f9b0f9f54bb6389005c23c5a50159e",
@@ -24,7 +24,7 @@
     "agent-pass/human-in-the-loop.mdx": "3e95ad7d113efc710946645dd0cffd4bd46edfc31641e75712ffe33656618bcc",
     "agent-pass/xaa.mdx": "6d86ea9651d9d716e895946811b53267b8bdb61dee9d35d86af7c6fd63d33c77",
     "agent-pass/use-world-id-with-your-agent.mdx": "445845473a0384c69b7308ccb164ccb4a8c6e85307cf3050568299146b423ee5",
-    "agent-pass/build-with-a-coding-agent.mdx": "10073a4a07a97ca8241a2dfe93900a0a603d5d968efae912570cb99f0a7b60d1",
+    "agent-pass/build-with-a-coding-agent.mdx": "e7979586d564750e4421830d32eda1a1a3a533941d73deaa75ee0a1820aaf78f",
     "agent-pass/testing.mdx": "19e8fdf370b39aaa1f73b427943c36b6cc8047cdfbae7941fb5422fd57204b0a"
   },
   "sourceCommit": "6433cf475f547df0f825328895052a20ef9c621a"
