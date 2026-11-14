@@ -48,13 +48,7 @@ const federationDiagram = [
 ].join("\n");
 const publicIntroduction = "Your agent can read this guide because you authenticated with World ID and approved\nits OAuth access. This guide contains general guidance, not private account data.";
 const publicReplacement = "When you authenticate with World ID and approve an agent's OAuth access, the agent\ncan read the authenticated version of this guide through the user MCP server.\nThis public guide contains the same general guidance, not private account data.";
-const agentGuideSections = [
-  "agent-instructions",
-  "developer-portal-permission",
-  "register-an-application-with-your-agent",
-  "configure-an-existing-application-with-your-agent",
-  "publish-a-benefit-listing",
-];
+const agentInstructionsHeading = "\n## Agent instructions\n";
 const hash = (value) => createHash("sha256").update(value).digest("hex");
 
 function validateConfig(config) {
@@ -98,10 +92,12 @@ function rewriteLinks(markdown, config) {
   // Explicit sandbox guides must keep their environment-specific URLs.
   let result = markdown.replace(/(?:\{\{issuer\}\}|https:\/\/auth\.world\.org)\/docs\/guides\/([a-z0-9-]+)(\.md)?(?=\/?(?:[?#\s)`"'<>\]]|$))/g, (_, id, extension = "") => {
     if (!routes.has(id)) throw new Error(`Unmapped guide link: ${id}`);
+    if (id === "coding-agent-setup" && extension === ".md") return `${config.issuer}/docs/guides/${id}.md`;
     return `https://docs.world.org${routes.get(id)}${extension}`;
   });
   result = result.replace(/\]\((?:\.\/)?([a-z0-9-]+)\.md(#[^)\s]+)?\)/g, (_, id, fragment = "") => {
     if (!routes.has(id)) throw new Error(`Unmapped relative guide link: ${id}`);
+    if (id === "coding-agent-setup") return `](${config.issuer}/docs/guides/${id}.md${fragment})`;
     return `](${routes.get(id)}${fragment})`;
   });
   // Markdown links use local routes; plain URLs and agent prompts stay absolute.
@@ -156,6 +152,12 @@ export function renderGuide(markdown, page, config) {
   validateConfig(config);
   let body = markdown.replace(/\r\n/g, "\n");
   if (!/^# [^\n]+\n/.test(body)) throw new Error(`Missing guide title: ${page.source}`);
+  // Match idpportal's humanGuideMarkdown; Auth keeps the full Markdown for agents.
+  if (page.source === "coding-agent-setup.md") {
+    const parts = body.split(agentInstructionsHeading);
+    if (parts.length !== 2) throw new Error("Coding-agent setup guide requires one Agent instructions section");
+    body = `${parts[0].trimEnd()}\n`;
+  }
   body = body.replace(/^# [^\n]+\n+/, "");
   body = selectSection(body, page, config);
   if (page.publicUserGuide) {
@@ -164,9 +166,8 @@ export function renderGuide(markdown, page, config) {
   }
   body = rewriteLinks(body, config);
   const ids = new Map();
-  const sections = [];
   let fence;
-  const lines = body.split("\n").map((line, index) => {
+  const lines = body.split("\n").map((line) => {
     const marker = line.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
     if (fence) {
       if (marker && marker[1][0] === fence[0] && marker[1].length >= fence.length && !marker[2].trim()) fence = undefined;
@@ -182,7 +183,6 @@ export function renderGuide(markdown, page, config) {
     const count = ids.get(base) ?? 0;
     ids.set(base, count + 1);
     const id = count ? `${base}-${count}` : base;
-    if (heading[1] === "##") sections.push({ id, index });
     const aliases = (page.anchorAliases?.[id] ?? []).filter((alias) => alias !== id).map((alias) => {
       if (!/^[a-z0-9-]+$/.test(alias)) throw new Error(`Invalid heading alias: ${alias}`);
       return `<span id="${alias}" />\n\n`;
@@ -192,16 +192,6 @@ export function renderGuide(markdown, page, config) {
   if (fence) throw new Error(`Unclosed code fence: ${page.source}`);
   for (const id of Object.keys(page.anchorAliases ?? {})) {
     if (!ids.has(id)) throw new Error(`Missing heading for legacy anchor aliases: ${page.source}#${id}`);
-  }
-  if (page.source === "coding-agent-setup.md") {
-    for (const id of agentGuideSections) {
-      const matches = sections.filter((section) => section.id === id);
-      const section = matches[0];
-      const end = section && (sections[sections.indexOf(section) + 1]?.index ?? lines.length);
-      if (matches.length !== 1 || ids.get(id) !== 1 || !lines.slice(section.index + 1, end).some((line) => line.trim() && !/^ {0,3}(`{3,}|~{3,})/.test(line))) {
-        throw new Error(`Incomplete coding-agent guide: preserve the full ${id} section and later instructions`);
-      }
-    }
   }
   let content = lines.join("\n").trimEnd();
   if (page.federationDiagram) {
@@ -223,7 +213,7 @@ export function renderGuide(markdown, page, config) {
     '"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"',
     "---",
     "",
-    `{/* Generated from ${config.repository}/${config.sourceDirectory}/${page.source}. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}`,
+    `{/* Source reference: ${config.repository}/${config.sourceDirectory}/${page.source}. Maintained by Mintlify Autopilot; see .mintlify/world-id-auth-maintenance.md. */}`,
     "",
   ];
   if (page.environmentNote) metadata.push(environmentNote, "");
