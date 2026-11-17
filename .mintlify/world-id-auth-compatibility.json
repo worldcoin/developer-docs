@@ -52,10 +52,22 @@
     "futureRedirectHost": "auth.world.org",
     "preserveSandboxRouting": true
   },
-  "markdownEquivalent": {
-    "authPath": "/docs/guides/coding-agent-setup.md",
-    "docsPath": "/agent-pass/build-with-a-coding-agent.md",
-    "action": "keep-serving-environment-specific-markdown-on-auth"
+  "codingAgentPublication": {
+    "humanContent": "before-agent-instructions-heading",
+    "excludedHeading": "Agent instructions",
+    "docsPath": "/agent-pass/build-with-a-coding-agent",
+    "fullInstructionsPath": "/docs/guides/coding-agent-setup.md",
+    "fullInstructionsHosts": [
+      "https://auth.world.org",
+      "https://sandbox.auth.world.org"
+    ],
+    "ruleSource": {
+      "repository": "worldcoin/temporal-apps",
+      "commit": "26ba0eedaed1f92815219bacf8667fc8fe59d826",
+      "path": "apps/idpportal/vite.config.ts",
+      "function": "humanGuideMarkdown"
+    },
+    "policy": "Keep the human setup prefix in Mintlify; keep the complete raw guide and MCP content on Auth. The Mintlify Markdown export is not equivalent to the full agent guide."
   },
   "guideResources": [
     { "id": "getting-started", "audience": "developer", "requiresAuth": false },
