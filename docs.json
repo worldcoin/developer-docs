@@ -995,6 +995,54 @@
     {
       "source": "/mini-apps/reference/errors",
       "destination": "/mini-apps/quick-start/installing"
+    },
+    {
+      "source": "/world-id/further-reading/zero-knowledge-proofs",
+      "destination": "/world-id/concepts"
+    },
+    {
+      "source": "/world-id/reference/nfc-issuer",
+      "destination": "/world-id/reference/issuer-9303"
+    },
+    {
+      "source": "/world-id/reference/poh-issuer",
+      "destination": "/world-id/reference/issuer-1"
+    },
+    {
+      "source": "/mini-apps/authentication/wallet-auth",
+      "destination": "/mini-apps/commands/wallet-auth"
+    },
+    {
+      "source": "/world-id/use-cases",
+      "destination": "/mini-apps/guidelines/app-guidelines"
+    },
+    {
+      "source": "/world-id/use-cases/voting",
+      "destination": "/mini-apps/guidelines/app-guidelines"
+    },
+    {
+      "source": "/world-id/use-cases/events",
+      "destination": "/mini-apps/guidelines/app-guidelines"
+    },
+    {
+      "source": "/world-id/use-cases/nfts",
+      "destination": "/mini-apps/guidelines/app-guidelines"
+    },
+    {
+      "source": "/world-id/quick-start/libraries",
+      "destination": "/world-id/idkit/integrate"
+    },
+    {
+      "source": "/mini-apps/more/minikit-v2",
+      "destination": "/mini-apps/migration/minikit-v2"
+    },
+    {
+      "source": "/mini-apps/virality",
+      "destination": "/mini-apps/growth"
+    },
+    {
+      "source": "/world-id/credentials/legacy-presets",
+      "destination": "/world-id/idkit/credentials#other-legacy-presets"
     }
   ],
   "api": {
