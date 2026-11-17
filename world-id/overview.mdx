@@ -103,17 +103,14 @@ Through credentials like Proof of Human, Proof of Attributes, and Proof of Prese
 
 ## IDKit or Agent Pass {#idkit-or-agent-pass}
 
-Use IDKit to verify World ID proofs directly. Use Agent Pass with World IdP to
-integrate through OpenID Connect, including sign-in, step-up, and agent access.
-
-| | IDKit | Agent Pass (World IdP) |
-| --- | --- | --- |
-| When to use it | Your app needs a proof for an action, uniqueness checks, or repeated verification of a returning user. | You want World ID through an OIDC library or auth server, with sign-in, step-up, or CLI/agent flows. |
-| What your backend validates | A complete World ID proof. | A signed OpenID Connect ID token. |
-| Returning users | Verify a new proof against the account's saved `session_id` and reject reused `session_nullifier` values. | Recognize the account using `(iss, sub)`. A new ID token does not necessarily mean fresh authentication. |
-| One-use actions | Atomically reject a `nullifier` already accepted for the same app and action. | Authentication can repeat. Your app enforces its own one-use rules. |
-| Sensitive actions | Request and verify another proof when your policy requires it. | Use [step-up authentication](/agent-pass/step-up) to require recent authentication and the credential or method your policy accepts. |
-| Agents and MCP | Include proof verification in your application's workflow. | Use device authorization for headless clients. Your auth server issues access tokens for your MCP server. |
+**Start with Agent Pass for agent integrations**, including authenticating users,
+connecting to MCP servers, and adding human checkpoints. It's built on OpenID
+Connect (OIDC), a widely supported authentication standard that works with
+compatible auth providers and libraries. It also supports sign-in and step-up
+authentication in regular apps. **Use IDKit, World ID's SDK, when you need to verify
+proofs directly on your backend.** It provides ready-made verification UI,
+nullifiers your backend can use to reject repeated actions, and session proofs
+for returning users.
 
 With either integration, your application manages accounts, sessions, permissions,
 and action approvals. Keep IDKit and World IdP registrations, credentials, and
