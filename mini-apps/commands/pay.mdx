@@ -5,7 +5,7 @@ description: "Request a payment from the user"
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-This command is an abstraction for a simple transfer. This shouldn't be used outside of World App. Pay supports WLD and all local stablecoins.
+This command is an abstraction for a simple transfer. This shouldn't be used outside of World Money. Pay supports WLD and all local stablecoins.
 
 ## Basic Usage
 
@@ -36,7 +36,7 @@ export async function sendPayment() {
     ],
     description: "Example payment",
     fallback: () => {
-      alert("Please complete the payment in World App to proceed.");
+      alert("Please complete the payment in World Money to proceed.");
     },
   };
 

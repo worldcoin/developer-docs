@@ -1,11 +1,11 @@
 ---
 title: "Upgrade to a Standalone Web App"
-description: "Convert your mini app into a standalone web app that works both inside World App and in any browser."
+description: "Convert your mini app into a standalone web app that works both inside World Money and in any browser."
 "og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-MiniKit commands auto-detect the environment. Outside World App, they fall back to Wagmi.
+MiniKit commands auto-detect the environment. Outside World Money, they fall back to Wagmi.
 
 | Feature | Effort | Details |
 |---|---|---|
@@ -93,7 +93,7 @@ No changes. [IDKit](https://docs.worldcoin.org/world-id/quick-start) is independ
 
 ```tsx
 const result = await MiniKit.walletAuth({ nonce, statement: "Sign in" });
-// result.executedWith === "minikit" (World App) or "wagmi" (web)
+// result.executedWith === "minikit" (World Money) or "wagmi" (web)
 ```
 
 ### Backend Verification
@@ -110,7 +110,7 @@ const { isValid, siweMessageData } = await verifySiweMessage(payload, nonce);
 
 `MiniKit.sendTransaction()` works automatically. World Chain only (chainId 480).
 
-- **World App**: native bridge, atomic batching, returns `userOpHash`
+- **World Money**: native bridge, atomic batching, returns `userOpHash`
 - **Web (single tx)**: sent directly via Wagmi
 - **Web (multiple txs)**: executed sequentially — each requires wallet confirmation and is not atomic
 
@@ -125,12 +125,12 @@ const result = await MiniKit.sendTransaction({
 
 ### Receipts
 
-Branch on `result.executedWith` — World App returns a UserOperation hash, web returns a standard tx hash:
+Branch on `result.executedWith` — World Money returns a UserOperation hash, web returns a standard tx hash:
 
 ```tsx
 import { useUserOperationReceipt } from "@worldcoin/minikit-react";
 
-// For World App: poll for the UserOperation receipt
+// For World Money: poll for the UserOperation receipt
 const { poll } = useUserOperationReceipt({ client });
 
 if (result.executedWith === "minikit") {

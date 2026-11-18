@@ -6,8 +6,8 @@ title: "FAQ"
 
 ## Who covers gas fees for transactions?
 
-World App sponsors gas fees for most transactions on Worldchain, subject to transaction minimums and restrictions.
-When someone verifies their identity with World ID and uses the World App, their transactions on Worldchain are automatically covered by the network.
+World Money sponsors gas fees for most transactions on Worldchain, subject to transaction minimums and restrictions.
+When someone verifies their identity with World ID and uses World Money, their transactions on Worldchain are automatically covered by the network.
 This means users don't need to hold or spend ETH to interact with mini apps, send tokens, or perform on-chain actions.
 The sponsorship is handled behind the scenes with a paymaster contract that pays the gas fees whenever a verified user initiates a transaction.
 
@@ -19,19 +19,19 @@ Yes. After development, submit your Mini App for review through the [Developer P
 
 The [Send Transaction command](/mini-apps/commands/send-transaction) is designed to execute on-chain transactions from the Mini App. When developers invoke this command,
 they supply a `chainId` and one or more `transactions` containing the target contract address, optional encoded function call (`data`), and optional value.
-For security, World App requires that any smart contract or token interactions are pre-approved (whitelisted) in the Developer Portal to prevent unauthorized transfers.
-For ERC-20 token transfers, standard `approve()` calls work, but Permit2 is recommended. World App automatically approves tokens to the Permit2 contract, so you can bundle the Permit2 approval and your contract call in a single transaction for a better UX.
+For security, World Money requires that any smart contract or token interactions are pre-approved (whitelisted) in the Developer Portal to prevent unauthorized transfers.
+For ERC-20 token transfers, standard `approve()` calls work, but Permit2 is recommended. World Money automatically approves tokens to the Permit2 contract, so you can bundle the Permit2 approval and your contract call in a single transaction for a better UX.
 
 ## How does Sign Message command work?
 
 The [Sign Message command](/mini-apps/commands/sign-message) prompts the user to cryptographically sign an arbitrary message using
-their wallet's private key. When you call the command (for example, `await MiniKit.signMessage({ message: "Hello" })`), World App generates a standardized payload that may include a nonce, timestamp, and other context to prevent replay attacks.
+their wallet's private key. When you call the command (for example, `await MiniKit.signMessage({ message: "Hello" })`), World Money generates a standardized payload that may include a nonce, timestamp, and other context to prevent replay attacks.
 The user's wallet then signs this message using ECDSA, producing a signature that proves the user controls the wallet, all without exposing the private key.
 This signed message can be sent back to your backend for verification, ensuring the integrity of user actions and serving as secure off-chain authorization for various operations.
 
 ## Can I use the simulator to test transactions on mini apps?
 
-No, mini app needs to be developed on mainnet (we don't support testnet). Gas is covered in the World App, so there's only deployment costs for you to develop on mainnet. Deploy "test" contracts to mainnet, and then redeploy "prod" mainnet contracts.
+No, mini app needs to be developed on mainnet (we don't support testnet). Gas is covered in World Money, so there's only deployment costs for you to develop on mainnet. Deploy "test" contracts to mainnet, and then redeploy "prod" mainnet contracts.
 
 ## How do I debug send transaction failed simulation?
 
@@ -43,7 +43,7 @@ Check the [Prod QA App](https://world.org/ecosystem/app_dfbe55706a640c82dce839bb
 
 ## How do I test my mini app on mobile?
 
-Remember that minikit ONLY works inside World App, so in order to test your mini app commands you must open it in World App
+To test native MiniKit commands on your phone, open your Mini App inside World Money.
 
 To test your Mini App directly on your phone, expose your app publicly using ngrok or any other tunneling service. After the URL is generated, go to the [Developer Portal](https://developer.worldcoin.org/) to configure it.
 

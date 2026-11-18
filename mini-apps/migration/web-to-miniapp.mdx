@@ -1,11 +1,11 @@
 ---
 title: "Migrate a Web App to Mini App"
-description: "Convert an existing Next.js web app to work as a World App mini app."
+description: "Convert an existing Next.js web app to work as a World Money mini app."
 "og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-Convert an existing Next.js web app that uses viem to work as a World App mini app.
+Convert an existing Next.js web app that uses viem to work as a World Money mini app.
 
 ## Ask an agent
 Add this skill and ask your agent to convert your web app to a mini app using the steps outlined in this guide. 
@@ -55,7 +55,7 @@ import Providers from "./providers";
 
 ## 4. Wallet Connection
 
-Use `getWorldAppProvider()` inside World App, fall back to `window.ethereum` for browsers.
+Use `getWorldAppProvider()` inside World Money, fall back to `window.ethereum` for browsers.
 
 ```tsx
 import { MiniKit, getWorldAppProvider } from "@worldcoin/minikit-js";
@@ -81,7 +81,7 @@ Existing `writeContract` / `readContract` calls work unchanged.
 
 ## 5. Bundle Approve + Contract Calls
 
-World App resets approvals to 0 after each transaction. A separate `approve()` tx followed by `transferFrom()` in the next tx will fail.
+World Money resets approvals to 0 after each transaction. A separate `approve()` tx followed by `transferFrom()` in the next tx will fail.
 
 Bundle them in one call:
 
@@ -112,7 +112,7 @@ await MiniKit.sendTransaction({
 });
 ```
 
-World App executes these atomically. On web, they execute sequentially — each requires a separate wallet confirmation and is not atomic.
+World Money executes these atomically. On web, they execute sequentially — each requires a separate wallet confirmation and is not atomic.
 
 ## 6. Handle userOpHash Receipts
 

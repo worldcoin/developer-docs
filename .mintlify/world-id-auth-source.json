@@ -1,7 +1,7 @@
 {
   "repository": "worldcoin/temporal-apps",
   "sourceDirectory": "apps/idpapi/mcp/guides",
-  "configSha256": "4e8b3a998e58efee93b7d618df31d9aa6622faeb2c2500f46e842e54f961f915",
+  "configSha256": "6c2e367a6aa3083bf2be9033e54df069b603f1905b5b26d6c0e7bc94cb9865ba",
   "sources": {
     "apps/idpapi/mcp/guides/getting-started.md": "562496424aed6fa2bc19bdde442eb2b9b4f370c974c92c2c4f11c35a4d9c0fb7",
     "apps/idpapi/mcp/guides/app-registration.md": "f96c7a898d5198dc39587d7720d1a907a1ad6813ed444f944b36ecc242dc96a3",
@@ -15,11 +15,11 @@
     "apps/idpapi/mcp/guides/testing.md": "defe6bf677aec7a6f0ab7ad1ad8cda60dc4c1f5122bbb7cd6c17e4731328932a"
   },
   "outputs": {
-    "agent-pass/quickstart.mdx": "ff0a735471be230f6acf560ed0cf7401ad5d70e65f94a2ba62f41d330db6ac13",
-    "agent-pass/app-registration.mdx": "48fddef9720ba67ddfe02d61d4168ea13ac32ca061cae17bc0567a0b5b5c3f7b",
-    "agent-pass/connect-your-backend.mdx": "ff499c3d536bcbb8058696188c2ff406153522c3770f7374c6423bc085dc8966",
+    "agent-pass/quickstart.mdx": "870bbcae12fc69400ce13b557336fe3686f0e4425d5194766de9c8564bef34d6",
+    "agent-pass/app-registration.mdx": "b6a6020857e9df27fd1b257d987702a0d9e7dad20f7bb1a6668d9fd6337ade36",
+    "agent-pass/connect-your-backend.mdx": "6c9159afaf784862b01c6237848dcfd65d3efd85f1d7da081769418ec8e7f823",
     "agent-pass/connect-your-auth-server.mdx": "cddab629cdadbef4d154fa719b223954d16f69c241a0d87d21bf191ac2065d1a",
-    "agent-pass/id-tokens-and-identity.mdx": "e7c416ec0adf5273d1d2b62b9fc1e560e4e9468f15cff3775388311e2e0f777e",
+    "agent-pass/id-tokens-and-identity.mdx": "2f58eae9c7ee766105df16bebdb92940969aee67e7b09f980a1a6c57170c289e",
     "agent-pass/step-up.mdx": "3ee436eeb2a18353dc43de69d093e71a027a379f759475e77f6b659d843a7aa2",
     "agent-pass/human-in-the-loop.mdx": "deb04082440ad78c9f4ce74d55348768c3e946809d86fd305da439a18f29c923",
     "agent-pass/xaa.mdx": "d0174c6493980c150b2859cc57458da5672c9c40c3de25deb7b5392cc4010a2c",

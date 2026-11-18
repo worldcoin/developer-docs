@@ -30,7 +30,7 @@ Universal-link format
 
 `https://world.org/mini-app?app_id={app_id}&path={path}`
 
-Deep-link (opens World App directly if installed)
+Deep-link (opens World Money directly if installed)
 
 `worldapp://mini-app?app_id={app_id}&path={path}`
 
@@ -142,14 +142,14 @@ export async function processReferral(data: {
 https://play.google.com/store/apps/details?id=com.worldcoin&referrer=app_id%3D{app_id}%26path%3D{path}
 ```
 
-World App prompts the install and then automatically forwards the user to your specified path.
+World Money prompts the install and then automatically forwards the user to your specified path.
 
 ### Optimising Social-Share Previews
 
-World app universal links will forward the og:image from your integration url.
+World Money universal links will forward the og:image from your integration url.
 
 Eg. `world.org/mini-app?app_id=1234&path=/invite?code=abcd` will forward the og:image from `[your-miniapp-url]/invite?code=abcd`.
-### Inside World App Discovery
+### Inside World Money Discovery {#inside-world-app-discovery}
 
 - **Quick Actions**: Mini apps can hand off context to one another. Split distinct flows into focused apps that trigger each other with Quick Actions.
 

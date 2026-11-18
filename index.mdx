@@ -2,9 +2,9 @@
 title: "World Developer Docs"
 sidebarTitle: "Home"
 mode: "custom"
-description: "Build Mini Apps, integrate World ID, and deploy on World Chain with official developer documentation."
+description: "Verify people, authenticate users and agents, create Mini Apps, and build on World Chain with official developer documentation."
 "og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
-"og:description": "Build with World ID, Mini Apps, and World Chain."
+"og:description": "Verify people, authenticate accounts, and build applications with World."
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
@@ -20,8 +20,9 @@ import { DeveloperStories } from "/snippets/developer-stories.jsx";
   for="humans" block: Mintlify inlines a snippet's full source into the export
   when the component appears in exported content, and drops it when all usages
   are hidden (verified on a preview deploy). Keep the twin's links and copy in
-  sync when editing. Agent Pass is intentionally linked only in the agent twin
-  during MCP testing, before its visible launch.
+  sync when editing. Visible authentication links now lead through World ID's
+  integration choice. The direct Agent Pass reference stays in the agent twin;
+  its standalone tab remains hidden during MCP testing.
 */}
 
 <Visibility for="humans">
@@ -30,39 +31,49 @@ import { DeveloperStories } from "/snippets/developer-stories.jsx";
 <div style={{ marginBottom: "160px" }}>
   <h1 className="landing-hero-title" style={{ margin: 0 }}>World Developer Docs</h1>
   <div className="landing-hero-sub">
-    Integrate World ID and deploy on World Chain with official developer documentation.
+    Verify people, authenticate users and agents, and build applications with World.
   </div>
 </div>
 
 <div className="landing-card-grid" style={{ marginBottom: "240px" }}>
 
-  <a href="/world-id/overview" className="product-card">
+  <a href="/world-id/overview#choose-your-integration" className="product-card">
     <div className="product-card-tile">
       <img src="/icons/landing/world-id.svg" alt="" className="product-card-icon" style={{ width: "32px", height: "32px", display: "block" }} />
     </div>
     <div>
-      <div className="product-card-title" style={{ fontSize: "32px", lineHeight: 1.2, letterSpacing: "-0.32px", fontWeight: 300 }}>Integrate World ID</div>
-      <div className="product-card-desc" style={{ fontSize: "16px", lineHeight: 1.4, fontWeight: 300, marginTop: "10px", maxWidth: "280px" }}>Anonymous Proof of Human for your website or app</div>
+      <div className="product-card-title" style={{ fontSize: "32px", lineHeight: 1.2, letterSpacing: "-0.32px", fontWeight: 300 }}>Verify a human</div>
+      <div className="product-card-desc" style={{ fontSize: "16px", lineHeight: 1.4, fontWeight: 300, marginTop: "10px", maxWidth: "280px" }}>Request and verify World ID proofs for your application's policy.</div>
     </div>
   </a>
 
-  <a href="/mini-apps" className="product-card">
+  <a href="/world-id/overview#idkit-or-agent-pass" className="product-card">
+    <div className="product-card-tile">
+      <img src="/icons/landing/agent-pass.svg" alt="" className="product-card-icon" style={{ width: "32px", height: "32px", display: "block" }} />
+    </div>
+    <div>
+      <div className="product-card-title" style={{ fontSize: "32px", lineHeight: 1.2, letterSpacing: "-0.32px", fontWeight: 300 }}>Authenticate users and agents</div>
+      <div className="product-card-desc" style={{ fontSize: "16px", lineHeight: 1.4, fontWeight: 300, marginTop: "10px", maxWidth: "280px" }}>Add OIDC authentication and require recent authentication for sensitive actions.</div>
+    </div>
+  </a>
+
+  <a href="/mini-apps/index" className="product-card">
     <div className="product-card-tile">
       <img src="/icons/landing/mini-app.svg" alt="" className="product-card-icon" style={{ width: "32px", height: "32px", display: "block" }} />
     </div>
     <div>
-      <div className="product-card-title" style={{ fontSize: "32px", lineHeight: 1.2, letterSpacing: "-0.32px", fontWeight: 300 }}>Create a Mini App</div>
-      <div className="product-card-desc" style={{ fontSize: "16px", lineHeight: 1.4, fontWeight: 300, marginTop: "10px", maxWidth: "280px" }}>Mini applications distributed in World App</div>
+      <div className="product-card-title" style={{ fontSize: "32px", lineHeight: 1.2, letterSpacing: "-0.32px", fontWeight: 300 }}>Build inside World Money</div>
+      <div className="product-card-desc" style={{ fontSize: "16px", lineHeight: 1.4, fontWeight: 300, marginTop: "10px", maxWidth: "280px" }}>Create a Mini App using MiniKit.</div>
     </div>
   </a>
 
-  <a href="/world-chain" className="product-card">
+  <a href="/world-chain/index" className="product-card">
     <div className="product-card-tile">
       <img src="/icons/landing/world-chain.svg" alt="" className="product-card-icon" style={{ width: "32px", height: "32px", display: "block" }} />
     </div>
     <div>
-      <div className="product-card-title" style={{ fontSize: "32px", lineHeight: 1.2, letterSpacing: "-0.32px", fontWeight: 300 }}>World Chain</div>
-      <div className="product-card-desc" style={{ fontSize: "16px", lineHeight: 1.4, fontWeight: 300, marginTop: "10px", maxWidth: "280px" }}>Build directly on World’s blockchain infrastructure</div>
+      <div className="product-card-title" style={{ fontSize: "32px", lineHeight: 1.2, letterSpacing: "-0.32px", fontWeight: 300 }}>Build on World Chain</div>
+      <div className="product-card-desc" style={{ fontSize: "16px", lineHeight: 1.4, fontWeight: 300, marginTop: "10px", maxWidth: "280px" }}>Deploy an application and query verified wallet addresses.</div>
     </div>
   </a>
 
@@ -173,12 +184,14 @@ import { DeveloperStories } from "/snippets/developer-stories.jsx";
 </Visibility>
 
 <Visibility for="agents">
-  Integrate World ID and deploy on World Chain with official developer documentation.
+  Verify people, authenticate users and agents, and build applications with World.
 
-  - [Integrate World ID](/world-id/overview) — Anonymous Proof of Human for your website or app.
-  - [Create a Mini App](/mini-apps) — Mini applications distributed in World App.
-  - [Agent Pass](/agent-pass/quickstart) — Connect apps and agents with World ID authentication.
-  - [World Chain](/world-chain) — Build directly on World’s blockchain infrastructure.
+  - [Verify a human](/world-id/overview#choose-your-integration): Request and verify World ID proofs for your application's policy.
+  - [Authenticate users and agents](/world-id/overview#idkit-or-agent-pass): Add OIDC authentication and require recent authentication for sensitive actions.
+  - [Build inside World Money](/mini-apps/index): Create a Mini App using MiniKit.
+  - [Build on World Chain](/world-chain/index): Deploy an application and query verified wallet addresses.
+
+  Direct integration reference: [Agent Pass](/agent-pass/quickstart).
 
   **Developer stories** — how developers build trusted, human-centered apps with World:
 
