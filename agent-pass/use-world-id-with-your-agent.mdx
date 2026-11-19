@@ -19,12 +19,14 @@ With the `world-id:read` scope on `https://auth.world.org/mcp`, your agent can:
 - Check that your account is active and World ID verified with `get_world_id_account`.
 - Read guides that require authenticated access.
 
-If you also approved `world-id:sign-in`, your agent can sign a browser it controls in to
+With `world-id:sign-in`, your agent can sign a browser it controls in to
 World IdP as you with `create_browser_login`. Sites that offer World ID sign-in then
 recognize you in that browser, as they would in yours. That browser can also manage your
 sessions, connections and settings on the IdP, but changing your passkeys or deleting your
 account needs a fresh sign-in. The tool returns a single-use link that expires after a minute; whoever
 opens it gets the session, so your agent opens it only in its own browser and never shares it.
+Every new connection includes `world-id:sign-in`. A connection approved without it must reconnect
+before your agent can sign a browser in.
 
 The account check confirms prior verification, not fresh human presence.
 It does not reveal an account identifier or the subject used by the World ID website.
@@ -82,9 +84,8 @@ grant. API restarts do not erase grants.
 
 Visit [your connections](https://auth.world.org/mcp/connections) to revoke a connection.
 Subsequent requests for content that requires authenticated access are rejected when they use
-that connection's credentials. A browser your agent signed in stays signed in; end that
-session from [your sessions](https://auth.world.org/browser-sessions). Reading that content again requires new
-authorization; public benefits remain available.
+that connection's credentials, and any browser your agent signed in with it is signed out.
+Reading that content again requires new authorization; public benefits remain available.
 
 If you connect the developer MCP server, manage that connection at
 [portal connections](https://auth.world.org/portal/mcp/connections). It uses `/mcp/developer`
