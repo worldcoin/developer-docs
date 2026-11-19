@@ -174,8 +174,9 @@ first unless their first supported class is `https://world.org/oidc/acr/orb-face
 `max_age=0` when authentication must be fresh for this browser attempt.
 
 The device authorization endpoint accepts the same `acr_values` and `claims`
-parameters as extensions to its RFC 8628 profile. Device authentication always
-requires fresh authentication; `prompt` and `max_age` do not control this grant. If the
+parameters and `max_age` as extensions to its
+RFC 8628 profile. An eligible session can be reused unless `max_age` requires fresh
+authentication; `prompt` is not supported on device requests. If the
 mobile response cannot satisfy an essential requirement, token polling returns
 `access_denied`, never a downgraded token.
 
