@@ -79,19 +79,21 @@ This illustrative browser response includes the requested nonce:
   "auth_time": 1790000000,
   "acr": "https://world.org/oidc/acr/orb",
   "amr": ["pop"],
+  "world_id_credentials": ["orb", "selfie"],
   "nonce": "<nonce-from-your-request>"
 }
 ```
 
 ## Claim reference {#claim-reference}
 
-| Claim        | World IdP behavior                                                                                                                                                                                                                                                                       |
-| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `iss`, `sub` | Store the exact issuer and opaque, case-sensitive subject together as the external account identity.                                                                                                                                                                                     |
-| `aud`        | Your registered client ID. Clients sharing a sector still have separate token audiences.                                                                                                                                                                                                 |
-| `auth_time`  | Server verification time for the proof or passkey assertion. See [Assurance values](#assurance-values).                                                                                                                                                                                  |
-| `acr`, `amr` | Achieved class and methods; see [Assurance values](#assurance-values). Selfie classes require a request or [accepted accounts](/agent-pass/step-up#accepted-accounts) that list them. Any account also permits Selfie or unverified accounts; unverified accounts omit `acr`. |
-| `nonce`      | Included when supplied in browser authorization; omitted in device grants.                                                                                                                                                                                                               |
+| Claim                  | World IdP behavior                                                                                                                                                                                                                                                                       |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `iss`, `sub`           | Store the exact issuer and opaque, case-sensitive subject together as the external account identity.                                                                                                                                                                                     |
+| `aud`                  | Your registered client ID. Clients sharing a sector still have separate token audiences.                                                                                                                                                                                                 |
+| `auth_time`            | Server verification time for the proof or passkey assertion. See [Assurance values](#assurance-values).                                                                                                                                                                                  |
+| `acr`, `amr`           | Achieved class and methods; see [Assurance values](#assurance-values). Selfie classes require a request or [accepted accounts](/agent-pass/step-up#accepted-accounts) that list them. Any account also permits Selfie or unverified accounts; unverified accounts omit `acr`. |
+| `world_id_credentials` | The credentials the account holds when the token is issued: `orb`, `selfie`, or both.                                                                                                                                                                                                    |
+| `nonce`                | Included when supplied in browser authorization; omitted in device grants.                                                                                                                                                                                                               |
 
 Apply standard `exp`, `iat`, and `jti` semantics. Read `exp` from the ID token;
 `expires_in` describes the access token. Use `sub` for account recognition.
