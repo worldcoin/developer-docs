@@ -25,8 +25,15 @@ recognize you in that browser, as they would in yours. That browser can also man
 sessions, connections and settings on the IdP, but changing your passkeys or deleting your
 account needs a fresh sign-in. The tool returns a single-use link that expires after a minute; whoever
 opens it gets the session, so your agent opens it only in its own browser and never shares it.
-Every new connection includes `world-id:sign-in`. A connection approved without it must reconnect
-before your agent can sign a browser in.
+
+With `world-id:notify`, your agent can send you a short message on your phone with
+`send_notification`, such as when a task finishes while you are away. It arrives in the
+World ID app on each phone where you are signed in with notifications turned on. Apple and
+Google deliver only a generic alert; the app fetches the message itself. Messages are plain
+text and expire after 24 hours, and revoking the connection stops new ones.
+
+Every new connection includes `world-id:sign-in` and `world-id:notify`. A connection approved
+without one of them must reconnect before your agent can use it.
 
 The account check confirms prior verification, not fresh human presence.
 It does not reveal an account identifier or the subject used by the World ID website.
