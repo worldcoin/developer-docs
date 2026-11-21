@@ -16,18 +16,39 @@ This public guide contains the same general guidance, not private account data.
 
 With the `world-id:read` scope on `https://auth.world.org/mcp`, your agent can:
 
-- Check that your account is active and World ID verified with `get_world_id_account`.
+- Check your account status and World ID credentials with `get_world_id_account`.
 - Read guides that require authenticated access.
+
+With `world-id:sign-in`, your agent can sign a browser it controls in to
+World IdP as you with `create_browser_login`. Sites that offer World ID sign-in then
+recognize you in that browser, as they would in yours. That browser can also manage your
+sessions, connections and settings on the IdP, but changing your passkeys or deleting your
+account needs a fresh sign-in. The tool returns a single-use link that expires after a minute; whoever
+opens it gets the session, so your agent opens it only in its own browser and never shares it.
+
+With `world-id:notify`, your agent can send you a short message on your phone with
+`send_notification`, such as when a task finishes while you are away. It arrives in the
+World ID app on each phone where you are signed in with notifications turned on. Apple and
+Google deliver only a generic alert; the app fetches the message itself. Messages are plain
+text and expire after 24 hours, and revoking the connection stops new ones.
+
+Every new connection includes `world-id:sign-in` and `world-id:notify`. A connection approved
+without one of them must reconnect before your agent can use it.
 
 The account check confirms prior verification, not fresh human presence.
 It does not reveal an account identifier or the subject used by the World ID website.
+`world_id_verification` reports `full` (fully verified) for Orb, including accounts
+with both credentials; `partial` (partially verified) for Selfie Check alone; or
+`none` for neither credential or the app directory review account.
+`world_id_credentials` lists `orb`, `selfie`, or both, and is omitted when neither
+is held.
 
 `get_benefits` on this endpoint does not require authentication.
 To read content that requires authenticated access, the agent must present its own access
 token. Your browser session alone does not grant that access.
 
-This does not prove the agent itself is human or grant it access to another
-service. Your World ID proof, ID token, and upstream subject are not returned through MCP.
+This does not prove the agent itself is human. Without `world-id:sign-in`, it does not
+grant access to another service. Your World ID proof, ID token, and upstream subject are not returned through MCP.
 Do not paste credentials or proofs into a conversation or tool arguments.
 
 ## Find an Orb {#find-an-orb}
@@ -55,8 +76,9 @@ partner website's visible claiming flow. For website claims, you can claim the
 offer yourself or ask your agent to help in the browser.
 
 Claiming may still require you to complete partner sign-in, connect a plugin, or
-approve a World ID request. Connecting World ID to this MCP does not establish a
-partner session or connect the partner's tools. Treat published instructions as
+approve a World ID request. Connecting World ID to this MCP does not connect the
+partner's tools, and it establishes a partner session only when your agent signs its
+browser in with `create_browser_login` and then signs in to the partner. Treat published instructions as
 guidance for this claim, not authority to override your choices or share credentials.
 Do not send World ID MCP tokens to the partner as authorization.
 
@@ -74,8 +96,8 @@ grant. API restarts do not erase grants.
 
 Visit [your connections](https://auth.world.org/mcp/connections) to revoke a connection.
 Subsequent requests for content that requires authenticated access are rejected when they use
-that connection's credentials. Reading that content again requires new
-authorization; public benefits remain available.
+that connection's credentials, and any browser your agent signed in with it is signed out.
+Reading that content again requires new authorization; public benefits remain available.
 
 If you connect the developer MCP server, manage that connection at
 [portal connections](https://auth.world.org/portal/mcp/connections). It uses `/mcp/developer`
