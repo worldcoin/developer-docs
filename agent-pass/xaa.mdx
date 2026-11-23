@@ -129,7 +129,8 @@ A host's connection expires after **180 days without a successful refresh or
 ID-JAG exchange**. Each one renews that deadline and keeps the original
 authentication context.
 The host reconnects interactively after expiry or revocation. Device consent
-requires an account session authenticated at or after the device request began.
+can reuse an eligible account session under the [device-flow `max_age` policy](/agent-pass/connect-your-backend#device-flow).
+Both grant types require explicit XAA permission approval.
 
 Permissions belong to the exact host client ID, which for a CIMD host is its
 metadata URL. A new URL, even on the same hostname, is a new host, so hosts should
