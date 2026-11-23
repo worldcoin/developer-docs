@@ -1,0 +1,88 @@
+---
+title: "Accepted accounts"
+description: "Choose which World ID accounts your OIDC client accepts by default, and override the default per request with acr_values or an acr claim request."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+{/* cspell:ignore passkey passkeys oidc OIDC nonnegative */}
+
+World ID Auth signs people in through OpenID Connect (OIDC). Each OIDC client has **accepted accounts**: the authentication classes it accepts when a request doesn't name any. Use accepted accounts when your OIDC library or identity broker can't add `acr_values` or a `claims` parameter to the authorization request.
+
+## Authentication classes
+
+The ID token's `acr` claim reports the class the person achieved:
+
+| Class | Meaning |
+| ----- | ------- |
+| `https://world.org/oidc/acr/orb` | The account holds an Orb verification. |
+| `https://world.org/oidc/acr/selfie` | The account holds a Selfie Check verification. |
+| `https://world.org/oidc/acr/orb-face` | An Orb proof with a completed face check during this authentication. |
+| `https://world.org/oidc/acr/selfie-face` | A Selfie Check proof with a completed face check during this authentication. |
+
+ID tokens for accounts without Orb or Selfie Check verification omit `acr`. A passkey login reports the account's baseline class, never a `-face` class.
+
+## Choose the default accepted accounts
+
+Choose the accepted accounts when you create an application in the developer portal. To change them, open the application and go to **Settings → Authenticate → Default accepted accounts**:
+
+- **Orb:** accounts verified at an Orb.
+- **Selfie Check:** accounts verified with Selfie Check or at an Orb. The login offers Selfie Check first.
+- **Any account:** every World ID account. Accounts with Orb or Selfie Check verification still receive their class in `acr`. ID tokens for accounts without either verification omit `acr`.
+
+Each choice also accepts the stricter classes. **Any account** includes Selfie Check and Orb accounts. **Selfie Check** includes Orb accounts.
+
+<Warning>
+**Any account** admits accounts without Orb or Selfie Check verification. When your application requires verification, request explicit classes instead of relying on the default.
+</Warning>
+
+### Ask for Face Auth
+
+**Ask for Face Auth** adds a face check in the World ID app to each new proof. It adds a step for people, and they can't authenticate with a passkey. It's a preference: an eligible browser session can still be reused. To require Face Auth, send an [essential `acr` claim](/world-id-auth/step-up#require-face-auth).
+
+## How a request selects classes
+
+World ID Auth decides which classes a request accepts in this order:
+
+| Request | Accepted classes |
+| ------- | ---------------- |
+| Essential `acr` claim in `claims` | Only the classes the claim lists. |
+| `claims={"id_token":{"acr":null}}` | Any account. This overrides the client's defaults. |
+| Non-empty `acr_values` | The listed classes, as voluntary preferences. |
+| No `acr_values` and no `acr` claim request | The client's default accepted accounts. |
+| Empty `acr_values` | The client's default accepted accounts. |
+
+An explicit `claims.id_token.acr` request takes precedence over `acr_values`.
+
+### Require Orb or Selfie Check
+
+To require verification, send an essential `acr` claim that lists every class you accept. Set the `claims` query parameter to this JSON and have your OIDC library URL-encode it:
+
+```json
+{
+  "id_token": {
+    "acr": {
+      "essential": true,
+      "values": ["https://world.org/oidc/acr/orb", "https://world.org/oidc/acr/selfie"]
+    }
+  }
+}
+```
+
+The values are alternatives: one matching class is enough. Essential requests treat each class as a distinct value, so list any `-face` variants you also accept. If none of the requested essential classes is supported, the request fails with `unmet_authentication_requirements`.
+
+### Accept any account for one request
+
+To accept any account for a single request, including accounts without Orb or Selfie Check verification, send this decoded `claims` parameter:
+
+```json
+{ "id_token": { "acr": null } }
+```
+
+This voluntary claim request overrides the client's defaults and asks for `acr` when available. ID tokens for accounts without verification still omit `acr`.
+
+## Validate the result
+
+Always validate the returned `acr` in your backend, even when the request or client default names classes. `acr_values` are preferences: unsupported values don't force an error. Require the ID token's `acr` to exactly match one of the classes your application accepts. If your application accepts unverified accounts, handle tokens without `acr`.
+
+For freshness and per-operation requirements, see [Step-up authentication](/world-id-auth/step-up).
