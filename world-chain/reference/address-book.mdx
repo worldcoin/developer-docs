@@ -1,10 +1,15 @@
 ---
-title: Address Book
+title: "Address Book"
+description: "Query whether a wallet address is registered as World ID verified on World Chain."
 "og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 "twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
 ---
 
-The Address Book is a contract that stores verified World ID addresses. You can check if a user's address and associated ENS name (if available) is Orb verified using the `getIsUserVerified` helper function.
+Use the Address Book on World Chain to query whether a wallet address is
+registered as Orb verified. The example below uses `getIsUserVerified`.
+
+This is a verification-status lookup. It does not establish current wallet control,
+fresh World ID authentication, or permission to perform an action.
 
 ## Considerations
 

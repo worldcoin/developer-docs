@@ -2,6 +2,9 @@
 
 - Write all published pages, maintenance notes, commit messages, and PR descriptions in English.
 - Follow the existing MDX, navigation, branding, and terminology conventions. Register pages in `docs.json`; reuse existing snippets and components when they fit.
+- Explain concepts in short paragraphs, setup in numbered steps, and guide choices with links or cards. Use tables when readers need to compare the same fields or look up values. Introduce each table with a short explanation of the comparison or decision it supports.
+- State what an integration returns, what the developer must validate, and what the application must enforce. Replace vague phrases such as "trust layer" or "enforce eligibility" with the specific behavior needed at that point.
+- Use World Money for wallet, payment, and Mini App flows hosted in that app. Use World ID app for identity verification, credential management, and proof requests. Preserve historical World App references and exact SDK names, fields, and URL schemes such as `window.WorldApp` and `worldapp://`. See the official [World Money](https://world.org/world-money) and [World ID app](https://world.org/world-id-app) descriptions.
 - Document durable product behavior, public contracts, and necessary integration setup. Keep implementation walkthroughs, operational runbooks, and PR history out of published pages.
 - Keep changes focused. Preserve coverage of the rest of the site when extending maintenance to IDP. Explain any necessary edits outside the affected product area.
 - Keep commit subjects and PR titles short. Follow the repository's PR template. If there is no template, use `Summary` with one to three bullets and `Testing` with commands and outcomes or `Not run`.
@@ -10,6 +13,8 @@
 ## IDP
 
 Keep Agent Pass in `docs.json` as a tab with `hidden: true` and `searchable: true` during MCP testing. Preserve its complete groups and page list so direct links retain the internal sidebar. Keep the scoped Agent Pass tab rules in `tailwind.css`: Mintlify otherwise reveals the hidden tab when it is active. Keep the generated `agent-pass/` pages, their URLs, agent-only homepage link, and `seo.indexing: "all"` so they remain available to search and AI tools. Do not make the tab or promotional cards visible until the public launch is requested. Read [IDP maintenance](world-id-auth-maintenance.md) before changing generated pages. Use the manifest, source lock, and compatibility contract for current coverage and provenance.
+
+The approved capabilities navigation adds a visible World ID integration comparison and `world-id/agent-pass.mdx` entry. Home's authentication capability links to that World ID comparison. Preserve these entry points while keeping the standalone Agent Pass tab hidden and searchable; they do not change the generated guide bodies or their release status.
 
 - Keep `worldcoin/temporal-apps/apps/idpapi/mcp/guides/*.md` as the canonical guide text shared by the Auth browser documentation, MCP, and the generated Mintlify pages. Make content changes in those Markdown files, then regenerate. The landing page in `apps/idpportal/docs.html` is excluded from this migration.
 - Do not edit generated `agent-pass/*.mdx` bodies directly. Keep publishing metadata and approved adaptations in `.mintlify/world-id-auth-pages.json` and `scripts/sync-world-id-auth.mjs`. Record the source commit in `.mintlify/world-id-auth-source.json` through the generator.

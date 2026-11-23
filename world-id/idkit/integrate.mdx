@@ -8,7 +8,7 @@ description: "Integrate World ID into your app"
 
 import IDKitResponse from "/snippets/idkit-response.mdx";
 
-IDKit is the SDK for integrating World ID into your app. It handles proof requests, verification flows and communication with the World ID App, so your backend receives cryptographic proof of human, not personal data.
+IDKit is the SDK for integrating World ID into your app. It handles proof requests, verification flows and communication with the World ID app, so your backend receives cryptographic proof of human, not personal data.
 
 Use the React widget for drop-in integration, or the JS, Swift and Kotlin SDKs for custom flows. For the core concepts of World ID, see [this page](/world-id/concepts).
 
@@ -18,11 +18,23 @@ Use the React widget for drop-in integration, or the JS, Swift and Kotlin SDKs f
 
 Use IDKit to request a proof and verify it on your backend: follow this guide for one-time checks, or use [session proofs](/world-id/idkit/session-proofs) for returning users.
 
-<div className="dark:rounded-2xl dark:bg-white dark:p-6">
-  <img src="/images/docs/idkit-flow-v2.svg" alt="IDKit integration flow: your app sends a proof request to World App, receives a ZK proof, forwards it to your backend, and the backend verifies it with the World ID Developer Portal" />
-</div>
+```mermaid
+sequenceDiagram
+    accTitle: Verify a proof from the World ID app
+    accDescr: IDKit requests a proof from the World ID app. Your app sends the complete proof to your backend, which verifies it through the Developer Portal.
+    participant Client as Your app (IDKit)
+    participant Identity as World ID app
+    participant Backend as Your backend
+    participant Portal as Developer Portal
 
-Four components are involved: your **client** (where IDKit runs), your **backend** (which signs requests and verifies proofs), the **World ID App** (on the user's device) and the **Developer Portal** (which validates proofs on-chain). The steps below cover each one.
+    Client->>Identity: Request a proof
+    Identity-->>Client: World ID proof
+    Client->>Backend: Send the complete proof
+    Backend->>Portal: Verify the proof
+    Portal-->>Backend: Verification result
+```
+
+Four components are involved: your **client** (where IDKit runs), your **backend** (which signs requests and verifies proofs), the **World ID app** (on the user's device) and the **Developer Portal** (which validates proofs on-chain). The steps below cover each one.
 
 # Step 1: Install IDKit
 
