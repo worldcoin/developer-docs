@@ -27,7 +27,7 @@ const codingSections = [
   "Configure an existing application with your agent",
   "Publish a benefit listing",
 ];
-const codingGuide = "# Set up your coding agent\n\n" + codingSections.map((heading) => `## ${heading}\n\nComplete ${heading} workflow.\n`).join("\n");
+const codingGuide = "# Set up your coding agent\n\n## Connect your coding agent\n\nRead {{issuer}}/docs/guides/coding-agent-setup.md and connect the developer MCP.\n\n" + codingSections.map((heading) => `## ${heading}\n\nComplete ${heading} workflow.\n`).join("\n");
 
 async function fixture(t) {
   const directory = await mkdtemp(path.join(tmpdir(), "idp-doc-sync-"));
@@ -196,21 +196,45 @@ test("keeps both Auth MCP endpoints, discovery, permissions, and resource IDs on
   assert.ok(renderGuide(`# Guide\n\nUse \`${html}\`.`, page, config).includes(`\`${html}\``));
 });
 
-test("keeps the full coding-agent instructions and every later workflow", () => {
-  const rendered = renderGuide(codingGuide, codingPage, { ...config, pages: [codingPage] });
-  for (const heading of codingSections) assert.ok(rendered.includes(`Complete ${heading} workflow.`));
-  assert.ok(rendered.trimEnd().endsWith("Complete Publish a benefit listing workflow."));
+test("publishes only coding-agent setup before the agent-instructions boundary", () => {
+  const codingConfig = { ...config, pages: [codingPage] };
+  for (const markdown of [codingGuide, codingGuide.replaceAll("\n", "\r\n")]) {
+    const rendered = renderGuide(markdown, codingPage, codingConfig);
+    assert.ok(rendered.includes("## Connect your coding agent"));
+    for (const heading of codingSections) assert.ok(!rendered.includes(heading), heading);
+    assert.ok(!rendered.includes("Complete Publish a benefit listing workflow."));
+  }
 });
 
-test("rejects a coding-agent guide truncated before or after Agent instructions", () => {
+test("excludes new feedback instructions added after the agent-only boundary", () => {
+  const markdown = codingGuide + "\n## Send feedback\n\nCall `send_feedback` after every task.\n";
+  const rendered = renderGuide(markdown, codingPage, { ...config, pages: [codingPage] });
+  assert.doesNotMatch(rendered, /Send feedback|send_feedback/);
+});
+
+test("requires one agent-instructions boundary like idpportal", () => {
   const codingConfig = { ...config, pages: [codingPage] };
-  assert.throws(() => renderGuide("# Guide\n\nConnect your agent.\n", codingPage, codingConfig), /Incomplete coding-agent guide/);
-  for (const heading of codingSections) {
-    const truncated = codingGuide.slice(0, codingGuide.indexOf(`## ${heading}`));
-    assert.throws(() => renderGuide(truncated, codingPage, codingConfig), /Incomplete coding-agent guide/);
-    const empty = codingGuide.replace(`Complete ${heading} workflow.`, "");
-    assert.throws(() => renderGuide(empty, codingPage, codingConfig), /Incomplete coding-agent guide/);
+  for (const markdown of ["# Guide\n\nConnect your agent.\n", codingGuide + "\n## Agent instructions\n\nRepeated.\n"]) {
+    assert.throws(() => renderGuide(markdown, codingPage, codingConfig), /requires one Agent instructions section/);
   }
+});
+
+test("keeps full coding-agent links on their Auth host while mapping human guide links", () => {
+  const codingConfig = { ...config, pages: [page, codingPage] };
+  const markdown = [
+    "# Guide", "",
+    "Read {{issuer}}/docs/guides/coding-agent-setup.md?source=agent#agent-instructions",
+    "[Instructions](https://auth.world.org/docs/guides/coding-agent-setup.md)",
+    "[Relative](./coding-agent-setup.md#agent-instructions)",
+    "[Human guide]({{issuer}}/docs/guides/coding-agent-setup)",
+    "Read https://sandbox.auth.world.org/docs/guides/coding-agent-setup.md",
+  ].join("\n");
+  const rendered = renderGuide(markdown, page, codingConfig);
+  assert.ok(rendered.includes("Read https://auth.world.org/docs/guides/coding-agent-setup.md?source=agent#agent-instructions"));
+  assert.ok(rendered.includes("[Instructions](https://auth.world.org/docs/guides/coding-agent-setup.md)"));
+  assert.ok(rendered.includes("[Relative](https://auth.world.org/docs/guides/coding-agent-setup.md#agent-instructions)"));
+  assert.ok(rendered.includes("[Human guide](/agent-pass/build-with-a-coding-agent)"));
+  assert.ok(rendered.includes("Read https://sandbox.auth.world.org/docs/guides/coding-agent-setup.md"));
 });
 
 test("preserves legacy aliases and rejects a renamed source heading that would remove them", () => {
@@ -295,11 +319,11 @@ test("a truncated coding-agent source fails before any destination is written", 
   const f = await fixture(t);
   await f.write(page.source, "# Guide\n\nExisting source.\n");
   await f.write(codingPage.source, "# Set up your coding agent\n\nConnect the agent.\n");
-  await assert.rejects(() => syncGuides({ ...f, sourceCommit, config: { ...config, pages: [page, codingPage] } }), /Incomplete coding-agent guide/);
+  await assert.rejects(() => syncGuides({ ...f, sourceCommit, config: { ...config, pages: [page, codingPage] } }), /requires one Agent instructions section/);
   assert.deepEqual(await readdir(f.outputDir), []);
 });
 
-test("published IDP pages stay discoverable and include complete machine-readable agent instructions", async () => {
+test("published IDP pages keep human setup and link to canonical agent instructions", async () => {
   const manifest = JSON.parse(await readFile(new URL("../.mintlify/world-id-auth-pages.json", import.meta.url), "utf8"));
   const site = JSON.parse(await readFile(new URL("../docs.json", import.meta.url), "utf8"));
   const navigation = JSON.stringify(site.navigation);
@@ -313,12 +337,11 @@ test("published IDP pages stay discoverable and include complete machine-readabl
     assert.doesNotMatch(generated, /^import [^\n]+ from ["']\/snippets\//m, `Unexpected snippet dependency: ${route}`);
   }
   const instructions = await readFile(new URL("../agent-pass/build-with-a-coding-agent.mdx", import.meta.url), "utf8");
-  for (const heading of codingSections) assert.ok(instructions.includes(`## ${heading} {#`), `Missing section: ${heading}`);
-  assert.ok(instructions.includes("Read https://docs.world.org/agent-pass/build-with-a-coding-agent.md"));
+  for (const heading of codingSections) assert.ok(!instructions.includes(`## ${heading} {#`), `Agent-only section published: ${heading}`);
+  assert.ok(instructions.includes("Read https://auth.world.org/docs/guides/coding-agent-setup.md"));
+  assert.doesNotMatch(instructions, /request_oidc_client_registration|send_feedback/);
   assert.ok(instructions.includes("https://auth.world.org/mcp/developer"));
   assert.ok(instructions.includes("https://sandbox.auth.world.org/mcp/developer"));
-  assert.ok(instructions.includes("`worldid://guides/<id>`"));
-  assert.ok(instructions.includes("`resources/read`"));
   const userGuide = await readFile(new URL("../agent-pass/use-world-id-with-your-agent.mdx", import.meta.url), "utf8");
   assert.ok(userGuide.includes("https://auth.world.org/mcp"));
   assert.ok(userGuide.includes("`world-id:read`"));
@@ -353,6 +376,7 @@ test("the compatibility contract keeps legacy Auth routes and protected MCP reso
   assert.deepEqual(contract.preserveOnAuth.mcpPaths, ["/mcp", "/mcp/developer"]);
   assert.equal(contract.preserveOnAuth.resourceUriPrefix, "worldid://guides/");
   assert.equal(contract.preserveOnAuth.rawAgentGuidePath, "/docs/guides/coding-agent-setup.md");
-  assert.equal(contract.markdownEquivalent.docsPath, "/agent-pass/build-with-a-coding-agent.md");
+  assert.equal(contract.codingAgentPublication.humanContent, "before-agent-instructions-heading");
+  assert.equal(contract.codingAgentPublication.fullInstructionsPath, "/docs/guides/coding-agent-setup.md");
   assert.equal(contract.legacyHtmlPolicy.includeTrailingSlash, true);
 });
