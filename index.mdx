@@ -10,7 +10,7 @@ description: "Build Mini Apps, integrate World ID, and deploy on World Chain wit
 
 import { DeveloperStories } from "/snippets/developer-stories.jsx";
 
-{/* cspell:ignore worldcoin Estevez Jangwon Toktokhan Hyrax gigagas flashblock prismic */}
+{/* cspell:ignore worldcoin Jangwon Toktokhan Hyrax gigagas flashblock prismic */}
 
 {/*
   The visual landing layout is wrapped in <Visibility for="humans"> (rendered on
@@ -20,7 +20,8 @@ import { DeveloperStories } from "/snippets/developer-stories.jsx";
   for="humans" block: Mintlify inlines a snippet's full source into the export
   when the component appears in exported content, and drops it when all usages
   are hidden (verified on a preview deploy). Keep the twin's links and copy in
-  sync when editing.
+  sync when editing. Agent Pass is intentionally linked only in the agent twin
+  during MCP testing, before its visible launch.
 */}
 
 <Visibility for="humans">
@@ -35,7 +36,7 @@ import { DeveloperStories } from "/snippets/developer-stories.jsx";
 
 <div className="landing-coming-soon" style={{ marginBottom: "80px" }}>
   <div className="product-card-tile">
-    <img src="/icons/landing/agentkit.svg" alt="" className="product-card-icon" style={{ width: "32px", height: "32px", display: "block" }} />
+    <img src="/icons/landing/agent-pass.svg" alt="" className="product-card-icon" style={{ width: "32px", height: "32px", display: "block" }} />
   </div>
   <div>
     <span className="landing-coming-soon-badge">Coming soon</span>
@@ -86,13 +87,6 @@ import { DeveloperStories } from "/snippets/developer-stories.jsx";
     title="Developer stories"
     subtitle="See how developers build trusted, human-centered apps with World."
     items={[
-      {
-        name: "Diego Estevez",
-        role: "Co-Founder",
-        company: "Divine",
-        youtubeId: "DPiCrh4-5Dc",
-        poster: "https://images.prismic.io/worldcoin-company-website/agb7nKYofJOwHRRv_Frame2147264383-1-.png?auto=format,compress&w=1200",
-      },
       {
         name: "Jangwon Seo",
         role: "Founder",
@@ -192,11 +186,11 @@ import { DeveloperStories } from "/snippets/developer-stories.jsx";
 
   - [Integrate World ID](/world-id/overview) — Anonymous Proof of Human for your website or app.
   - [Create a Mini App](/mini-apps) — Mini applications distributed in World App.
+  - [Agent Pass](/agent-pass/quickstart) — Connect apps and agents with World ID authentication.
   - [World Chain](/world-chain) — Build directly on World’s blockchain infrastructure.
 
   **Developer stories** — how developers build trusted, human-centered apps with World:
 
-  - Diego Estevez, Co-Founder, Divine: [video](https://www.youtube.com/watch?v=DPiCrh4-5Dc)
   - Jangwon Seo, Founder, Toktokhan.dev: [video](https://www.youtube.com/watch?v=KsOXJx_JQ7w)
   - Corey Miller, Co-Founder, tbd.vote: [video](https://www.youtube.com/watch?v=cnM2VuLlElw)
 

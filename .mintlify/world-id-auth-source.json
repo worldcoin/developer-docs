@@ -1,0 +1,31 @@
+{
+  "repository": "worldcoin/temporal-apps",
+  "sourceDirectory": "apps/idpapi/mcp/guides",
+  "configSha256": "4e8b3a998e58efee93b7d618df31d9aa6622faeb2c2500f46e842e54f961f915",
+  "sources": {
+    "apps/idpapi/mcp/guides/getting-started.md": "562496424aed6fa2bc19bdde442eb2b9b4f370c974c92c2c4f11c35a4d9c0fb7",
+    "apps/idpapi/mcp/guides/app-registration.md": "f96c7a898d5198dc39587d7720d1a907a1ad6813ed444f944b36ecc242dc96a3",
+    "apps/idpapi/mcp/guides/oidc.md": "c6bf8c5a2427b6fb0992f791b94803c04095061ec61bd3668fddb95050dd1681",
+    "apps/idpapi/mcp/guides/mcp-authorization.md": "860fd71630b9965e7401ffbabb440d7b139b6b345d47f689043decaa73ce6c7f",
+    "apps/idpapi/mcp/guides/id-token.md": "73d3b46fb0c8b24ae19d5bae818bd3fa52f537d7261e2ac653792687ad1360d2",
+    "apps/idpapi/mcp/guides/step-up.md": "148b199b5b11c43f9174bb8d46907c3602ad203be9aececc5443bb8c70f5a8ec",
+    "apps/idpapi/mcp/guides/xaa.md": "8cfdeb56b9738526f191b098bf87de1a1de0a9dac4263c4d1a42612b050a2767",
+    "apps/idpapi/mcp/guides/world-id-users.md": "7d654042f45f02eb1054db73d1ea8cc034573d834351fb18309f572db9caca75",
+    "apps/idpapi/mcp/guides/coding-agent-setup.md": "063eeaf4ad067cb1f2b7b8fa12f20dda25d55ee93ce584ed66d2bde0b558e5bb",
+    "apps/idpapi/mcp/guides/testing.md": "defe6bf677aec7a6f0ab7ad1ad8cda60dc4c1f5122bbb7cd6c17e4731328932a"
+  },
+  "outputs": {
+    "agent-pass/quickstart.mdx": "ff0a735471be230f6acf560ed0cf7401ad5d70e65f94a2ba62f41d330db6ac13",
+    "agent-pass/app-registration.mdx": "48fddef9720ba67ddfe02d61d4168ea13ac32ca061cae17bc0567a0b5b5c3f7b",
+    "agent-pass/connect-your-backend.mdx": "ff499c3d536bcbb8058696188c2ff406153522c3770f7374c6423bc085dc8966",
+    "agent-pass/connect-your-auth-server.mdx": "cddab629cdadbef4d154fa719b223954d16f69c241a0d87d21bf191ac2065d1a",
+    "agent-pass/id-tokens-and-identity.mdx": "e7c416ec0adf5273d1d2b62b9fc1e560e4e9468f15cff3775388311e2e0f777e",
+    "agent-pass/step-up.mdx": "3ee436eeb2a18353dc43de69d093e71a027a379f759475e77f6b659d843a7aa2",
+    "agent-pass/human-in-the-loop.mdx": "deb04082440ad78c9f4ce74d55348768c3e946809d86fd305da439a18f29c923",
+    "agent-pass/xaa.mdx": "d0174c6493980c150b2859cc57458da5672c9c40c3de25deb7b5392cc4010a2c",
+    "agent-pass/use-world-id-with-your-agent.mdx": "a461714fe6f76b29048949e5c783a4ba62d3de370d7c30533f97cbb5a07200cf",
+    "agent-pass/build-with-a-coding-agent.mdx": "099d324b2e32544cd4f18ae7e67aefeafe4923572886c4b0bb7c082b646b19d3",
+    "agent-pass/testing.mdx": "48cb7e614300ec457965cebaa3546611e20a11ccc2efb337f047a75efb36f1c7"
+  },
+  "sourceCommit": "0fa073d5899a85cc4c8d080305711f7681d7ee04"
+}

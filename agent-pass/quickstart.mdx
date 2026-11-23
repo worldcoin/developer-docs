@@ -1,0 +1,94 @@
+---
+title: "Quickstart"
+sidebarTitle: "Quickstart"
+description: "Register an application, connect to the World ID issuer, and add step-up authentication."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+{/* Generated from worldcoin/temporal-apps/apps/idpapi/mcp/guides/getting-started.md. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}
+
+<Note>
+  Unless a section explicitly says Sandbox, examples use the production issuer
+  `https://auth.world.org`. For sandbox testing, use `https://sandbox.auth.world.org`
+  for discovery, portal registration, credentials, and all authentication endpoints.
+  Keep every part of an integration in the same environment. See
+  [Test your integration](/agent-pass/testing#test-in-the-sandbox).
+</Note>
+
+World IdP returns a signed authentication result and a sector-scoped account
+identifier. Your application owns its accounts, sessions, permissions, and actions.
+
+<span id="how-it-works" />
+
+<span id="integrate-in-four-steps" />
+
+## Choose your integration {#choose-your-integration}
+
+[Set up your client](/agent-pass/app-registration), then follow the path
+for your application. An existing auth server can act as the OIDC client.
+
+| Goal                                                       | Guide                                                                                          |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Authenticate through a browser                             | [Authorization Code Flow](/agent-pass/connect-your-backend#sign-in-through-the-browser)             |
+| Authenticate a CLI or client without a browser callback    | [Device Authorization Grant](/agent-pass/connect-your-backend#sign-in-a-headless-agent-device-flow) |
+| Require recent or specific authentication before an action | [Step-up authentication](/agent-pass/step-up)                                       |
+| Pause an agent workflow for a human checkpoint             | [Human checkpoints](/agent-pass/step-up#human-checkpoints)                          |
+| Use World ID for your application's primary sign-in        | [Primary sign-in](/agent-pass/connect-your-backend#primary-sign-in)                                 |
+| Authorize access to your MCP server                        | [MCP authorization](/agent-pass/connect-your-auth-server)                                  |
+| Accept delegated access through an XAA-capable host        | [Cross-App Access (XAA)](/agent-pass/xaa)                                           |
+
+Keep your existing sign-in and add step-up when your application needs World ID
+authentication before sensitive actions. The [Tokens and identity reference](/agent-pass/id-tokens-and-identity)
+defines subjects and authentication claims.
+Choose which [credentials and authentication classes](/agent-pass/id-tokens-and-identity#credentials-and-authentication-classes)
+your application accepts. To allow either Orb or Selfie Check, list both classes
+in your [authentication request](/agent-pass/step-up#accept-orb-or-selfie-check).
+Before launch, complete the checks in
+[Sandbox and testing](/agent-pass/testing).
+
+## Environment values {#environment-values}
+
+| Setting          | Value                                         |
+| ---------------- | --------------------------------------------- |
+| Issuer           | `https://auth.world.org`                                  |
+| Discovery        | `https://auth.world.org/.well-known/openid-configuration` |
+| Developer portal | [Portal](https://auth.world.org/portal)                   |
+
+Use registration, credentials, and discovery from the same environment. The
+[authentication profile](/agent-pass/connect-your-backend#configure-your-oidc-library)
+lists supported scopes, grants, signing algorithms, and client requirements.
+
+## Other World ID integrations {#other-world-id-integrations}
+
+These guides cover OIDC integration with World IdP. Use World IdP's
+registrations, credentials, and identifiers only for that flow; IDKit proof
+applications use their own.
+
+- **IDKit uniqueness:** use a nullifier scoped to the application and action for
+  one-use eligibility. Verify the proof on your backend and atomically reject a
+  previously consumed nullifier. Check authentication freshness separately from
+  stored uniqueness results. Follow the
+  [IDKit setup and verification guide](https://docs.world.org/world-id/idkit/integrate).
+- **IDKit sessions:** use repeated proofs of the saved `session_id` for account
+  continuity. Each check still requires user interaction and a fresh proof.
+  Use `session_nullifier` to identify a proof for replay checks. Manage
+  application login cookies and World IdP browser
+  sessions separately from proof sessions. Follow
+  the [session-proof guide](https://docs.world.org/world-id/idkit/session-proofs)
+  for registration, signed requests, verification, and replay checks.
+
+**Legacy Sign In with World ID is deprecated.** Use World IdP's OIDC flow for
+new sign-in integrations; legacy credentials and identities are not interchangeable
+with World IdP's.
+
+Apply the selected product's credential, environment, request-expiry, and replay
+rules. Validate the resulting assurance and check business permissions in your application.
+OIDC authentication remains repeatable. For one-use benefits, enforce your own rule with
+atomic consumption in the
+[appropriate identity scope](/agent-pass/id-tokens-and-identity#store-and-match-sub).
+
+## Get help from a coding agent {#get-help-from-a-coding-agent}
+
+Give your coding agent the public guides. For optional registration and management
+tools, follow [Coding-agent setup](/agent-pass/build-with-a-coding-agent).

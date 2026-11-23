@@ -1,0 +1,74 @@
+{
+  "mode": "dual-publication",
+  "docsOrigin": "https://docs.world.org",
+  "docsRoutePrefix": "/agent-pass",
+  "legacyDocsRouting": {
+    "sourcePrefix": "/world-id-auth",
+    "destinationPrefix": "/agent-pass",
+    "action": "preserve-legacy-documentation-urls-through-docs-json-redirects",
+    "includeRawMarkdown": true
+  },
+  "authOrigins": [
+    "https://auth.world.org",
+    "https://sandbox.auth.world.org"
+  ],
+  "routingSource": {
+    "repository": "worldcoin/temporal-apps",
+    "commit": "4313560eb5ccc41b857607519b37da1c25421f7b",
+    "path": "infra/lib/idp/idpcommon.ts"
+  },
+  "guideSource": {
+    "repository": "worldcoin/temporal-apps",
+    "commit": "0fa073d5899a85cc4c8d080305711f7681d7ee04",
+    "path": "apps/idpapi/mcp/server.go"
+  },
+  "worldDocsMcp": "https://docs.world.org/mcp",
+  "preserveOnAuth": {
+    "landingPaths": ["/docs", "/docs/"],
+    "indexPaths": ["/llms.txt", "/robots.txt"],
+    "mcpPaths": ["/mcp", "/mcp/developer"],
+    "discoveryPrefix": "/.well-known/",
+    "rawAgentGuidePath": "/docs/guides/coding-agent-setup.md",
+    "resourceUriPrefix": "worldid://guides/"
+  },
+  "legacyHtmlRoutes": [
+    { "path": "/docs/guides", "docsPath": "/agent-pass/quickstart" },
+    { "path": "/docs/guides/getting-started", "docsPath": "/agent-pass/quickstart" },
+    { "path": "/docs/guides/app-registration", "docsPath": "/agent-pass/app-registration" },
+    { "path": "/docs/guides/oidc", "docsPath": "/agent-pass/connect-your-backend" },
+    { "path": "/docs/guides/federation", "docsPath": "/agent-pass/connect-your-auth-server" },
+    { "path": "/docs/guides/mcp-authorization", "docsPath": "/agent-pass/connect-your-auth-server" },
+    { "path": "/docs/guides/id-token", "docsPath": "/agent-pass/id-tokens-and-identity" },
+    { "path": "/docs/guides/step-up", "docsPath": "/agent-pass/step-up" },
+    { "path": "/docs/guides/human-in-the-loop", "docsPath": "/agent-pass/human-in-the-loop" },
+    { "path": "/docs/guides/xaa", "docsPath": "/agent-pass/xaa" },
+    { "path": "/docs/guides/coding-agent-setup", "docsPath": "/agent-pass/build-with-a-coding-agent" },
+    { "path": "/docs/guides/mcp-oauth", "docsPath": "/agent-pass/build-with-a-coding-agent" },
+    { "path": "/docs/guides/testing", "docsPath": "/agent-pass/testing" }
+  ],
+  "legacyHtmlPolicy": {
+    "includeTrailingSlash": true,
+    "action": "keep-existing-auth-routing",
+    "futureRedirectHost": "auth.world.org",
+    "preserveSandboxRouting": true
+  },
+  "markdownEquivalent": {
+    "authPath": "/docs/guides/coding-agent-setup.md",
+    "docsPath": "/agent-pass/build-with-a-coding-agent.md",
+    "action": "keep-serving-environment-specific-markdown-on-auth"
+  },
+  "guideResources": [
+    { "id": "getting-started", "audience": "developer", "requiresAuth": false },
+    { "id": "app-registration", "audience": "developer", "requiresAuth": false },
+    { "id": "oidc", "audience": "developer", "requiresAuth": false },
+    { "id": "mcp-authorization", "audience": "developer", "requiresAuth": false },
+    { "id": "id-token", "audience": "developer", "requiresAuth": false },
+    { "id": "step-up", "audience": "developer", "requiresAuth": false },
+    { "id": "xaa", "audience": "developer", "requiresAuth": false },
+    { "id": "coding-agent-setup", "audience": "developer", "requiresAuth": false },
+    { "id": "testing", "audience": "developer", "requiresAuth": false },
+    { "id": "world-id-users", "audience": "user", "requiresAuth": true }
+  ],
+  "legacyGuideResourceIds": ["federation", "human-in-the-loop"],
+  "legacyGuideResourcePolicy": "Legacy Auth HTML paths do not register MCP resource aliases. Legacy resource IDs require changes in the owning Auth service; this documentation does not claim they remain available."
+}

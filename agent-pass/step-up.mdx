@@ -1,0 +1,320 @@
+---
+title: "Step-up authentication"
+sidebarTitle: "Step-up authentication"
+description: "Require recent World ID authentication before sensitive actions."
+"og:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+"twitter:image": "https://raw.githubusercontent.com/worldcoin/developer-docs/main/images/docs/docs-meta.png"
+---
+
+{/* Generated from worldcoin/temporal-apps/apps/idpapi/mcp/guides/step-up.md. Edit the source Markdown, then run scripts/sync-world-id-auth.mjs. */}
+
+Require recent World ID authentication before a sensitive action in your
+application. Your backend validates the authentication result, links or matches
+the returned World ID to the application account, and checks permissions before
+allowing the action.
+
+Before starting, [connect your backend or auth server with OIDC](/agent-pass/connect-your-backend).
+Link World ID before step-up, or explicitly authorize the flow below to enroll
+the first validated identity for the signed-in account.
+This works with your existing sign-in or World ID as your primary sign-in.
+
+## Decide who may authorize the operation {#decide-who-may-authorize-the-operation}
+
+Bind each attempt to its initiating session, target account, and exact operation
+or resource before authentication. If the account already has a linked World ID,
+require the validated `(iss, sub)` to match. If the account is unlinked, enroll
+the validated identity only when the saved attempt explicitly permits enrollment.
+
+Some operations may accept any qualifying human or a user with a specific role.
+Define the required assurance and eligibility, and whether a different identity
+is allowed. Test both acceptance and rejection against that authorization policy.
+
+## Implement step-up {#implement-step-up}
+
+1. **Save the pending operation.** Record the current application account,
+   its linked World ID `(iss, sub)` if present, whether this attempt may enroll an identity,
+   the required authentication age and class, and the pending operation in
+   server-side state. Bind a fresh OAuth `state`, `nonce`, and PKCE verifier to
+   this attempt. Keep the operation pending until all checks pass.
+2. **Request fresh authentication.** Redirect to the authorization endpoint with the
+   usual [browser authentication](/agent-pass/connect-your-backend#sign-in-through-the-browser)
+   parameters plus `max_age=0` for fresh authentication, or a positive `max_age` for a
+   maximum authentication age. For example, these additional decoded query
+   fields require fresh Orb-class authentication:
+
+   ```text
+   max_age=0
+   claims={"id_token":{"acr":{"essential":true,"value":"https://world.org/oidc/acr/orb"}}}
+   ```
+
+   A successful result has the Orb class. The person can authenticate with an
+   Orb proof or an enrolled passkey for an Orb-verified account. Validate the
+   returned `acr` against the requested class. To require a fresh proof with
+   Face Auth, use the [essential Face Auth request](/agent-pass/step-up#require-face-auth)
+   with `max_age=0`.
+
+3. **Validate the result.** Validate the callback `state`, redeem the code once,
+   and [validate the ID token](/agent-pass/connect-your-backend#validate-the-id-token),
+   including its nonce. Reconfirm that the initiating session and target account
+   match the saved attempt. For a linked account, require the returned
+   `(iss, sub)` to match. For an unlinked account, continue only when the attempt
+   explicitly permits enrollment and the identity is not linked elsewhere. Defer
+   storing the pair until the remaining checks pass.
+4. **Check freshness and assurance.** Validate `acr`, `amr`, and `auth_time`
+   against the saved policy. For `max_age=N`, check the authentication age when the
+   operation runs, allowing only a small, explicit clock tolerance and rejecting
+   implausibly future timestamps. For `max_age=0`, check that authentication
+   belongs to the newly initiated attempt (using its start time, nonce, and bounded
+   lifetime); do not require its age to remain literally zero during the browser
+   round trip.
+5. **Allow the operation.** After all checks pass, atomically save the validated
+   `(iss, sub)` for enrollment if needed, but only while the target account is
+   still unlinked and the identity is still unassigned. Then update your trusted
+   session or grant's assurance, recheck permissions and any transaction-specific
+   approval, and allow the intended operation. Cancellation, expiry, changed binding, identity mismatch,
+   unsupported assurance, and dependency failure leave the operation
+   unauthorized.
+
+Authorize payments, redemptions, and account changes through your application's
+permission checks. For agent workflows, follow [Human checkpoints](#human-checkpoints).
+
+## Request parameters {#request-parameters}
+
+Validate the returned `acr`, `amr`, and `auth_time` against the saved policy.
+See [class and method definitions](/agent-pass/id-tokens-and-identity#assurance-values)
+for the values and their guarantees.
+
+Step-up uses the same registered client, `scope=openid`, state, and S256 PKCE
+requirements as [browser authentication](/agent-pass/connect-your-backend#sign-in-through-the-browser),
+at the authorization endpoint from the
+[OIDC discovery document](https://auth.world.org/.well-known/openid-configuration). The
+protocol permits omitting nonce; the step-up procedure above uses it to bind the
+result to the attempt.
+
+| Parameter      | Implemented behavior                                                                                               |
+| -------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `max_age=N`    | Accept authentication no older than N seconds, subject to session/consent eligibility. N is a nonnegative integer. |
+| `max_age=0`    | Require fresh authentication for this transaction, even with an existing browser session.                          |
+| `prompt=login` | Require fresh authentication; overrides a larger `max_age`.                                                        |
+| `prompt=none`  | Forbid interaction; return `login_required` or `interaction_required` if silent authorization cannot complete.     |
+| `acr_values`   | Voluntary preferences. Unsupported values do not force an error; validate the achieved `acr` yourself.             |
+| `claims`       | Request an essential ID-token `acr` to require an acceptable authentication class.                                 |
+
+Omit `prompt` for normal interactive fallback. The supported values are `login`,
+`none`, and `consent`, supplied individually. `consent` forces the interactive
+authorization page. `select_account` and prompt combinations are rejected.
+Use an interactive request when you require fresh authentication.
+
+## Accept Orb or Selfie Check {#accept-orb-or-selfie-check}
+
+To require Orb or Selfie Check verification, add the `claims` query parameter
+to your OIDC authorization request. Set its value to the following JSON and have
+your OIDC library URL-encode it:
+
+```json
+{
+  "id_token": {
+    "acr": {
+      "essential": true,
+      "values": ["https://world.org/oidc/acr/orb", "https://world.org/oidc/acr/selfie"]
+    }
+  }
+}
+```
+
+The values are alternatives: one matching class is enough. This requires an
+account with Orb or Selfie Check verification.
+An explicit `claims.id_token.acr` request takes precedence over `acr_values`.
+After validating the ID token, require its `acr` to match one of your saved
+acceptable values exactly. Essential requests treat each class as a distinct
+value. List every class you accept, including any `-face` variants.
+
+These baseline classes can also be satisfied by a passkey on a verified account.
+They do not require a new credential proof or face check. Add `max_age=0` for
+fresh authentication and check `amr` for the method used. To require a face
+check with either credential, use the same essential request with
+`https://world.org/oidc/acr/orb-face` and
+`https://world.org/oidc/acr/selfie-face`, plus `max_age=0`.
+
+See [Credentials and authentication classes](/agent-pass/id-tokens-and-identity#credentials-and-authentication-classes)
+for the differences in assurance. Omitting a class request uses the client's
+[accepted accounts](#accepted-accounts). **Any account** also admits accounts
+without Orb or Selfie Check, so use explicit classes when verification is required.
+
+## Require Face Auth {#require-face-auth}
+
+To require Face Auth in the World ID app, send this JSON as the URL-encoded
+`claims` parameter:
+
+```json
+{ "id_token": { "acr": { "essential": true, "values": ["https://world.org/oidc/acr/orb-face"] } } }
+```
+
+Add `max_age=0` for a check during this browser authentication attempt. Without a
+freshness requirement, a qualifying Face Auth session can be reused.
+
+`https://world.org/oidc/acr/selfie-face` requires the same check on a Selfie Check
+proof and follows the same rules.
+
+`acr_values=https://world.org/oidc/acr/orb-face` requests Face Auth whenever a
+new proof is created. Unlike an essential `claims` request, it permits reuse of
+a baseline browser session and acceptance of a baseline result. When listing
+multiple `acr_values`, put your preferred class first; the first supported class
+determines whether a new proof requires Face Auth.
+
+If none of the requested essential classes is supported, the request fails with
+`unmet_authentication_requirements`. The RP must still validate the returned `acr`.
+
+When passkeys are enabled, requests offer authentication with an enrolled passkey
+first unless their first supported class is `https://world.org/oidc/acr/orb-face` or
+`https://world.org/oidc/acr/selfie-face`. A passkey login reports the account's class,
+`https://world.org/oidc/acr/orb` or, for a Selfie Check account,
+`https://world.org/oidc/acr/selfie`, but never a face check class. Check
+`amr` to see whether a World ID proof or a passkey authenticated the person. Add
+`max_age=0` when authentication must be fresh for this browser attempt.
+
+The device authorization endpoint accepts the same `acr_values` and `claims`
+parameters as extensions to its RFC 8628 profile. Device authentication always
+requires fresh authentication; `prompt` and `max_age` do not control this grant. If the
+mobile response cannot satisfy an essential requirement, token polling returns
+`access_denied`, never a downgraded token.
+
+A requested `claims.id_token.sub` value must match the authenticating account.
+A mismatch ends the request with `access_denied`, including device token polling.
+
+Reference: [OIDC ACR requests](https://openid.net/specs/openid-connect-core-1_0.html#acrSemantics).
+
+<span id="default-verification-preference" />
+
+## Accepted accounts {#accepted-accounts}
+
+A request with neither `acr_values` nor an `acr` claim request uses the
+client's registered classes as its `acr_values`. This is useful when your OIDC
+library or identity broker cannot add `acr_values`.
+
+Choose the accepted accounts when you create an application in the
+[developer portal](https://auth.world.org/portal). To change them, open the application and go
+to **Settings → Authenticate → Default accepted accounts**:
+
+- **Orb:** accounts verified at an Orb.
+- **Selfie Check:** accounts verified with Selfie Check or at an Orb. The login
+  offers Selfie Check first.
+- **Any account:** every World ID account. Accounts with Orb or Selfie Check
+  verification still receive their class in `acr`; ID tokens for accounts without
+  either omit `acr`.
+
+Each choice also accepts the accounts above it: any account, then Selfie Check,
+then Orb. An essential `acr` claim request accepts only the classes it lists.
+
+To accept any account for one request, including accounts without Orb or Selfie
+Check verification, send this decoded `claims` parameter:
+
+```json
+{ "id_token": { "acr": null } }
+```
+
+This overrides the client's defaults and requests `acr` when available. Tokens
+for accounts without verification still omit `acr`. An empty `acr_values` uses
+the client's defaults.
+
+**Ask for Face Auth** adds a face check in the World ID app to each new proof.
+It adds a step for people, and they can't authenticate with a passkey. It is a
+preference: an eligible browser session can still be reused. To require Face
+Auth, send an [essential `acr` claim](#require-face-auth).
+
+## Human checkpoints {#human-checkpoints}
+
+Pause the agent workflow, complete the [step-up procedure](#implement-step-up),
+and resume only after your backend accepts the authentication, checks permissions,
+and confirms any action approval required by your policy. This works with your
+existing sign-in or World ID as your primary sign-in.
+
+### Optional: collect action approval in your application {#optional-collect-action-approval-in-your-application}
+
+Save the exact action, version, destination, owning account, and expiry, bound
+to the authentication attempt. After validating the account and assurance, show
+the saved action to the user and record their approval or denial. At execution,
+recheck permissions, expiry, freshness, and approval, and authorize only that
+version. Changes require new approval. Denial, cancellation, failed validation,
+or expiry leaves the action blocked. Apply the
+[one-use and retry rules](#prevent-stale-or-duplicate-operations).
+
+For `max_age=0`, authentication belongs to the newly initiated attempt. Enforce
+your application's freshness window when the action runs, including time spent
+reviewing it.
+
+For headless clients, follow the [Device Authorization Grant](/agent-pass/connect-your-backend#sign-in-a-headless-agent-device-flow).
+Your backend issues their API or MCP credentials. Where supported, use the
+[challenge and retry flow](#challenge-an-agent-or-api-client-rfc-9470).
+
+## Prevent stale or duplicate operations {#prevent-stale-or-duplicate-operations}
+
+- **Save what the user is approving.** When authentication starts, save the
+  operation, target account, authentication requirements, and expiry. Do not
+  change them. If the operation or target changes, start again. Checking status
+  or retrying must not extend the expiry.
+- **Check again before acting.** Verify that the session, account, World ID, and
+  permissions still match the saved attempt. Reject an attempt that is outdated,
+  cancelled, or expired.
+- **Use an approval once.** Mark the approval as used in the same database
+  transaction that authorizes or reserves the operation. A cancellation blocks
+  the operation only if it is saved first; it cannot undo an operation that
+  already happened.
+- **Revoke access in your application.** Check expiry and revocation before each
+  use. Ending World IdP's browser session, deleting the OIDC client, rotating credentials,
+  revoking an MCP grant, or closing a browser tab does not revoke access stored
+  by your application.
+- **Reconcile external requests before retrying.** Give each external operation a
+  stable ID. After a timeout or lost response, ask the external service whether
+  it completed the operation. Retry with the same ID only if the service
+  guarantees that duplicates cannot run twice. If you cannot determine the
+  result, keep the operation blocked and investigate.
+
+## Through your auth server {#through-your-auth-server}
+
+The chain is: application or agent → your auth server → World IdP → your
+auth server → your protected operation. Each layer must preserve the requirement.
+
+- **Start a new upstream request.** Your auth server must start a new OIDC
+  authorization request with World IdP for each attempt. Its existing
+  session must not bypass the upstream freshness check.
+- **Forward the parameters.** Pass `max_age` and any requested `prompt=login`,
+  `acr_values`, and `claims` parameters to `https://auth.world.org/api/v1/authorize`. A setting
+  on only the outer login request is insufficient if the connector drops it.
+- **Keep World IdP's result.** Your auth server must validate and retain
+  World IdP's `auth_time`, `acr`, `amr`, and account binding. Convey the result to the
+  resource through trusted server state or your own signed token claims. A login,
+  password or MFA event at your auth server, MCP consent, OAuth refresh, or new
+  downstream token does not prove a fresh World ID authentication.
+- **Enforce at the resource.** If your auth server cannot propagate or validate
+  the requirement, this integration cannot provide World ID step-up.
+
+See [Configure your auth server](/agent-pass/connect-your-backend#configure-your-auth-server)
+for configuration. A useful acceptance test starts with an old World IdP browser
+session and a live session on your auth server: the sensitive operation must cause a
+fresh upstream authentication, produce a newer `auth_time`, and remain blocked when the
+human cancels or uses the wrong account.
+
+## Challenge an agent or API client (RFC 9470) {#challenge-an-agent-or-api-client-rfc-9470}
+
+Your resource server can reject insufficient authentication with a header like:
+
+```http
+HTTP/1.1 401 Unauthorized
+WWW-Authenticate: Bearer error="insufficient_user_authentication", max_age="300", acr_values="https://world.org/oidc/acr/orb"
+```
+
+Implement this response in your downstream resource server. The client asks your auth server for sufficient
+authentication; that server carries the requirement upstream as above. After
+validation, your server issues a new resource-bound credential and the client
+retries the operation. The resource checks the new credential's permissions and
+authentication context, including freshness at execution time. Use your auth
+server's resource-bound credential to call the downstream MCP server.
+
+Both the client and your auth server must support this challenge and retry
+flow; basic MCP OAuth support does not guarantee RFC 9470 support. Where a client
+cannot handle it, provide an explicit interactive reauthentication path and
+retry only after the backend confirms completion. Bound retries, and ensure a
+mutating operation cannot execute twice after an uncertain response.
+
+Reference: [RFC 9470](https://www.rfc-editor.org/info/rfc9470/).

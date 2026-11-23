@@ -58,6 +58,43 @@
     height: auto !important;
   }
 
+  /* Keep native Mermaid diagrams readable in narrow content columns. */
+  [data-component-name="mermaid-container"] {
+    container: mermaid / inline-size;
+    display: flex;
+    flex-direction: column;
+  }
+  [data-component-name="mermaid-container"] > .mermaid {
+    min-width: 0;
+  }
+  [data-component-name="mermaid-container"] > .mermaid > svg {
+    max-width: 100%;
+    height: auto;
+  }
+  @container mermaid (max-width: 40rem) {
+    [data-component-name="mermaid-container"] > .mermaid {
+      order: 0;
+      width: 100%;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+    }
+    [data-component-name="mermaid-container"] > .mermaid > svg {
+      max-width: none;
+    }
+    [data-component-name="mermaid-container"] > [data-component-name="mermaid-controls-wrapper"] {
+      position: static !important;
+      order: 1;
+      align-self: flex-end;
+      margin-block: 0.75rem 0.25rem;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
+    [data-component-name="mermaid-container"] > [data-component-name="mermaid-controls-wrapper"] button {
+      min-width: 2.75rem;
+      min-height: 2.75rem;
+    }
+  }
+
   /* Improve select dropdown option contrast in light/dark modes */
   select,
   select option {
@@ -80,6 +117,12 @@
   #navbar .nav-tabs {
     align-items: center;
     gap: 0 !important;
+  }
+  /* Mintlify reveals hidden tabs when active. Keep Agent Pass out of the
+     tab switchers while its navigation tree supplies the page sidebar. */
+  #navbar .nav-tabs-item[href^="/agent-pass/"],
+  a.mobile-nav-tabs-item[href^="/agent-pass/"] {
+    display: none !important;
   }
   #navbar .nav-tabs-item {
     height: 32px !important;
@@ -163,6 +206,7 @@
   /* the logo, the tab row, and the search/assistant cluster lay out on  */
   /* ONE flex line — no absolute positioning, so the variable-width      */
   /* hosted cluster (Search + Ask Assistant) can never overlap the tabs. */
+  /* Leave room for all tabs plus Search and Ask Assistant.             */
   /* Below 1440px — including when the hosted assistant panel narrows    */
   /* the page without changing the window width — the two-row layout     */
   /* above remains: the pill activates on the header's own width via a   */
