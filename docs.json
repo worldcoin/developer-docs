@@ -609,6 +609,10 @@
       "destination": "/agent-pass/testing"
     },
     {
+      "source": "/agents/agent-kit",
+      "destination": "/agent-pass/quickstart"
+    },
+    {
       "source": "/agents/agent-kit/integrate",
       "destination": "/agent-pass/quickstart"
     },
