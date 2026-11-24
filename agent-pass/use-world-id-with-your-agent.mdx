@@ -27,10 +27,13 @@ account needs a fresh sign-in. The tool returns a single-use link that expires a
 opens it gets the session, so your agent opens it only in its own browser and never shares it.
 
 With `world-id:notify`, your agent can send you a short message on your phone with
-`send_notification`, such as when a task finishes while you are away. It arrives in the
-World ID app on each phone where you are signed in with notifications turned on. Apple and
-Google deliver only a generic alert; the app fetches the message itself. Messages are plain
-text and expire after 24 hours, and revoking the connection stops new ones.
+`send_notification`, such as when a task finishes while you are away, or ask you to approve
+or deny something before it acts. It arrives in the World ID app on each phone where you are
+signed in with notifications turned on. Apple and Google deliver only a generic alert; the
+app fetches the message itself. Your answer goes only to the agent that asked, which reads it
+with `get_notification_answer`. Messages are plain text and expire after 24 hours, questions
+when the agent chose (10 minutes by default, at most 24 hours), and revoking the connection
+stops new ones.
 
 Every new connection includes `world-id:sign-in` and `world-id:notify`. A connection approved
 without one of them must reconnect before your agent can use it.
