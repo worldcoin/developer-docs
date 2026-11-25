@@ -66,8 +66,9 @@ val completion = request.pollUntilCompletion(
   options = IDKitPollOptions(pollIntervalMs = 2_000u, timeoutMs = 120_000u)
 )
 
-if (completion is IDKitCompletionResult.Success) {
-  val result = completion.result
+when (completion) {
+  is IDKitCompletionResult.Success -> println(completion.result)
+  is IDKitCompletionResult.Failure -> println("${completion.error.rawValue}: ${completion.reason}")
 }
 ```
 
@@ -107,7 +108,10 @@ request.statusFlow(2.seconds).collectLatest { status ->
     IDKitStatus.WaitingForConnection -> Unit
     IDKitStatus.AwaitingConfirmation -> Unit
     is IDKitStatus.Confirmed -> println(status.result)
-    is IDKitStatus.Failed -> println(status.error)
+    is IDKitStatus.Failed -> println("${status.error.rawValue}: ${status.reason}")
+    is IDKitStatus.NetworkingError -> println("Transport error: ${status.error.rawValue}")
   }
 }
 ```
+
+`IDKitStatus.Failed` and `IDKitCompletionResult.Failure` both expose `reason: ErrorReason?`, defaulting to `null`. Missing or `null` bridge reasons stay `null`; unrecognized strings become `ErrorReason.UNKNOWN`. `challenge_failed` is exposed as `IDKitErrorCode.CHALLENGE_FAILED`. See [Error codes and reasons](/world-id/idkit/error-codes#optional-error-reasons) for recognized values and parsing examples.
