@@ -159,7 +159,10 @@ export async function POST(request: Request): Promise<Response> {
     `https://developer.world.org/api/v4/verify/${process.env.WORLD_ID_RP_ID}`,
     {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: {
+        "content-type": "application/json",
+        "user-agent": "my-world-id-backend/1.0",
+      },
       body: JSON.stringify(idkitResponse),
     },
   );
