@@ -19,6 +19,10 @@ https://credit.cash/api/borrower/[identifier]
 
 where `[identifier]` is either the user's wallet address or [World username](/mini-apps/reference/usernames).
 
+<Note>
+This endpoint requires authorization; unauthenticated requests, including the example below, receive `401 Unauthorized`. Contact the [Credit team](#support) for access before integrating.
+</Note>
+
 The response is a JSON object with two keys:
 
 - `state`: the user's status on Credit
@@ -80,6 +84,7 @@ curl -s "https://credit.cash/api/borrower/0x764C890E7D96481cBEa64c64C0F9cFF34bFF
 | **Status** | **Error**                   | **Description**                        |
 | ---------- | --------------------------- | -------------------------------------- |
 | 400        | Missing identifier          | No wallet address or username provided |
+| 401        | Unauthorized                | Missing or invalid authorization       |
 | 404        | Username not found          | World username could not be resolved   |
 | 500        | Failed to get borrower info | Internal server error                  |
 
